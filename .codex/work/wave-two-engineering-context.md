@@ -98,3 +98,13 @@ skill-authoring
 - Template sources propagate to `.codex/templates` targets and provenance lock entries.
 - License declarations propagate from `SOURCE.json`/notice files into component metadata and installed artifacts.
 - Independence propagates through dependency resolution tests and clean installation selection.
+
+## Completion evidence
+
+- Registry 0.3.0 contains 22 components: the 11 Wave 1 components, seven Wave 2 atomic skill components, and four independently selectable Wave 2 bundles.
+- The `engineering`, `typescript-engineering`, `session-quality`, and `skill-authoring` dependency graphs and artifact targets are asserted exactly by the registry-builder tests. The same tests reject frontend, runtime, and objective-orchestration artifacts from Wave 2 resolution.
+- Registry construction validates exact `SOURCE.json` repository, revision, and license agreement with component metadata, rejects unresolved packaged Markdown references, and excludes the inventory skill's binary fixture from text materialization. The installed inventory validator recreates that fixture in a temporary copy and passes.
+- Framework verification passed from implementation commit `97b99f9a88b49f8396e65b43341d1417d0e3182b`: `pnpm typecheck`, the complete `pnpm test` workspace suite, `pnpm check` with zero errors and four pre-existing warnings, and `pnpm registry:check` reporting registry 0.3.0 with 22 components.
+- Clean Control Tower installation commit `10e23cfe5e0133552d6945db3a12e5fdcfbd0828` selects `typescript-engineering`, `session-quality`, and `skill-authoring` explicitly; `engineering` resolves through the TypeScript bundle. Installer diff reports current and doctor reports healthy.
+- Clean Control Tower passed `pnpm typecheck`, the complete `pnpm test` workspace suite, and `pnpm check` with zero errors and eight unrelated warnings after its final registry update.
+- No frontend policy, product manifest, host lockfile, Wave 3 runtime, repository-context server, hooks, agents, or objective-orchestration components were added or changed.
