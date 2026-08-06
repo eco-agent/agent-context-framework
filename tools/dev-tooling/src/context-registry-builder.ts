@@ -102,6 +102,7 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
     components,
   });
   validateNoticeCoverage(registry);
+  await validateSourceAttribution(resolvedRoot, registry);
   await validatePackagedMarkdownReferences(resolvedRoot, registry);
   return registry;
 }
@@ -210,6 +211,63 @@ function validateNoticeCoverage(registry: ContextRegistryV2): void {
       }
     }
   }
+}
+
+async function validateSourceAttribution(
+  root: string,
+  registry: ContextRegistryV2,
+): Promise<void> {
+  for (const component of registry.components) {
+    const thirdPartyLicenses = component.licenses.filter((license) => license.kind === "third-party");
+    const sourceArtifacts = component.artifacts.filter((artifact) =>
+      path.posix.basename(artifact.targetPath) === "SOURCE.json");
+    if (sourceArtifacts.length > 0 && thirdPartyLicenses.length === 0) {
+      throw new Error(`Component ${component.name} installs orphaned SOURCE.json metadata.`);
+    }
+    if (thirdPartyLicenses.length > 0 && sourceArtifacts.length === 0) {
+      throw new Error(`Third-party component ${component.name} must install SOURCE.json metadata.`);
+    }
+    if (thirdPartyLicenses.length === 0) continue;
+
+    const attributed = new Set<string>();
+    for (const artifact of sourceArtifacts) {
+      const value = await readJson(repositoryPath(root, artifact.sourcePath), artifact.sourcePath);
+      for (const entry of decodeSourceAttributions(value, artifact.sourcePath)) {
+        attributed.add(attributionIdentity(entry.repository, entry.revision, entry.license));
+      }
+    }
+    const declared = new Set(thirdPartyLicenses.map((license) =>
+      attributionIdentity(license.source, license.revision, license.spdx)));
+    if (
+      attributed.size !== declared.size ||
+      [...attributed].some((identity) => !declared.has(identity))
+    ) {
+      throw new Error(`Component ${component.name} SOURCE.json does not match its registry licenses.`);
+    }
+  }
+}
+
+interface SourceAttribution {
+  readonly repository: string;
+  readonly revision: string;
+  readonly license: string;
+}
+
+function decodeSourceAttributions(value: unknown, label: string): readonly SourceAttribution[] {
+  if (!isRecord(value)) throw new Error(`${label} must contain an object.`);
+  const entries = Array.isArray(value.sources) ? value.sources : [value];
+  return entries.map((entry) => {
+    if (!isRecord(entry)) throw new Error(`${label} source attribution must be an object.`);
+    return {
+      repository: requiredString(entry, "repository"),
+      revision: requiredString(entry, "revision"),
+      license: requiredString(entry, "license"),
+    };
+  });
+}
+
+function attributionIdentity(repository: string, revision: string, license: string): string {
+  return `${repository}\n${revision}\n${license}`;
 }
 
 async function validatePackagedMarkdownReferences(

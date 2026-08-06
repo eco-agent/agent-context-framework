@@ -12,6 +12,23 @@ import { buildContextRegistry, checkContextRegistry } from "../src/context-regis
 import { checkContextGovernance } from "../src/context-governance.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+const packagedSkills = [
+  "adopt-established-product",
+  "choose-react-animation",
+  "design-accessible-interfaces",
+  "design-color-systems",
+  "design-interface-details",
+  "design-web-typography",
+  "frontend-design-discipline",
+  "responsive-css-architect",
+  "codebase-inventory",
+  "design-typescript-invariants",
+  "diagnose",
+  "reuse-before-implementation",
+  "write-technical-prose",
+  "writing-great-skills",
+  "optimize-codex-sessions",
+];
 
 test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes generated caches and fixtures", async () => {
   const first = await buildContextRegistry(frameworkRoot);
@@ -171,33 +188,31 @@ test("registry construction rejects unresolved packaged Markdown references", as
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-reference-"));
   try {
     await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
-    await mkdir(path.join(temporaryRoot, ".codex", "skills"), { recursive: true });
-    for (const skill of [
-      "adopt-established-product",
-      "choose-react-animation",
-      "design-accessible-interfaces",
-      "design-color-systems",
-      "design-interface-details",
-      "design-web-typography",
-      "frontend-design-discipline",
-      "responsive-css-architect",
-      "codebase-inventory",
-      "design-typescript-invariants",
-      "diagnose",
-      "reuse-before-implementation",
-      "write-technical-prose",
-      "writing-great-skills",
-      "optimize-codex-sessions",
-    ]) {
-      await cp(
-        path.join(frameworkRoot, ".codex", "skills", skill),
-        path.join(temporaryRoot, ".codex", "skills", skill),
-        { recursive: true, filter: (source) => !source.replaceAll("\\", "/").includes("/tailwind-docs/cache") },
-      );
-    }
+    await copyPackagedSkills(temporaryRoot);
     const skillPath = path.join(temporaryRoot, ".codex", "skills", "frontend-design-discipline", "SKILL.md");
     await writeFile(skillPath, `${await readFile(skillPath, "utf8")}\n[Missing](references/missing.md)\n`);
     await assert.rejects(buildContextRegistry(temporaryRoot), /Packaged Markdown reference is unresolved/u);
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("registry construction rejects source attribution that differs from component licenses", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-attribution-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await copyPackagedSkills(temporaryRoot);
+    const sourcePath = path.join(
+      temporaryRoot,
+      ".codex",
+      "skills",
+      "writing-great-skills",
+      "SOURCE.json",
+    );
+    const source = JSON.parse(await readFile(sourcePath, "utf8")) as Record<string, unknown>;
+    source.revision = "different-revision";
+    await writeFile(sourcePath, `${JSON.stringify(source, null, 2)}\n`);
+    await assert.rejects(buildContextRegistry(temporaryRoot), /SOURCE.json does not match its registry licenses/u);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
@@ -208,6 +223,17 @@ function componentNames(
   selected: string,
 ): readonly string[] {
   return resolveContextComponents(registry, [selected]).map((component) => component.name);
+}
+
+async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
+  await mkdir(path.join(temporaryRoot, ".codex", "skills"), { recursive: true });
+  for (const skill of packagedSkills) {
+    await cp(
+      path.join(frameworkRoot, ".codex", "skills", skill),
+      path.join(temporaryRoot, ".codex", "skills", skill),
+      { recursive: true, filter: (source) => !source.replaceAll("\\", "/").includes("/tailwind-docs/cache") },
+    );
+  }
 }
 
 async function exists(candidate: string): Promise<boolean> {
