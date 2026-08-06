@@ -28,8 +28,10 @@ import {
 } from "./context-artifact-projection.js";
 import {
   applyContextTransaction,
-  readContextTransaction,
+  inspectContextTransaction,
+  resumeContextTransaction,
   type ContextMutation,
+  type ContextTransactionInspection,
 } from "./context-transaction.js";
 import { exists } from "./workspace.js";
 
@@ -109,6 +111,14 @@ export interface ContextDoctorResult {
   readonly diagnostics: readonly string[];
   readonly capabilities: readonly ContextCapability[];
   readonly diff: ContextDiffResult | null;
+  readonly transaction: ContextTransactionInspection;
+}
+
+export interface ContextRecoveryResult {
+  readonly command: "recover";
+  readonly projectRoot: string;
+  readonly status: "none" | "discarded" | "resumed";
+  readonly recoveredPaths: readonly string[];
 }
 
 type PlanningIntent =
@@ -257,11 +267,21 @@ export async function doctorProject(
 ): Promise<ContextDoctorResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const diagnostics: string[] = [];
-  const transaction = await readContextTransaction(resolvedProjectRoot);
-  if (transaction) {
+  const transaction = await inspectContextTransaction(resolvedProjectRoot);
+  if (transaction.status === "discardable") {
     diagnostics.push(
-      `Incomplete ${transaction.command} transaction for registry ${transaction.registryRevision}; ` +
-      `${transaction.mutations.length} mutation(s) require Git review before the journal is removed.`,
+      "Incomplete transaction staging is safely discardable because no journal was published; " +
+      "run agent-context recover before writing.",
+    );
+  } else if (transaction.status === "resumable" && transaction.journal) {
+    diagnostics.push(
+      `Incomplete ${transaction.journal.command} transaction for registry ${transaction.journal.registryRevision} ` +
+      `is safely resumable (${transaction.detail}); run agent-context recover before writing.`,
+    );
+  } else if (transaction.status === "blocked" && transaction.journal) {
+    diagnostics.push(
+      `Incomplete ${transaction.journal.command} transaction for registry ${transaction.journal.registryRevision} ` +
+      `cannot be resumed safely: ${transaction.detail}`,
     );
   }
   const config = await readOptionalConfig(resolvedProjectRoot);
@@ -274,6 +294,7 @@ export async function doctorProject(
       diagnostics,
       capabilities: [],
       diff: null,
+      transaction,
     };
   }
   const registry = await loadContextRegistry(frameworkRoot);
@@ -290,11 +311,18 @@ export async function doctorProject(
   return {
     command: "doctor",
     projectRoot: resolvedProjectRoot,
-    health: transaction === null && diff.current ? "healthy" : "attention",
+    health: transaction.status === "none" && diff.current ? "healthy" : "attention",
     diagnostics,
     capabilities,
     diff,
+    transaction,
   };
+}
+
+export async function recoverProject(projectRoot: string): Promise<ContextRecoveryResult> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const recovery = await resumeContextTransaction(resolvedProjectRoot);
+  return { command: "recover", projectRoot: resolvedProjectRoot, ...recovery };
 }
 
 export async function loadContextRegistry(frameworkRoot: string): Promise<ContextRegistryV2> {
@@ -454,7 +482,7 @@ async function applyDesiredState(
   intent: PlanningIntent,
   loadedRegistry?: ContextRegistryV2,
 ): Promise<ContextOperationResult> {
-  if (await readContextTransaction(projectRoot)) {
+  if ((await inspectContextTransaction(projectRoot)).status !== "none") {
     throw new Error("An incomplete context transaction exists. Run agent-context doctor before writing.");
   }
   const registry = loadedRegistry ?? await loadContextRegistry(frameworkRoot);

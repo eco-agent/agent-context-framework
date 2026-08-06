@@ -7,6 +7,7 @@ import {
   doctorProject,
   initProject,
   inspectProject,
+  recoverProject,
   removeComponent,
   updateProject,
   type ArtifactAssessment,
@@ -14,6 +15,7 @@ import {
   type ContextDoctorResult,
   type ContextInspection,
   type ContextOperationResult,
+  type ContextRecoveryResult,
 } from "./context-installer.js";
 
 type ContextInstallerArguments =
@@ -24,7 +26,7 @@ type ContextInstallerArguments =
       readonly output: "text" | "json";
     }
   | {
-      readonly command: "init";
+      readonly command: "init" | "recover";
       readonly projectRoot: string;
       readonly component: null;
       readonly output: "text";
@@ -46,7 +48,8 @@ type ContextCommandResult =
   | ContextOperationResult
   | ContextDiffResult
   | ContextInspection
-  | ContextDoctorResult;
+  | ContextDoctorResult
+  | ContextRecoveryResult;
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -81,10 +84,11 @@ export function parseContextInstallerArguments(
     command !== "diff" &&
     command !== "update" &&
     command !== "remove" &&
-    command !== "doctor"
+    command !== "doctor" &&
+    command !== "recover"
   ) {
     throw new Error(
-      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT]|remove COMPONENT|doctor> [--cwd PROJECT] [--json].",
+      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT]|remove COMPONENT|doctor|recover> [--cwd PROJECT] [--json].",
     );
   }
   if (json && command !== "inspect" && command !== "diff" && command !== "doctor") {
@@ -101,7 +105,9 @@ export function parseContextInstallerArguments(
     return { command, projectRoot, component: positionals[1] ?? null, output: "text" };
   }
   if (positionals[1]) throw new Error(`agent-context ${command} does not accept a component name.`);
-  if (command === "init") return { command, projectRoot, component: null, output: "text" };
+  if (command === "init" || command === "recover") {
+    return { command, projectRoot, component: null, output: "text" };
+  }
   return { command, projectRoot, component: null, output: json ? "json" : "text" };
 }
 
@@ -119,6 +125,11 @@ export function formatContextResult(result: ContextCommandResult): string {
   if (result.command === "doctor") {
     lines.push(`health: ${result.health}`);
     lines.push(...result.diagnostics.map((diagnostic) => `- ${diagnostic}`));
+    return lines.join("\n");
+  }
+  if (result.command === "recover") {
+    lines.push(`status: ${result.status}`);
+    if (result.recoveredPaths.length > 0) lines.push(`recovered: ${result.recoveredPaths.join(", ")}`);
     return lines.join("\n");
   }
   for (const assessment of result.plan.assessments) lines.push(formatAssessment(assessment));
@@ -162,6 +173,8 @@ async function execute(arguments_: ContextInstallerArguments): Promise<ContextCo
       return await removeComponent(arguments_.projectRoot, frameworkRoot, arguments_.component);
     case "doctor":
       return await doctorProject(arguments_.projectRoot, frameworkRoot);
+    case "recover":
+      return await recoverProject(arguments_.projectRoot);
   }
 }
 

@@ -3,6 +3,8 @@ import {
   lstat,
   mkdir,
   readFile,
+  readdir,
+  realpath,
   rename,
   rm,
   unlink,
@@ -10,10 +12,9 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 
-import { exists } from "./workspace.js";
-
 export const CONTEXT_TRANSACTION_PATH = ".agent-context/transaction.json";
-const CONTEXT_TRANSACTION_STAGE_PATH = ".agent-context/transaction-stage";
+export const CONTEXT_TRANSACTION_STAGE_PATH = ".agent-context/transaction-stage";
+const CONTEXT_TRANSACTION_STAGED_JOURNAL = "journal.staged";
 
 export type ContextMutation =
   | { readonly operation: "write"; readonly targetPath: string; readonly content: string }
@@ -33,29 +34,77 @@ export interface ContextTransactionJournalMutation {
   readonly afterSha256: string | null;
 }
 
+export interface ContextTransactionMutationInspection extends ContextTransactionJournalMutation {
+  readonly state: "pending" | "applied" | "blocked";
+  readonly detail: string;
+}
+
+export interface ContextTransactionInspection {
+  readonly status: "none" | "discardable" | "resumable" | "blocked";
+  readonly journal: ContextTransactionJournal | null;
+  readonly mutations: readonly ContextTransactionMutationInspection[];
+  readonly detail: string;
+}
+
+export interface ContextTransactionRecoveryResult {
+  readonly status: "none" | "discarded" | "resumed";
+  readonly recoveredPaths: readonly string[];
+}
+
+export type ContextTransactionMutationBoundary =
+  | { readonly kind: "stage-root-created" }
+  | { readonly kind: "write-staged"; readonly index: number; readonly targetPath: string }
+  | { readonly kind: "journal-staged" }
+  | { readonly kind: "journal-published" }
+  | { readonly kind: "target-parent-created"; readonly index: number; readonly targetPath: string }
+  | { readonly kind: "target-written"; readonly index: number; readonly targetPath: string }
+  | { readonly kind: "target-deleted"; readonly index: number; readonly targetPath: string }
+  | { readonly kind: "stage-removed" }
+  | { readonly kind: "journal-removed" };
+
+export interface ContextTransactionOptions {
+  readonly afterMutation?: (boundary: ContextTransactionMutationBoundary) => void | Promise<void>;
+}
+
 export async function applyContextTransaction(
   projectRoot: string,
   command: ContextTransactionJournal["command"],
   registryRevision: string,
   mutations: readonly ContextMutation[],
+  options: ContextTransactionOptions = {},
 ): Promise<readonly string[]> {
   if (mutations.length === 0) return [];
   requireUniqueTargets(mutations);
-  const journalPath = secureProjectPath(projectRoot, CONTEXT_TRANSACTION_PATH);
-  const stageRoot = secureProjectPath(projectRoot, CONTEXT_TRANSACTION_STAGE_PATH);
-  if (await exists(journalPath) || await exists(stageRoot)) {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const existing = await inspectContextTransaction(resolvedProjectRoot);
+  if (existing.status !== "none") {
     throw new Error("An incomplete context transaction exists. Run agent-context doctor before writing.");
   }
 
-  await mkdir(stageRoot, { recursive: true });
-  const journalMutations: ContextTransactionJournalMutation[] = [];
+  const journalPath = await secureProjectPath(
+    resolvedProjectRoot,
+    CONTEXT_TRANSACTION_PATH,
+    "Context transaction journal",
+  );
+  const stageRoot = await secureProjectPath(
+    resolvedProjectRoot,
+    CONTEXT_TRANSACTION_STAGE_PATH,
+    "Context transaction staging",
+  );
   try {
+    await mkdir(stageRoot, { recursive: true });
+    await notifyMutation(options, { kind: "stage-root-created" });
+    const journalMutations: ContextTransactionJournalMutation[] = [];
     for (const [index, mutation] of mutations.entries()) {
-      const target = secureProjectPath(projectRoot, mutation.targetPath);
-      const beforeSha256 = (await exists(target)) ? contentHash(await readFile(target)) : null;
+      const beforeSha256 = await readTargetHash(resolvedProjectRoot, mutation.targetPath);
       if (mutation.operation === "write") {
-        const staged = path.join(stageRoot, `${index}.staged`);
+        const staged = await secureProjectPath(
+          resolvedProjectRoot,
+          stagedMutationPath(index),
+          `Staged context write ${mutation.targetPath}`,
+        );
         await writeFile(staged, mutation.content, { encoding: "utf8", flag: "wx" });
+        await notifyMutation(options, { kind: "write-staged", index, targetPath: mutation.targetPath });
         journalMutations.push({
           operation: "write",
           targetPath: mutation.targetPath,
@@ -63,6 +112,9 @@ export async function applyContextTransaction(
           afterSha256: contentHash(Buffer.from(mutation.content, "utf8")),
         });
       } else {
+        if (beforeSha256 === null) {
+          throw new Error(`Context deletion target is missing: ${mutation.targetPath}.`);
+        }
         journalMutations.push({
           operation: "delete",
           targetPath: mutation.targetPath,
@@ -71,41 +123,300 @@ export async function applyContextTransaction(
         });
       }
     }
+
     const journal: ContextTransactionJournal = {
       schemaVersion: 1,
       command,
       registryRevision,
       mutations: journalMutations,
     };
-    await writeFile(journalPath, serializeJson(journal), { encoding: "utf8", flag: "wx" });
+    const stagedJournalPath = await secureProjectPath(
+      resolvedProjectRoot,
+      `${CONTEXT_TRANSACTION_STAGE_PATH}/${CONTEXT_TRANSACTION_STAGED_JOURNAL}`,
+      "Staged context transaction journal",
+    );
+    await writeFile(stagedJournalPath, serializeJson(journal), { encoding: "utf8", flag: "wx" });
+    await notifyMutation(options, { kind: "journal-staged" });
+    await secureProjectPath(resolvedProjectRoot, CONTEXT_TRANSACTION_PATH, "Context transaction journal");
+    await rename(stagedJournalPath, journalPath);
+    await notifyMutation(options, { kind: "journal-published" });
 
-    for (const [index, mutation] of mutations.entries()) {
-      const target = secureProjectPath(projectRoot, mutation.targetPath);
-      if (mutation.operation === "write") {
-        await mkdir(path.dirname(target), { recursive: true });
-        await rename(path.join(stageRoot, `${index}.staged`), target);
-      } else if (await exists(target)) {
-        const state = await lstat(target);
-        if (!state.isFile()) throw new Error(`Context deletion target is not a regular file: ${mutation.targetPath}.`);
-        await unlink(target);
-      }
+    for (const [index, mutation] of journal.mutations.entries()) {
+      await promotePendingMutation(resolvedProjectRoot, index, mutation, options);
     }
-    await unlink(journalPath);
-    await rm(stageRoot, { recursive: true });
+    await completeTransactionCleanup(resolvedProjectRoot, options);
     return mutations.map((mutation) => mutation.targetPath);
   } catch (error) {
-    if (!(await exists(journalPath))) {
-      await rm(stageRoot, { recursive: true, force: true });
+    if (!(await pathExists(journalPath))) {
+      await discardStageRoot(stageRoot);
     }
     throw error;
   }
 }
 
+export async function inspectContextTransaction(
+  projectRoot: string,
+): Promise<ContextTransactionInspection> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const journalPath = await secureProjectPath(
+    resolvedProjectRoot,
+    CONTEXT_TRANSACTION_PATH,
+    "Context transaction journal",
+  );
+  const stageRoot = await secureProjectPath(
+    resolvedProjectRoot,
+    CONTEXT_TRANSACTION_STAGE_PATH,
+    "Context transaction staging",
+  );
+  const hasJournal = await pathExists(journalPath);
+  const hasStage = await pathExists(stageRoot);
+  if (!hasJournal) {
+    return hasStage
+      ? {
+          status: "discardable",
+          journal: null,
+          mutations: [],
+          detail: "Uncommitted transaction staging exists; no target promotion could have started.",
+        }
+      : { status: "none", journal: null, mutations: [], detail: "No context transaction exists." };
+  }
+
+  const journal = await readJournalAt(journalPath);
+  const mutations = await Promise.all(
+    journal.mutations.map(async (mutation, index) =>
+      await inspectJournalMutation(resolvedProjectRoot, mutation, index)),
+  );
+  const expectedStageEntries = new Set(
+    mutations.flatMap((mutation, index) =>
+      mutation.operation === "write" && mutation.state === "pending" ? [`${index}.staged`] : []),
+  );
+  let unexpectedStageEntries: readonly string[] = [];
+  if (hasStage) {
+    const stageState = await lstat(stageRoot);
+    if (!stageState.isDirectory() || stageState.isSymbolicLink()) {
+      unexpectedStageEntries = ["transaction-stage is not a regular directory"];
+    } else {
+      unexpectedStageEntries = (await readdir(stageRoot)).filter((entry) => !expectedStageEntries.has(entry));
+    }
+  } else if (expectedStageEntries.size > 0) {
+    unexpectedStageEntries = ["transaction-stage is missing"];
+  }
+  const blocked = mutations.some((mutation) => mutation.state === "blocked") ||
+    unexpectedStageEntries.length > 0;
+  if (blocked) {
+    const details = [
+      ...mutations.filter((mutation) => mutation.state === "blocked").map((mutation) => mutation.detail),
+      ...unexpectedStageEntries.map((entry) => `Unexpected transaction staging entry: ${entry}.`),
+    ];
+    return {
+      status: "blocked",
+      journal,
+      mutations,
+      detail: details.join(" "),
+    };
+  }
+  const pending = mutations.filter((mutation) => mutation.state === "pending").length;
+  const applied = mutations.length - pending;
+  return {
+    status: "resumable",
+    journal,
+    mutations,
+    detail: `${applied} mutation(s) are applied and ${pending} mutation(s) are pending.`,
+  };
+}
+
+export async function resumeContextTransaction(
+  projectRoot: string,
+  options: ContextTransactionOptions = {},
+): Promise<ContextTransactionRecoveryResult> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const inspection = await inspectContextTransaction(resolvedProjectRoot);
+  if (inspection.status === "none") return { status: "none", recoveredPaths: [] };
+  if (inspection.status === "discardable") {
+    const stageRoot = await secureProjectPath(
+      resolvedProjectRoot,
+      CONTEXT_TRANSACTION_STAGE_PATH,
+      "Context transaction staging",
+    );
+    await discardStageRoot(stageRoot);
+    await notifyMutation(options, { kind: "stage-removed" });
+    return { status: "discarded", recoveredPaths: [] };
+  }
+  if (inspection.status === "blocked" || !inspection.journal) {
+    throw new Error(`Context transaction cannot be resumed safely: ${inspection.detail}`);
+  }
+
+  for (const [index, mutation] of inspection.mutations.entries()) {
+    if (mutation.state === "pending") {
+      await promotePendingMutation(resolvedProjectRoot, index, mutation, options);
+    } else {
+      const current = await inspectJournalMutation(resolvedProjectRoot, mutation, index);
+      if (current.state !== "applied") {
+        throw new Error(`Context transaction changed during recovery: ${current.detail}`);
+      }
+    }
+  }
+  const completed = await inspectContextTransaction(resolvedProjectRoot);
+  if (
+    completed.status !== "resumable" ||
+    completed.mutations.some((mutation) => mutation.state !== "applied")
+  ) {
+    throw new Error(`Context transaction could not be completed safely: ${completed.detail}`);
+  }
+  await completeTransactionCleanup(resolvedProjectRoot, options);
+  return {
+    status: "resumed",
+    recoveredPaths: inspection.mutations.map((mutation) => mutation.targetPath),
+  };
+}
+
 export async function readContextTransaction(
   projectRoot: string,
 ): Promise<ContextTransactionJournal | null> {
-  const journalPath = secureProjectPath(projectRoot, CONTEXT_TRANSACTION_PATH);
-  if (!(await exists(journalPath))) return null;
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const journalPath = await secureProjectPath(
+    resolvedProjectRoot,
+    CONTEXT_TRANSACTION_PATH,
+    "Context transaction journal",
+  );
+  return (await pathExists(journalPath)) ? await readJournalAt(journalPath) : null;
+}
+
+async function inspectJournalMutation(
+  projectRoot: string,
+  mutation: ContextTransactionJournalMutation,
+  index: number,
+): Promise<ContextTransactionMutationInspection> {
+  try {
+    const currentSha256 = await readTargetHash(projectRoot, mutation.targetPath);
+    if (mutation.operation === "write") {
+      if (currentSha256 === mutation.afterSha256) {
+        const stagedExists = await pathExists(await secureProjectPath(
+          projectRoot,
+          stagedMutationPath(index),
+          `Staged context write ${mutation.targetPath}`,
+        ));
+        return stagedExists
+          ? { ...mutation, state: "blocked", detail: `Applied write still has staged bytes: ${mutation.targetPath}.` }
+          : { ...mutation, state: "applied", detail: `Write is already applied: ${mutation.targetPath}.` };
+      }
+      if (currentSha256 === mutation.beforeSha256) {
+        const stagedSha256 = await readStagedHash(projectRoot, mutation.targetPath, index);
+        return stagedSha256 === mutation.afterSha256
+          ? { ...mutation, state: "pending", detail: `Write is staged and pending: ${mutation.targetPath}.` }
+          : { ...mutation, state: "blocked", detail: `Staged write hash differs from the journal: ${mutation.targetPath}.` };
+      }
+      return {
+        ...mutation,
+        state: "blocked",
+        detail: `Write target matches neither journal boundary: ${mutation.targetPath}.`,
+      };
+    }
+    if (currentSha256 === null) {
+      return { ...mutation, state: "applied", detail: `Deletion is already applied: ${mutation.targetPath}.` };
+    }
+    return currentSha256 === mutation.beforeSha256
+      ? { ...mutation, state: "pending", detail: `Deletion is pending: ${mutation.targetPath}.` }
+      : {
+          ...mutation,
+          state: "blocked",
+          detail: `Deletion target differs from the journal boundary: ${mutation.targetPath}.`,
+        };
+  } catch (error) {
+    return {
+      ...mutation,
+      state: "blocked",
+      detail: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+async function promotePendingMutation(
+  projectRoot: string,
+  index: number,
+  mutation: ContextTransactionJournalMutation,
+  options: ContextTransactionOptions,
+): Promise<void> {
+  const currentSha256 = await readTargetHash(projectRoot, mutation.targetPath);
+  if (currentSha256 !== mutation.beforeSha256) {
+    throw new Error(`Context target changed before promotion: ${mutation.targetPath}.`);
+  }
+  if (mutation.operation === "write") {
+    const stagedSha256 = await readStagedHash(projectRoot, mutation.targetPath, index);
+    if (stagedSha256 !== mutation.afterSha256) {
+      throw new Error(`Staged context write hash differs from the journal: ${mutation.targetPath}.`);
+    }
+    let target = await secureProjectPath(
+      projectRoot,
+      mutation.targetPath,
+      `Context promotion target ${mutation.targetPath}`,
+    );
+    await mkdir(path.dirname(target), { recursive: true });
+    await notifyMutation(options, { kind: "target-parent-created", index, targetPath: mutation.targetPath });
+    target = await secureProjectPath(
+      projectRoot,
+      mutation.targetPath,
+      `Context promotion target ${mutation.targetPath}`,
+    );
+    if (await readTargetHash(projectRoot, mutation.targetPath) !== mutation.beforeSha256) {
+      throw new Error(`Context target changed during promotion: ${mutation.targetPath}.`);
+    }
+    const staged = await secureProjectPath(
+      projectRoot,
+      stagedMutationPath(index),
+      `Staged context write ${mutation.targetPath}`,
+    );
+    if (await readStagedHash(projectRoot, mutation.targetPath, index) !== mutation.afterSha256) {
+      throw new Error(`Staged context write changed during promotion: ${mutation.targetPath}.`);
+    }
+    await rename(staged, target);
+    await notifyMutation(options, { kind: "target-written", index, targetPath: mutation.targetPath });
+    return;
+  }
+
+  const target = await secureProjectPath(
+    projectRoot,
+    mutation.targetPath,
+    `Context deletion target ${mutation.targetPath}`,
+  );
+  const state = await lstat(target);
+  if (!state.isFile() || state.isSymbolicLink()) {
+    throw new Error(`Context deletion target is not a regular file: ${mutation.targetPath}.`);
+  }
+  if (await readTargetHash(projectRoot, mutation.targetPath) !== mutation.beforeSha256) {
+    throw new Error(`Context deletion target changed during promotion: ${mutation.targetPath}.`);
+  }
+  await unlink(target);
+  await notifyMutation(options, { kind: "target-deleted", index, targetPath: mutation.targetPath });
+}
+
+async function completeTransactionCleanup(
+  projectRoot: string,
+  options: ContextTransactionOptions,
+): Promise<void> {
+  const stageRoot = await secureProjectPath(
+    projectRoot,
+    CONTEXT_TRANSACTION_STAGE_PATH,
+    "Context transaction staging",
+  );
+  if (await pathExists(stageRoot)) {
+    await rm(stageRoot, { recursive: true });
+    await notifyMutation(options, { kind: "stage-removed" });
+  }
+  const journalPath = await secureProjectPath(
+    projectRoot,
+    CONTEXT_TRANSACTION_PATH,
+    "Context transaction journal",
+  );
+  await unlink(journalPath);
+  await notifyMutation(options, { kind: "journal-removed" });
+}
+
+async function readJournalAt(journalPath: string): Promise<ContextTransactionJournal> {
+  const state = await lstat(journalPath);
+  if (!state.isFile() || state.isSymbolicLink()) {
+    throw new Error("Context transaction journal must be a regular file.");
+  }
   let value: unknown;
   try {
     value = JSON.parse(await readFile(journalPath, "utf8")) as unknown;
@@ -130,11 +441,13 @@ function decodeJournal(value: unknown): ContextTransactionJournal {
     throw new Error("Context transaction registryRevision must be a non-empty string.");
   }
   if (!Array.isArray(record.mutations)) throw new Error("Context transaction mutations must be an array.");
+  const mutations = record.mutations.map(decodeJournalMutation);
+  requireUniqueTargets(mutations);
   return {
     schemaVersion: 1,
     command: record.command,
     registryRevision: record.registryRevision,
-    mutations: record.mutations.map(decodeJournalMutation),
+    mutations,
   };
 }
 
@@ -149,29 +462,114 @@ function decodeJournalMutation(value: unknown): ContextTransactionJournalMutatio
     throw new Error("Context transaction mutation operation must be write or delete.");
   }
   const targetPath = portableRelativePath(record.targetPath);
-  return {
-    operation: record.operation,
-    targetPath,
-    beforeSha256: nullableHash(record.beforeSha256, "beforeSha256"),
-    afterSha256: nullableHash(record.afterSha256, "afterSha256"),
-  };
+  const beforeSha256 = nullableHash(record.beforeSha256, "beforeSha256");
+  const afterSha256 = nullableHash(record.afterSha256, "afterSha256");
+  if (record.operation === "write") {
+    if (afterSha256 === null) throw new Error("Context transaction write afterSha256 must not be null.");
+    if (beforeSha256 !== null && beforeSha256 === afterSha256) {
+      throw new Error("Context transaction write must change the target hash.");
+    }
+  } else {
+    if (beforeSha256 === null) throw new Error("Context transaction delete beforeSha256 must not be null.");
+    if (afterSha256 !== null) throw new Error("Context transaction delete afterSha256 must be null.");
+  }
+  return { operation: record.operation, targetPath, beforeSha256, afterSha256 };
 }
 
-function requireUniqueTargets(mutations: readonly ContextMutation[]): void {
+function requireUniqueTargets(
+  mutations: readonly Pick<ContextMutation | ContextTransactionJournalMutation, "targetPath">[],
+): void {
   const targets = mutations.map((mutation) => mutation.targetPath);
   const duplicate = targets.find((target, index) => targets.indexOf(target) !== index);
   if (duplicate) throw new Error(`Context transaction contains duplicate target ${duplicate}.`);
 }
 
-function secureProjectPath(root: string, relativePath: string): string {
+async function secureProjectPath(root: string, relativePath: string, label: string): Promise<string> {
   portableRelativePath(relativePath);
   const resolvedRoot = path.resolve(root);
   const resolved = path.resolve(resolvedRoot, relativePath);
   const relative = path.relative(resolvedRoot, resolved);
   if (relative === "" || relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
-    throw new Error(`Context transaction path escapes the project: ${relativePath}.`);
+    throw new Error(`${label} escapes the project: ${relativePath}.`);
+  }
+  let current = resolvedRoot;
+  for (const segment of relative.split(path.sep)) {
+    current = path.join(current, segment);
+    try {
+      const state = await lstat(current);
+      if (state.isSymbolicLink()) throw new Error(`${label} traverses symbolic link ${current}.`);
+    } catch (error) {
+      if (isMissingPathError(error)) break;
+      throw error;
+    }
   }
   return resolved;
+}
+
+async function readTargetHash(projectRoot: string, relativePath: string): Promise<string | null> {
+  const target = await secureProjectPath(
+    projectRoot,
+    relativePath,
+    `Context transaction target ${relativePath}`,
+  );
+  try {
+    const state = await lstat(target);
+    if (!state.isFile() || state.isSymbolicLink()) {
+      throw new Error(`Context transaction target is not a regular file: ${relativePath}.`);
+    }
+    return contentHash(await readFile(target));
+  } catch (error) {
+    if (isMissingPathError(error)) return null;
+    throw error;
+  }
+}
+
+async function readStagedHash(
+  projectRoot: string,
+  targetPath: string,
+  index: number,
+): Promise<string | null> {
+  const staged = await secureProjectPath(
+    projectRoot,
+    stagedMutationPath(index),
+    `Staged context write ${targetPath}`,
+  );
+  try {
+    const state = await lstat(staged);
+    if (!state.isFile() || state.isSymbolicLink()) {
+      throw new Error(`Staged context write is not a regular file: ${targetPath}.`);
+    }
+    return contentHash(await readFile(staged));
+  } catch (error) {
+    if (isMissingPathError(error)) return null;
+    throw error;
+  }
+}
+
+function stagedMutationPath(index: number): string {
+  return `${CONTEXT_TRANSACTION_STAGE_PATH}/${index}.staged`;
+}
+
+async function notifyMutation(
+  options: ContextTransactionOptions,
+  boundary: ContextTransactionMutationBoundary,
+): Promise<void> {
+  await options.afterMutation?.(boundary);
+}
+
+async function discardStageRoot(stageRoot: string): Promise<void> {
+  if (!(await pathExists(stageRoot))) return;
+  await rm(stageRoot, { recursive: true, force: true });
+}
+
+async function pathExists(candidate: string): Promise<boolean> {
+  try {
+    await lstat(candidate);
+    return true;
+  } catch (error) {
+    if (isMissingPathError(error)) return false;
+    throw error;
+  }
 }
 
 function portableRelativePath(value: unknown): string {
@@ -218,4 +616,8 @@ function strictRecord(
 
 function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isMissingPathError(error: unknown): boolean {
+  return error instanceof Error && "code" in error && error.code === "ENOENT";
 }

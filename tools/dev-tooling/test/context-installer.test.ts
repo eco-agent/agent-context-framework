@@ -13,6 +13,7 @@ import {
   doctorProject,
   initProject,
   inspectProject,
+  recoverProject,
   removeComponent,
   updateProject,
 } from "../src/context-installer.js";
@@ -118,6 +119,28 @@ test("remove deletes unchanged artifacts, preserves modified section content, an
   }
 });
 
+test("obsolete structured artifacts are removed after their registry sources are deleted", async () => {
+  const fixture = await createFixture();
+  try {
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    const added = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
+    assert.equal(added.plan.status, "ready");
+    const tomlPath = path.join(fixture.projectRoot, ".codex", "config.toml");
+    assert.match(await readFile(tomlPath, "utf8"), /\[mcp_servers\.context\]/u);
+    assert.doesNotMatch(await readFile(tomlPath, "utf8"), /not_owned/u);
+
+    await rm(path.join(fixture.frameworkRoot, "registry", "sources", "structured.json"));
+    await rm(path.join(fixture.frameworkRoot, "registry", "sources", "structured.toml"));
+    await writeRegistry(fixture.frameworkRoot, "0.2.1", ".codex/tool.md", false);
+    const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
+    assert.equal(removed.plan.status, "ready");
+    assert.deepEqual(JSON.parse(await readFile(path.join(fixture.projectRoot, "settings.json"), "utf8")), {});
+    assert.equal(await fileExists(tomlPath), false);
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("malformed markers and symbolic-link traversal prevent writes", async (t) => {
   const fixture = await createFixture();
   const outside = await mkdtemp(path.join(os.tmpdir(), "agent-context-outside-"));
@@ -167,7 +190,10 @@ test("doctor explains an interrupted transaction and mutators refuse it", async 
     const doctor = await doctorProject(fixture.projectRoot, fixture.frameworkRoot);
     assert.equal(doctor.health, "attention");
     assert.match(doctor.diagnostics[0] ?? "", /Incomplete update transaction/u);
+    assert.equal(doctor.transaction.status, "resumable");
     await assert.rejects(updateProject(fixture.projectRoot, fixture.frameworkRoot, null), /incomplete context transaction/u);
+    assert.equal((await recoverProject(fixture.projectRoot)).status, "resumed");
+    assert.equal((await updateProject(fixture.projectRoot, fixture.frameworkRoot, null)).plan.status, "ready");
   } finally {
     await fixture.remove();
   }
@@ -198,6 +224,9 @@ test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
   assert.deepEqual(parseContextInstallerArguments(["doctor", "--json"], "D:/repo"), {
     command: "doctor", projectRoot: "D:/repo", component: null, output: "json",
   });
+  assert.deepEqual(parseContextInstallerArguments(["recover"], "D:/repo"), {
+    command: "recover", projectRoot: "D:/repo", component: null, output: "text",
+  });
   assert.throws(() => parseContextInstallerArguments(["add"], "D:/repo"), /requires a component/u);
   assert.throws(() => parseContextInstallerArguments(["init", "--json"], "D:/repo"), /read-only/u);
   assert.match(formatContextResult({
@@ -221,6 +250,14 @@ async function createFixture(): Promise<Fixture> {
   await mkdir(projectRoot, { recursive: true });
   await writeFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "# Core rules\n");
   await writeFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "tool bytes\n");
+  await writeFile(
+    path.join(frameworkRoot, "registry", "sources", "structured.json"),
+    '{"owned":{"enabled":true},"notOwned":true}\n',
+  );
+  await writeFile(
+    path.join(frameworkRoot, "registry", "sources", "structured.toml"),
+    '[mcp_servers.context]\ncommand = "node"\n\n[mcp_servers.not_owned]\ncommand = "other"\n',
+  );
   await writeFile(path.join(frameworkRoot, "registry", "decisions", "0.2.0.md"), "# Decision\n");
   await writeRegistry(frameworkRoot, "0.2.0");
   return { frameworkRoot, projectRoot, remove: async () => await rm(root, { recursive: true, force: true }) };
@@ -235,9 +272,17 @@ async function writeToolsTarget(frameworkRoot: string, targetPath: string): Prom
   await writeRegistry(frameworkRoot, "0.2.0", targetPath);
 }
 
-async function writeRegistry(frameworkRoot: string, revision: string, toolsTarget = ".codex/tool.md"): Promise<void> {
+async function writeRegistry(
+  frameworkRoot: string,
+  revision: string,
+  toolsTarget = ".codex/tool.md",
+  includeStructured = true,
+): Promise<void> {
   const core = await readFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "utf8");
   const tool = await readFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "utf8");
+  const structuredArtifacts = includeStructured
+    ? await structuredRegistryArtifacts(frameworkRoot)
+    : [];
   const registry = {
     schemaVersion: 2,
     revision,
@@ -250,6 +295,12 @@ async function writeRegistry(frameworkRoot: string, revision: string, toolsTarge
           targetPath: "AGENTS.md", sectionId: "core", markerStyle: "markdown",
         }],
       },
+      ...(includeStructured
+        ? [{
+            name: "structured", dependencies: ["core"], capabilities: [], licenses: [{ kind: "project" }],
+            artifacts: structuredArtifacts,
+          }]
+        : []),
       {
         name: "tools", dependencies: ["core"],
         capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
@@ -262,6 +313,21 @@ async function writeRegistry(frameworkRoot: string, revision: string, toolsTarge
     ],
   };
   await writeFile(path.join(frameworkRoot, "registry", "registry.json"), `${JSON.stringify(registry, null, 2)}\n`);
+}
+
+async function structuredRegistryArtifacts(frameworkRoot: string): Promise<readonly Record<string, unknown>[]> {
+  const json = await readFile(path.join(frameworkRoot, "registry", "sources", "structured.json"), "utf8");
+  const toml = await readFile(path.join(frameworkRoot, "registry", "sources", "structured.toml"), "utf8");
+  return [
+    {
+      operation: "json-members", sourcePath: "registry/sources/structured.json", sourceSha256: sha(json),
+      targetPath: "settings.json", ownedPointers: ["/owned"],
+    },
+    {
+      operation: "toml-tables", sourcePath: "registry/sources/structured.toml", sourceSha256: sha(toml),
+      targetPath: ".codex/config.toml", ownedTables: ["mcp_servers.context"], sectionId: "context-runtime",
+    },
+  ];
 }
 
 function sha(value: string): string {
