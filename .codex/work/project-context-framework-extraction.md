@@ -131,6 +131,10 @@ slices 4 and 5 depend on it.
 - `pnpm test` passed: event contracts 4, data contracts 29, data ingress 2,
   data worker 13, data control API 1, shared fixtures 11, and developer tooling
   4 tests.
+- Post-test inventory exposed data-worker fixtures that still recreated
+  `.codex/artifacts`; those fixtures now use the operating-system temp
+  directory. The generated empty `.codex` tree was removed, and the focused
+  data-worker typecheck plus 13 tests passed without recreating it.
 - Live Convex/PostgreSQL conformance was not run; it requires the retained
   external runtime and credentials and is unrelated to the context split.
 
