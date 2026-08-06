@@ -19,7 +19,7 @@ revision 0.2.0 and the existing clean Control Tower installation.
 | Recovery action | Resume only a fully classified transaction; reapply pending mutations, accept already-applied mutations, then remove staging and the journal in cleanup-last order. | Context transaction |
 | Promotion path safety | Revalidate repository-relative ancestors immediately before each target mutation and again after creating write ancestors. Reject symbolic links instead of following them. | Context transaction |
 | Failure injection | Expose a test-only callback at each mutating filesystem boundary and test all reported boundaries. Production callers omit it. | Context transaction tests |
-| CLI scope | Keep recovery in the existing `doctor` lifecycle and materializer API unless tests show a separate Wave 1 command is necessary. Add no Wave 2 component or registry content. | Installer |
+| CLI scope | Keep `doctor` read-only for classification and add an explicit Wave 1 `recover` command for safe discard or resume. Add no component or registry content. | Installer |
 | External code | Reuse the repository's projection and transaction owners, Node filesystem primitives, and installed TOML parser/serializer. Add no dependency or vendored implementation. | Task |
 
 ## State
@@ -78,3 +78,32 @@ artifact projection -----> installation plan
 - Path validation propagates to every promoted write and delete, including resumed mutations.
 - Failure-boundary evidence propagates from the transaction primitive through installer lifecycle fixtures.
 - Verification propagates from focused developer tooling to framework-wide checks and the pinned clean installation.
+
+## Completion evidence
+
+- Framework commits: `d93bc99` constrains structured ownership, `6b24d13`
+  implements classification/recovery and boundary tests, and `dd9fef7`
+  exposes the recovery workflow.
+- Obsolete text-section, JSON-member, and TOML-table projections derive read
+  and removal behavior only from locked ownership metadata. Deleted or stale
+  registry sources are not consulted.
+- TOML source is parsed once, reduced to `ownedTables`, and serialized with the
+  existing `smol-toml` dependency before install or replace.
+- Journals are staged and atomically published before target promotion.
+  Recovery distinguishes no transaction, discardable pre-journal staging,
+  safely resumable exact boundaries, and blocked target/staging drift.
+- Promotion revalidates target ancestors after parent creation and immediately
+  before rename. The Windows junction-race test passed.
+- Failure injection passed after all 12 normal filesystem mutation boundaries,
+  including both cleanup boundaries. Every injected state either resumed from
+  exact hashes or was already complete and journal-free.
+- Focused result: 16 projection, installer, and transaction tests passed.
+  Developer-tooling result: 26 tests and its TypeScript 7 check passed.
+- Full framework `pnpm typecheck`, `pnpm test`, `pnpm check`, and
+  `pnpm registry:check` passed. Policy reported the four pre-existing warnings
+  and zero errors. Registry 0.2.0 remains deterministic with 11 components.
+- `D:\dev\control-tower-clean` remains clean at
+  `071a7592ac2b97f731bde467e4a04dcecbf00b1d`. Framework `diff` reports no
+  installation differences and `doctor` reports healthy.
+- No frontend policy, registry source, registry revision, Wave 2 component,
+  clean-installation file, push, or deployment changed.
