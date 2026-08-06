@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 
 import type { ContextRegistryArtifact } from "@agent-context/repo-policy";
-import { parse as parseToml } from "smol-toml";
+import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 
 export type ProjectedScope =
   | { readonly state: "absent" }
@@ -41,6 +41,55 @@ export function createArtifactProjection(
   }
 }
 
+export function createArtifactRemovalProjection(
+  artifact: ContextRegistryArtifact,
+): ArtifactProjection {
+  switch (artifact.operation) {
+    case "file":
+    case "runtime-workspace":
+      return wholeFileProjection("");
+    case "text-section": {
+      const markers = markerPair(artifact.sectionId, artifact.markerStyle);
+      return removalOnlyProjection(
+        (target) => readMarkedScope(target, markers, (inner) => inner),
+        (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+      );
+    }
+    case "json-members":
+      return removalOnlyProjection(
+        (target) => readJsonMembers(target, artifact.ownedPointers),
+        (target, preserveContent) => removeJsonMembers(target, preserveContent, artifact.ownedPointers),
+      );
+    case "toml-tables": {
+      const markers = markerPair(artifact.sectionId, "toml");
+      return removalOnlyProjection(
+        (target) => readMarkedScope(target, markers, (inner) => {
+          const value = parseTomlObject(inner, "TOML owned section");
+          return stableJson(projectObjectPaths(value, artifact.ownedTables, true));
+        }),
+        (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+      );
+    }
+  }
+}
+
+function removalOnlyProjection(
+  read: ArtifactProjection["read"],
+  remove: ArtifactProjection["remove"],
+): ArtifactProjection {
+  const unavailable = (): never => {
+    throw new Error("An ownership-only projection cannot install or replace content.");
+  };
+  return {
+    sourceSha256: "",
+    sourceDisplay: "",
+    read,
+    install: unavailable,
+    replace: unavailable,
+    remove,
+  };
+}
+
 function wholeFileProjection(source: string): ArtifactProjection {
   return {
     sourceSha256: contentHash(source),
@@ -76,17 +125,7 @@ function jsonMembersProjection(source: string, pointers: readonly string[]): Art
   return {
     sourceSha256: contentHash(sourceDisplay),
     sourceDisplay,
-    read: (target) => {
-      if (target === null) return { state: "absent" };
-      const targetValue = parseJsonObject(target, "JSON member target");
-      const presence = pointers.map((pointer) => hasJsonPointer(targetValue, pointer));
-      if (presence.every((present) => !present)) return { state: "absent" };
-      if (presence.some((present) => !present)) {
-        return { state: "malformed", detail: "JSON target contains only part of the owned member set." };
-      }
-      const display = stableJson(projectJsonPointers(targetValue, pointers, true));
-      return { state: "present", sha256: contentHash(display), display };
-    },
+    read: (target) => readJsonMembers(target, pointers),
     install: (target) => {
       const targetValue = target === null ? {} : parseJsonObject(target, "JSON member target");
       for (const pointer of pointers) {
@@ -104,15 +143,33 @@ function jsonMembersProjection(source: string, pointers: readonly string[]): Art
       }
       return stableJson(targetValue);
     },
-    remove: (target, preserveContent) => {
-      if (preserveContent) return target;
-      const targetValue = parseJsonObject(target, "JSON member target");
-      for (const pointer of [...pointers].sort((left, right) => right.length - left.length)) {
-        deleteJsonPointer(targetValue, pointer);
-      }
-      return stableJson(targetValue);
-    },
+    remove: (target, preserveContent) => removeJsonMembers(target, preserveContent, pointers),
   };
+}
+
+function readJsonMembers(target: string | null, pointers: readonly string[]): ProjectedScope {
+  if (target === null) return { state: "absent" };
+  const targetValue = parseJsonObject(target, "JSON member target");
+  const presence = pointers.map((pointer) => hasJsonPointer(targetValue, pointer));
+  if (presence.every((present) => !present)) return { state: "absent" };
+  if (presence.some((present) => !present)) {
+    return { state: "malformed", detail: "JSON target contains only part of the owned member set." };
+  }
+  const display = stableJson(projectJsonPointers(targetValue, pointers, true));
+  return { state: "present", sha256: contentHash(display), display };
+}
+
+function removeJsonMembers(
+  target: string,
+  preserveContent: boolean,
+  pointers: readonly string[],
+): string {
+  if (preserveContent) return target;
+  const targetValue = parseJsonObject(target, "JSON member target");
+  for (const pointer of [...pointers].sort((left, right) => right.length - left.length)) {
+    deleteJsonPointer(targetValue, pointer);
+  }
+  return stableJson(targetValue);
 }
 
 function tomlTablesProjection(
@@ -124,6 +181,7 @@ function tomlTablesProjection(
   const sourceValue = parseTomlObject(source, "TOML table source");
   const sourceScope = projectObjectPaths(sourceValue, tablePaths, true);
   const sourceDisplay = stableJson(sourceScope);
+  const ownedSource = stringifyToml(selectObjectPaths(sourceValue, tablePaths));
   const markers = markerPair(sectionId, "toml");
   return {
     sourceSha256: contentHash(sourceDisplay),
@@ -141,11 +199,50 @@ function tomlTablesProjection(
           throw new Error(`TOML target already contains owned table ${tablePath}.`);
         }
       }
-      return appendMarkedSection(target ?? "", source, markers);
+      return appendMarkedSection(target ?? "", ownedSource, markers);
     },
-    replace: (target) => replaceMarkedSection(target, source, markers),
+    replace: (target) => replaceMarkedSection(target, ownedSource, markers),
     remove: (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
   };
+}
+
+function selectObjectPaths(
+  value: Record<string, unknown>,
+  paths: readonly string[],
+): Record<string, unknown> {
+  const selection: Record<string, unknown> = {};
+  for (const objectPath of paths) {
+    const table = getObjectPath(value, objectPath);
+    if (!isObject(table)) {
+      throw new Error(`Source owned TOML path is not a table: ${objectPath}.`);
+    }
+    setObjectPath(selection, objectPath, table);
+  }
+  return selection;
+}
+
+function setObjectPath(
+  value: Record<string, unknown>,
+  objectPath: string,
+  nextValue: unknown,
+): void {
+  const segments = objectPath.split(".");
+  const leaf = segments.at(-1);
+  if (!leaf) throw new Error("Owned TOML path cannot address the root.");
+  let current = value;
+  for (const segment of segments.slice(0, -1)) {
+    const child = current[segment];
+    if (child === undefined) {
+      const created: Record<string, unknown> = {};
+      current[segment] = created;
+      current = created;
+    } else if (isObject(child)) {
+      current = child;
+    } else {
+      throw new Error(`TOML table parent is not an object: ${objectPath}.`);
+    }
+  }
+  current[leaf] = cloneJson(nextValue);
 }
 
 function readMarkedScope(

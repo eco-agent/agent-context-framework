@@ -3,7 +3,10 @@ import test from "node:test";
 
 import type { ContextRegistryArtifact } from "@agent-context/repo-policy";
 
-import { createArtifactProjection } from "../src/context-artifact-projection.js";
+import {
+  createArtifactProjection,
+  createArtifactRemovalProjection,
+} from "../src/context-artifact-projection.js";
 
 const hash = "a".repeat(64);
 
@@ -38,21 +41,40 @@ test("JSON member ownership preserves unrelated members and detects partial scop
   assert.deepEqual(removed, { name: "project", scripts: { test: "node --test" }, tooling: {} });
 });
 
-test("TOML table ownership preserves project tables and rejects existing owned tables", () => {
+test("TOML table ownership installs only declared tables, preserves project tables, and rejects collisions", () => {
   const projection = createArtifactProjection(artifact({
     operation: "toml-tables",
     ownedTables: ["mcp_servers.context"],
     sectionId: "context-runtime",
-  }), "[mcp_servers.context]\ncommand = \"node\"\n");
+  }), "[mcp_servers.context]\ncommand = \"node\"\n\n[mcp_servers.not_owned]\ncommand = \"other\"\n");
   const installed = projection.install("[project]\nname = \"fixture\"\n");
   assert.match(installed, /^\[project\]/u);
   assert.match(installed, /# agent-context:context-runtime:start\n\[mcp_servers\.context\]/u);
+  assert.doesNotMatch(installed, /not_owned/u);
   assert.equal(projection.read(installed).state, "present");
   assert.throws(
     () => projection.install("[mcp_servers.context]\ncommand = \"custom\"\n"),
     /already contains owned table/u,
   );
   assert.equal(projection.remove(installed, false), "[project]\nname = \"fixture\"\n");
+});
+
+test("ownership-only projections read and remove structured artifacts without source bytes", () => {
+  const json = createArtifactRemovalProjection(artifact({
+    operation: "json-members",
+    ownedPointers: ["/owned"],
+  }));
+  assert.equal(json.read('{"owned":{"enabled":true},"local":1}\n').state, "present");
+  assert.equal(json.remove('{"owned":{"enabled":true},"local":1}\n', false), '{\n  "local": 1\n}\n');
+
+  const toml = createArtifactRemovalProjection(artifact({
+    operation: "toml-tables",
+    ownedTables: ["mcp_servers.context"],
+    sectionId: "context-runtime",
+  }));
+  const installed = "[project]\nname = \"local\"\n\n# agent-context:context-runtime:start\n[mcp_servers.context]\ncommand = \"node\"\n# agent-context:context-runtime:end\n";
+  assert.equal(toml.read(installed).state, "present");
+  assert.equal(toml.remove(installed, false), "[project]\nname = \"local\"\n");
 });
 
 function artifact(

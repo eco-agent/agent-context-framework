@@ -22,6 +22,7 @@ import { createTwoFilesPatch } from "diff";
 
 import {
   createArtifactProjection,
+  createArtifactRemovalProjection,
   type ArtifactProjection,
   type ProjectedScope,
 } from "./context-artifact-projection.js";
@@ -606,13 +607,9 @@ async function projectionForLocked(
   locked: ContextLockedArtifact,
 ): Promise<ArtifactProjection> {
   const sourcePath = await securePath(frameworkRoot, locked.sourcePath, `Locked source ${locked.sourcePath}`);
-  if (!(await exists(sourcePath))) {
-    if (locked.operation === "file" || locked.operation === "runtime-workspace") {
-      return createArtifactProjection(locked, "");
-    }
-    throw new Error(`Previous structured source is unavailable: ${locked.sourcePath}.`);
-  }
-  return createArtifactProjection(locked, await readStrictUtf8(sourcePath, `Locked source ${locked.sourcePath}`));
+  return (await exists(sourcePath))
+    ? createArtifactProjection(locked, await readStrictUtf8(sourcePath, `Locked source ${locked.sourcePath}`))
+    : createArtifactRemovalProjection(locked);
 }
 
 function lockedArtifact(desired: DesiredArtifact): ContextLockedArtifact {
