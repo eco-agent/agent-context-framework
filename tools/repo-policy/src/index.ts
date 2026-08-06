@@ -1,4 +1,5 @@
 export * from "./checks/scope.js";
+export * from "./context-installation.js";
 export * from "./implementation-contract.js";
 export * from "./implementation-skill.js";
 export * from "./model.js";

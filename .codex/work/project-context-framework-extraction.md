@@ -40,8 +40,9 @@ are explicit, and no global Codex configuration is required.
 - Mixed ownership was split: Control Tower retains its F1 runtime tooling and
   domain fixtures; the framework retains task tooling and objective-store
   conformance.
-- The framework registry and installer are not implemented yet. Integration
-  into the clean product is therefore pending rather than simulated.
+- The installation-spine contract is recorded in
+  `.codex/work/types/installation-spine-v1.md`. Implementation is in progress;
+  integration remains pending until its focused tests pass.
 
 ## Topology
 
@@ -77,8 +78,8 @@ not depend on framework packages before that installation.
 4. Install the framework into the clean Control Tower worktree.
 5. Verify framework unit behavior and the installed Control Tower integration.
 
-Slices 1 and 2 are complete. Slice 3 is the next implementation boundary;
-slices 4 and 5 depend on it.
+Slices 1 and 2 are complete. Slice 3 is active with an explicit v1 ownership,
+planning, drift, and path-safety contract; slices 4 and 5 depend on it.
 
 ## Replacements
 

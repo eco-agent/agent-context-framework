@@ -15,6 +15,7 @@
   },
   "scripts": {
     "agent:inspect": "node .codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs",
+    "agent-context": "node --import tsx tools/dev-tooling/src/context-installer-cli.ts",
     "build": "tsc -b",
     "check": "vp check",
     "clean": "tsc -b --clean",
