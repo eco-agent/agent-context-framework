@@ -401,7 +401,7 @@ export async function planContextInstallation(
       virtualTargets,
       originalTargets,
     );
-    const projection = await projectionForLocked(resolvedFrameworkRoot, locked);
+    const projection = projectionForLocked(locked);
     const current = projection.read(target);
     const unchanged = current.state === "absent" ||
       (current.state === "present" && current.sha256 === locked.installedSha256);
@@ -630,14 +630,8 @@ async function loadDesiredArtifacts(
   return desired;
 }
 
-async function projectionForLocked(
-  frameworkRoot: string,
-  locked: ContextLockedArtifact,
-): Promise<ArtifactProjection> {
-  const sourcePath = await securePath(frameworkRoot, locked.sourcePath, `Locked source ${locked.sourcePath}`);
-  return (await exists(sourcePath))
-    ? createArtifactProjection(locked, await readStrictUtf8(sourcePath, `Locked source ${locked.sourcePath}`))
-    : createArtifactRemovalProjection(locked);
+function projectionForLocked(locked: ContextLockedArtifact): ArtifactProjection {
+  return createArtifactRemovalProjection(locked);
 }
 
 function lockedArtifact(desired: DesiredArtifact): ContextLockedArtifact {

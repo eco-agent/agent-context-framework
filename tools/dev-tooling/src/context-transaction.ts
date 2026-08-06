@@ -353,14 +353,6 @@ async function promotePendingMutation(
     );
     await mkdir(path.dirname(target), { recursive: true });
     await notifyMutation(options, { kind: "target-parent-created", index, targetPath: mutation.targetPath });
-    target = await secureProjectPath(
-      projectRoot,
-      mutation.targetPath,
-      `Context promotion target ${mutation.targetPath}`,
-    );
-    if (await readTargetHash(projectRoot, mutation.targetPath) !== mutation.beforeSha256) {
-      throw new Error(`Context target changed during promotion: ${mutation.targetPath}.`);
-    }
     const staged = await secureProjectPath(
       projectRoot,
       stagedMutationPath(index),
@@ -368,6 +360,14 @@ async function promotePendingMutation(
     );
     if (await readStagedHash(projectRoot, mutation.targetPath, index) !== mutation.afterSha256) {
       throw new Error(`Staged context write changed during promotion: ${mutation.targetPath}.`);
+    }
+    target = await secureProjectPath(
+      projectRoot,
+      mutation.targetPath,
+      `Context promotion target ${mutation.targetPath}`,
+    );
+    if (await readTargetHash(projectRoot, mutation.targetPath) !== mutation.beforeSha256) {
+      throw new Error(`Context target changed during promotion: ${mutation.targetPath}.`);
     }
     await rename(staged, target);
     await notifyMutation(options, { kind: "target-written", index, targetPath: mutation.targetPath });

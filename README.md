@@ -60,6 +60,8 @@ Run the CLI from this repository and point it at the project to configure:
 pnpm agent-context init --cwd D:\path\to\project
 pnpm agent-context diff --cwd D:\path\to\project
 pnpm agent-context add core --cwd D:\path\to\project
+pnpm agent-context doctor --cwd D:\path\to\project
+pnpm agent-context recover --cwd D:\path\to\project
 ```
 
 `init` installs `core` and is idempotent. `add` resolves component dependencies
@@ -67,7 +69,10 @@ and is ready for further registry components. `diff` is read-only and exits
 non-zero when files are missing, upstream bytes need installation, local drift
 blocks an update, or the deterministic lock needs refreshing. The installer
 never rewrites context with a model and refuses to overwrite locally edited
-managed content or adopt an existing whole-file target.
+managed content or adopt an existing whole-file target. `doctor` classifies an
+interrupted transaction as discardable, safely resumable, or blocked by drift.
+`recover` discards only pre-journal staging or resumes mutations whose current
+and staged hashes still match the journal boundaries.
 
 ## Extraction state
 
