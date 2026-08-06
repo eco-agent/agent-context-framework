@@ -29,12 +29,19 @@ are explicit, and no global Codex configuration is required.
 
 ## State
 
-- Source worktree is clean.
+- Source worktree remains unchanged and clean.
 - Both target paths were absent before creation.
-- Both branches and worktrees now exist at the same source commit.
-- Inventory found 344 non-generated visible source files and 55,656 lines;
-  `tools`, `.codex`, and framework-linked packages require semantic splitting.
-- Classification and extraction are in progress.
+- `codex/control-tower-clean` now contains the product baseline without agent
+  instructions, skills, repository policy, Codex workflows, or objective
+  framework packages.
+- `codex/agent-context-framework` now contains the neutrally named framework
+  without Control Tower applications, domain packages, product tests, or
+  product planning documents.
+- Mixed ownership was split: Control Tower retains its F1 runtime tooling and
+  domain fixtures; the framework retains task tooling and objective-store
+  conformance.
+- The framework registry and installer are not implemented yet. Integration
+  into the clean product is therefore pending rather than simulated.
 
 ## Topology
 
@@ -70,6 +77,9 @@ not depend on framework packages before that installation.
 4. Install the framework into the clean Control Tower worktree.
 5. Verify framework unit behavior and the installed Control Tower integration.
 
+Slices 1 and 2 are complete. Slice 3 is the next implementation boundary;
+slices 4 and 5 depend on it.
+
 ## Replacements
 
 - Replace the Control Tower-specific root instruction document in the
@@ -100,3 +110,33 @@ not depend on framework packages before that installation.
   configuration, package scripts, and the framework manifest.
 - Every intentional gap or skipped verification will be recorded here before
   handoff.
+
+## Verification
+
+### Framework baseline
+
+- `pnpm install --frozen-lockfile --ignore-scripts` completed for seven
+  workspace projects.
+- `pnpm typecheck` passed.
+- `pnpm test` passed: objective kernel 5, repository policy 22, objective
+  runtime 12, Codex workflows 35, and developer tooling 7 tests.
+- PostgreSQL-backed objective tests were not run because they require an
+  explicit database URL and are not needed to prove the repository split.
+
+### Clean Control Tower baseline
+
+- `pnpm install --frozen-lockfile --ignore-scripts` completed for fourteen
+  workspace projects.
+- `pnpm typecheck` passed.
+- `pnpm test` passed: event contracts 4, data contracts 29, data ingress 2,
+  data worker 13, data control API 1, shared fixtures 11, and developer tooling
+  4 tests.
+- Live Convex/PostgreSQL conformance was not run; it requires the retained
+  external runtime and credentials and is unrelated to the context split.
+
+### Integration status
+
+No framework files have been reintroduced into the clean worktree. The clean
+tree is the integration fixture, not yet an installed result. The next slice
+must create the registry/installer and its manifest before an integration test
+can make a meaningful assertion.

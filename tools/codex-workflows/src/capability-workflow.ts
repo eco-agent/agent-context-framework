@@ -3,12 +3,12 @@ import {
   type CapabilityRequest,
   type PolicyResult,
 } from "@agent-context/repo-policy";
-import type { Evidence, LoopContext, LoopResult } from "../contracts.js";
+import type { Evidence, LoopContext, LoopResult } from "./contracts.js";
 import {
   runReviewerRepair,
   type ReviewDecision,
   type ReviewFinding,
-} from "../loops/reviewer-repair.js";
+} from "./loops/reviewer-repair.js";
 
 export interface CapabilityArtifact {
   readonly revision: string;
