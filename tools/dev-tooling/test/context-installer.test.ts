@@ -193,6 +193,28 @@ test("project writes reject symbolic-link traversal", async (t) => {
   }
 });
 
+test("registry sources must be exact UTF-8 text without a byte-order mark", async () => {
+  const fixture = await createFixture();
+  const sourcePath = path.join(fixture.frameworkRoot, "registry", "components", "core", "AGENTS.md");
+  try {
+    await writeFile(sourcePath, Uint8Array.from([0xff]));
+    await assert.rejects(
+      initProject(fixture.projectRoot, fixture.frameworkRoot),
+      /must be valid UTF-8/u,
+    );
+    assert.equal(await fileExists(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH)), false);
+
+    await writeFile(sourcePath, Uint8Array.from([0xef, 0xbb, 0xbf, 0x23, 0x0a]));
+    await assert.rejects(
+      initProject(fixture.projectRoot, fixture.frameworkRoot),
+      /without a byte-order mark/u,
+    );
+    assert.equal(await fileExists(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH)), false);
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("CLI parsing and reporting keep init, add, and diff explicit", () => {
   assert.deepEqual(parseContextInstallerArguments(["init", "--cwd", "fixture"], "D:/repo"), {
     command: "init",

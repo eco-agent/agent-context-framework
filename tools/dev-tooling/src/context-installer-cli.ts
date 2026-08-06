@@ -10,11 +10,9 @@ import {
   type ContextOperationResult,
 } from "./context-installer.js";
 
-interface ContextInstallerArguments {
-  readonly command: "init" | "add" | "diff";
-  readonly projectRoot: string;
-  readonly component: string | null;
-}
+type ContextInstallerArguments =
+  | { readonly command: "init" | "diff"; readonly projectRoot: string; readonly component: null }
+  | { readonly command: "add"; readonly projectRoot: string; readonly component: string };
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -42,17 +40,16 @@ export function parseContextInstallerArguments(
   if (command !== "init" && command !== "add" && command !== "diff") {
     throw new Error("Usage: pnpm agent-context <init|add COMPONENT|diff> [--cwd PROJECT].");
   }
-  const component = positionals[1] ?? null;
-  if (command === "add" && component === null) {
-    throw new Error("agent-context add requires a component name.");
+  if (command === "add") {
+    const component = positionals[1];
+    if (!component) throw new Error("agent-context add requires a component name.");
+    if (positionals.length > 2) throw new Error("agent-context add received too many arguments.");
+    return { command, projectRoot, component };
   }
-  if (command !== "add" && component !== null) {
+  if (positionals[1]) {
     throw new Error(`agent-context ${command} does not accept a component name.`);
   }
-  if (positionals.length > (command === "add" ? 2 : 1)) {
-    throw new Error(`agent-context ${command} received too many arguments.`);
-  }
-  return { command, projectRoot, component };
+  return { command, projectRoot, component: null };
 }
 
 export function formatContextResult(result: ContextOperationResult | ContextDiffResult): string {
@@ -82,7 +79,7 @@ async function main(): Promise<void> {
   const result = arguments_.command === "init"
     ? await initProject(arguments_.projectRoot, frameworkRoot)
     : arguments_.command === "add"
-      ? await addComponent(arguments_.projectRoot, frameworkRoot, arguments_.component as string)
+      ? await addComponent(arguments_.projectRoot, frameworkRoot, arguments_.component)
       : await diffProject(arguments_.projectRoot, frameworkRoot);
   console.log(formatContextResult(result));
   if (result.plan.status === "blocked" || (result.command === "diff" && !result.current)) {

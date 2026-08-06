@@ -22,7 +22,7 @@ Git. Global Codex configuration is not required.
 - `tools/objective-runtime` provides memory, JSONL, PostgreSQL, artifact,
   scheduler, and queue adapters.
 - `tools/dev-tooling` provides project-local task activation, preflight,
-  precedent materialization, and handoff commands.
+  precedent materialization, installation, and handoff commands.
 - `packages/objective-test-fixtures` provides store conformance shared by the
   runtime adapters.
 
@@ -46,11 +46,35 @@ pnpm --filter @agent-context/objective-runtime test
 pnpm --filter @agent-context/dev-tooling test
 ```
 
+## Project-local installation
+
+The v1 registry contains one `core` component. It installs a marked section in
+the target repository's `AGENTS.md`, while leaving any project-authored text
+outside that section untouched. Desired components live in
+`.agent-context/config.json`; exact installed hashes and ownership live in
+`.agent-context/lock.json`.
+
+Run the CLI from this repository and point it at the project to configure:
+
+```powershell
+pnpm agent-context init --cwd D:\path\to\project
+pnpm agent-context diff --cwd D:\path\to\project
+pnpm agent-context add core --cwd D:\path\to\project
+```
+
+`init` installs `core` and is idempotent. `add` resolves component dependencies
+and is ready for further registry components. `diff` is read-only and exits
+non-zero when files are missing, upstream bytes need installation, local drift
+blocks an update, or the deterministic lock needs refreshing. The installer
+never rewrites context with a model and refuses to overwrite locally edited
+managed content or adopt an existing whole-file target.
+
 ## Extraction state
 
-The reusable implementation is isolated and neutrally named. The next slice is
-the project-local registry and installer, followed by an installation into the
-clean Control Tower worktree at `D:\dev\control-tower-clean`.
+The reusable implementation is isolated and neutrally named. The first
+installation slice is implemented and installed into the clean Control Tower
+worktree at `D:\dev\control-tower-clean`; later slices can expand the registry
+without changing the ownership or drift contract.
 
 The extraction decisions and verification record live in
 `.codex/work/project-context-framework-extraction.md`.

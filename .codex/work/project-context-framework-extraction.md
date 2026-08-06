@@ -24,6 +24,8 @@ are explicit, and no global Codex configuration is required.
 | Framework boundary | Agent instructions, skills, repository policy, bounded repository context, task envelopes, objective orchestration, and their direct tooling dependencies stay only in the framework worktree. | Framework |
 | Mixed code | Extract and rename reusable behavior; do not retain Control Tower branding or product-specific policy as hidden defaults. | Framework |
 | Distribution | Copy project-owned artifacts from a versioned registry through a project-local CLI and record an installation manifest. | Framework CLI |
+| Installation mechanism | Reuse the repository's strict decoder, SHA-256, path-boundary, deterministic JSON, and staged-write patterns. Adopt shadcn's registry/component/diff concepts, but not its UI-specific package or merge semantics. | Framework CLI |
+| Ownership | Project configuration owns desired components; the lock owns exact prior hashes; a registry artifact owns either a whole file or one marked section. Local drift is a blocking result, never an implicit overwrite. | Framework CLI |
 | Integration fixture | Install into `D:/dev/control-tower-clean` and verify the resulting files and applicable narrow checks there. | Integration test |
 | Recovery | Git commits in each worktree are the recovery mechanism. No compatibility tree or duplicate representation will be added. | Git |
 
@@ -41,8 +43,18 @@ are explicit, and no global Codex configuration is required.
   domain fixtures; the framework retains task tooling and objective-store
   conformance.
 - The installation-spine contract is recorded in
-  `.codex/work/types/installation-spine-v1.md`. Implementation is in progress;
-  integration remains pending until its focused tests pass.
+  `.codex/work/types/installation-spine-v1.md` and implemented by the strict
+  schemas in `tools/repo-policy` plus the planner, materializer, and CLI in
+  `tools/dev-tooling`.
+- Registry revision `0.1.0` contains the reusable `core` component. It owns one
+  marked section in `AGENTS.md`; project text outside that section remains
+  project-owned.
+- `init`, `add`, and `diff` are executable through `pnpm agent-context`.
+  Registry/config/lock data is closed and versioned, text is exact BOM-free
+  UTF-8, writes reject traversal and symbolic-link ancestors, and blocked plans
+  write nothing.
+- The `core` component is installed and committed in the clean Control Tower
+  fixture at commit `097619a`.
 
 ## Topology
 
@@ -78,8 +90,8 @@ not depend on framework packages before that installation.
 4. Install the framework into the clean Control Tower worktree.
 5. Verify framework unit behavior and the installed Control Tower integration.
 
-Slices 1 and 2 are complete. Slice 3 is active with an explicit v1 ownership,
-planning, drift, and path-safety contract; slices 4 and 5 depend on it.
+All five slices are complete. Further components can extend the v1 registry
+without changing its configuration, ownership, lock, or conflict contract.
 
 ## Replacements
 
@@ -139,9 +151,35 @@ planning, drift, and path-safety contract; slices 4 and 5 depend on it.
 - Live Convex/PostgreSQL conformance was not run; it requires the retained
   external runtime and credentials and is unrelated to the context split.
 
-### Integration status
+### Installation spine
 
-No framework files have been reintroduced into the clean worktree. The clean
-tree is the integration fixture, not yet an installed result. The next slice
-must create the registry/installer and its manifest before an integration test
-can make a meaningful assertion.
+- `pnpm --filter @agent-context/repo-policy test` passed 26 tests, including
+  exact schema decoding, dependency order, unknown dependency, cycle, path,
+  duplicate, adapter, and hash rejection.
+- `pnpm --filter @agent-context/dev-tooling test` passed 15 tests. Installer
+  coverage includes first install, second-install idempotency, local prose
+  preservation, safe upstream updates, managed drift, malformed markers,
+  unowned whole-file conflict, stale ownership, symbolic-link traversal, and
+  strict UTF-8 source handling.
+- Full framework `pnpm typecheck` passed.
+- Full framework `pnpm test` passed 93 tests: objective kernel 5, repository
+  policy 26, objective runtime 12, Codex workflows 35, and developer tooling
+  15.
+- Framework `pnpm check` reported zero errors and four pre-existing warnings in
+  objective/runtime and older developer-tooling files. No installer file
+  produced a warning.
+
+### Clean Control Tower integration
+
+- `pnpm agent-context init --cwd D:\dev\control-tower-clean` created only
+  `AGENTS.md`, `.agent-context/config.json`, and `.agent-context/lock.json`.
+- Immediate `diff` reported no installation differences. A second `init` and
+  `add core` each reported no writes.
+- Installed Control Tower `pnpm typecheck` passed.
+- Installed Control Tower `pnpm test` passed 64 tests across the retained
+  product workspace.
+- Installed Control Tower `pnpm check` reported zero errors and eight
+  pre-existing product warnings. `git diff --check` passed.
+- Both worktrees are clean after their final commits. Live PostgreSQL/Convex
+  conformance remains intentionally out of scope because the installation does
+  not touch those external-runtime boundaries.

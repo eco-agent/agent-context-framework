@@ -25,7 +25,7 @@ import {
   type ContextRegistryV1,
 } from "@agent-context/repo-policy";
 
-import { exists, readJson } from "./workspace.js";
+import { exists } from "./workspace.js";
 
 export const CONTEXT_CONFIG_PATH = ".agent-context/config.json";
 export const CONTEXT_LOCK_PATH = ".agent-context/lock.json";
@@ -72,7 +72,7 @@ export type ContextInstallationPlan = ReadyInstallationPlan | BlockedInstallatio
 export interface ContextOperationResult {
   readonly command: "init" | "add";
   readonly projectRoot: string;
-  readonly configChanged: boolean;
+  readonly configWriteRequired: boolean;
   readonly plan: ContextInstallationPlan;
   readonly writtenPaths: readonly string[];
 }
@@ -103,8 +103,14 @@ export async function initProject(
   const config =
     (await readOptionalConfig(resolvedProjectRoot)) ??
     createContextProjectConfig([DEFAULT_CONTEXT_COMPONENT]);
-  const configChanged = !(await exists(path.join(resolvedProjectRoot, CONTEXT_CONFIG_PATH)));
-  return await applyDesiredState("init", resolvedProjectRoot, frameworkRoot, config, configChanged);
+  const configWriteRequired = !(await exists(path.join(resolvedProjectRoot, CONTEXT_CONFIG_PATH)));
+  return await applyDesiredState(
+    "init",
+    resolvedProjectRoot,
+    frameworkRoot,
+    config,
+    configWriteRequired,
+  );
 }
 
 export async function addComponent(
@@ -157,7 +163,7 @@ export async function loadContextRegistry(frameworkRoot: string): Promise<Contex
     CONTEXT_REGISTRY_PATH,
     "Registry catalog",
   );
-  return decodeContextRegistry(await readJson(registryPath));
+  return decodeContextRegistry(await readStrictJson(registryPath, "Context registry"));
 }
 
 export async function planContextInstallation(
@@ -180,7 +186,7 @@ export async function planContextInstallation(
       artifact.sourcePath,
       `Registry source ${artifact.sourcePath}`,
     );
-    const source = await readFile(sourcePath, "utf8");
+    const source = await readStrictUtf8(sourcePath, `Registry source ${artifact.sourcePath}`);
     if (artifact.ownership === "managed-section" && !source.endsWith("\n")) {
       throw new Error(`Managed section source ${artifact.sourcePath} must end with a newline.`);
     }
@@ -205,7 +211,9 @@ export async function planContextInstallation(
     );
     let target = virtualTargets.get(targetPath);
     if (target === undefined && !virtualTargets.has(targetPath)) {
-      target = (await exists(targetAbsolutePath)) ? await readFile(targetAbsolutePath, "utf8") : null;
+      target = (await exists(targetAbsolutePath))
+        ? await readStrictUtf8(targetAbsolutePath, `Project target ${targetPath}`)
+        : null;
       virtualTargets.set(targetPath, target);
       originalTargets.set(targetPath, target);
     }
@@ -279,7 +287,7 @@ async function applyDesiredState(
   projectRoot: string,
   frameworkRoot: string,
   config: ContextProjectConfigV1,
-  configChanged: boolean,
+  configWriteRequired: boolean,
 ): Promise<ContextOperationResult> {
   const registry = await loadContextRegistry(frameworkRoot);
   const previousLock = await readOptionalLock(projectRoot);
@@ -291,7 +299,7 @@ async function applyDesiredState(
     previousLock,
   );
   if (plan.status === "blocked") {
-    return { command, projectRoot, configChanged, plan, writtenPaths: [] };
+    return { command, projectRoot, configWriteRequired, plan, writtenPaths: [] };
   }
 
   const writtenPaths: string[] = [];
@@ -299,7 +307,7 @@ async function applyDesiredState(
     await atomicProjectWrite(projectRoot, write.targetPath, write.content);
     writtenPaths.push(write.targetPath);
   }
-  if (configChanged) {
+  if (configWriteRequired) {
     await atomicProjectWrite(projectRoot, CONTEXT_CONFIG_PATH, serializeJson(config));
     writtenPaths.push(CONTEXT_CONFIG_PATH);
   }
@@ -307,7 +315,7 @@ async function applyDesiredState(
     await atomicProjectWrite(projectRoot, CONTEXT_LOCK_PATH, serializeJson(plan.nextLock));
     writtenPaths.push(CONTEXT_LOCK_PATH);
   }
-  return { command, projectRoot, configChanged, plan, writtenPaths };
+  return { command, projectRoot, configWriteRequired, plan, writtenPaths };
 }
 
 function assessArtifact(
@@ -509,12 +517,37 @@ function serializeJson(value: unknown): string {
 
 async function readOptionalConfig(projectRoot: string): Promise<ContextProjectConfigV1 | null> {
   const configPath = await securePath(projectRoot, CONTEXT_CONFIG_PATH, "Context project config");
-  return (await exists(configPath)) ? decodeContextProjectConfig(await readJson(configPath)) : null;
+  return (await exists(configPath))
+    ? decodeContextProjectConfig(await readStrictJson(configPath, "Context project config"))
+    : null;
 }
 
 async function readOptionalLock(projectRoot: string): Promise<ContextInstallationLockV1 | null> {
   const lockPath = await securePath(projectRoot, CONTEXT_LOCK_PATH, "Context installation lock");
-  return (await exists(lockPath)) ? decodeContextInstallationLock(await readJson(lockPath)) : null;
+  return (await exists(lockPath))
+    ? decodeContextInstallationLock(await readStrictJson(lockPath, "Context installation lock"))
+    : null;
+}
+
+async function readStrictJson(candidate: string, label: string): Promise<unknown> {
+  try {
+    return JSON.parse(await readStrictUtf8(candidate, label)) as unknown;
+  } catch (error) {
+    if (error instanceof SyntaxError) throw new Error(`${label} must contain valid JSON.`, { cause: error });
+    throw error;
+  }
+}
+
+async function readStrictUtf8(candidate: string, label: string): Promise<string> {
+  const bytes = await readFile(candidate);
+  if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    throw new Error(`${label} must be UTF-8 without a byte-order mark.`);
+  }
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch (error) {
+    throw new Error(`${label} must be valid UTF-8.`, { cause: error });
+  }
 }
 
 async function atomicProjectWrite(
