@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const script = path.join(here, 'codebase-meta.mjs');
-const root = path.resolve(here, '../fixtures/sample-repo');
+const fixtureSource = path.resolve(here, '../fixtures/sample-repo');
+const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'codebase-inventory-fixture-'));
+const root = path.join(temporaryRoot, 'sample-repo');
+cpSync(fixtureSource, root, { recursive: true });
+writeFileSync(path.join(root, 'src/components/logo.png'), Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+process.on('exit', () => rmSync(temporaryRoot, { recursive: true, force: true }));
 const envelopeSchema = JSON.parse(readFileSync(path.resolve(here, '../references/result-envelope.schema.json'), 'utf8'));
 
 function run(mode, args = []) {

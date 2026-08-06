@@ -40,6 +40,7 @@ interface RegistryDirectoryArtifact {
   readonly sourceDirectory: string;
   readonly targetDirectory: string;
   readonly excludedPrefixes: readonly string[];
+  readonly excludedPaths: readonly string[];
 }
 
 export async function buildContextRegistry(root: string): Promise<ContextRegistryV2> {
@@ -67,7 +68,10 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
       const files = await listFiles(sourceDirectory);
       for (const relativeFile of files) {
         const portableRelativeFile = portablePath(relativeFile);
-        if (declaration.excludedPrefixes.some((prefix) => portableRelativeFile.startsWith(prefix))) {
+        if (
+          declaration.excludedPaths.includes(portableRelativeFile) ||
+          declaration.excludedPrefixes.some((prefix) => portableRelativeFile.startsWith(prefix))
+        ) {
           continue;
         }
         const sourcePathValue = joinPortable(declaration.sourceDirectory, portableRelativeFile);
@@ -162,17 +166,26 @@ function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
       "sourceDirectory",
       "targetDirectory",
       "excludedPrefixes",
+      "excludedPaths",
     ]);
     const excludedPrefixes = decodeArray(
       record.excludedPrefixes,
       "Registry directory excludedPrefixes",
       (candidate) => normalizedPrefix(candidate),
     );
+    const excludedPaths = record.excludedPaths === undefined
+      ? []
+      : decodeArray(
+          record.excludedPaths,
+          "Registry directory excludedPaths",
+          (candidate) => portablePathValue(candidate, "Registry excluded path"),
+        );
     return {
       kind: "directory",
       sourceDirectory: portableRelativePath(record, "sourceDirectory"),
       targetDirectory: portableRelativePath(record, "targetDirectory"),
       excludedPrefixes,
+      excludedPaths,
     };
   }
   if (value.kind !== "artifact") {
@@ -338,6 +351,11 @@ function normalizedPrefix(value: unknown): string {
   }
   portableRelativePath({ value: value.slice(0, -1) }, "value");
   return value;
+}
+
+function portablePathValue(value: unknown, label: string): string {
+  if (typeof value !== "string") throw new Error(`${label} must be a string.`);
+  return portableRelativePath({ value }, "value");
 }
 
 function joinPortable(parent: string, child: string): string {

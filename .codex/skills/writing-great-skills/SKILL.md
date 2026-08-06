@@ -57,7 +57,7 @@ Keep each meaning in one **single source of truth**.
 
 Check every line for **relevance**. Then run the **no-op** test on each sentence in isolation: does it change behavior versus the model default? Delete sentences that do not.
 
-After pruning model-facing prompts, tool descriptions, handoffs, or skill instructions, run `pnpm check:technical-prose --files <targets>`. Resolve each finding without dropping facts or constraints.
+After pruning model-facing prompts, tool descriptions, handoffs, or skill instructions, run the repository-declared technical-prose check when one exists. Resolve each finding without dropping facts or constraints. Do not assume the framework's policy command is installed.
 
 ## Leading words
 

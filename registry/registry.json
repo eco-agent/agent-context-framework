@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.2.0",
-  "decisionPath": "registry/decisions/0.2.0-wave-one.md",
+  "revision": "0.3.0",
+  "decisionPath": "registry/decisions/0.3.0-wave-two.md",
   "components": [
     {
       "name": "core",
@@ -595,6 +595,624 @@
         }
       ],
       "artifacts": []
+    },
+    {
+      "name": "skill-codebase-inventory",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/.gitignore",
+          "sourceSha256": "42b8122e063c576d8a4f23859bbe4ce5a660505b1229518a3512ef8b5fe80652",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/.gitignore",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/ignored.tmp",
+          "sourceSha256": "a6c7e3c5ddd823efc8b7a30853eabc152dac866843bd7a39dc4a29e0a0eb68b3",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/ignored.tmp",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/package-lock.json",
+          "sourceSha256": "f66e66d185a139532477c54bd6ad0f4c3cd04cb7803a3a2f23bccfa6e07df037",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/package-lock.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/components/Button.test.tsx",
+          "sourceSha256": "e51d76ec39b7a454f49f799f2d0d27f0f228c9073799132570f4aae2121e432c",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/components/Button.test.tsx",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/components/Button.tsx",
+          "sourceSha256": "9eb57a607ea11ed681bb2b6d71a23a3fd7497171308aa4517237cc285b0c94ec",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/components/Button.tsx",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/generated/api-client.ts",
+          "sourceSha256": "90c27117f996e96ea56d5ab50e5fdf7c1e568fc815f96f719873e25464e9d11c",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/generated/api-client.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/single-child/nested/thing.ts",
+          "sourceSha256": "00ce0f6157816d0663ffa0e2762928c48f3b1f4e1ce9de18021ba4a3946b05d5",
+          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/src/single-child/nested/thing.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/references/output-types.md",
+          "sourceSha256": "dc201eaf054f051c4ee469dff40ff88769cba29db6ec6f9b43b966a000d3183c",
+          "targetPath": ".codex/skills/codebase-inventory/references/output-types.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/references/report-modes.md",
+          "sourceSha256": "f37d6acfaab2601887e7cb42a229eb9ddbc15ec2a63678cbece0fed838ba8e8a",
+          "targetPath": ".codex/skills/codebase-inventory/references/report-modes.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/references/result-envelope.schema.json",
+          "sourceSha256": "88e19bd1a778a82513c20fa272b2f9eae8f0e1caf1adc63e5ec22f8a93972f49",
+          "targetPath": ".codex/skills/codebase-inventory/references/result-envelope.schema.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/scripts/codebase-meta.mjs",
+          "sourceSha256": "b0b9efec49fbfed6fa82e24bfcbf7958ba68e6a28f65499d07774000c5cbad66",
+          "targetPath": ".codex/skills/codebase-inventory/scripts/codebase-meta.mjs",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/scripts/validate-fixture.mjs",
+          "sourceSha256": "72dbad1f92e872c1994859e02ea1bfb010c63142f551873d870418424a54e421",
+          "targetPath": ".codex/skills/codebase-inventory/scripts/validate-fixture.mjs",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/codebase-inventory/SKILL.md",
+          "sourceSha256": "73b8808fa2742512a08071641f6e3fc44b90bfd3a697c24ffb88923330068431",
+          "targetPath": ".codex/skills/codebase-inventory/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-design-typescript-invariants",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/mattpocock/skills",
+          "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
+          "noticePath": ".codex/skills/design-typescript-invariants/LICENSE.mattpocock.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/agents/openai.yaml",
+          "sourceSha256": "a90409a6f5df118158fe5ccba6d5c190cdfa568081d9ed625e84902bc1ac0738",
+          "targetPath": ".codex/skills/design-typescript-invariants/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/assets/type-contract.md",
+          "sourceSha256": "aac93e1f0ae7d054e33764ede9d16157eafb584f0aa8aa9449d21f33134d3d0c",
+          "targetPath": ".codex/skills/design-typescript-invariants/assets/type-contract.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/LICENSE.mattpocock.upstream",
+          "sourceSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+          "targetPath": ".codex/skills/design-typescript-invariants/LICENSE.mattpocock.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/references/boundaries-and-failures.md",
+          "sourceSha256": "01cef76595c5bb4964a080b5a344a7425e378e8449aa3967b71ffac8d5fd2868",
+          "targetPath": ".codex/skills/design-typescript-invariants/references/boundaries-and-failures.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/references/deep-modules.md",
+          "sourceSha256": "c8a1229c39ef1c94ff7ae4856bfcc4d17925be1bbbac0f71c722264e7728d728",
+          "targetPath": ".codex/skills/design-typescript-invariants/references/deep-modules.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/references/lint-rules.md",
+          "sourceSha256": "b8f54b7aa016be752a94d5529a8f36f28a55f2eb49480119d8223579511d5b3b",
+          "targetPath": ".codex/skills/design-typescript-invariants/references/lint-rules.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/references/modeling-procedure.md",
+          "sourceSha256": "876fb93ff28ad7a6b0f78f395d17236e53ba9517e7bf7dcd947169b923477e10",
+          "targetPath": ".codex/skills/design-typescript-invariants/references/modeling-procedure.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/references/review-checklist.md",
+          "sourceSha256": "3e2e886dc6f739dc9c7aa02b48fd3f2270a3644df68a2419239e9fe737c4a100",
+          "targetPath": ".codex/skills/design-typescript-invariants/references/review-checklist.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
+          "sourceSha256": "57cf8fec2cff79276f03abed56e37e5838012b5241c9b11af6b7cabe4a1b80b5",
+          "targetPath": ".codex/skills/design-typescript-invariants/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/SOURCE.json",
+          "sourceSha256": "b030986803125b0ac900108dd707f45b33202d60a620fe029c157c6ff01c3a7b",
+          "targetPath": ".codex/skills/design-typescript-invariants/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-diagnose",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/diagnose/scripts/hitl-loop.template.sh",
+          "sourceSha256": "b2932630950e5210075bcd6f850e5accf30c101c5367b29eac3a29b4dd8084c8",
+          "targetPath": ".codex/skills/diagnose/scripts/hitl-loop.template.sh",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/diagnose/SKILL.md",
+          "sourceSha256": "3bea7cfe2263c8603c8caedf013560a9f8dd783d5483096b0abc84675bd8fcac",
+          "targetPath": ".codex/skills/diagnose/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-reuse-before-implementation",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/reuse-before-implementation/agents/openai.yaml",
+          "sourceSha256": "98e7c508c430e208ed755921b755d89ac678f75855ca977774da7d66ac681e6d",
+          "targetPath": ".codex/skills/reuse-before-implementation/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/reuse-before-implementation/SKILL.md",
+          "sourceSha256": "65d5d3979925a9a24b7899e409099429400afcff38c1980493d4ad7cd7fb3098",
+          "targetPath": ".codex/skills/reuse-before-implementation/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-write-technical-prose",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/danyuchn/asd-ste100-skill",
+          "revision": "8564f8985f15104c2184f90531bfd1bbb25f3d5b",
+          "noticePath": ".codex/skills/write-technical-prose/LICENSE.danyuchn.upstream"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/woosal1337/blog",
+          "revision": "b912d5fa59f368253683af2ebfac64ad6d08312d",
+          "noticePath": ".codex/skills/write-technical-prose/LICENSE.woosal1337.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/write-technical-prose/agents/openai.yaml",
+          "sourceSha256": "0d4136866474bd5532618fc6410f122cd1744fb00efeb6ebe8f9ab5841ca9442",
+          "targetPath": ".codex/skills/write-technical-prose/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/write-technical-prose/LICENSE.danyuchn.upstream",
+          "sourceSha256": "d3c674e8592076c9021a59b55177adbcba6fd7e1710082becb922522b22ec672",
+          "targetPath": ".codex/skills/write-technical-prose/LICENSE.danyuchn.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/write-technical-prose/LICENSE.woosal1337.upstream",
+          "sourceSha256": "fe70c738b47edb6aebda20b5f4a4158bf394cbfbe5485e5a9e197525e3319311",
+          "targetPath": ".codex/skills/write-technical-prose/LICENSE.woosal1337.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/write-technical-prose/SKILL.md",
+          "sourceSha256": "83b7e8948ad8f93125750dc861b3720f047cb19cfffb20a575a7da9a939203f8",
+          "targetPath": ".codex/skills/write-technical-prose/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/write-technical-prose/SOURCE.json",
+          "sourceSha256": "7b6a82a8127f0a76081e8bc0912f3f7c3521121c816deb1b01e10a0b4815edc1",
+          "targetPath": ".codex/skills/write-technical-prose/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-writing-great-skills",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/mattpocock/skills",
+          "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
+          "noticePath": ".codex/skills/writing-great-skills/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/writing-great-skills/agents/openai.yaml",
+          "sourceSha256": "91809b1d9418619a0064239f841975c366252c3a040ad48523f399bbc46d6b49",
+          "targetPath": ".codex/skills/writing-great-skills/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/writing-great-skills/GLOSSARY.md",
+          "sourceSha256": "287d758035c34fb0e927ad2cd1b4bbcc06f5e8ffffbd1481ad46f54884b6d0b1",
+          "targetPath": ".codex/skills/writing-great-skills/GLOSSARY.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/writing-great-skills/LICENSE.upstream",
+          "sourceSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+          "targetPath": ".codex/skills/writing-great-skills/LICENSE.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/writing-great-skills/SKILL.md",
+          "sourceSha256": "0ec67d8e4c43b6c7f251673998569d3aa6c344265d13f9dc597f6ef5ef9ba0a4",
+          "targetPath": ".codex/skills/writing-great-skills/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/writing-great-skills/SOURCE.json",
+          "sourceSha256": "70c6356b1af24a097bd3b0d78746d0d26e42364c38888d1f8e67a41ee95b72e5",
+          "targetPath": ".codex/skills/writing-great-skills/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-optimize-codex-sessions",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "codex-session-log",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "repository-context",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/agents/openai.yaml",
+          "sourceSha256": "70da6d356a61b4055b71729dc97c85b42549200548cf4174cf9f07dd5276f0c2",
+          "targetPath": ".codex/skills/optimize-codex-sessions/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/references/analysis-rubric.md",
+          "sourceSha256": "f482ca7a1c68e55c933b3f029a9e31ac3084362324603374d5e5b9de95a175e1",
+          "targetPath": ".codex/skills/optimize-codex-sessions/references/analysis-rubric.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/references/model-prior-hypotheses.md",
+          "sourceSha256": "79a5aecf462a235ea7beae847167d64d8362a9ba3a714055122abad4a9483eea",
+          "targetPath": ".codex/skills/optimize-codex-sessions/references/model-prior-hypotheses.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs",
+          "sourceSha256": "8a2bb739826f0dff82ad3dde86dc159d3a5cc8cff35e02c6d3d488a71c5d85c3",
+          "targetPath": ".codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/scripts/codex-session-metrics.mjs",
+          "sourceSha256": "38a1432b76d1d4c23bf529508cf51b6926ff02ef052402b1e0376d78b5430c2f",
+          "targetPath": ".codex/skills/optimize-codex-sessions/scripts/codex-session-metrics.mjs",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/scripts/codex-session-metrics.test.mjs",
+          "sourceSha256": "e3ce50e7cf7f58dd6c1fb00956b8fe691a034f5b83f16f2d21b518ffe740b55e",
+          "targetPath": ".codex/skills/optimize-codex-sessions/scripts/codex-session-metrics.test.mjs",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/scripts/git-session-metrics.mjs",
+          "sourceSha256": "a79892393faaf2a330de85309981fe259c835b0ac8b701e738f26b13a3d697bc",
+          "targetPath": ".codex/skills/optimize-codex-sessions/scripts/git-session-metrics.mjs",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/optimize-codex-sessions/SKILL.md",
+          "sourceSha256": "e90533c760be431ee7b2784599c6a166f2792da0c314a2c8aa4cb7fd0dd4edcc",
+          "targetPath": ".codex/skills/optimize-codex-sessions/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "engineering",
+      "dependencies": [
+        "skill-codebase-inventory",
+        "skill-diagnose",
+        "skill-reuse-before-implementation",
+        "skill-write-technical-prose"
+      ],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/engineering.md",
+          "sourceSha256": "168c5a1e460939739273a81835d96e20427854dbf7aa236cc9860b4a9d3933c2",
+          "targetPath": "AGENTS.md",
+          "sectionId": "engineering",
+          "markerStyle": "markdown"
+        },
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/documentation.md",
+          "sourceSha256": "86e7eec1cc3d86cf4cada227a9033f1b58a6b9e357c0b8dc86d3032a10a1dd01",
+          "targetPath": "docs/AGENTS.md",
+          "sectionId": "documentation",
+          "markerStyle": "markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/templates/work-record.md",
+          "sourceSha256": "41b4bec222b9b8d51b06ee22296b04ef93fe7ba05829ee2b5202c002f2cfb49e",
+          "targetPath": ".codex/templates/work-record.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/templates/project-decision.md",
+          "sourceSha256": "fbb4752727f185e89921a5c0c1458e2e44e4eb847a74aabb5cb9d826588d10fb",
+          "targetPath": ".codex/templates/project-decision.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "typescript-engineering",
+      "dependencies": [
+        "engineering",
+        "skill-design-typescript-invariants"
+      ],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/typescript-engineering.md",
+          "sourceSha256": "ebe84c1e9d6d26abb91644428f0540b936e8753113eb15f3a5444855aada3ebb",
+          "targetPath": "AGENTS.md",
+          "sectionId": "typescript-engineering",
+          "markerStyle": "markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/assets/type-contract.md",
+          "sourceSha256": "aac93e1f0ae7d054e33764ede9d16157eafb584f0aa8aa9449d21f33134d3d0c",
+          "targetPath": ".codex/templates/type-contract.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "session-quality",
+      "dependencies": [
+        "skill-optimize-codex-sessions"
+      ],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "codex-session-log",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "repository-context",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/session-quality.md",
+          "sourceSha256": "8575facab8d2e2aa72a9d2b49157c373ea1b9986c49369e9d7ac48ed2ad6b94d",
+          "targetPath": "AGENTS.md",
+          "sectionId": "session-quality",
+          "markerStyle": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-authoring",
+      "dependencies": [
+        "skill-write-technical-prose",
+        "skill-writing-great-skills"
+      ],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/skill-authoring.md",
+          "sourceSha256": "6c448e92e85762a6505e329768cc3a9ac91494f917a5e303d30f8c3e8539c085",
+          "targetPath": "AGENTS.md",
+          "sectionId": "skill-authoring",
+          "markerStyle": "markdown"
+        }
+      ]
     }
   ]
 }

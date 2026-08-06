@@ -1,0 +1,39 @@
+# Work record: <task>
+
+## Outcome
+
+Describe the completed state this task must make true.
+
+## Decisions
+
+| Decision | Answer | Owner |
+| --- | --- | --- |
+|  |  |  |
+
+## State
+
+- Record the authoritative baseline, branch, relevant external state, and known gaps.
+
+## Topology
+
+Describe the owners and flow affected by the task.
+
+## Slice
+
+1. Name the smallest cross-layer slice that proves the outcome.
+
+## Replacements
+
+- Name representations or paths this work replaces directly.
+
+## Non-goals
+
+- Name adjacent work that remains out of scope.
+
+## Propagation
+
+- Record every entry point, client, adapter, contract, reverse action, fixture, and verification surface that must follow the decision.
+
+## Verification evidence
+
+- Record commands, outputs, skipped checks, residual risks, and final revisions.

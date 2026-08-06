@@ -1,40 +1,29 @@
 # Type-invariant lint rules
 
-## Repository-wide errors
+## Repository-wide rules
 
-The application ESLint config loads `apps/web/eslint/type-invariants/eslint-plugin.mjs` and enforces:
+Inspect the repository's actual TypeScript and lint configuration. Useful low-noise rules commonly reject:
 
-- `@typescript-eslint/no-explicit-any`
-- `@typescript-eslint/no-unnecessary-type-assertion`
-- `@typescript-eslint/switch-exhaustiveness-check`
-- `type-invariants/no-redundant-catch`
+- explicit `any`
+- unnecessary type assertions
+- non-exhaustive switches
+- redundant catch and rethrow blocks
 
-These rules have low false-positive risk and run through the normal repository lint command.
+Do not claim these rules are active until the repository configuration proves it.
 
-## Changed-line gate
+## Changed-line gates
 
-Run:
+Some repositories add a wrapper that reports heuristic findings only on added lines. When such a gate is declared, inspect its command, comparison base, untracked-file behavior, exclusions, and supported overrides before running it.
 
-```powershell
-node apps/web/eslint/type-invariants/lint-changed-invariants.mjs apps/web
-```
+Useful heuristic checks include:
 
-The wrapper:
+- broad `Partial<T>` domain models
+- open-ended `Record<string, unknown | any>` away from parsing boundaries
+- object types whose fields are all optional
+- positional boolean arguments
+- assertions or non-null assertions without a proof comment
 
-1. reads added ranges from `git diff <base>`
-2. treats untracked files as entirely new
-3. runs ESLint with the invariant rules enabled
-4. reports only findings whose source line was added
-
-Use `--base origin/main` or `TYPE_INVARIANT_BASE=origin/main` when `HEAD` is not the intended comparison.
-
-The additional rules are:
-
-- `no-partial-domain-model`: replace broad `Partial<T>` with an exact draft/patch type.
-- `no-open-ended-record`: keep `Record<string, unknown|any>` at explicit parsing boundaries.
-- `no-optional-property-bag`: reconsider object types with at least three fields that are all optional.
-- `no-positional-boolean-arguments`: name modes instead of passing opaque boolean literals.
-- `require-escape-justification`: require a nearby `type-invariant:` proof for assertions and non-null assertions; `as const` is exempt.
+Do not invent a changed-line gate or assume the framework's implementation is installed.
 
 ## Resolve findings
 
@@ -43,9 +32,9 @@ Prefer, in order:
 1. make the input type exclude the invalid state
 2. narrow or parse at the trust boundary
 3. create an exact representation or named variant
-4. prove the assertion with a concise `type-invariant:` comment
+4. prove the assertion with the repository's established justification convention
 
-Do not add a proof comment merely to silence the gate. A proof must name the validation, control-flow fact, or external typing limitation that establishes safety.
+Do not add a proof comment merely to silence a gate. A proof must name the validation, control-flow fact, or external typing limitation that establishes safety.
 
 ## What lint cannot prove
 

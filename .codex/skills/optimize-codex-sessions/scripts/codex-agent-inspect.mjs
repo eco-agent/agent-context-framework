@@ -9,7 +9,7 @@ import { inspectAgentThread } from "./codex-session-metrics.mjs";
 const args = process.argv.slice(2).filter((value) => value !== "--");
 const threadId = argumentValue(args, "--thread");
 if (threadId === undefined) {
-  throw new Error("Usage: pnpm agent:inspect -- --thread <child-thread-id>");
+  throw new Error("Usage: node .codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs --thread <child-thread-id>");
 }
 const codexHome = path.resolve(
   argumentValue(args, "--codex-home") ??

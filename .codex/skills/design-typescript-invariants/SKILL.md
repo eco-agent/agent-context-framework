@@ -99,19 +99,13 @@ Use `unknown` for genuinely untrusted input, then narrow it once. Do not carry `
 
 ## Run the automated invariant gate
 
-Use the repository ESLint rules instead of manually grepping for escape hatches:
+Read the repository instructions and manifests for its TypeScript, lint, invariant, and test commands. Run the declared invariant gate when one exists; otherwise run the repository's narrow typecheck and lint commands and perform the semantic review below. Do not assume a framework-specific application path, ESLint plugin, comparison base, or environment variable.
 
-```powershell
-node apps/web/eslint/type-invariants/lint-changed-invariants.mjs apps/web
-```
-
-The gate checks only added lines relative to `HEAD`, including untracked files. In CI or a branch comparison, pass `--base <ref>` or set `TYPE_INVARIANT_BASE`.
-
-Repository lint enforces low-noise rules globally: no explicit `any`, no unnecessary assertions, exhaustive switches, and no redundant catch/rethrow. The changed-line gate additionally enforces the heuristic rules for `Partial`, open-ended records, all-optional bags, positional booleans, non-null assertions, and unexplained assertions.
+A repository gate may enforce low-noise rules globally and added-line heuristics separately. Treat its configured scope and comparison base as authoritative.
 
 Treat `type-invariant:` comments as proof obligations, not suppression labels. State the boundary check or compiler limitation that makes the escape safe.
 
-Read [lint-rules.md](references/lint-rules.md) when configuring the gate or resolving a finding.
+Read [lint-rules.md](references/lint-rules.md) when interpreting or configuring a repository-owned gate.
 
 ## Choose failure semantics deliberately
 

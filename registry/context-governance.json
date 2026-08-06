@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.2.0",
-  "decisionPath": "registry/decisions/0.2.0-wave-one.md",
+  "registryRevision": "0.3.0",
+  "decisionPath": "registry/decisions/0.3.0-wave-two.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -27,6 +27,26 @@
       "invariantId": "documentation-prose",
       "sourcePath": "registry/sources/instructions/documentation.md",
       "sha256": "86e7eec1cc3d86cf4cada227a9033f1b58a6b9e357c0b8dc86d3032a10a1dd01"
+    },
+    {
+      "invariantId": "engineering-independent",
+      "sourcePath": "registry/sources/instructions/engineering.md",
+      "sha256": "168c5a1e460939739273a81835d96e20427854dbf7aa236cc9860b4a9d3933c2"
+    },
+    {
+      "invariantId": "typescript-engineering-explicit",
+      "sourcePath": "registry/sources/instructions/typescript-engineering.md",
+      "sha256": "ebe84c1e9d6d26abb91644428f0540b936e8753113eb15f3a5444855aada3ebb"
+    },
+    {
+      "invariantId": "session-quality-explicit",
+      "sourcePath": "registry/sources/instructions/session-quality.md",
+      "sha256": "8575facab8d2e2aa72a9d2b49157c373ea1b9986c49369e9d7ac48ed2ad6b94d"
+    },
+    {
+      "invariantId": "skill-authoring-explicit",
+      "sourcePath": "registry/sources/instructions/skill-authoring.md",
+      "sha256": "6c448e92e85762a6505e329768cc3a9ac91494f917a5e303d30f8c3e8539c085"
     }
   ],
   "projections": [
@@ -53,6 +73,30 @@
       "sourcePath": "registry/sources/instructions/documentation.md",
       "targetPath": "docs/AGENTS.md",
       "heading": "## Prose and Reporting Style"
+    },
+    {
+      "invariantId": "engineering-independent",
+      "sourcePath": "registry/sources/instructions/engineering.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Engineering"
+    },
+    {
+      "invariantId": "typescript-engineering-explicit",
+      "sourcePath": "registry/sources/instructions/typescript-engineering.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## TypeScript engineering"
+    },
+    {
+      "invariantId": "session-quality-explicit",
+      "sourcePath": "registry/sources/instructions/session-quality.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Session quality"
+    },
+    {
+      "invariantId": "skill-authoring-explicit",
+      "sourcePath": "registry/sources/instructions/skill-authoring.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Skill authoring"
     }
   ]
 }
