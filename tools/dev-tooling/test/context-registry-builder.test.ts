@@ -47,3 +47,32 @@ test("governance rejects stale protected projections", async () => {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
+
+test("registry construction rejects unresolved packaged Markdown references", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-reference-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await mkdir(path.join(temporaryRoot, ".codex", "skills"), { recursive: true });
+    for (const skill of [
+      "adopt-established-product",
+      "choose-react-animation",
+      "design-accessible-interfaces",
+      "design-color-systems",
+      "design-interface-details",
+      "design-web-typography",
+      "frontend-design-discipline",
+      "responsive-css-architect",
+    ]) {
+      await cp(
+        path.join(frameworkRoot, ".codex", "skills", skill),
+        path.join(temporaryRoot, ".codex", "skills", skill),
+        { recursive: true, filter: (source) => !source.replaceAll("\\", "/").includes("/tailwind-docs/cache") },
+      );
+    }
+    const skillPath = path.join(temporaryRoot, ".codex", "skills", "frontend-design-discipline", "SKILL.md");
+    await writeFile(skillPath, `${await readFile(skillPath, "utf8")}\n[Missing](references/missing.md)\n`);
+    await assert.rejects(buildContextRegistry(temporaryRoot), /Packaged Markdown reference is unresolved/u);
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});

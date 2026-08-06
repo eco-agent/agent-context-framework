@@ -26,7 +26,7 @@ cache generation when it already supplies that behavior.
 | Divergence | Preserve local modifications. Apply an upstream update only when installed content still equals its previous source. Report divergence and stop before writes. | Installer |
 | Transactions | Stage every write, record one recovery journal, promote mutations, write config and lock last, and leave interrupted state for `doctor` to explain. | Materializer |
 | Registry construction | Author concise component declarations, expand directories into exact per-file artifacts at build time, and commit source hashes in the built registry. | Registry builder |
-| Frontend bundle | `frontend` depends on eight atomic skill components plus one canonical frontend instruction section. | Frontend registry |
+| Frontend bundles | `frontend` selects seven general frontend skills and the canonical frontend instruction section. `frontend-tailwind` adds the responsive CSS skill, producing the complete eight-skill Wave 1 installation. | Frontend registry |
 | Tailwind cache | Exclude `.codex/skills/responsive-css-architect/references/tailwind-docs/cache/**` from Wave 1. Preserve the existing on-demand synchronization source and manifests needed to rebuild it. | Responsive CSS component |
 | Capabilities | Declare external skills and runtime needs in registry metadata. Installation reports them; it never silently assumes or installs them. | Registry |
 | Licensing | Package each upstream `SOURCE.json` and `LICENSE.upstream`; project-authored skills declare project ownership. | Registry |
@@ -71,25 +71,29 @@ registry/sources/instructions/
 ## Wave 1 component graph
 
 ```text
-frontend
-├── skill-adopt-established-product
-├── skill-choose-react-animation
-├── skill-design-accessible-interfaces
-├── skill-design-color-systems
-├── skill-design-interface-details
-├── skill-design-web-typography
-├── skill-frontend-design-discipline
+frontend-tailwind
+├── frontend
+│   ├── skill-adopt-established-product
+│   ├── skill-choose-react-animation
+│   ├── skill-design-accessible-interfaces
+│   ├── skill-design-color-systems
+│   ├── skill-design-interface-details
+│   ├── skill-design-web-typography
+│   └── skill-frontend-design-discipline
 └── skill-responsive-css-architect
 ```
 
-Every skill component owns exact `.codex/skills/<name>/**` targets. The bundle
-itself owns only the `AGENTS.md` frontend section and dependency selection.
+Every skill component owns exact `.codex/skills/<name>/**` targets. `frontend`
+owns only the `AGENTS.md` frontend section and general dependency selection;
+`frontend-tailwind` owns no artifacts and adds the Tailwind-specific skill.
 
 ## State
 
 - Framework worktree baseline: `dc78076020c4ee8c5dc12c220d3307c45d4845f4`.
 - Clean Control Tower baseline: `097619af6334f08b989a156439ea2ca62d5c8b3c`.
-- V1 supports `core`, `init`, `add`, and `diff`; v2 replacement is pending.
+- Registry, project config, and provenance lock are schema v2. The lifecycle
+  now supports `inspect`, `init`, `add`, `diff`, `update`, `remove`, and
+  `doctor` without a v1 decoder or migration representation.
 - The framework and clean fixture were clean before this slice.
 - The responsive CSS fallback previously required generated cache paths that
   Wave 1 excludes. The permitted narrow repair now rebuilds that cache from
@@ -172,3 +176,27 @@ project-owned AGENTS section and skill source
 - Framework full typecheck/tests/check pass.
 - Clean Control Tower typecheck/tests/check pass after v2 core and frontend
   installation, and a repeated diff is stable.
+
+## Completion evidence
+
+- Framework implementation commit: `8b41bf7`.
+- Clean Control Tower installation commit: `071a759`.
+- The built registry is revision `0.2.0` with 11 components: core, eight
+  atomic skills, and two bundle selectors.
+- `frontend-tailwind` installs exactly eight skill directories and one
+  governed frontend section. The installed Tailwind cache contains zero files.
+- All packaged local Markdown references resolve and every third-party notice
+  is installed. Registry construction now enforces both conditions.
+- Repeated `init`, `add frontend-tailwind`, and `update` write no files. `diff`
+  reports current and `doctor` reports healthy while listing capabilities
+  without inferring their availability.
+- Framework `pnpm typecheck`, `pnpm test`, `pnpm check`, and
+  `pnpm registry:check` pass. The check reports four unrelated warnings and no
+  errors.
+- Clean Control Tower `pnpm typecheck`, `pnpm test`, and `pnpm check` pass. The
+  check reports eight unrelated warnings and no errors.
+- The original `D:\dev\control-tower` worktree is clean. Root `AGENTS.md` is
+  unchanged from the framework baseline. The only skill-source changes are the
+  two recorded responsive CSS cache-fallback files required by cache exclusion.
+- Wave 2, repository policy packaging, Codex runtime packaging, objective
+  orchestration packaging, publication, push, and deployment remain untouched.

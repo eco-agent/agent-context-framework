@@ -98,6 +98,7 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
     components,
   });
   validateNoticeCoverage(registry);
+  await validatePackagedMarkdownReferences(resolvedRoot, registry);
   return registry;
 }
 
@@ -193,6 +194,28 @@ function validateNoticeCoverage(registry: ContextRegistryV2): void {
         throw new Error(
           `Component ${component.name} does not install declared notice ${license.noticePath}.`,
         );
+      }
+    }
+  }
+}
+
+async function validatePackagedMarkdownReferences(
+  root: string,
+  registry: ContextRegistryV2,
+): Promise<void> {
+  const packagedSources = new Set(
+    registry.components.flatMap((component) => component.artifacts.map((artifact) => artifact.sourcePath)),
+  );
+  for (const sourcePath of [...packagedSources].sort()) {
+    if (path.posix.extname(sourcePath).toLowerCase() !== ".md") continue;
+    const source = await readStrictUtf8(repositoryPath(root, sourcePath), sourcePath);
+    const links = source.matchAll(/\]\((?!https?:\/\/|mailto:|#)([^)#]+)(?:#[^)]*)?\)/gu);
+    for (const link of links) {
+      const reference = link[1];
+      if (!reference) continue;
+      const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(sourcePath), reference));
+      if (resolved.startsWith("../") || !packagedSources.has(resolved)) {
+        throw new Error(`Packaged Markdown reference is unresolved: ${sourcePath} -> ${reference}.`);
       }
     }
   }
