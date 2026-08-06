@@ -1048,7 +1048,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/optimize-codex-sessions/SKILL.md",
-          "sourceSha256": "e90533c760be431ee7b2784599c6a166f2792da0c314a2c8aa4cb7fd0dd4edcc",
+          "sourceSha256": "8f02eb85bd8a02c5f6f874a2b8a4780accd45d9aa768a1dd2a0bffe81a05c38a",
           "targetPath": ".codex/skills/optimize-codex-sessions/SKILL.md",
           "mediaType": "text/markdown"
         }

@@ -196,7 +196,8 @@ test("optimization skill routes bounded repository context without --all", async
 
   assert.match(skill, /`mcp__repo_context__repo_context`/u);
   assert.match(skill, /batch up to four requests in one call/u);
-  assert.match(skill, /dist\/src\/context-cli\.js/u);
+  assert.match(skill, /direct filesystem read and search tools/u);
+  assert.equal(skill.includes("dist/src/context-cli.js"), false);
   assert.match(skill, /Follow `nextCursor` to continue/u);
   assert.equal(skill.includes("pnpm --silent context"), false);
   assert.equal(skill.includes("--all"), false);

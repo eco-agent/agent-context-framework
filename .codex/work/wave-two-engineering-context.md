@@ -23,7 +23,7 @@ objective orchestration independently selected.
 | Technical-prose capability | Make repository-specific prose commands conditional and declare the deterministic technical-prose check as recommended, not silently assumed. | Skill and registry |
 | TypeScript gate portability | Remove Control Tower-specific `apps/web` command assumptions. Route to a repository-declared invariant gate, lint, and typecheck. | TypeScript skill |
 | Session tooling portability | Keep source-owned Node metrics scripts. Remove fallback references to framework-only compiled workflow paths and declare repository-context access as recommended. | Session skill |
-| Binary fixture | Keep the codebase-inventory `.png` sentinel as a materialized fixture but use UTF-8 sentinel bytes; classification is extension-driven and the existing validator proves the behavior. | Inventory skill |
+| Binary fixture | Exclude the binary `.png` sentinel from the text-only registry and have the installed validator generate those fixture bytes in a temporary copy before it runs. | Inventory skill |
 | Runtime boundary | Add no runtime workspace, policy package, hooks, agents, repo-context server, or bootstrap operation. | Task |
 | Orchestration boundary | Add no objective kernel, scheduler, durable runner, loop, task-envelope, or objective fixture artifact to the distributable registry. | Task |
 

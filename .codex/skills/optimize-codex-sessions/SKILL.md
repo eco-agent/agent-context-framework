@@ -41,7 +41,7 @@ Then use the task/thread inspection tool:
 
 Prefer committed code, tests, Git history, and repository-owned handoffs over session narration.
 
-Use the available bounded repository-context connector and batch independent reads when its contract supports batching. If no repository-context capability is available, use the host's direct filesystem read and search tools within the task's authority and output limits. Do not assume the framework's compiled workflow CLI is installed.
+When `mcp__repo_context__repo_context` is available, use it as the bounded repository-context connector and batch up to four requests in one call. If that capability is unavailable, use the host's direct filesystem read and search tools within the task's authority and output limits. Do not assume the framework's compiled workflow CLI is installed.
 
 Default limits are 10,000 UTF-8 content bytes, 200 read lines, 50 matches, and two search-context lines. Follow `nextCursor` to continue until the required evidence is collected.
 
