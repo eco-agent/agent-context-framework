@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "revision": "0.2.0",
+  "decisionPath": "registry/decisions/0.2.0-wave-one.md",
+  "components": [
+    {
+      "name": "core",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/core.md",
+          "targetPath": "AGENTS.md",
+          "sectionId": "core",
+          "markerStyle": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-adopt-established-product",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "runtime", "name": "network", "requirement": "required" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/adopt-established-product",
+          "targetDirectory": ".codex/skills/adopt-established-product",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-choose-react-animation",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/choose-react-animation",
+          "targetDirectory": ".codex/skills/choose-react-animation",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-design-accessible-interfaces",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-accessible-interfaces/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/design-accessible-interfaces",
+          "targetDirectory": ".codex/skills/design-accessible-interfaces",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-design-color-systems",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-color-systems/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/design-color-systems",
+          "targetDirectory": ".codex/skills/design-color-systems",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-design-interface-details",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" }
+      ],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-interface-details/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/design-interface-details",
+          "targetDirectory": ".codex/skills/design-interface-details",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-design-web-typography",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-web-typography/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/design-web-typography",
+          "targetDirectory": ".codex/skills/design-web-typography",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-frontend-design-discipline",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/frontend-design-discipline",
+          "targetDirectory": ".codex/skills/frontend-design-discipline",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-responsive-css-architect",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "runtime", "name": "native-subagents", "requirement": "recommended" },
+        { "kind": "runtime", "name": "network", "requirement": "recommended" },
+        { "kind": "runtime", "name": "python", "requirement": "recommended" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/responsive-css-architect",
+          "targetDirectory": ".codex/skills/responsive-css-architect",
+          "excludedPrefixes": ["references/tailwind-docs/cache/"]
+        }
+      ]
+    },
+    {
+      "name": "frontend",
+      "dependencies": [
+        "skill-adopt-established-product",
+        "skill-choose-react-animation",
+        "skill-design-accessible-interfaces",
+        "skill-design-color-systems",
+        "skill-design-interface-details",
+        "skill-design-web-typography",
+        "skill-frontend-design-discipline"
+      ],
+      "capabilities": [
+        { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" },
+        { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/frontend.md",
+          "targetPath": "AGENTS.md",
+          "sectionId": "frontend",
+          "markerStyle": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "frontend-tailwind",
+      "dependencies": ["frontend", "skill-responsive-css-architect"],
+      "capabilities": [
+        { "kind": "runtime", "name": "network", "requirement": "recommended" },
+        { "kind": "runtime", "name": "python", "requirement": "recommended" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": []
+    }
+  ]
+}

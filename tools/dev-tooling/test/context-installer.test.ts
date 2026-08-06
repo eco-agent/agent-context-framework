@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -9,13 +10,13 @@ import {
   CONTEXT_CONFIG_PATH,
   CONTEXT_LOCK_PATH,
   diffProject,
+  doctorProject,
   initProject,
-  managedSectionMarkers,
+  inspectProject,
+  removeComponent,
+  updateProject,
 } from "../src/context-installer.js";
-import {
-  formatContextResult,
-  parseContextInstallerArguments,
-} from "../src/context-installer-cli.js";
+import { formatContextResult, parseContextInstallerArguments } from "../src/context-installer-cli.js";
 
 interface Fixture {
   readonly frameworkRoot: string;
@@ -35,129 +36,101 @@ test("init preserves project prose and is byte-for-byte idempotent", async () =>
     assert.match(installed, /<!-- agent-context:core:start -->\n# Core rules/u);
 
     const config = JSON.parse(await readFile(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH), "utf8")) as unknown;
-    assert.deepEqual(config, { schemaVersion: 1, adapter: "codex", components: ["core"] });
-    const beforeSecond = await snapshotProject(fixture.projectRoot);
-    const second = await initProject(fixture.projectRoot, fixture.frameworkRoot);
-    assert.equal(second.plan.status, "ready");
-    assert.deepEqual(second.writtenPaths, []);
-    assert.deepEqual(await snapshotProject(fixture.projectRoot), beforeSecond);
+    assert.deepEqual(config, { schemaVersion: 2, adapter: "codex", components: ["core"] });
+    const before = await snapshotProject(fixture.projectRoot);
+    assert.deepEqual((await initProject(fixture.projectRoot, fixture.frameworkRoot)).writtenPaths, []);
+    assert.deepEqual(await snapshotProject(fixture.projectRoot), before);
     assert.equal((await diffProject(fixture.projectRoot, fixture.frameworkRoot)).current, true);
   } finally {
     await fixture.remove();
   }
 });
 
-test("add resolves dependencies and refuses to adopt an existing whole-file target", async () => {
+test("add resolves dependencies, reports capabilities, and refuses untracked whole files", async () => {
   const fixture = await createFixture();
   try {
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
     await mkdir(path.join(fixture.projectRoot, ".codex"), { recursive: true });
     await writeFile(path.join(fixture.projectRoot, ".codex", "tool.md"), "project owned\n");
-    const configBefore = await readFile(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH), "utf8");
     const blocked = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
     assert.equal(blocked.plan.status, "blocked");
     assert.deepEqual(blocked.writtenPaths, []);
-    assert.equal(
-      blocked.plan.assessments.find((assessment) => assessment.targetPath === ".codex/tool.md")?.status,
-      "unmanaged-conflict",
-    );
-    assert.equal(await readFile(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH), "utf8"), configBefore);
+    assert.equal(blocked.plan.assessments.some((item) => item.status === "untracked-conflict"), true);
 
     await rm(path.join(fixture.projectRoot, ".codex", "tool.md"));
     const added = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
     assert.equal(added.plan.status, "ready");
     assert.deepEqual(added.writtenPaths, [".codex/tool.md", CONTEXT_CONFIG_PATH, CONTEXT_LOCK_PATH]);
-    const lock = JSON.parse(await readFile(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH), "utf8")) as {
-      readonly components: readonly string[];
-    };
-    assert.deepEqual(lock.components, ["core", "tools"]);
-    assert.equal((await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools")).writtenPaths.length, 0);
+    assert.deepEqual((await inspectProject(fixture.projectRoot, fixture.frameworkRoot)).selectedComponents, ["core", "tools"]);
+    const doctor = await doctorProject(fixture.projectRoot, fixture.frameworkRoot);
+    assert.equal(doctor.health, "healthy");
+    assert.deepEqual(doctor.capabilities, [{ kind: "runtime", name: "network", requirement: "required" }]);
   } finally {
     await fixture.remove();
   }
 });
 
-test("safe registry updates preserve text outside the managed section", async () => {
+test("explicit update distinguishes upstream, local, and diverged changes", async () => {
   const fixture = await createFixture();
   try {
-    await writeFile(path.join(fixture.projectRoot, "AGENTS.md"), "Local prefix\n");
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
-    await writeFile(path.join(fixture.projectRoot, "AGENTS.md"), `${await readFile(path.join(fixture.projectRoot, "AGENTS.md"), "utf8")}Local suffix\n`);
-    assert.equal((await diffProject(fixture.projectRoot, fixture.frameworkRoot)).current, true);
-
-    await writeFile(path.join(fixture.frameworkRoot, "registry", "components", "core", "AGENTS.md"), "# Core rules v2\n");
-    await writeRegistry(fixture.frameworkRoot, "0.2.0");
-    const updated = await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await writeCore(fixture.frameworkRoot, "# Core rules v2\n", "0.2.1");
+    const upstream = await diffProject(fixture.projectRoot, fixture.frameworkRoot);
+    assert.equal(upstream.plan.assessments[0]?.status, "upstream-changed");
+    assert.match(upstream.plan.assessments[0]?.difference ?? "", /Core rules v2/u);
+    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null);
     assert.equal(updated.plan.status, "ready");
-    assert.deepEqual(updated.writtenPaths, ["AGENTS.md", CONTEXT_LOCK_PATH]);
-    const installed = await readFile(path.join(fixture.projectRoot, "AGENTS.md"), "utf8");
-    assert.match(installed, /^Local prefix\n/u);
-    assert.match(installed, /# Core rules v2\n/u);
-    assert.match(installed, /Local suffix\n$/u);
-  } finally {
-    await fixture.remove();
-  }
-});
+    assert.match(await readFile(path.join(fixture.projectRoot, "AGENTS.md"), "utf8"), /Core rules v2/u);
 
-test("managed-section drift and malformed markers block all writes", async () => {
-  const fixture = await createFixture();
-  try {
-    await initProject(fixture.projectRoot, fixture.frameworkRoot);
     const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
-    const original = await readFile(agentsPath, "utf8");
-    await writeFile(agentsPath, original.replace("# Core rules", "# Locally edited rules"));
-    await writeFile(path.join(fixture.frameworkRoot, "registry", "components", "core", "AGENTS.md"), "# Upstream rules\n");
-    const lockBefore = await readFile(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH), "utf8");
-    const drifted = await initProject(fixture.projectRoot, fixture.frameworkRoot);
-    assert.equal(drifted.plan.status, "blocked");
-    assert.deepEqual(drifted.writtenPaths, []);
-    assert.equal(drifted.plan.assessments[0]?.status, "drift");
-    assert.equal(await readFile(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH), "utf8"), lockBefore);
+    await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("Core rules v2", "Local rules v2"));
+    assert.equal((await diffProject(fixture.projectRoot, fixture.frameworkRoot)).plan.assessments[0]?.status, "locally-modified");
+    const localUpdate = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null);
+    assert.equal(localUpdate.plan.status, "ready");
+    assert.match(await readFile(agentsPath, "utf8"), /Local rules v2/u);
 
-    const markers = managedSectionMarkers("core");
-    await writeFile(agentsPath, `${markers.start}\n# Core rules\n${markers.start}\n${markers.end}\n`);
-    const malformed = await diffProject(fixture.projectRoot, fixture.frameworkRoot);
-    assert.equal(malformed.plan.status, "blocked");
-    assert.equal(malformed.plan.assessments[0]?.status, "malformed-section");
+    await writeCore(fixture.frameworkRoot, "# Core rules v3\n", "0.2.2");
+    const diverged = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null);
+    assert.equal(diverged.plan.status, "blocked");
+    assert.equal(diverged.plan.assessments[0]?.status, "diverged");
+    assert.deepEqual(diverged.writtenPaths, []);
+    assert.match(await readFile(agentsPath, "utf8"), /Local rules v2/u);
   } finally {
     await fixture.remove();
   }
 });
 
-test("stale lock ownership blocks an upstream artifact removal", async () => {
+test("remove deletes unchanged artifacts, preserves modified section content, and supports reinstall", async () => {
   const fixture = await createFixture();
   try {
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
-    await writeFile(
-      path.join(fixture.frameworkRoot, "registry", "registry.json"),
-      `${JSON.stringify({
-        schemaVersion: 1,
-        revision: "0.2.0",
-        components: [{
-          name: "core",
-          dependencies: [],
-          artifacts: [{
-            ownership: "managed-file",
-            sourcePath: "registry/components/core/replacement.md",
-            targetPath: ".codex/replacement.md",
-          }],
-        }],
-      }, null, 2)}\n`,
-    );
-    await writeFile(path.join(fixture.frameworkRoot, "registry", "components", "core", "replacement.md"), "replacement\n");
-    const result = await initProject(fixture.projectRoot, fixture.frameworkRoot);
-    assert.equal(result.plan.status, "blocked");
-    assert.equal(result.plan.assessments.some((assessment) => assessment.status === "stale"), true);
-    assert.equal(await fileExists(path.join(fixture.projectRoot, ".codex", "replacement.md")), false);
+    await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
+    const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
+    assert.equal(removed.plan.status, "ready");
+    assert.equal(await fileExists(path.join(fixture.projectRoot, ".codex", "tool.md")), false);
+    assert.equal((await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools")).plan.status, "ready");
+
+    const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
+    await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("# Core rules", "# Project-owned rules"));
+    await assert.rejects(removeComponent(fixture.projectRoot, fixture.frameworkRoot, "core"), /cannot be removed/u);
   } finally {
     await fixture.remove();
   }
 });
 
-test("project writes reject symbolic-link traversal", async (t) => {
+test("malformed markers and symbolic-link traversal prevent writes", async (t) => {
   const fixture = await createFixture();
   const outside = await mkdtemp(path.join(os.tmpdir(), "agent-context-outside-"));
   try {
+    await writeFile(
+      path.join(fixture.projectRoot, "AGENTS.md"),
+      "<!-- agent-context:core:start -->\n# One\n<!-- agent-context:core:start -->\n<!-- agent-context:core:end -->\n",
+    );
+    const malformed = await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    assert.equal(malformed.plan.status, "blocked");
+    assert.equal(malformed.plan.assessments[0]?.status, "untracked-conflict");
+
+    await rm(path.join(fixture.projectRoot, "AGENTS.md"));
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
     await mkdir(path.join(fixture.projectRoot, ".codex"), { recursive: true });
     try {
@@ -169,19 +142,7 @@ test("project writes reject symbolic-link traversal", async (t) => {
       }
       throw error;
     }
-    const registryPath = path.join(fixture.frameworkRoot, "registry", "registry.json");
-    const registry = JSON.parse(await readFile(registryPath, "utf8")) as {
-      revision: string;
-      components: Array<{ name: string; dependencies: string[]; artifacts: unknown[] }>;
-    };
-    const tools = registry.components.find((component) => component.name === "tools");
-    assert.ok(tools);
-    tools.artifacts = [{
-      ownership: "managed-file",
-      sourcePath: "registry/components/tools/tool.md",
-      targetPath: ".codex/linked/tool.md",
-    }];
-    await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+    await writeToolsTarget(fixture.frameworkRoot, ".codex/linked/tool.md");
     await assert.rejects(
       addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools"),
       /traverses symbolic link/u,
@@ -193,99 +154,118 @@ test("project writes reject symbolic-link traversal", async (t) => {
   }
 });
 
-test("registry sources must be exact UTF-8 text without a byte-order mark", async () => {
+test("doctor explains an interrupted transaction and mutators refuse it", async () => {
   const fixture = await createFixture();
-  const sourcePath = path.join(fixture.frameworkRoot, "registry", "components", "core", "AGENTS.md");
   try {
-    await writeFile(sourcePath, Uint8Array.from([0xff]));
-    await assert.rejects(
-      initProject(fixture.projectRoot, fixture.frameworkRoot),
-      /must be valid UTF-8/u,
-    );
-    assert.equal(await fileExists(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH)), false);
-
-    await writeFile(sourcePath, Uint8Array.from([0xef, 0xbb, 0xbf, 0x23, 0x0a]));
-    await assert.rejects(
-      initProject(fixture.projectRoot, fixture.frameworkRoot),
-      /without a byte-order mark/u,
-    );
-    assert.equal(await fileExists(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH)), false);
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await writeFile(path.join(fixture.projectRoot, ".agent-context", "transaction.json"), `${JSON.stringify({
+      schemaVersion: 1,
+      command: "update",
+      registryRevision: "0.2.0",
+      mutations: [],
+    }, null, 2)}\n`);
+    const doctor = await doctorProject(fixture.projectRoot, fixture.frameworkRoot);
+    assert.equal(doctor.health, "attention");
+    assert.match(doctor.diagnostics[0] ?? "", /Incomplete update transaction/u);
+    await assert.rejects(updateProject(fixture.projectRoot, fixture.frameworkRoot, null), /incomplete context transaction/u);
   } finally {
     await fixture.remove();
   }
 });
 
-test("CLI parsing and reporting keep init, add, and diff explicit", () => {
+test("registry sources reject hash drift, invalid UTF-8, and BOMs", async () => {
+  const fixture = await createFixture();
+  const sourcePath = path.join(fixture.frameworkRoot, "registry", "sources", "core.md");
+  try {
+    await writeFile(sourcePath, "changed without registry rebuild\n");
+    await assert.rejects(initProject(fixture.projectRoot, fixture.frameworkRoot), /source hash mismatch/u);
+    await writeFile(sourcePath, Uint8Array.from([0xff]));
+    await assert.rejects(initProject(fixture.projectRoot, fixture.frameworkRoot), /valid UTF-8/u);
+    await writeFile(sourcePath, Uint8Array.from([0xef, 0xbb, 0xbf, 0x23, 0x0a]));
+    await assert.rejects(initProject(fixture.projectRoot, fixture.frameworkRoot), /without a byte-order mark/u);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
   assert.deepEqual(parseContextInstallerArguments(["init", "--cwd", "fixture"], "D:/repo"), {
-    command: "init",
-    projectRoot: path.resolve("D:/repo", "fixture"),
-    component: null,
+    command: "init", projectRoot: path.resolve("D:/repo", "fixture"), component: null, output: "text",
   });
-  assert.deepEqual(parseContextInstallerArguments(["add", "tools"], "D:/repo"), {
-    command: "add",
-    projectRoot: "D:/repo",
-    component: "tools",
+  assert.deepEqual(parseContextInstallerArguments(["update", "frontend"], "D:/repo"), {
+    command: "update", projectRoot: "D:/repo", component: "frontend", output: "text",
+  });
+  assert.deepEqual(parseContextInstallerArguments(["doctor", "--json"], "D:/repo"), {
+    command: "doctor", projectRoot: "D:/repo", component: null, output: "json",
   });
   assert.throws(() => parseContextInstallerArguments(["add"], "D:/repo"), /requires a component/u);
+  assert.throws(() => parseContextInstallerArguments(["init", "--json"], "D:/repo"), /read-only/u);
   assert.match(formatContextResult({
-    command: "diff",
+    command: "inspect",
     projectRoot: "D:/repo",
-    current: true,
-    plan: { status: "ready", assessments: [], writes: [], nextLock: {
-      schemaVersion: 1,
-      registryRevision: "0.1.0",
-      components: [],
-      artifacts: [],
-    }, lockChanged: false },
-  }), /current: no installation differences/u);
+    initialized: false,
+    hasAgents: false,
+    hasCodexConfig: false,
+    hasCodexHooks: false,
+    registryRevision: "0.2.0",
+    selectedComponents: [],
+  }), /initialized: no/u);
 });
 
 async function createFixture(): Promise<Fixture> {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-installer-"));
   const frameworkRoot = path.join(root, "framework");
   const projectRoot = path.join(root, "project");
-  await mkdir(path.join(frameworkRoot, "registry", "components", "core"), { recursive: true });
-  await mkdir(path.join(frameworkRoot, "registry", "components", "tools"), { recursive: true });
+  await mkdir(path.join(frameworkRoot, "registry", "sources"), { recursive: true });
+  await mkdir(path.join(frameworkRoot, "registry", "decisions"), { recursive: true });
   await mkdir(projectRoot, { recursive: true });
-  await writeFile(path.join(frameworkRoot, "registry", "components", "core", "AGENTS.md"), "# Core rules\n");
-  await writeFile(path.join(frameworkRoot, "registry", "components", "tools", "tool.md"), "tool bytes\n");
-  await writeRegistry(frameworkRoot, "0.1.0");
-  return {
-    frameworkRoot,
-    projectRoot,
-    remove: async () => await rm(root, { recursive: true, force: true }),
-  };
+  await writeFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "# Core rules\n");
+  await writeFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "tool bytes\n");
+  await writeFile(path.join(frameworkRoot, "registry", "decisions", "0.2.0.md"), "# Decision\n");
+  await writeRegistry(frameworkRoot, "0.2.0");
+  return { frameworkRoot, projectRoot, remove: async () => await rm(root, { recursive: true, force: true }) };
 }
 
-async function writeRegistry(frameworkRoot: string, revision: string): Promise<void> {
-  await writeFile(
-    path.join(frameworkRoot, "registry", "registry.json"),
-    `${JSON.stringify({
-      schemaVersion: 1,
-      revision,
-      components: [
-        {
-          name: "core",
-          dependencies: [],
-          artifacts: [{
-            ownership: "managed-section",
-            sourcePath: "registry/components/core/AGENTS.md",
-            targetPath: "AGENTS.md",
-            sectionId: "core",
-          }],
-        },
-        {
-          name: "tools",
-          dependencies: ["core"],
-          artifacts: [{
-            ownership: "managed-file",
-            sourcePath: "registry/components/tools/tool.md",
-            targetPath: ".codex/tool.md",
-          }],
-        },
-      ],
-    }, null, 2)}\n`,
-  );
+async function writeCore(frameworkRoot: string, content: string, revision: string): Promise<void> {
+  await writeFile(path.join(frameworkRoot, "registry", "sources", "core.md"), content);
+  await writeRegistry(frameworkRoot, revision);
+}
+
+async function writeToolsTarget(frameworkRoot: string, targetPath: string): Promise<void> {
+  await writeRegistry(frameworkRoot, "0.2.0", targetPath);
+}
+
+async function writeRegistry(frameworkRoot: string, revision: string, toolsTarget = ".codex/tool.md"): Promise<void> {
+  const core = await readFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "utf8");
+  const tool = await readFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "utf8");
+  const registry = {
+    schemaVersion: 2,
+    revision,
+    decisionPath: "registry/decisions/0.2.0.md",
+    components: [
+      {
+        name: "core", dependencies: [], capabilities: [], licenses: [{ kind: "project" }],
+        artifacts: [{
+          operation: "text-section", sourcePath: "registry/sources/core.md", sourceSha256: sha(core),
+          targetPath: "AGENTS.md", sectionId: "core", markerStyle: "markdown",
+        }],
+      },
+      {
+        name: "tools", dependencies: ["core"],
+        capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
+        licenses: [{ kind: "project" }],
+        artifacts: [{
+          operation: "file", sourcePath: "registry/sources/tool.md", sourceSha256: sha(tool),
+          targetPath: toolsTarget, mediaType: "text/markdown",
+        }],
+      },
+    ],
+  };
+  await writeFile(path.join(frameworkRoot, "registry", "registry.json"), `${JSON.stringify(registry, null, 2)}\n`);
+}
+
+function sha(value: string): string {
+  return createHash("sha256").update(value, "utf8").digest("hex");
 }
 
 async function snapshotProject(projectRoot: string): Promise<readonly string[]> {

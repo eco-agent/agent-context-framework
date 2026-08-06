@@ -1,0 +1,402 @@
+import { createHash } from "node:crypto";
+
+import type { ContextRegistryArtifact } from "@agent-context/repo-policy";
+import { parse as parseToml } from "smol-toml";
+
+export type ProjectedScope =
+  | { readonly state: "absent" }
+  | { readonly state: "present"; readonly sha256: string; readonly display: string }
+  | { readonly state: "malformed"; readonly detail: string };
+
+export interface ArtifactProjection {
+  readonly sourceSha256: string;
+  readonly sourceDisplay: string;
+  read(target: string | null): ProjectedScope;
+  install(target: string | null): string;
+  replace(target: string): string;
+  remove(target: string, preserveContent: boolean): string | null;
+}
+
+interface SectionLocation {
+  readonly blockStart: number;
+  readonly innerStart: number;
+  readonly innerEnd: number;
+  readonly blockEnd: number;
+}
+
+export function createArtifactProjection(
+  artifact: ContextRegistryArtifact,
+  source: string,
+): ArtifactProjection {
+  switch (artifact.operation) {
+    case "file":
+    case "runtime-workspace":
+      return wholeFileProjection(source);
+    case "text-section":
+      return textSectionProjection(source, markerPair(artifact.sectionId, artifact.markerStyle));
+    case "json-members":
+      return jsonMembersProjection(source, artifact.ownedPointers);
+    case "toml-tables":
+      return tomlTablesProjection(source, artifact.ownedTables, artifact.sectionId);
+  }
+}
+
+function wholeFileProjection(source: string): ArtifactProjection {
+  return {
+    sourceSha256: contentHash(source),
+    sourceDisplay: source,
+    read: (target) => target === null
+      ? { state: "absent" }
+      : { state: "present", sha256: contentHash(target), display: target },
+    install: () => source,
+    replace: () => source,
+    remove: (target, preserveContent) => preserveContent ? target : null,
+  };
+}
+
+function textSectionProjection(
+  source: string,
+  markers: { readonly start: string; readonly end: string },
+): ArtifactProjection {
+  if (!source.endsWith("\n")) throw new Error("Text-section source must end with a newline.");
+  return {
+    sourceSha256: contentHash(source),
+    sourceDisplay: source,
+    read: (target) => readMarkedScope(target, markers, (inner) => inner),
+    install: (target) => appendMarkedSection(target ?? "", source, markers),
+    replace: (target) => replaceMarkedSection(target, source, markers),
+    remove: (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+  };
+}
+
+function jsonMembersProjection(source: string, pointers: readonly string[]): ArtifactProjection {
+  const sourceValue = parseJsonObject(source, "JSON member source");
+  const sourceScope = projectJsonPointers(sourceValue, pointers, true);
+  const sourceDisplay = stableJson(sourceScope);
+  return {
+    sourceSha256: contentHash(sourceDisplay),
+    sourceDisplay,
+    read: (target) => {
+      if (target === null) return { state: "absent" };
+      const targetValue = parseJsonObject(target, "JSON member target");
+      const presence = pointers.map((pointer) => hasJsonPointer(targetValue, pointer));
+      if (presence.every((present) => !present)) return { state: "absent" };
+      if (presence.some((present) => !present)) {
+        return { state: "malformed", detail: "JSON target contains only part of the owned member set." };
+      }
+      const display = stableJson(projectJsonPointers(targetValue, pointers, true));
+      return { state: "present", sha256: contentHash(display), display };
+    },
+    install: (target) => {
+      const targetValue = target === null ? {} : parseJsonObject(target, "JSON member target");
+      for (const pointer of pointers) {
+        if (hasJsonPointer(targetValue, pointer)) {
+          throw new Error(`JSON target already contains owned pointer ${pointer}.`);
+        }
+        setJsonPointer(targetValue, pointer, getJsonPointer(sourceValue, pointer));
+      }
+      return stableJson(targetValue);
+    },
+    replace: (target) => {
+      const targetValue = parseJsonObject(target, "JSON member target");
+      for (const pointer of pointers) {
+        setJsonPointer(targetValue, pointer, getJsonPointer(sourceValue, pointer));
+      }
+      return stableJson(targetValue);
+    },
+    remove: (target, preserveContent) => {
+      if (preserveContent) return target;
+      const targetValue = parseJsonObject(target, "JSON member target");
+      for (const pointer of [...pointers].sort((left, right) => right.length - left.length)) {
+        deleteJsonPointer(targetValue, pointer);
+      }
+      return stableJson(targetValue);
+    },
+  };
+}
+
+function tomlTablesProjection(
+  source: string,
+  tablePaths: readonly string[],
+  sectionId: string,
+): ArtifactProjection {
+  if (!source.endsWith("\n")) throw new Error("TOML table source must end with a newline.");
+  const sourceValue = parseTomlObject(source, "TOML table source");
+  const sourceScope = projectObjectPaths(sourceValue, tablePaths, true);
+  const sourceDisplay = stableJson(sourceScope);
+  const markers = markerPair(sectionId, "toml");
+  return {
+    sourceSha256: contentHash(sourceDisplay),
+    sourceDisplay,
+    read: (target) => readMarkedScope(target, markers, (inner) => {
+      const value = parseTomlObject(inner, "TOML owned section");
+      return stableJson(projectObjectPaths(value, tablePaths, true));
+    }),
+    install: (target) => {
+      const targetValue = target === null || target.trim().length === 0
+        ? {}
+        : parseTomlObject(target, "TOML target");
+      for (const tablePath of tablePaths) {
+        if (hasObjectPath(targetValue, tablePath)) {
+          throw new Error(`TOML target already contains owned table ${tablePath}.`);
+        }
+      }
+      return appendMarkedSection(target ?? "", source, markers);
+    },
+    replace: (target) => replaceMarkedSection(target, source, markers),
+    remove: (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+  };
+}
+
+function readMarkedScope(
+  target: string | null,
+  markers: { readonly start: string; readonly end: string },
+  normalize: (inner: string) => string,
+): ProjectedScope {
+  if (target === null) return { state: "absent" };
+  const section = locateMarkedSection(target, markers);
+  if (section === null) {
+    return target.includes(markers.start) || target.includes(markers.end)
+      ? { state: "malformed", detail: "Owned section markers are duplicated, missing, or reversed." }
+      : { state: "absent" };
+  }
+  const display = normalize(target.slice(section.innerStart, section.innerEnd));
+  return { state: "present", sha256: contentHash(display), display };
+}
+
+function appendMarkedSection(
+  target: string,
+  source: string,
+  markers: { readonly start: string; readonly end: string },
+): string {
+  const separator = target.length === 0
+    ? ""
+    : target.endsWith("\n\n")
+      ? ""
+      : target.endsWith("\n")
+        ? "\n"
+        : "\n\n";
+  return `${target}${separator}${markers.start}\n${source}${markers.end}\n`;
+}
+
+function replaceMarkedSection(
+  target: string,
+  source: string,
+  markers: { readonly start: string; readonly end: string },
+): string {
+  const section = locateMarkedSection(target, markers);
+  if (!section) throw new Error("Cannot replace a missing or malformed owned section.");
+  return `${target.slice(0, section.innerStart)}${source}${target.slice(section.innerEnd)}`;
+}
+
+function removeMarkedSection(
+  target: string,
+  preserveContent: boolean,
+  markers: { readonly start: string; readonly end: string },
+): string | null {
+  const section = locateMarkedSection(target, markers);
+  if (!section) throw new Error("Cannot remove a missing or malformed owned section.");
+  const replacement = preserveContent ? target.slice(section.innerStart, section.innerEnd) : "";
+  const removalStart = preserveContent ? section.innerStart - `${markers.start}\n`.length : section.blockStart;
+  const result = `${target.slice(0, removalStart)}${replacement}${target.slice(section.blockEnd)}`;
+  const normalized = result.replace(/^\n+/u, "").replace(/\n{3,}/gu, "\n\n");
+  return normalized.length === 0 ? null : normalized;
+}
+
+function locateMarkedSection(
+  target: string,
+  markers: { readonly start: string; readonly end: string },
+): SectionLocation | null {
+  const startToken = `${markers.start}\n`;
+  const firstStart = target.indexOf(startToken);
+  if (firstStart < 0 || target.indexOf(startToken, firstStart + startToken.length) >= 0) return null;
+  const innerStart = firstStart + startToken.length;
+  const firstEnd = target.indexOf(markers.end, innerStart);
+  if (firstEnd < 0 || target.indexOf(markers.end, firstEnd + markers.end.length) >= 0) return null;
+  if (target.indexOf(markers.end) < firstStart) return null;
+  const blockStart = firstStart >= 2 && target.slice(firstStart - 2, firstStart) === "\n\n"
+    ? firstStart - 1
+    : firstStart;
+  const afterEnd = firstEnd + markers.end.length;
+  const blockEnd = target[afterEnd] === "\n" ? afterEnd + 1 : afterEnd;
+  return { blockStart, innerStart, innerEnd: firstEnd, blockEnd };
+}
+
+function markerPair(
+  sectionId: string,
+  style: "markdown" | "toml" | "javascript",
+): { readonly start: string; readonly end: string } {
+  switch (style) {
+    case "markdown":
+      return {
+        start: `<!-- agent-context:${sectionId}:start -->`,
+        end: `<!-- agent-context:${sectionId}:end -->`,
+      };
+    case "toml":
+      return {
+        start: `# agent-context:${sectionId}:start`,
+        end: `# agent-context:${sectionId}:end`,
+      };
+    case "javascript":
+      return {
+        start: `// agent-context:${sectionId}:start`,
+        end: `// agent-context:${sectionId}:end`,
+      };
+  }
+}
+
+function parseJsonObject(source: string, label: string): Record<string, unknown> {
+  let value: unknown;
+  try {
+    value = JSON.parse(source) as unknown;
+  } catch (error) {
+    throw new Error(`${label} must contain valid JSON.`, { cause: error });
+  }
+  if (!isObject(value)) throw new Error(`${label} must be an object.`);
+  return value;
+}
+
+function parseTomlObject(source: string, label: string): Record<string, unknown> {
+  try {
+    const value: unknown = parseToml(source);
+    if (!isObject(value)) throw new Error(`${label} must be an object.`);
+    return value;
+  } catch (error) {
+    throw new Error(`${label} must contain valid TOML.`, { cause: error });
+  }
+}
+
+function projectJsonPointers(
+  value: Record<string, unknown>,
+  pointers: readonly string[],
+  requirePresent: boolean,
+): Record<string, unknown> {
+  const projection: Record<string, unknown> = {};
+  for (const pointer of pointers) {
+    if (!hasJsonPointer(value, pointer)) {
+      if (requirePresent) throw new Error(`Source does not contain owned JSON pointer ${pointer}.`);
+      continue;
+    }
+    projection[pointer] = getJsonPointer(value, pointer);
+  }
+  return projection;
+}
+
+function projectObjectPaths(
+  value: Record<string, unknown>,
+  paths: readonly string[],
+  requirePresent: boolean,
+): Record<string, unknown> {
+  const projection: Record<string, unknown> = {};
+  for (const objectPath of paths) {
+    if (!hasObjectPath(value, objectPath)) {
+      if (requirePresent) throw new Error(`Source does not contain owned TOML table ${objectPath}.`);
+      continue;
+    }
+    projection[objectPath] = getObjectPath(value, objectPath);
+  }
+  return projection;
+}
+
+function hasJsonPointer(value: Record<string, unknown>, pointer: string): boolean {
+  const segments = jsonPointerSegments(pointer);
+  let current: unknown = value;
+  for (const segment of segments) {
+    if (!isObject(current) || !Object.hasOwn(current, segment)) return false;
+    current = current[segment];
+  }
+  return true;
+}
+
+function getJsonPointer(value: Record<string, unknown>, pointer: string): unknown {
+  const segments = jsonPointerSegments(pointer);
+  let current: unknown = value;
+  for (const segment of segments) {
+    if (!isObject(current) || !Object.hasOwn(current, segment)) {
+      throw new Error(`JSON pointer is missing: ${pointer}.`);
+    }
+    current = current[segment];
+  }
+  return cloneJson(current);
+}
+
+function setJsonPointer(value: Record<string, unknown>, pointer: string, nextValue: unknown): void {
+  const segments = jsonPointerSegments(pointer);
+  const leaf = segments.at(-1);
+  if (!leaf) throw new Error("Owned JSON pointer cannot address the root.");
+  let current = value;
+  for (const segment of segments.slice(0, -1)) {
+    const child = current[segment];
+    if (child === undefined) {
+      const created: Record<string, unknown> = {};
+      current[segment] = created;
+      current = created;
+    } else if (isObject(child)) {
+      current = child;
+    } else {
+      throw new Error(`JSON pointer parent is not an object: ${pointer}.`);
+    }
+  }
+  current[leaf] = cloneJson(nextValue);
+}
+
+function deleteJsonPointer(value: Record<string, unknown>, pointer: string): void {
+  const segments = jsonPointerSegments(pointer);
+  const leaf = segments.at(-1);
+  if (!leaf) return;
+  let current: Record<string, unknown> = value;
+  for (const segment of segments.slice(0, -1)) {
+    const child = current[segment];
+    if (!isObject(child)) return;
+    current = child;
+  }
+  delete current[leaf];
+}
+
+function jsonPointerSegments(pointer: string): readonly string[] {
+  return pointer.slice(1).split("/").map((segment) => segment.replaceAll("~1", "/").replaceAll("~0", "~"));
+}
+
+function hasObjectPath(value: Record<string, unknown>, objectPath: string): boolean {
+  try {
+    getObjectPath(value, objectPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getObjectPath(value: Record<string, unknown>, objectPath: string): unknown {
+  let current: unknown = value;
+  for (const segment of objectPath.split(".")) {
+    if (!isObject(current) || !Object.hasOwn(current, segment)) {
+      throw new Error(`Object path is missing: ${objectPath}.`);
+    }
+    current = current[segment];
+  }
+  return cloneJson(current);
+}
+
+function cloneJson(value: unknown): unknown {
+  return JSON.parse(JSON.stringify(value)) as unknown;
+}
+
+function stableJson(value: unknown): string {
+  return `${JSON.stringify(sortJson(value), null, 2)}\n`;
+}
+
+function sortJson(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortJson);
+  if (!isObject(value)) return value;
+  return Object.fromEntries(
+    Object.keys(value).sort().map((key) => [key, sortJson(value[key])]),
+  );
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function contentHash(content: string): string {
+  return createHash("sha256").update(content, "utf8").digest("hex");
+}

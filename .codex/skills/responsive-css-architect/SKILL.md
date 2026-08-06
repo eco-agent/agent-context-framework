@@ -265,7 +265,7 @@ For Tailwind-heavy work, delegate documentation lookup to one bounded native sub
 3. Pass the generated prompt unchanged to a fresh native subagent. Do not launch `codex exec` or another CLI agent.
 4. Continue local inspection while it runs, then treat its result as documentation context rather than design authority.
 
-Do not assume `scripts/` exists at the project root. If native subagents are unavailable, read `references/tailwind-v4-operating-model.md` and the relevant cached metadata under `references/tailwind-docs/cache/meta/`, then report the fallback.
+Do not assume `scripts/` exists at the project root. If native subagents are unavailable, follow `references/tailwind-v4-operating-model.md`; synchronize the excluded generated cache from its retained manifest when missing, read only the relevant metadata, then report the fallback.
 
 When a project uses Tailwind v4, prefer CSS-first configuration over JavaScript styling abstractions.
 

@@ -91,6 +91,9 @@ itself owns only the `AGENTS.md` frontend section and dependency selection.
 - Clean Control Tower baseline: `097619af6334f08b989a156439ea2ca62d5c8b3c`.
 - V1 supports `core`, `init`, `add`, and `diff`; v2 replacement is pending.
 - The framework and clean fixture were clean before this slice.
+- The responsive CSS fallback previously required generated cache paths that
+  Wave 1 excludes. The permitted narrow repair now rebuilds that cache from
+  the retained manifest and synchronization script before reading it.
 
 ## Topology
 
@@ -169,4 +172,3 @@ project-owned AGENTS section and skill source
 - Framework full typecheck/tests/check pass.
 - Clean Control Tower typecheck/tests/check pass after v2 core and frontend
   installation, and a repeated diff is stable.
-

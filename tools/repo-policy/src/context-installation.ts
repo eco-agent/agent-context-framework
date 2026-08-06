@@ -1,60 +1,101 @@
-export const CONTEXT_INSTALLATION_SCHEMA_VERSION = 1 as const;
+export const CONTEXT_INSTALLATION_SCHEMA_VERSION = 2 as const;
 export const CONTEXT_ADAPTER = "codex" as const;
 
-export interface ContextRegistryV1 {
+export interface ContextRegistryV2 {
   readonly schemaVersion: typeof CONTEXT_INSTALLATION_SCHEMA_VERSION;
   readonly revision: string;
+  readonly decisionPath: string;
   readonly components: readonly ContextRegistryComponent[];
 }
 
 export interface ContextRegistryComponent {
   readonly name: string;
   readonly dependencies: readonly string[];
+  readonly capabilities: readonly ContextCapability[];
+  readonly licenses: readonly ContextLicense[];
   readonly artifacts: readonly ContextRegistryArtifact[];
 }
 
-export type ContextRegistryArtifact = ContextManagedFile | ContextManagedSection;
+export interface ContextCapability {
+  readonly kind: "codex-skill" | "runtime";
+  readonly name: string;
+  readonly requirement: "required" | "recommended";
+}
 
-export interface ContextManagedFile {
-  readonly ownership: "managed-file";
+export type ContextLicense =
+  | { readonly kind: "project" }
+  | {
+      readonly kind: "third-party";
+      readonly spdx: string;
+      readonly source: string;
+      readonly revision: string;
+      readonly noticePath: string;
+    };
+
+interface ContextArtifactBase {
   readonly sourcePath: string;
+  readonly sourceSha256: string;
   readonly targetPath: string;
 }
 
-export interface ContextManagedSection {
-  readonly ownership: "managed-section";
-  readonly sourcePath: string;
-  readonly targetPath: string;
+export interface ContextFileArtifact extends ContextArtifactBase {
+  readonly operation: "file";
+  readonly mediaType: string;
+}
+
+export interface ContextTextSectionArtifact extends ContextArtifactBase {
+  readonly operation: "text-section";
+  readonly sectionId: string;
+  readonly markerStyle: "markdown" | "toml" | "javascript";
+}
+
+export interface ContextJsonMembersArtifact extends ContextArtifactBase {
+  readonly operation: "json-members";
+  readonly ownedPointers: readonly string[];
+}
+
+export interface ContextTomlTablesArtifact extends ContextArtifactBase {
+  readonly operation: "toml-tables";
+  readonly ownedTables: readonly string[];
   readonly sectionId: string;
 }
 
-export interface ContextProjectConfigV1 {
+export interface ContextRuntimeWorkspaceArtifact extends ContextArtifactBase {
+  readonly operation: "runtime-workspace";
+  readonly workspaceId: string;
+  readonly mediaType: string;
+}
+
+export type ContextRegistryArtifact =
+  | ContextFileArtifact
+  | ContextTextSectionArtifact
+  | ContextJsonMembersArtifact
+  | ContextTomlTablesArtifact
+  | ContextRuntimeWorkspaceArtifact;
+
+export interface ContextProjectConfigV2 {
   readonly schemaVersion: typeof CONTEXT_INSTALLATION_SCHEMA_VERSION;
   readonly adapter: typeof CONTEXT_ADAPTER;
   readonly components: readonly string[];
 }
 
-export interface ContextInstallationLockV1 {
+export interface ContextInstallationLockV2 {
   readonly schemaVersion: typeof CONTEXT_INSTALLATION_SCHEMA_VERSION;
   readonly registryRevision: string;
   readonly components: readonly string[];
   readonly artifacts: readonly ContextLockedArtifact[];
 }
 
-export type ContextLockedArtifact = ContextLockedFile | ContextLockedSection;
+export type ContextLockedArtifact = ContextRegistryArtifact & {
+  readonly component: string;
+  readonly installedSha256: string;
+};
 
-export interface ContextLockedFile extends ContextManagedFile {
-  readonly sha256: string;
-}
-
-export interface ContextLockedSection extends ContextManagedSection {
-  readonly sha256: string;
-}
-
-export function decodeContextRegistry(value: unknown): ContextRegistryV1 {
+export function decodeContextRegistry(value: unknown): ContextRegistryV2 {
   const record = strictRecord(value, "Context registry", [
     "schemaVersion",
     "revision",
+    "decisionPath",
     "components",
   ]);
   requireSchemaVersion(record.schemaVersion, "Context registry");
@@ -63,11 +104,12 @@ export function decodeContextRegistry(value: unknown): ContextRegistryV1 {
   return {
     schemaVersion: CONTEXT_INSTALLATION_SCHEMA_VERSION,
     revision: requiredRevision(record, "revision"),
+    decisionPath: portableRelativePath(record, "decisionPath"),
     components,
   };
 }
 
-export function decodeContextProjectConfig(value: unknown): ContextProjectConfigV1 {
+export function decodeContextProjectConfig(value: unknown): ContextProjectConfigV2 {
   const record = strictRecord(value, "Context project config", [
     "schemaVersion",
     "adapter",
@@ -93,7 +135,7 @@ export function decodeContextProjectConfig(value: unknown): ContextProjectConfig
   };
 }
 
-export function decodeContextInstallationLock(value: unknown): ContextInstallationLockV1 {
+export function decodeContextInstallationLock(value: unknown): ContextInstallationLockV2 {
   const record = strictRecord(value, "Context installation lock", [
     "schemaVersion",
     "registryRevision",
@@ -122,7 +164,7 @@ export function decodeContextInstallationLock(value: unknown): ContextInstallati
 }
 
 export function resolveContextComponents(
-  registry: ContextRegistryV1,
+  registry: ContextRegistryV2,
   selectedNames: readonly string[],
 ): readonly ContextRegistryComponent[] {
   const byName = new Map(registry.components.map((component) => [component.name, component]));
@@ -159,15 +201,26 @@ export function resolveContextComponents(
 }
 
 export function artifactIdentity(artifact: ContextRegistryArtifact | ContextLockedArtifact): string {
-  return artifact.ownership === "managed-file"
-    ? `file:${artifact.targetPath}`
-    : `section:${artifact.targetPath}:${artifact.sectionId}`;
+  switch (artifact.operation) {
+    case "file":
+      return `file:${artifact.targetPath}`;
+    case "text-section":
+      return `text-section:${artifact.targetPath}:${artifact.sectionId}`;
+    case "json-members":
+      return `json-members:${artifact.targetPath}:${artifact.ownedPointers.join(",")}`;
+    case "toml-tables":
+      return `toml-tables:${artifact.targetPath}:${artifact.ownedTables.join(",")}`;
+    case "runtime-workspace":
+      return `runtime-workspace:${artifact.workspaceId}:${artifact.targetPath}`;
+  }
 }
 
 function decodeComponent(value: unknown): ContextRegistryComponent {
   const record = strictRecord(value, "Context registry component", [
     "name",
     "dependencies",
+    "capabilities",
+    "licenses",
     "artifacts",
   ]);
   const dependencies = decodeArray(
@@ -176,84 +229,153 @@ function decodeComponent(value: unknown): ContextRegistryComponent {
     (dependency) => componentName(dependency, "Context registry dependency"),
   );
   requireUnique(dependencies, "Context registry component dependencies");
+  const capabilities = decodeArray(
+    record.capabilities,
+    "Context registry component capabilities",
+    decodeCapability,
+  );
+  requireUnique(
+    capabilities.map((capability) => `${capability.kind}:${capability.name}`),
+    "Context registry component capabilities",
+  );
+  const licenses = decodeArray(
+    record.licenses,
+    "Context registry component licenses",
+    decodeLicense,
+  );
+  if (licenses.length === 0) {
+    throw new Error("Context registry component licenses must not be empty.");
+  }
   const artifacts = decodeArray(
     record.artifacts,
     "Context registry component artifacts",
     decodeRegistryArtifact,
   );
-  if (artifacts.length === 0) {
-    throw new Error("Context registry component artifacts must not be empty.");
+  if (artifacts.length === 0 && dependencies.length === 0) {
+    throw new Error("Context registry component must declare artifacts or dependencies.");
   }
   requireUnique(artifacts.map(artifactIdentity), "Context registry component artifact identities");
   return {
     name: componentName(record.name, "Context registry component name"),
     dependencies,
+    capabilities,
+    licenses,
     artifacts,
   };
 }
 
-function decodeRegistryArtifact(value: unknown): ContextRegistryArtifact {
-  const ownership = discriminant(value, "Context registry artifact");
-  if (ownership === "managed-file") {
-    const record = strictRecord(value, "Managed file", ["ownership", "sourcePath", "targetPath"]);
-    return {
-      ownership,
-      sourcePath: portableRelativePath(record, "sourcePath"),
-      targetPath: portableRelativePath(record, "targetPath"),
-    };
+function decodeCapability(value: unknown): ContextCapability {
+  const record = strictRecord(value, "Context capability", ["kind", "name", "requirement"]);
+  if (record.kind !== "codex-skill" && record.kind !== "runtime") {
+    throw new Error("Context capability kind must be codex-skill or runtime.");
   }
-  const record = strictRecord(value, "Managed section", [
-    "ownership",
-    "sourcePath",
-    "targetPath",
-    "sectionId",
+  if (record.requirement !== "required" && record.requirement !== "recommended") {
+    throw new Error("Context capability requirement must be required or recommended.");
+  }
+  return {
+    kind: record.kind,
+    name: componentName(record.name, "Context capability name"),
+    requirement: record.requirement,
+  };
+}
+
+function decodeLicense(value: unknown): ContextLicense {
+  if (!isRecord(value)) throw new Error("Context license must be an object.");
+  if (value.kind === "project") {
+    strictRecord(value, "Project context license", ["kind"]);
+    return { kind: "project" };
+  }
+  if (value.kind !== "third-party") {
+    throw new Error("Context license kind must be project or third-party.");
+  }
+  const record = strictRecord(value, "Third-party context license", [
+    "kind",
+    "spdx",
+    "source",
+    "revision",
+    "noticePath",
   ]);
   return {
-    ownership,
-    sourcePath: portableRelativePath(record, "sourcePath"),
-    targetPath: portableRelativePath(record, "targetPath"),
-    sectionId: sectionId(record.sectionId),
+    kind: "third-party",
+    spdx: requiredString(record, "spdx"),
+    source: requiredString(record, "source"),
+    revision: requiredRevision(record, "revision"),
+    noticePath: portableRelativePath(record, "noticePath"),
   };
+}
+
+function decodeRegistryArtifact(value: unknown): ContextRegistryArtifact {
+  if (!isRecord(value)) throw new Error("Context registry artifact must be an object.");
+  return decodeArtifact(value, "Context registry artifact");
 }
 
 function decodeLockedArtifact(value: unknown): ContextLockedArtifact {
-  const ownership = discriminant(value, "Context installation lock artifact");
-  if (ownership === "managed-file") {
-    const record = strictRecord(value, "Locked managed file", [
-      "ownership",
-      "sourcePath",
-      "targetPath",
-      "sha256",
-    ]);
-    return {
-      ownership,
-      sourcePath: portableRelativePath(record, "sourcePath"),
-      targetPath: portableRelativePath(record, "targetPath"),
-      sha256: sha256(record, "sha256"),
-    };
-  }
-  const record = strictRecord(value, "Locked managed section", [
-    "ownership",
-    "sourcePath",
-    "targetPath",
-    "sectionId",
-    "sha256",
-  ]);
+  if (!isRecord(value)) throw new Error("Context installation lock artifact must be an object.");
+  const component = componentName(value.component, "Context installation lock artifact component");
+  const installedSha256 = sha256(value, "installedSha256");
+  const withoutComponent = Object.fromEntries(
+    Object.entries(value).filter(([key]) => key !== "component" && key !== "installedSha256"),
+  );
   return {
-    ownership,
-    sourcePath: portableRelativePath(record, "sourcePath"),
-    targetPath: portableRelativePath(record, "targetPath"),
-    sectionId: sectionId(record.sectionId),
-    sha256: sha256(record, "sha256"),
+    ...decodeArtifact(withoutComponent, "Context installation lock artifact"),
+    component,
+    installedSha256,
   };
 }
 
-function discriminant(value: unknown, label: string): ContextRegistryArtifact["ownership"] {
-  if (!isRecord(value)) throw new Error(`${label} must be an object.`);
-  if (value.ownership !== "managed-file" && value.ownership !== "managed-section") {
-    throw new Error(`${label} ownership must be managed-file or managed-section.`);
+function decodeArtifact(record: Record<string, unknown>, label: string): ContextRegistryArtifact {
+  const operation = record.operation;
+  const baseKeys = ["operation", "sourcePath", "sourceSha256", "targetPath"] as const;
+  const base = (): ContextArtifactBase => ({
+    sourcePath: portableRelativePath(record, "sourcePath"),
+    sourceSha256: sha256(record, "sourceSha256"),
+    targetPath: portableRelativePath(record, "targetPath"),
+  });
+  switch (operation) {
+    case "file": {
+      strictRecord(record, label, [...baseKeys, "mediaType"]);
+      return { operation, ...base(), mediaType: requiredString(record, "mediaType") };
+    }
+    case "text-section": {
+      strictRecord(record, label, [...baseKeys, "sectionId", "markerStyle"]);
+      const markerStyle = record.markerStyle;
+      if (markerStyle !== "markdown" && markerStyle !== "toml" && markerStyle !== "javascript") {
+        throw new Error("Text section markerStyle must be markdown, toml, or javascript.");
+      }
+      return { operation, ...base(), sectionId: sectionId(record.sectionId), markerStyle };
+    }
+    case "json-members": {
+      strictRecord(record, label, [...baseKeys, "ownedPointers"]);
+      const ownedPointers = decodeArray(
+        record.ownedPointers,
+        "JSON member ownedPointers",
+        jsonPointer,
+      );
+      if (ownedPointers.length === 0) throw new Error("JSON member ownedPointers must not be empty.");
+      requireSortedUnique(ownedPointers, "JSON member ownedPointers");
+      return { operation, ...base(), ownedPointers };
+    }
+    case "toml-tables": {
+      strictRecord(record, label, [...baseKeys, "ownedTables", "sectionId"]);
+      const ownedTables = decodeArray(record.ownedTables, "TOML ownedTables", tomlTablePath);
+      if (ownedTables.length === 0) throw new Error("TOML ownedTables must not be empty.");
+      requireSortedUnique(ownedTables, "TOML ownedTables");
+      return { operation, ...base(), ownedTables, sectionId: sectionId(record.sectionId) };
+    }
+    case "runtime-workspace": {
+      strictRecord(record, label, [...baseKeys, "workspaceId", "mediaType"]);
+      return {
+        operation,
+        ...base(),
+        workspaceId: componentName(record.workspaceId, "Runtime workspaceId"),
+        mediaType: requiredString(record, "mediaType"),
+      };
+    }
+    default:
+      throw new Error(
+        "Context registry artifact operation must be file, text-section, json-members, toml-tables, or runtime-workspace.",
+      );
   }
-  return value.ownership;
 }
 
 function requireSchemaVersion(value: unknown, label: string): void {
@@ -270,8 +392,19 @@ function componentName(value: unknown, label: string): string {
 }
 
 function sectionId(value: unknown): string {
-  if (typeof value !== "string" || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/u.test(value)) {
-    throw new Error("Managed section sectionId must be a lowercase kebab-case identifier.");
+  return componentName(value, "Context sectionId");
+}
+
+function jsonPointer(value: unknown): string {
+  if (typeof value !== "string" || !/^\/(?:[^~/]|~[01])+(?:\/(?:[^~/]|~[01])+)*$/u.test(value)) {
+    throw new Error("JSON member pointer must be a non-root RFC 6901 pointer.");
+  }
+  return value;
+}
+
+function tomlTablePath(value: unknown): string {
+  if (typeof value !== "string" || !/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/u.test(value)) {
+    throw new Error("TOML table path must be a dotted bare-key path.");
   }
   return value;
 }
@@ -343,4 +476,11 @@ function decodeArray<T>(
 function requireUnique(values: readonly string[], label: string): void {
   const duplicate = values.find((value, index) => values.indexOf(value) !== index);
   if (duplicate) throw new Error(`${label} contains duplicate ${duplicate}.`);
+}
+
+function requireSortedUnique(values: readonly string[], label: string): void {
+  requireUnique(values, label);
+  if (values.some((value, index) => index > 0 && value < (values[index - 1] ?? ""))) {
+    throw new Error(`${label} must be sorted.`);
+  }
 }

@@ -1,13 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  lstat,
-  mkdir,
-  readFile,
-  realpath,
-  rename,
-  unlink,
-  writeFile,
-} from "node:fs/promises";
+import { lstat, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 
 import {
@@ -18,13 +10,26 @@ import {
   decodeContextProjectConfig,
   decodeContextRegistry,
   resolveContextComponents,
-  type ContextInstallationLockV1,
+  type ContextCapability,
+  type ContextInstallationLockV2,
   type ContextLockedArtifact,
-  type ContextProjectConfigV1,
+  type ContextProjectConfigV2,
   type ContextRegistryArtifact,
-  type ContextRegistryV1,
+  type ContextRegistryComponent,
+  type ContextRegistryV2,
 } from "@agent-context/repo-policy";
+import { createTwoFilesPatch } from "diff";
 
+import {
+  createArtifactProjection,
+  type ArtifactProjection,
+  type ProjectedScope,
+} from "./context-artifact-projection.js";
+import {
+  applyContextTransaction,
+  readContextTransaction,
+  type ContextMutation,
+} from "./context-transaction.js";
 import { exists } from "./workspace.js";
 
 export const CONTEXT_CONFIG_PATH = ".agent-context/config.json";
@@ -33,31 +38,33 @@ export const CONTEXT_REGISTRY_PATH = "registry/registry.json";
 export const DEFAULT_CONTEXT_COMPONENT = "core";
 
 export type ArtifactAssessmentStatus =
-  | "current"
-  | "missing"
-  | "update"
-  | "drift"
-  | "unmanaged-conflict"
-  | "malformed-section"
-  | "stale";
+  | "uninstalled"
+  | "unchanged"
+  | "locally-modified"
+  | "upstream-changed"
+  | "diverged"
+  | "untracked-conflict"
+  | "obsolete-unchanged"
+  | "obsolete-modified";
 
 export interface ArtifactAssessment {
   readonly identity: string;
+  readonly component: string;
   readonly targetPath: string;
+  readonly operation: ContextRegistryArtifact["operation"];
   readonly status: ArtifactAssessmentStatus;
+  readonly previousSourceSha256: string | null;
+  readonly currentSha256: string | null;
+  readonly nextSourceSha256: string | null;
+  readonly difference: string | null;
   readonly detail: string;
-}
-
-export interface PlannedContextWrite {
-  readonly targetPath: string;
-  readonly content: string;
 }
 
 export interface ReadyInstallationPlan {
   readonly status: "ready";
   readonly assessments: readonly ArtifactAssessment[];
-  readonly writes: readonly PlannedContextWrite[];
-  readonly nextLock: ContextInstallationLockV1;
+  readonly mutations: readonly ContextMutation[];
+  readonly nextLock: ContextInstallationLockV2;
   readonly lockChanged: boolean;
 }
 
@@ -70,9 +77,8 @@ export interface BlockedInstallationPlan {
 export type ContextInstallationPlan = ReadyInstallationPlan | BlockedInstallationPlan;
 
 export interface ContextOperationResult {
-  readonly command: "init" | "add";
+  readonly command: "init" | "add" | "update" | "remove";
   readonly projectRoot: string;
-  readonly configWriteRequired: boolean;
   readonly plan: ContextInstallationPlan;
   readonly writtenPaths: readonly string[];
 }
@@ -84,15 +90,37 @@ export interface ContextDiffResult {
   readonly current: boolean;
 }
 
-interface DesiredArtifact {
-  readonly artifact: ContextRegistryArtifact;
-  readonly source: string;
-  readonly sha256: string;
+export interface ContextInspection {
+  readonly command: "inspect";
+  readonly projectRoot: string;
+  readonly initialized: boolean;
+  readonly hasAgents: boolean;
+  readonly hasCodexConfig: boolean;
+  readonly hasCodexHooks: boolean;
+  readonly registryRevision: string;
+  readonly selectedComponents: readonly string[];
 }
 
-interface SectionLocation {
-  readonly innerStart: number;
-  readonly innerEnd: number;
+export interface ContextDoctorResult {
+  readonly command: "doctor";
+  readonly projectRoot: string;
+  readonly health: "healthy" | "attention";
+  readonly diagnostics: readonly string[];
+  readonly capabilities: readonly ContextCapability[];
+  readonly diff: ContextDiffResult | null;
+}
+
+type PlanningIntent =
+  | { readonly kind: "observe" }
+  | { readonly kind: "install" }
+  | { readonly kind: "update"; readonly components: ReadonlySet<string> }
+  | { readonly kind: "remove" };
+
+interface DesiredArtifact {
+  readonly component: string;
+  readonly artifact: ContextRegistryArtifact;
+  readonly source: string;
+  readonly projection: ArtifactProjection;
 }
 
 export async function initProject(
@@ -100,16 +128,15 @@ export async function initProject(
   frameworkRoot: string,
 ): Promise<ContextOperationResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
-  const config =
-    (await readOptionalConfig(resolvedProjectRoot)) ??
-    createContextProjectConfig([DEFAULT_CONTEXT_COMPONENT]);
-  const configWriteRequired = !(await exists(path.join(resolvedProjectRoot, CONTEXT_CONFIG_PATH)));
+  const existingConfig = await readOptionalConfig(resolvedProjectRoot);
+  const config = existingConfig ?? createContextProjectConfig([DEFAULT_CONTEXT_COMPONENT]);
   return await applyDesiredState(
     "init",
     resolvedProjectRoot,
     frameworkRoot,
     config,
-    configWriteRequired,
+    existingConfig === null,
+    { kind: "install" },
   );
 }
 
@@ -119,10 +146,7 @@ export async function addComponent(
   componentName: string,
 ): Promise<ContextOperationResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
-  const currentConfig = await readOptionalConfig(resolvedProjectRoot);
-  if (!currentConfig) {
-    throw new Error(`Project is not initialized: ${CONTEXT_CONFIG_PATH} is missing.`);
-  }
+  const currentConfig = await requireConfig(resolvedProjectRoot);
   const selected = currentConfig.components.includes(componentName)
     ? currentConfig.components
     : [...currentConfig.components, componentName];
@@ -133,6 +157,55 @@ export async function addComponent(
     frameworkRoot,
     config,
     selected !== currentConfig.components,
+    { kind: "install" },
+  );
+}
+
+export async function updateProject(
+  projectRoot: string,
+  frameworkRoot: string,
+  componentName: string | null,
+): Promise<ContextOperationResult> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const config = await requireConfig(resolvedProjectRoot);
+  const registry = await loadContextRegistry(frameworkRoot);
+  const resolved = componentName === null
+    ? resolveContextComponents(registry, config.components)
+    : resolveSelectedUpdate(registry, config, componentName);
+  return await applyDesiredState(
+    "update",
+    resolvedProjectRoot,
+    frameworkRoot,
+    config,
+    false,
+    { kind: "update", components: new Set(resolved.map((component) => component.name)) },
+    registry,
+  );
+}
+
+export async function removeComponent(
+  projectRoot: string,
+  frameworkRoot: string,
+  componentName: string,
+): Promise<ContextOperationResult> {
+  if (componentName === DEFAULT_CONTEXT_COMPONENT) {
+    throw new Error("The core component cannot be removed from an initialized project.");
+  }
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const currentConfig = await requireConfig(resolvedProjectRoot);
+  if (!currentConfig.components.includes(componentName)) {
+    throw new Error(`Context component ${componentName} is not selected by the project.`);
+  }
+  const config = createContextProjectConfig(
+    currentConfig.components.filter((component) => component !== componentName),
+  );
+  return await applyDesiredState(
+    "remove",
+    resolvedProjectRoot,
+    frameworkRoot,
+    config,
+    true,
+    { kind: "remove" },
   );
 }
 
@@ -141,122 +214,221 @@ export async function diffProject(
   frameworkRoot: string,
 ): Promise<ContextDiffResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
-  const config = await readOptionalConfig(resolvedProjectRoot);
-  if (!config) {
-    throw new Error(`Project is not initialized: ${CONTEXT_CONFIG_PATH} is missing.`);
-  }
+  const config = await requireConfig(resolvedProjectRoot);
   const registry = await loadContextRegistry(frameworkRoot);
-  const lock = await readOptionalLock(resolvedProjectRoot);
-  const plan = await planContextInstallation(resolvedProjectRoot, frameworkRoot, registry, config, lock);
+  const previousLock = await readOptionalLock(resolvedProjectRoot);
+  const plan = await planContextInstallation(
+    resolvedProjectRoot,
+    frameworkRoot,
+    registry,
+    config,
+    previousLock,
+    { kind: "observe" },
+  );
+  const current = plan.status === "ready" &&
+    plan.assessments.every((assessment) => assessment.status === "unchanged") &&
+    !plan.lockChanged;
+  return { command: "diff", projectRoot: resolvedProjectRoot, plan, current };
+}
+
+export async function inspectProject(
+  projectRoot: string,
+  frameworkRoot: string,
+): Promise<ContextInspection> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const config = await readOptionalConfig(resolvedProjectRoot);
+  const registry = await loadContextRegistry(frameworkRoot);
   return {
-    command: "diff",
+    command: "inspect",
     projectRoot: resolvedProjectRoot,
-    plan,
-    current: plan.status === "ready" && plan.writes.length === 0 && !plan.lockChanged,
+    initialized: config !== null,
+    hasAgents: await exists(path.join(resolvedProjectRoot, "AGENTS.md")),
+    hasCodexConfig: await exists(path.join(resolvedProjectRoot, ".codex", "config.toml")),
+    hasCodexHooks: await exists(path.join(resolvedProjectRoot, ".codex", "hooks.json")),
+    registryRevision: registry.revision,
+    selectedComponents: config?.components ?? [],
   };
 }
 
-export async function loadContextRegistry(frameworkRoot: string): Promise<ContextRegistryV1> {
+export async function doctorProject(
+  projectRoot: string,
+  frameworkRoot: string,
+): Promise<ContextDoctorResult> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const diagnostics: string[] = [];
+  const transaction = await readContextTransaction(resolvedProjectRoot);
+  if (transaction) {
+    diagnostics.push(
+      `Incomplete ${transaction.command} transaction for registry ${transaction.registryRevision}; ` +
+      `${transaction.mutations.length} mutation(s) require Git review before the journal is removed.`,
+    );
+  }
+  const config = await readOptionalConfig(resolvedProjectRoot);
+  if (!config) {
+    diagnostics.push(`Project is not initialized: ${CONTEXT_CONFIG_PATH} is missing.`);
+    return {
+      command: "doctor",
+      projectRoot: resolvedProjectRoot,
+      health: "attention",
+      diagnostics,
+      capabilities: [],
+      diff: null,
+    };
+  }
+  const registry = await loadContextRegistry(frameworkRoot);
+  const components = resolveContextComponents(registry, config.components);
+  const capabilities = uniqueCapabilities(components);
+  for (const capability of capabilities) {
+    diagnostics.push(
+      `${capability.requirement} ${capability.kind} capability declared: ${capability.name}; ` +
+      "availability is project-controlled and is not inferred by the installer.",
+    );
+  }
+  const diff = await diffProject(resolvedProjectRoot, frameworkRoot);
+  if (!diff.current) diagnostics.push("Installed context differs from its provenance baseline.");
+  return {
+    command: "doctor",
+    projectRoot: resolvedProjectRoot,
+    health: transaction === null && diff.current ? "healthy" : "attention",
+    diagnostics,
+    capabilities,
+    diff,
+  };
+}
+
+export async function loadContextRegistry(frameworkRoot: string): Promise<ContextRegistryV2> {
   const resolvedFrameworkRoot = await realpath(frameworkRoot);
   const registryPath = await securePath(
     resolvedFrameworkRoot,
     CONTEXT_REGISTRY_PATH,
     "Registry catalog",
   );
-  return decodeContextRegistry(await readStrictJson(registryPath, "Context registry"));
+  const registry = decodeContextRegistry(await readStrictJson(registryPath, "Context registry"));
+  const decisionPath = await securePath(
+    resolvedFrameworkRoot,
+    registry.decisionPath,
+    "Registry decision",
+  );
+  if (!(await exists(decisionPath))) throw new Error(`Registry decision is missing: ${registry.decisionPath}.`);
+  return registry;
 }
 
 export async function planContextInstallation(
   projectRoot: string,
   frameworkRoot: string,
-  registry: ContextRegistryV1,
-  config: ContextProjectConfigV1,
-  previousLock: ContextInstallationLockV1 | null,
+  registry: ContextRegistryV2,
+  config: ContextProjectConfigV2,
+  previousLock: ContextInstallationLockV2 | null,
+  intent: PlanningIntent,
 ): Promise<ContextInstallationPlan> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const resolvedFrameworkRoot = await realpath(frameworkRoot);
   const components = resolveContextComponents(registry, config.components);
-  const registryArtifacts = components.flatMap((component) => component.artifacts);
-  validateTargetOwnership(registryArtifacts);
-
-  const desiredArtifacts: DesiredArtifact[] = [];
-  for (const artifact of registryArtifacts) {
-    const sourcePath = await securePath(
-      resolvedFrameworkRoot,
-      artifact.sourcePath,
-      `Registry source ${artifact.sourcePath}`,
-    );
-    const source = await readStrictUtf8(sourcePath, `Registry source ${artifact.sourcePath}`);
-    if (artifact.ownership === "managed-section" && !source.endsWith("\n")) {
-      throw new Error(`Managed section source ${artifact.sourcePath} must end with a newline.`);
-    }
-    desiredArtifacts.push({ artifact, source, sha256: contentHash(source) });
-  }
+  const desiredArtifacts = await loadDesiredArtifacts(resolvedFrameworkRoot, components);
+  validateTargetOwnership(desiredArtifacts.map((desired) => desired.artifact));
 
   const lockedByIdentity = new Map(
     (previousLock?.artifacts ?? []).map((artifact) => [artifactIdentity(artifact), artifact]),
   );
   const desiredIdentities = new Set(desiredArtifacts.map(({ artifact }) => artifactIdentity(artifact)));
   const assessments: ArtifactAssessment[] = [];
+  const nextLockedByIdentity = new Map<string, ContextLockedArtifact>();
   const virtualTargets = new Map<string, string | null>();
   const originalTargets = new Map<string, string | null>();
 
   for (const desired of desiredArtifacts) {
     const identity = artifactIdentity(desired.artifact);
-    const targetPath = desired.artifact.targetPath;
-    const targetAbsolutePath = await securePath(
+    const target = await readVirtualTarget(
       resolvedProjectRoot,
-      targetPath,
-      `Project target ${targetPath}`,
+      desired.artifact.targetPath,
+      virtualTargets,
+      originalTargets,
     );
-    let target = virtualTargets.get(targetPath);
-    if (target === undefined && !virtualTargets.has(targetPath)) {
-      target = (await exists(targetAbsolutePath))
-        ? await readStrictUtf8(targetAbsolutePath, `Project target ${targetPath}`)
-        : null;
-      virtualTargets.set(targetPath, target);
-      originalTargets.set(targetPath, target);
-    }
     const locked = lockedByIdentity.get(identity);
-    const result = assessArtifact(desired, locked, target ?? null);
-    assessments.push(result.assessment);
-    virtualTargets.set(targetPath, result.nextTarget);
+    const current = desired.projection.read(target);
+    const assessment = assessDesired(desired, locked, current);
+    assessments.push(assessment);
+
+    const shouldUpdate = intent.kind === "update" && intent.components.has(desired.component);
+    if (assessment.status === "uninstalled" && (intent.kind === "install" || shouldUpdate)) {
+      virtualTargets.set(desired.artifact.targetPath, desired.projection.install(target));
+      nextLockedByIdentity.set(identity, lockedArtifact(desired));
+    } else if (assessment.status === "upstream-changed" && shouldUpdate && target !== null) {
+      virtualTargets.set(desired.artifact.targetPath, desired.projection.replace(target));
+      nextLockedByIdentity.set(identity, lockedArtifact(desired));
+    } else if (locked) {
+      nextLockedByIdentity.set(identity, locked);
+    } else if (assessment.status === "unchanged") {
+      nextLockedByIdentity.set(identity, lockedArtifact(desired));
+    }
   }
 
   for (const locked of previousLock?.artifacts ?? []) {
     const identity = artifactIdentity(locked);
-    if (!desiredIdentities.has(identity)) {
-      assessments.push({
-        identity,
-        targetPath: locked.targetPath,
-        status: "stale",
-        detail: "The previous lock owns this artifact, but the selected registry no longer does.",
-      });
+    if (desiredIdentities.has(identity)) continue;
+    const target = await readVirtualTarget(
+      resolvedProjectRoot,
+      locked.targetPath,
+      virtualTargets,
+      originalTargets,
+    );
+    const projection = await projectionForLocked(resolvedFrameworkRoot, locked);
+    const current = projection.read(target);
+    const unchanged = current.state === "absent" ||
+      (current.state === "present" && current.sha256 === locked.installedSha256);
+    const assessment: ArtifactAssessment = {
+      identity,
+      component: locked.component,
+      targetPath: locked.targetPath,
+      operation: locked.operation,
+      status: unchanged ? "obsolete-unchanged" : "obsolete-modified",
+      previousSourceSha256: locked.sourceSha256,
+      currentSha256: current.state === "present" ? current.sha256 : null,
+      nextSourceSha256: null,
+      difference: null,
+      detail: unchanged
+        ? "The previous source is no longer selected and can be removed safely."
+        : "The previous source is no longer selected; project content will be retained.",
+    };
+    assessments.push(assessment);
+    if (intent.kind === "remove" || intent.kind === "update") {
+      if (target !== null) {
+        if (current.state === "malformed") {
+          nextLockedByIdentity.set(identity, locked);
+        } else {
+          virtualTargets.set(locked.targetPath, projection.remove(target, !unchanged));
+        }
+      }
+    } else {
+      nextLockedByIdentity.set(identity, locked);
     }
   }
 
-  const conflicts = assessments.filter((assessment) => isConflict(assessment.status));
-  if (conflicts.length > 0) {
-    return { status: "blocked", assessments, conflicts };
-  }
+  const conflicts = assessments.filter((assessment) => isBlockingAssessment(assessment, intent));
+  if (conflicts.length > 0) return { status: "blocked", assessments, conflicts };
 
-  const writes: PlannedContextWrite[] = [];
-  for (const [targetPath, nextTarget] of virtualTargets) {
-    const originalTarget = originalTargets.get(targetPath);
-    if (nextTarget !== null && nextTarget !== originalTarget) {
-      writes.push({ targetPath, content: nextTarget });
+  const mutations = mutationsFromTargets(virtualTargets, originalTargets);
+  const orderedLocks: ContextLockedArtifact[] = [];
+  for (const desired of desiredArtifacts) {
+    const locked = nextLockedByIdentity.get(artifactIdentity(desired.artifact));
+    if (locked) orderedLocks.push(locked);
+  }
+  for (const locked of previousLock?.artifacts ?? []) {
+    if (!desiredIdentities.has(artifactIdentity(locked))) {
+      const retained = nextLockedByIdentity.get(artifactIdentity(locked));
+      if (retained) orderedLocks.push(retained);
     }
   }
-  const nextLock: ContextInstallationLockV1 = {
+  const nextLock: ContextInstallationLockV2 = {
     schemaVersion: CONTEXT_INSTALLATION_SCHEMA_VERSION,
     registryRevision: registry.revision,
     components: components.map((component) => component.name),
-    artifacts: desiredArtifacts.map(toLockedArtifact),
+    artifacts: orderedLocks,
   };
   return {
     status: "ready",
     assessments,
-    writes,
+    mutations,
     nextLock,
     lockChanged: serializeJson(previousLock) !== serializeJson(nextLock),
   };
@@ -264,7 +436,7 @@ export async function planContextInstallation(
 
 export function createContextProjectConfig(
   components: readonly string[],
-): ContextProjectConfigV1 {
+): ContextProjectConfigV2 {
   return decodeContextProjectConfig({
     schemaVersion: CONTEXT_INSTALLATION_SCHEMA_VERSION,
     adapter: CONTEXT_ADAPTER,
@@ -272,24 +444,19 @@ export function createContextProjectConfig(
   });
 }
 
-export function managedSectionMarkers(sectionId: string): {
-  readonly start: string;
-  readonly end: string;
-} {
-  return {
-    start: `<!-- agent-context:${sectionId}:start -->`,
-    end: `<!-- agent-context:${sectionId}:end -->`,
-  };
-}
-
 async function applyDesiredState(
-  command: "init" | "add",
+  command: ContextOperationResult["command"],
   projectRoot: string,
   frameworkRoot: string,
-  config: ContextProjectConfigV1,
-  configWriteRequired: boolean,
+  config: ContextProjectConfigV2,
+  configChanged: boolean,
+  intent: PlanningIntent,
+  loadedRegistry?: ContextRegistryV2,
 ): Promise<ContextOperationResult> {
-  const registry = await loadContextRegistry(frameworkRoot);
+  if (await readContextTransaction(projectRoot)) {
+    throw new Error("An incomplete context transaction exists. Run agent-context doctor before writing.");
+  }
+  const registry = loadedRegistry ?? await loadContextRegistry(frameworkRoot);
   const previousLock = await readOptionalLock(projectRoot);
   const plan = await planContextInstallation(
     projectRoot,
@@ -297,189 +464,215 @@ async function applyDesiredState(
     registry,
     config,
     previousLock,
+    intent,
   );
   if (plan.status === "blocked") {
-    return { command, projectRoot, configWriteRequired, plan, writtenPaths: [] };
+    return { command, projectRoot, plan, writtenPaths: [] };
   }
-
-  const writtenPaths: string[] = [];
-  for (const write of plan.writes) {
-    await atomicProjectWrite(projectRoot, write.targetPath, write.content);
-    writtenPaths.push(write.targetPath);
-  }
-  if (configWriteRequired) {
-    await atomicProjectWrite(projectRoot, CONTEXT_CONFIG_PATH, serializeJson(config));
-    writtenPaths.push(CONTEXT_CONFIG_PATH);
+  const mutations: ContextMutation[] = [...plan.mutations];
+  if (configChanged) {
+    mutations.push({ operation: "write", targetPath: CONTEXT_CONFIG_PATH, content: serializeJson(config) });
   }
   if (plan.lockChanged) {
-    await atomicProjectWrite(projectRoot, CONTEXT_LOCK_PATH, serializeJson(plan.nextLock));
-    writtenPaths.push(CONTEXT_LOCK_PATH);
+    mutations.push({ operation: "write", targetPath: CONTEXT_LOCK_PATH, content: serializeJson(plan.nextLock) });
   }
-  return { command, projectRoot, configWriteRequired, plan, writtenPaths };
+  const writtenPaths = await applyContextTransaction(projectRoot, command, registry.revision, mutations);
+  return { command, projectRoot, plan, writtenPaths };
 }
 
-function assessArtifact(
+function assessDesired(
   desired: DesiredArtifact,
   locked: ContextLockedArtifact | undefined,
-  target: string | null,
-): { readonly assessment: ArtifactAssessment; readonly nextTarget: string | null } {
+  current: ProjectedScope,
+): ArtifactAssessment {
   const identity = artifactIdentity(desired.artifact);
-  const targetPath = desired.artifact.targetPath;
-  if (desired.artifact.ownership === "managed-file") {
-    if (!locked) {
-      if (target !== null) {
-        return {
-          assessment: {
-            identity,
-            targetPath,
-            status: "unmanaged-conflict",
-            detail: "A whole-file target exists without a matching lock entry.",
-          },
-          nextTarget: target,
-        };
-      }
+  const base = {
+    identity,
+    component: desired.component,
+    targetPath: desired.artifact.targetPath,
+    operation: desired.artifact.operation,
+  };
+  if (!locked) {
+    if (current.state === "absent") {
       return {
-        assessment: {
-          identity,
-          targetPath,
-          status: "missing",
-          detail: "The managed file will be created.",
-        },
-        nextTarget: desired.source,
-      };
-    }
-    if (target === null || contentHash(target) !== locked.sha256) {
-      return {
-        assessment: {
-          identity,
-          targetPath,
-          status: "drift",
-          detail: target === null ? "The previously managed file is missing." : "The managed file was edited locally.",
-        },
-        nextTarget: target,
-      };
-    }
-    if (desired.sha256 !== locked.sha256) {
-      return {
-        assessment: {
-          identity,
-          targetPath,
-          status: "update",
-          detail: "Registry bytes changed and the installed file is safe to update.",
-        },
-        nextTarget: desired.source,
+        ...base,
+        status: "uninstalled",
+        previousSourceSha256: null,
+        currentSha256: null,
+        nextSourceSha256: desired.artifact.sourceSha256,
+        difference: boundedDifference("absent", desired.artifact.targetPath, "", desired.projection.sourceDisplay),
+        detail: "The selected project-owned source has not been installed.",
       };
     }
     return {
-      assessment: { identity, targetPath, status: "current", detail: "Managed bytes are current." },
-      nextTarget: target,
+      ...base,
+      status: "untracked-conflict",
+      previousSourceSha256: null,
+      currentSha256: current.state === "present" ? current.sha256 : null,
+      nextSourceSha256: desired.artifact.sourceSha256,
+      difference: current.state === "present"
+        ? boundedDifference("project", "registry", current.display, desired.projection.sourceDisplay)
+        : null,
+      detail: current.state === "malformed"
+        ? current.detail
+        : "The target ownership scope existed before installation.",
     };
   }
 
-  const markers = managedSectionMarkers(desired.artifact.sectionId);
-  const section = target === null ? null : locateManagedSection(target, markers.start, markers.end);
-  if (!locked) {
-    if (section !== null || (target !== null && containsEitherMarker(target, markers))) {
-      return {
-        assessment: {
-          identity,
-          targetPath,
-          status: "malformed-section",
-          detail: "Managed-section markers exist without a matching lock entry.",
-        },
-        nextTarget: target,
-      };
-    }
+  const projectMatchesPrevious = current.state === "present" && current.sha256 === locked.installedSha256;
+  const upstreamMatchesPrevious = desired.projection.sourceSha256 === locked.installedSha256;
+  if (projectMatchesPrevious && upstreamMatchesPrevious) {
     return {
-      assessment: {
-        identity,
-        targetPath,
-        status: "missing",
-        detail: "The managed section will be appended without changing existing project text.",
-      },
-      nextTarget: appendManagedSection(target ?? "", desired.source, markers.start, markers.end),
+      ...base,
+      status: "unchanged",
+      previousSourceSha256: locked.sourceSha256,
+      currentSha256: current.sha256,
+      nextSourceSha256: desired.artifact.sourceSha256,
+      difference: null,
+      detail: "Project source and registry source match the provenance baseline.",
     };
   }
-  if (target === null || section === null) {
+  if (!projectMatchesPrevious && upstreamMatchesPrevious) {
     return {
-      assessment: {
-        identity,
-        targetPath,
-        status: "malformed-section",
-        detail: target === null
-          ? "The file containing the previously managed section is missing."
-          : "The managed-section markers are missing, duplicated, or malformed.",
-      },
-      nextTarget: target,
+      ...base,
+      status: "locally-modified",
+      previousSourceSha256: locked.sourceSha256,
+      currentSha256: current.state === "present" ? current.sha256 : null,
+      nextSourceSha256: desired.artifact.sourceSha256,
+      difference: current.state === "present"
+        ? boundedDifference("registry-baseline", "project", desired.projection.sourceDisplay, current.display)
+        : null,
+      detail: current.state === "malformed" ? current.detail : "Project-owned source differs from its baseline.",
     };
   }
-  const installed = target.slice(section.innerStart, section.innerEnd);
-  if (contentHash(installed) !== locked.sha256) {
+  if (projectMatchesPrevious) {
     return {
-      assessment: {
-        identity,
-        targetPath,
-        status: "drift",
-        detail: "The managed section was edited locally.",
-      },
-      nextTarget: target,
-    };
-  }
-  if (desired.sha256 !== locked.sha256) {
-    return {
-      assessment: {
-        identity,
-        targetPath,
-        status: "update",
-        detail: "Registry bytes changed and the installed section is safe to update.",
-      },
-      nextTarget: `${target.slice(0, section.innerStart)}${desired.source}${target.slice(section.innerEnd)}`,
+      ...base,
+      status: "upstream-changed",
+      previousSourceSha256: locked.sourceSha256,
+      currentSha256: current.sha256,
+      nextSourceSha256: desired.artifact.sourceSha256,
+      difference: boundedDifference("project", "registry-next", current.display, desired.projection.sourceDisplay),
+      detail: "Registry source changed while project-owned source remained at its baseline.",
     };
   }
   return {
-    assessment: { identity, targetPath, status: "current", detail: "Managed bytes are current." },
-    nextTarget: target,
+    ...base,
+    status: "diverged",
+    previousSourceSha256: locked.sourceSha256,
+    currentSha256: current.state === "present" ? current.sha256 : null,
+    nextSourceSha256: desired.artifact.sourceSha256,
+    difference: current.state === "present"
+      ? boundedDifference("project", "registry-next", current.display, desired.projection.sourceDisplay)
+      : null,
+    detail: current.state === "malformed"
+      ? current.detail
+      : "Project-owned source and registry source both changed from the provenance baseline.",
   };
 }
 
-function locateManagedSection(target: string, start: string, end: string): SectionLocation | null {
-  const startToken = `${start}\n`;
-  const firstStart = target.indexOf(startToken);
-  if (firstStart < 0 || target.indexOf(startToken, firstStart + startToken.length) >= 0) return null;
-  const innerStart = firstStart + startToken.length;
-  const firstEnd = target.indexOf(end, innerStart);
-  if (firstEnd < 0 || target.indexOf(end, firstEnd + end.length) >= 0) return null;
-  if (target.includes(end, 0) && target.indexOf(end) < firstStart) return null;
-  return { innerStart, innerEnd: firstEnd };
-}
-
-function containsEitherMarker(
-  target: string,
-  markers: { readonly start: string; readonly end: string },
-): boolean {
-  return target.includes(markers.start) || target.includes(markers.end);
-}
-
-function appendManagedSection(target: string, source: string, start: string, end: string): string {
-  const separator = target.length === 0 ? "" : target.endsWith("\n\n") ? "" : target.endsWith("\n") ? "\n" : "\n\n";
-  return `${target}${separator}${start}\n${source}${end}\n`;
-}
-
-function toLockedArtifact(desired: DesiredArtifact): ContextLockedArtifact {
-  return desired.artifact.ownership === "managed-file"
-    ? {
-        ownership: "managed-file",
-        sourcePath: desired.artifact.sourcePath,
-        targetPath: desired.artifact.targetPath,
-        sha256: desired.sha256,
+async function loadDesiredArtifacts(
+  frameworkRoot: string,
+  components: readonly ContextRegistryComponent[],
+): Promise<readonly DesiredArtifact[]> {
+  const desired: DesiredArtifact[] = [];
+  for (const component of components) {
+    for (const artifact of component.artifacts) {
+      const sourcePath = await securePath(
+        frameworkRoot,
+        artifact.sourcePath,
+        `Registry source ${artifact.sourcePath}`,
+      );
+      const source = await readStrictUtf8(sourcePath, `Registry source ${artifact.sourcePath}`);
+      const rawHash = contentHash(source);
+      if (rawHash !== artifact.sourceSha256) {
+        throw new Error(
+          `Registry source hash mismatch for ${artifact.sourcePath}: expected ${artifact.sourceSha256}, got ${rawHash}.`,
+        );
       }
-    : {
-        ownership: "managed-section",
-        sourcePath: desired.artifact.sourcePath,
-        targetPath: desired.artifact.targetPath,
-        sectionId: desired.artifact.sectionId,
-        sha256: desired.sha256,
-      };
+      desired.push({
+        component: component.name,
+        artifact,
+        source,
+        projection: createArtifactProjection(artifact, source),
+      });
+    }
+  }
+  return desired;
+}
+
+async function projectionForLocked(
+  frameworkRoot: string,
+  locked: ContextLockedArtifact,
+): Promise<ArtifactProjection> {
+  const sourcePath = await securePath(frameworkRoot, locked.sourcePath, `Locked source ${locked.sourcePath}`);
+  if (!(await exists(sourcePath))) {
+    if (locked.operation === "file" || locked.operation === "runtime-workspace") {
+      return createArtifactProjection(locked, "");
+    }
+    throw new Error(`Previous structured source is unavailable: ${locked.sourcePath}.`);
+  }
+  return createArtifactProjection(locked, await readStrictUtf8(sourcePath, `Locked source ${locked.sourcePath}`));
+}
+
+function lockedArtifact(desired: DesiredArtifact): ContextLockedArtifact {
+  return {
+    ...desired.artifact,
+    component: desired.component,
+    installedSha256: desired.projection.sourceSha256,
+  };
+}
+
+function isBlockingAssessment(
+  assessment: ArtifactAssessment,
+  intent: PlanningIntent,
+): boolean {
+  if (intent.kind === "observe") return false;
+  if (assessment.status === "untracked-conflict") {
+    return intent.kind !== "remove";
+  }
+  if (assessment.status === "diverged") {
+    return intent.kind === "update" && intent.components.has(assessment.component);
+  }
+  if (
+    assessment.status === "obsolete-modified" &&
+    assessment.currentSha256 === null &&
+    (intent.kind === "remove" || intent.kind === "update")
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function mutationsFromTargets(
+  virtualTargets: ReadonlyMap<string, string | null>,
+  originalTargets: ReadonlyMap<string, string | null>,
+): readonly ContextMutation[] {
+  const mutations: ContextMutation[] = [];
+  for (const [targetPath, next] of virtualTargets) {
+    const original = originalTargets.get(targetPath) ?? null;
+    if (next === original) continue;
+    mutations.push(next === null
+      ? { operation: "delete", targetPath }
+      : { operation: "write", targetPath, content: next });
+  }
+  return mutations;
+}
+
+async function readVirtualTarget(
+  projectRoot: string,
+  targetPath: string,
+  virtualTargets: Map<string, string | null>,
+  originalTargets: Map<string, string | null>,
+): Promise<string | null> {
+  if (virtualTargets.has(targetPath)) return virtualTargets.get(targetPath) ?? null;
+  const targetAbsolutePath = await securePath(projectRoot, targetPath, `Project target ${targetPath}`);
+  const target = (await exists(targetAbsolutePath))
+    ? await readStrictUtf8(targetAbsolutePath, `Project target ${targetPath}`)
+    : null;
+  virtualTargets.set(targetPath, target);
+  originalTargets.set(targetPath, target);
+  return target;
 }
 
 function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]): void {
@@ -490,39 +683,93 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
     byTarget.set(artifact.targetPath, current);
   }
   for (const [targetPath, targetArtifacts] of byTarget) {
-    if (targetArtifacts.some((artifact) => artifact.ownership === "managed-file") && targetArtifacts.length > 1) {
-      throw new Error(`Managed file target ${targetPath} cannot share ownership with another artifact.`);
+    const wholeFile = targetArtifacts.some(
+      (artifact) => artifact.operation === "file" || artifact.operation === "runtime-workspace",
+    );
+    if (wholeFile && targetArtifacts.length > 1) {
+      throw new Error(`Whole-file target ${targetPath} cannot share ownership with another artifact.`);
     }
     const identities = targetArtifacts.map(artifactIdentity);
     if (new Set(identities).size !== identities.length) {
       throw new Error(`Registry resolves duplicate ownership for ${targetPath}.`);
     }
+    const jsonPointers = targetArtifacts.flatMap((artifact) =>
+      artifact.operation === "json-members" ? artifact.ownedPointers : []);
+    requireNoOverlappingPaths(jsonPointers, `JSON target ${targetPath}`);
+    const tomlTables = targetArtifacts.flatMap((artifact) =>
+      artifact.operation === "toml-tables" ? artifact.ownedTables : []);
+    requireNoOverlappingPaths(tomlTables, `TOML target ${targetPath}`);
   }
 }
 
-function isConflict(status: ArtifactAssessmentStatus): boolean {
-  return status === "drift" ||
-    status === "unmanaged-conflict" ||
-    status === "malformed-section" ||
-    status === "stale";
+function requireNoOverlappingPaths(paths: readonly string[], label: string): void {
+  for (const [index, candidate] of paths.entries()) {
+    for (const other of paths.slice(index + 1)) {
+      if (
+        candidate === other ||
+        candidate.startsWith(`${other}.`) ||
+        other.startsWith(`${candidate}.`) ||
+        candidate.startsWith(`${other}/`) ||
+        other.startsWith(`${candidate}/`)
+      ) {
+        throw new Error(`${label} contains overlapping ownership paths ${candidate} and ${other}.`);
+      }
+    }
+  }
 }
 
-function contentHash(content: string): string {
-  return createHash("sha256").update(content, "utf8").digest("hex");
+function resolveSelectedUpdate(
+  registry: ContextRegistryV2,
+  config: ContextProjectConfigV2,
+  componentName: string,
+): readonly ContextRegistryComponent[] {
+  const selected = resolveContextComponents(registry, config.components);
+  if (!selected.some((component) => component.name === componentName)) {
+    throw new Error(`Context component ${componentName} is not selected by the project.`);
+  }
+  return resolveContextComponents(registry, [componentName]);
 }
 
-function serializeJson(value: unknown): string {
-  return value === null ? "" : `${JSON.stringify(value, null, 2)}\n`;
+function uniqueCapabilities(components: readonly ContextRegistryComponent[]): readonly ContextCapability[] {
+  const result = new Map<string, ContextCapability>();
+  for (const component of components) {
+    for (const capability of component.capabilities) {
+      const key = `${capability.kind}:${capability.name}`;
+      const existing = result.get(key);
+      if (!existing || capability.requirement === "required") result.set(key, capability);
+    }
+  }
+  return [...result.values()].sort((left, right) =>
+    `${left.kind}:${left.name}`.localeCompare(`${right.kind}:${right.name}`));
 }
 
-async function readOptionalConfig(projectRoot: string): Promise<ContextProjectConfigV1 | null> {
+function boundedDifference(
+  previousLabel: string,
+  nextLabel: string,
+  previous: string,
+  next: string,
+): string {
+  const difference = createTwoFilesPatch(previousLabel, nextLabel, previous, next, "", "", { context: 3 });
+  const maximumLength = 16_384;
+  return difference.length <= maximumLength
+    ? difference
+    : `${difference.slice(0, maximumLength)}\n... difference truncated at ${maximumLength} characters ...\n`;
+}
+
+async function requireConfig(projectRoot: string): Promise<ContextProjectConfigV2> {
+  const config = await readOptionalConfig(projectRoot);
+  if (!config) throw new Error(`Project is not initialized: ${CONTEXT_CONFIG_PATH} is missing.`);
+  return config;
+}
+
+async function readOptionalConfig(projectRoot: string): Promise<ContextProjectConfigV2 | null> {
   const configPath = await securePath(projectRoot, CONTEXT_CONFIG_PATH, "Context project config");
   return (await exists(configPath))
     ? decodeContextProjectConfig(await readStrictJson(configPath, "Context project config"))
     : null;
 }
 
-async function readOptionalLock(projectRoot: string): Promise<ContextInstallationLockV1 | null> {
+async function readOptionalLock(projectRoot: string): Promise<ContextInstallationLockV2 | null> {
   const lockPath = await securePath(projectRoot, CONTEXT_LOCK_PATH, "Context installation lock");
   return (await exists(lockPath))
     ? decodeContextInstallationLock(await readStrictJson(lockPath, "Context installation lock"))
@@ -550,27 +797,6 @@ async function readStrictUtf8(candidate: string, label: string): Promise<string>
   }
 }
 
-async function atomicProjectWrite(
-  projectRoot: string,
-  relativePath: string,
-  content: string,
-): Promise<void> {
-  const targetPath = await securePath(projectRoot, relativePath, `Project write ${relativePath}`);
-  await mkdir(path.dirname(targetPath), { recursive: true });
-  const temporaryPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
-  try {
-    await writeFile(temporaryPath, content, { encoding: "utf8", flag: "wx" });
-    await rename(temporaryPath, targetPath);
-  } catch (error) {
-    try {
-      await unlink(temporaryPath);
-    } catch {
-      // The temporary file either was never created or was already renamed.
-    }
-    throw error;
-  }
-}
-
 async function securePath(root: string, relativePath: string, label: string): Promise<string> {
   if (
     path.isAbsolute(relativePath) ||
@@ -585,15 +811,12 @@ async function securePath(root: string, relativePath: string, label: string): Pr
   if (relative === "" || relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
     throw new Error(`${label} escapes its repository root.`);
   }
-
   let current = resolvedRoot;
   for (const segment of relative.split(path.sep)) {
     current = path.join(current, segment);
     try {
       const state = await lstat(current);
-      if (state.isSymbolicLink()) {
-        throw new Error(`${label} traverses symbolic link ${current}.`);
-      }
+      if (state.isSymbolicLink()) throw new Error(`${label} traverses symbolic link ${current}.`);
     } catch (error) {
       if (isMissingPathError(error)) break;
       throw error;
@@ -604,4 +827,12 @@ async function securePath(root: string, relativePath: string, label: string): Pr
 
 function isMissingPathError(error: unknown): boolean {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
+}
+
+function contentHash(content: string): string {
+  return createHash("sha256").update(content, "utf8").digest("hex");
+}
+
+function serializeJson(value: unknown): string {
+  return value === null ? "" : `${JSON.stringify(value, null, 2)}\n`;
 }

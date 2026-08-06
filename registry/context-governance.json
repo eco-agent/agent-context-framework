@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "registryRevision": "0.2.0",
+  "decisionPath": "registry/decisions/0.2.0-wave-one.md",
+  "protectedSources": [
+    {
+      "invariantId": "portable-core",
+      "sourcePath": "registry/sources/instructions/core.md",
+      "sha256": "3698c7e0f680ced0072e47b4f900a4444463f8f73383651f527715799d9578b6"
+    },
+    {
+      "invariantId": "frontend-discipline",
+      "sourcePath": "registry/sources/instructions/frontend.md",
+      "sha256": "4006e1691e9008ebe9e5b5939ba234774b486860d9335a9dd7192129a6bff1d1"
+    },
+    {
+      "invariantId": "repository-work",
+      "sourcePath": "registry/sources/instructions/repository-work.md",
+      "sha256": "ac21eb656a3c766ce6f5853f976434e1461b575f9368de3e6c3442a44b9bcd24"
+    },
+    {
+      "invariantId": "verification",
+      "sourcePath": "registry/sources/instructions/verification.md",
+      "sha256": "a284e58185bf12c62bb320e9277c1155a7e8c6f0aa71bb7c8189559eb1c18490"
+    },
+    {
+      "invariantId": "documentation-prose",
+      "sourcePath": "registry/sources/instructions/documentation.md",
+      "sha256": "86e7eec1cc3d86cf4cada227a9033f1b58a6b9e357c0b8dc86d3032a10a1dd01"
+    }
+  ],
+  "projections": [
+    {
+      "invariantId": "repository-work",
+      "sourcePath": "registry/sources/instructions/repository-work.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Work"
+    },
+    {
+      "invariantId": "frontend-discipline",
+      "sourcePath": "registry/sources/instructions/frontend.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Frontend"
+    },
+    {
+      "invariantId": "verification",
+      "sourcePath": "registry/sources/instructions/verification.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Verification"
+    },
+    {
+      "invariantId": "documentation-prose",
+      "sourcePath": "registry/sources/instructions/documentation.md",
+      "targetPath": "docs/AGENTS.md",
+      "heading": "## Prose and Reporting Style"
+    }
+  ]
+}

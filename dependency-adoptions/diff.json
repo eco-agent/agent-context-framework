@@ -1,0 +1,17 @@
+{
+  "name": "diff",
+  "version": "9.0.0",
+  "source": "https://github.com/kpdecker/jsdiff/tree/ed13aca03aa25735fafc0645d1185e7a1c68fd8c",
+  "license": "BSD-3-Clause",
+  "integrity": "sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==",
+  "purpose": "Produce deterministic human-reviewable line differences for locally modified and diverged installed context.",
+  "alternativesConsidered": [
+    "Report only hashes and require a separate Git comparison",
+    "Implement a project-owned line-diff algorithm"
+  ],
+  "maintenanceStatus": "Pinned to the upstream v9.0.0 release tag and isolated inside developer tooling.",
+  "securityEvidence": "Registry metadata, exact release source, BSD-3-Clause license, package integrity, and zero runtime dependencies were reviewed.",
+  "modifications": "None; assessment ownership and output bounds remain project-owned.",
+  "requiredNotices": "Preserve the BSD-3-Clause license notice when redistribution requires it.",
+  "owner": "platform"
+}

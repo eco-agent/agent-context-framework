@@ -1,0 +1,17 @@
+{
+  "name": "smol-toml",
+  "version": "1.7.1",
+  "source": "https://github.com/squirrelchat/smol-toml/tree/fc75994f95588178acf4ec29e78930403c5d3aed",
+  "license": "BSD-3-Clause",
+  "integrity": "sha512-PPlsspAZ4jbMBu5DMFhfUGDQLu/vrL4SyBROVS37x8ynnVmFIs1VPBz1Co8Xks3TvpIaZXmU85y4DrQ+UyVFoQ==",
+  "purpose": "Validate TOML source and targets before deterministic owned-table insertion without reserializing project-authored configuration.",
+  "alternativesConsidered": [
+    "Handwritten TOML table scanning",
+    "Reserialize complete project TOML and discard comments"
+  ],
+  "maintenanceStatus": "Pinned to the upstream v1.7.1 release tag and used only at the installer trust boundary.",
+  "securityEvidence": "Registry metadata, exact release source, BSD-3-Clause license, package integrity, and Node.js engine requirement were reviewed.",
+  "modifications": "None; table ownership, marker syntax, and project formatting preservation remain project-owned.",
+  "requiredNotices": "Preserve the BSD-3-Clause license notice when redistribution requires it.",
+  "owner": "platform"
+}

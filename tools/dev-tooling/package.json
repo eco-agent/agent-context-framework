@@ -17,6 +17,8 @@
     "clean": "tsc -b --clean",
     "dependency:facts": "node --import tsx src/dependency-facts-cli.ts",
     "precedent:materialize": "node --import tsx src/product-precedent-materializer-cli.ts",
+    "registry:build": "node --import tsx src/context-registry-cli.ts build",
+    "registry:check": "node --import tsx src/context-registry-cli.ts check",
     "task:handoff": "node --import tsx src/task-handoff-cli.ts",
     "task:doctor": "node --import tsx src/task-preflight-cli.ts",
     "test": "node --import tsx --test test/*.test.ts",
@@ -26,7 +28,9 @@
     "@agent-context/codex-workflows": "workspace:*",
     "@agent-context/objective-kernel": "workspace:*",
     "@agent-context/objective-runtime": "workspace:*",
-    "@agent-context/repo-policy": "workspace:*"
+    "@agent-context/repo-policy": "workspace:*",
+    "diff": "9.0.0",
+    "smol-toml": "1.7.1"
   },
   "devDependencies": {
     "@types/node": "24.13.3",

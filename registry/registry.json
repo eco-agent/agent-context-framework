@@ -1,18 +1,600 @@
 {
-  "schemaVersion": 1,
-  "revision": "0.1.0",
+  "schemaVersion": 2,
+  "revision": "0.2.0",
+  "decisionPath": "registry/decisions/0.2.0-wave-one.md",
   "components": [
     {
       "name": "core",
       "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "codex-skill",
+          "name": "visualize",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
       "artifacts": [
         {
-          "ownership": "managed-section",
-          "sourcePath": "registry/components/core/AGENTS.md",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/core.md",
+          "sourceSha256": "3698c7e0f680ced0072e47b4f900a4444463f8f73383651f527715799d9578b6",
           "targetPath": "AGENTS.md",
-          "sectionId": "core"
+          "sectionId": "core",
+          "markerStyle": "markdown"
         }
       ]
+    },
+    {
+      "name": "skill-adopt-established-product",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/adopt-established-product/agents/openai.yaml",
+          "sourceSha256": "95be1eb7ce536e4357ced60da12a9698be7a1bd0bf9b836e62fe518f22ab0524",
+          "targetPath": ".codex/skills/adopt-established-product/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/adopt-established-product/SKILL.md",
+          "sourceSha256": "2ea404cbf54c475b54e2b810bcd06fd182c3c73e771a11357ae035b9dd9d5133",
+          "targetPath": ".codex/skills/adopt-established-product/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-choose-react-animation",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/choose-react-animation/agents/openai.yaml",
+          "sourceSha256": "ae79ee81607d4f1277a7ac9fbf2d94c95eb50a38366f23423499878d889d3d71",
+          "targetPath": ".codex/skills/choose-react-animation/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/choose-react-animation/SKILL.md",
+          "sourceSha256": "5208dc7b9ac34576302f6796cae4ddf3aa035c382676c79ba4efa0a28d1102dc",
+          "targetPath": ".codex/skills/choose-react-animation/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-design-accessible-interfaces",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-accessible-interfaces/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/agents/openai.yaml",
+          "sourceSha256": "1fb43fb4c06ce2343c8d5166b5eab287b0681221f0dafeffbfc4b8dc3bb61e80",
+          "targetPath": ".codex/skills/design-accessible-interfaces/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/LICENSE.upstream",
+          "sourceSha256": "ed1dfe988fc40511b4845ccd9050a143a2002fee3bedc8064c47fa342b5d8d4f",
+          "targetPath": ".codex/skills/design-accessible-interfaces/LICENSE.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/references/focus-and-keyboard.md",
+          "sourceSha256": "c3a06d4f3002760a459da608fd74832a1445476c7fd76c848499ebe2ad031019",
+          "targetPath": ".codex/skills/design-accessible-interfaces/references/focus-and-keyboard.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/references/forms.md",
+          "sourceSha256": "01a23db15fa32e4110198f2fd99a3ae85383f5feae57715f959184f6efe79a27",
+          "targetPath": ".codex/skills/design-accessible-interfaces/references/forms.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/references/hit-areas.md",
+          "sourceSha256": "dbe5a28eec3fcce7f0d3278b22656637748dfe48f4e474abc8d79aacaf7215fa",
+          "targetPath": ".codex/skills/design-accessible-interfaces/references/hit-areas.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/references/motion-and-zoom.md",
+          "sourceSha256": "8bac5b6c45133abe77aaba93ddaa70a6ad811e27647f1dab54edc8bbb46bb7c9",
+          "targetPath": ".codex/skills/design-accessible-interfaces/references/motion-and-zoom.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/references/screen-readers.md",
+          "sourceSha256": "4ee2ac09a35678406bd1af4220a72706f8a052d0d8d12067dd436e42633c6ee5",
+          "targetPath": ".codex/skills/design-accessible-interfaces/references/screen-readers.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/references/semantics-and-aria.md",
+          "sourceSha256": "3290a83e1795f148dc41727a0c5724b67397532873561ba39d7018f93bb1ace8",
+          "targetPath": ".codex/skills/design-accessible-interfaces/references/semantics-and-aria.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/SKILL.md",
+          "sourceSha256": "ce5cb1fbc625de7bebfd0d5ce7fa72e4879a074fd6676b132d5710e225ae3ad2",
+          "targetPath": ".codex/skills/design-accessible-interfaces/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-accessible-interfaces/SOURCE.json",
+          "sourceSha256": "aad7886009a607f46301d2bce0b216ad673cf9acc782f5d419cd8152f7869c61",
+          "targetPath": ".codex/skills/design-accessible-interfaces/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-design-color-systems",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-color-systems/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/agents/openai.yaml",
+          "sourceSha256": "0539079bd9614320ae862165a61ca45d7eaa34ab0d12dff094038347252fd8e9",
+          "targetPath": ".codex/skills/design-color-systems/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/LICENSE.upstream",
+          "sourceSha256": "ed1dfe988fc40511b4845ccd9050a143a2002fee3bedc8064c47fa342b5d8d4f",
+          "targetPath": ".codex/skills/design-color-systems/LICENSE.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/references/color-conversion.md",
+          "sourceSha256": "cca032df7f66828df596d9dc4ad94cb8e0aa0887654aaec099e76a966a6c2687",
+          "targetPath": ".codex/skills/design-color-systems/references/color-conversion.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/references/color-usage.md",
+          "sourceSha256": "a0e20791f6c866a7a940943ffc3d6a7c46b4801dfdd5e1cec89de2bd055af74d",
+          "targetPath": ".codex/skills/design-color-systems/references/color-usage.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/references/gamut-and-tailwind.md",
+          "sourceSha256": "18e410dd1dfd985fa43c1ae1cba9a843641f13baf211c25ca95c2f3d247c158e",
+          "targetPath": ".codex/skills/design-color-systems/references/gamut-and-tailwind.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/references/palette-generation.md",
+          "sourceSha256": "3ad02b3cc7c2abbd7d643de9d6275f15e49dac2afd0dc2093261189f9571cff1",
+          "targetPath": ".codex/skills/design-color-systems/references/palette-generation.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/SKILL.md",
+          "sourceSha256": "04e9561a4da2d683e6606942bdfd9e6f43e333ca857d4395926668378a8c3efa",
+          "targetPath": ".codex/skills/design-color-systems/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-color-systems/SOURCE.json",
+          "sourceSha256": "9d539708ea76193d66124901c674cd2cbc0d84378347991cf23d55403e522954",
+          "targetPath": ".codex/skills/design-color-systems/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-design-interface-details",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "codex-skill",
+          "name": "imagegen",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-interface-details/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-interface-details/agents/openai.yaml",
+          "sourceSha256": "13c5bc3af95b41c21c1626ca54c965d356f828f7eeead386cd74d728a8501b86",
+          "targetPath": ".codex/skills/design-interface-details/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-interface-details/LICENSE.upstream",
+          "sourceSha256": "ed1dfe988fc40511b4845ccd9050a143a2002fee3bedc8064c47fa342b5d8d4f",
+          "targetPath": ".codex/skills/design-interface-details/LICENSE.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-interface-details/references/icons.md",
+          "sourceSha256": "467f3eeb8eec3820265829db7ef5f6a3d3a646f77b8f64988ca7cd84546fc222",
+          "targetPath": ".codex/skills/design-interface-details/references/icons.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-interface-details/references/performance.md",
+          "sourceSha256": "8450bd42fa61ee425a07de94abba0815119e7ee481eba53ef4ff42e70ca81de5",
+          "targetPath": ".codex/skills/design-interface-details/references/performance.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-interface-details/SKILL.md",
+          "sourceSha256": "da4fe2b25cd055e7add0b37d8146a7cf0b7e7504459f2926203021e552f487bb",
+          "targetPath": ".codex/skills/design-interface-details/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-interface-details/SOURCE.json",
+          "sourceSha256": "edc0262de541b37d62211ce760d59235cfe14555e3b5da5af76c3439aaa5ee30",
+          "targetPath": ".codex/skills/design-interface-details/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-design-web-typography",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/jakubkrehel/skills",
+          "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+          "noticePath": ".codex/skills/design-web-typography/LICENSE.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/agents/openai.yaml",
+          "sourceSha256": "89a6f4f35bc96b752d90de25d2bdac7609123118077571332211ef58d2a3c87b",
+          "targetPath": ".codex/skills/design-web-typography/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/LICENSE.upstream",
+          "sourceSha256": "ed1dfe988fc40511b4845ccd9050a143a2002fee3bedc8064c47fa342b5d8d4f",
+          "targetPath": ".codex/skills/design-web-typography/LICENSE.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/references/details-and-accessibility.md",
+          "sourceSha256": "b8a3beb706d974d5cba962edaf954b2417b1d2b2ffb05c948a8eb8640249522b",
+          "targetPath": ".codex/skills/design-web-typography/references/details-and-accessibility.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/references/spacing-and-sizing.md",
+          "sourceSha256": "df78e8fcf74953e5762340d7f793dcc9823b614f0e2ef7e67234ffb9ad3a5aba",
+          "targetPath": ".codex/skills/design-web-typography/references/spacing-and-sizing.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/references/variable-fonts-and-opentype.md",
+          "sourceSha256": "5aa349721fa1f667ce4a9515199e866d83b9fd8eb1d815e6265f092201a44dfe",
+          "targetPath": ".codex/skills/design-web-typography/references/variable-fonts-and-opentype.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/references/wrapping-and-punctuation.md",
+          "sourceSha256": "8717deaab5b71c9531f936b9f6ea53de2df776f52f188e5cabff1b78f724f745",
+          "targetPath": ".codex/skills/design-web-typography/references/wrapping-and-punctuation.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/SKILL.md",
+          "sourceSha256": "92c7c4c4d78532000202b097d9cb3370c9c17f496adbdcee088b8ec1ab75ca22",
+          "targetPath": ".codex/skills/design-web-typography/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-web-typography/SOURCE.json",
+          "sourceSha256": "b0167aab8a459f205b0867da6f689a2c64e24a342d502b69610581a11bed903b",
+          "targetPath": ".codex/skills/design-web-typography/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-frontend-design-discipline",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "codex-skill",
+          "name": "imagegen",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
+          "sourceSha256": "90c43dc9ae78859a2a96d3d4b69c54af04825376bbc9760bfe96d29b91d2ace6",
+          "targetPath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
+          "sourceSha256": "b15e391a5fbabf4c3d0393664906bda6015ee63509f6ac45434ba801aa575f6a",
+          "targetPath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/allowed-visual-styles.md",
+          "sourceSha256": "5a320b49eadbd1e7fe15c6c80d40df9d6122cdb089abe404817961dc12dbaec5",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/allowed-visual-styles.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
+          "sourceSha256": "1c78abd44a4ecb745bc5c2b1e051b4dc092113a02a6bb061d3ff1dad4d089a90",
+          "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-responsive-css-architect",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "native-subagents",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "python",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/agents/openai.yaml",
+          "sourceSha256": "057c775ba553b31cf81e5fca0ca2ab88406b5b351a525b5f937a16c8f4023f90",
+          "targetPath": ".codex/skills/responsive-css-architect/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
+          "sourceSha256": "f22344c99f05b4747ac701b1cc046bf249bb485f151209fbb506ca4c548be06c",
+          "targetPath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/review-checklist.md",
+          "sourceSha256": "1f62d3ecedb3bbc1d86d6923a10f736d90e9feecb382ea12840fba1e1ed2cffe",
+          "targetPath": ".codex/skills/responsive-css-architect/references/review-checklist.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/stylesheet-architecture.md",
+          "sourceSha256": "b6336ee5eec66748c98ac2557d8db9d4205fae83647f3a723d538753c6c0938c",
+          "targetPath": ".codex/skills/responsive-css-architect/references/stylesheet-architecture.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-doc-subagent.md",
+          "sourceSha256": "72a032a8e9309f583045f0330052cdea9bdedfb7c76ac987047655e7932202bf",
+          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-doc-subagent.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-docs/doc-manifest.json",
+          "sourceSha256": "2778da05fd51ba0b8baf888c887c6c035af5eea06f09ca6f3157959259917947",
+          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-docs/doc-manifest.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-docs/INDEX.md",
+          "sourceSha256": "36901e5335a7b147e0b84c3f472fc5010fe0ab58e84332bbd372b167eb3bd436",
+          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-docs/INDEX.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-v4-operating-model.md",
+          "sourceSha256": "0f5f35409118a2469eea9737c65ee4973fcc90b056dbe6d7f8dc8106822e8d8f",
+          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-v4-operating-model.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/scripts/sync_tailwind_docs.py",
+          "sourceSha256": "cbcab5603215789d68fc4a10f466045bae4d27c2592225934c923cfd2a489fdf",
+          "targetPath": ".codex/skills/responsive-css-architect/scripts/sync_tailwind_docs.py",
+          "mediaType": "text/x-python"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/scripts/tailwind_doc_context.py",
+          "sourceSha256": "f2c8da8532f0c58d0fd9adc0f19f9e052fb15f118b1a4151299f72d282092c85",
+          "targetPath": ".codex/skills/responsive-css-architect/scripts/tailwind_doc_context.py",
+          "mediaType": "text/x-python"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/responsive-css-architect/SKILL.md",
+          "sourceSha256": "10a944fe4d7c52adb6a39fc6aff45633d4395d977c691ced7ad0106075e31853",
+          "targetPath": ".codex/skills/responsive-css-architect/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "frontend",
+      "dependencies": [
+        "skill-adopt-established-product",
+        "skill-choose-react-animation",
+        "skill-design-accessible-interfaces",
+        "skill-design-color-systems",
+        "skill-design-interface-details",
+        "skill-design-web-typography",
+        "skill-frontend-design-discipline"
+      ],
+      "capabilities": [
+        {
+          "kind": "codex-skill",
+          "name": "imagegen",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "codex-skill",
+          "name": "visualize",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/frontend.md",
+          "sourceSha256": "4006e1691e9008ebe9e5b5939ba234774b486860d9335a9dd7192129a6bff1d1",
+          "targetPath": "AGENTS.md",
+          "sectionId": "frontend",
+          "markerStyle": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "frontend-tailwind",
+      "dependencies": [
+        "frontend",
+        "skill-responsive-css-architect"
+      ],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "python",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": []
     }
   ]
 }
