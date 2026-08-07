@@ -234,6 +234,17 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
       { recursive: true, filter: (source) => !source.replaceAll("\\", "/").includes("/tailwind-docs/cache") },
     );
   }
+  await cp(
+    path.join(frameworkRoot, ".agent-context", "runtime"),
+    path.join(temporaryRoot, ".agent-context", "runtime"),
+    {
+      recursive: true,
+      filter: (source) => {
+        const portable = source.replaceAll("\\", "/");
+        return !portable.includes("/node_modules") && !portable.includes("/dist");
+      },
+    },
+  );
 }
 
 async function exists(candidate: string): Promise<boolean> {

@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { spawn } from "node:child_process";
 import { lstat, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 
@@ -34,6 +35,10 @@ import {
   type ContextTransactionInspection,
 } from "./context-transaction.js";
 import { exists } from "./workspace.js";
+import {
+  bootstrapRuntime,
+  type RuntimeBootstrapStatus,
+} from "./runtime-bootstrap.js";
 
 export const CONTEXT_CONFIG_PATH = ".agent-context/config.json";
 export const CONTEXT_LOCK_PATH = ".agent-context/lock.json";
@@ -112,6 +117,20 @@ export interface ContextDoctorResult {
   readonly capabilities: readonly ContextCapability[];
   readonly diff: ContextDiffResult | null;
   readonly transaction: ContextTransactionInspection;
+  readonly runtime: ContextRuntimeHealth | null;
+  readonly repositoryPolicy: ContextRepositoryPolicyHealth | null;
+}
+
+export interface ContextRuntimeHealth {
+  readonly status: RuntimeBootstrapStatus;
+  readonly operational: boolean;
+  readonly message: string;
+}
+
+export interface ContextRepositoryPolicyHealth {
+  readonly status: "configuration-required" | "ready" | "invalid";
+  readonly ok: boolean;
+  readonly diagnostics: readonly string[];
 }
 
 export interface ContextRecoveryResult {
@@ -295,6 +314,8 @@ export async function doctorProject(
       capabilities: [],
       diff: null,
       transaction,
+      runtime: null,
+      repositoryPolicy: null,
     };
   }
   const registry = await loadContextRegistry(frameworkRoot);
@@ -306,17 +327,157 @@ export async function doctorProject(
       "availability is project-controlled and is not inferred by the installer.",
     );
   }
+  let runtime: ContextRuntimeHealth | null = null;
+  let repositoryPolicy: ContextRepositoryPolicyHealth | null = null;
+  if (components.some((component) => component.name === "runtime-base")) {
+    try {
+      const result = await bootstrapRuntime({
+        projectRoot: resolvedProjectRoot,
+        mode: "no-install",
+      });
+      runtime = {
+        status: result.status,
+        operational: result.operational,
+        message: result.message,
+      };
+      if (!runtime.operational) diagnostics.push(runtime.message);
+    } catch (error) {
+      runtime = {
+        status: "invalid",
+        operational: false,
+        message: error instanceof Error ? error.message : String(error),
+      };
+      diagnostics.push(`Runtime doctor failed: ${runtime.message}`);
+    }
+  }
+  if (components.some((component) => component.name === "repository-policy")) {
+    if (runtime?.operational === true) {
+      repositoryPolicy = await inspectInstalledRepositoryPolicy(resolvedProjectRoot);
+      if (!repositoryPolicy.ok) diagnostics.push(...repositoryPolicy.diagnostics);
+    } else {
+      diagnostics.push("Repository policy doctor requires an operational isolated runtime.");
+    }
+  }
   const diff = await diffProject(resolvedProjectRoot, frameworkRoot);
-  if (!diff.current) diagnostics.push("Installed context differs from its provenance baseline.");
+  const expectedPolicyConfiguration = repositoryPolicy?.status === "ready" &&
+    isExpectedPolicyConfigurationChange(diff);
+  if (!diff.current && !expectedPolicyConfiguration) {
+    diagnostics.push("Installed context differs from its provenance baseline.");
+  }
+  const healthy = transaction.status === "none" &&
+    (diff.current || expectedPolicyConfiguration) &&
+    (runtime === null || runtime.operational) &&
+    (repositoryPolicy === null || repositoryPolicy.ok);
   return {
     command: "doctor",
     projectRoot: resolvedProjectRoot,
-    health: transaction.status === "none" && diff.current ? "healthy" : "attention",
+    health: healthy ? "healthy" : "attention",
     diagnostics,
     capabilities,
     diff,
     transaction,
+    runtime,
+    repositoryPolicy,
   };
+}
+
+function isExpectedPolicyConfigurationChange(diff: ContextDiffResult): boolean {
+  return diff.plan.status === "ready" &&
+    !diff.plan.lockChanged &&
+    diff.plan.assessments.every((assessment) =>
+      assessment.status === "unchanged" ||
+      (assessment.targetPath === ".agent-context/policy.json" &&
+        assessment.status === "locally-modified"));
+}
+
+async function inspectInstalledRepositoryPolicy(
+  projectRoot: string,
+): Promise<ContextRepositoryPolicyHealth> {
+  const cliPath = path.join(
+    projectRoot,
+    ".agent-context",
+    "runtime",
+    "packages",
+    "policy",
+    "dist",
+    "src",
+    "cli.js",
+  );
+  const output = await executeCompactJson(process.execPath, [
+    cliPath,
+    "doctor",
+    "--root",
+    projectRoot,
+  ], projectRoot);
+  if (!isRecord(output)) {
+    return { status: "invalid", ok: false, diagnostics: ["Repository policy doctor returned a non-object result."] };
+  }
+  if (
+    output.status !== "configuration-required" &&
+    output.status !== "ready" &&
+    output.status !== "invalid"
+  ) {
+    return { status: "invalid", ok: false, diagnostics: ["Repository policy doctor returned an unknown status."] };
+  }
+  const diagnostics = output.diagnostics;
+  if (
+    typeof output.ok !== "boolean" ||
+    !Array.isArray(diagnostics) ||
+    diagnostics.some((diagnostic) => typeof diagnostic !== "string") ||
+    output.ok !== (output.status === "ready")
+  ) {
+    return { status: "invalid", ok: false, diagnostics: ["Repository policy doctor returned an inconsistent result."] };
+  }
+  return { status: output.status, ok: output.ok, diagnostics };
+}
+
+async function executeCompactJson(
+  executable: string,
+  arguments_: readonly string[],
+  cwd: string,
+): Promise<unknown> {
+  const maximumBytes = 1_000_000;
+  return await new Promise<unknown>((resolve, reject) => {
+    const child = spawn(executable, arguments_, {
+      cwd,
+      shell: false,
+      stdio: ["ignore", "pipe", "pipe"],
+      windowsHide: true,
+    });
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    let bytes = 0;
+    let exceeded = false;
+    const collect = (target: Buffer[]) => (chunk: Buffer): void => {
+      bytes += chunk.length;
+      if (bytes > maximumBytes) {
+        exceeded = true;
+        child.kill();
+        return;
+      }
+      target.push(chunk);
+    };
+    child.stdout.on("data", collect(stdout));
+    child.stderr.on("data", collect(stderr));
+    child.on("error", reject);
+    child.on("close", () => {
+      if (exceeded) {
+        reject(new Error(`Repository policy doctor exceeded ${maximumBytes} output bytes.`));
+        return;
+      }
+      const source = Buffer.concat(stdout).toString("utf8");
+      try {
+        resolve(JSON.parse(source) as unknown);
+      } catch (error) {
+        const detail = Buffer.concat(stderr).toString("utf8").trim();
+        reject(new Error(`Repository policy doctor returned invalid JSON${detail ? `: ${detail}` : "."}`, { cause: error }));
+      }
+    });
+  });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export async function recoverProject(projectRoot: string): Promise<ContextRecoveryResult> {

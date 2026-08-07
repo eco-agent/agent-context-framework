@@ -160,6 +160,12 @@ export function formatContextResult(result: ContextCommandResult): string {
   }
   if (result.command === "doctor") {
     lines.push(`health: ${result.health}`);
+    if (result.runtime) {
+      lines.push(`runtime: ${result.runtime.status}`);
+    }
+    if (result.repositoryPolicy) {
+      lines.push(`repository policy: ${result.repositoryPolicy.status}`);
+    }
     lines.push(...result.diagnostics.map((diagnostic) => `- ${diagnostic}`));
     return lines.join("\n");
   }
