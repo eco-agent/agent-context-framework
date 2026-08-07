@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -54,6 +54,12 @@ test("workspace inspection accepts a non-Node repository", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-non-node-"));
   try {
     await writeFile(path.join(root, "README.md"), "# fixture\n", "utf8");
+    await mkdir(path.join(root, ".agent-context", "runtime"), { recursive: true });
+    await writeFile(
+      path.join(root, ".agent-context", "runtime", "package.json"),
+      '{"name":"@agent-context/runtime-workspace","private":true}\n',
+      "utf8",
+    );
     assert.deepEqual(await discoverWorkspaceUnits(root), []);
   } finally {
     await rm(root, { recursive: true, force: true });

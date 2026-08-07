@@ -2,7 +2,10 @@ import { readdir, readFile, realpath, stat } from "node:fs/promises";
 import path from "node:path";
 
 const ignoredDirectories = new Set([".git", "dist", "node_modules"]);
-const ignoredRelativeDirectories = new Set([".codex/work/reference-checkouts"]);
+const ignoredRelativeDirectories = new Set([
+  ".agent-context/runtime",
+  ".codex/work/reference-checkouts",
+]);
 
 export async function findFiles(
   root: string,
