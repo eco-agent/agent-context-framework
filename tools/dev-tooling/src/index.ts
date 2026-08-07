@@ -19,3 +19,12 @@ export {
 export {
   materializeProductPrecedent,
 } from "./product-precedent-materializer.js";
+export {
+  bootstrapRuntime,
+  type RuntimeBootstrapExecutor,
+  type RuntimeBootstrapMode,
+  type RuntimeBootstrapRequest,
+  type RuntimeBootstrapResult,
+  type RuntimeBootstrapStatus,
+  type RuntimeBootstrapStep,
+} from "./runtime-bootstrap.js";

@@ -484,4 +484,3 @@ function requireSortedUnique(values: readonly string[], label: string): void {
     throw new Error(`${label} must be sorted.`);
   }
 }
-

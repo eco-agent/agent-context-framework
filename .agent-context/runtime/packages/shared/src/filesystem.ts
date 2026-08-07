@@ -63,4 +63,3 @@ export async function resolvesInside(root: string, candidate: string): Promise<b
   const candidateReal = await realpath(absolute);
   return candidateReal === rootReal || candidateReal.startsWith(`${rootReal}${path.sep}`);
 }
-

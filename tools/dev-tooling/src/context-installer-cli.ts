@@ -17,6 +17,11 @@ import {
   type ContextOperationResult,
   type ContextRecoveryResult,
 } from "./context-installer.js";
+import {
+  bootstrapRuntime,
+  type RuntimeBootstrapMode,
+  type RuntimeBootstrapResult,
+} from "./runtime-bootstrap.js";
 
 type ContextInstallerArguments =
   | {
@@ -42,6 +47,13 @@ type ContextInstallerArguments =
       readonly projectRoot: string;
       readonly component: string | null;
       readonly output: "text";
+    }
+  | {
+      readonly command: "bootstrap-runtime";
+      readonly projectRoot: string;
+      readonly component: null;
+      readonly output: "text";
+      readonly mode: RuntimeBootstrapMode;
     };
 
 type ContextCommandResult =
@@ -49,7 +61,8 @@ type ContextCommandResult =
   | ContextDiffResult
   | ContextInspection
   | ContextDoctorResult
-  | ContextRecoveryResult;
+  | ContextRecoveryResult
+  | RuntimeBootstrapResult;
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -60,6 +73,7 @@ export function parseContextInstallerArguments(
   const positionals: string[] = [];
   let projectRoot = currentDirectory;
   let json = false;
+  let noInstall = false;
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
     if (argument === "--cwd") {
@@ -69,6 +83,8 @@ export function parseContextInstallerArguments(
       index += 1;
     } else if (argument === "--json") {
       json = true;
+    } else if (argument === "--no-install") {
+      noInstall = true;
     } else if (!argument || argument.startsWith("-")) {
       throw new Error(`Unknown agent-context argument ${argument ?? ""}.`);
     } else {
@@ -85,14 +101,18 @@ export function parseContextInstallerArguments(
     command !== "update" &&
     command !== "remove" &&
     command !== "doctor" &&
-    command !== "recover"
+    command !== "recover" &&
+    command !== "bootstrap-runtime"
   ) {
     throw new Error(
-      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT]|remove COMPONENT|doctor|recover> [--cwd PROJECT] [--json].",
+      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]> [--cwd PROJECT] [--json].",
     );
   }
   if (json && command !== "inspect" && command !== "diff" && command !== "doctor") {
     throw new Error(`--json is read-only and cannot be used with agent-context ${command}.`);
+  }
+  if (noInstall && command !== "bootstrap-runtime") {
+    throw new Error("--no-install is valid only with agent-context bootstrap-runtime.");
   }
   if (command === "add" || command === "remove") {
     const component = positionals[1];
@@ -108,6 +128,15 @@ export function parseContextInstallerArguments(
   if (command === "init" || command === "recover") {
     return { command, projectRoot, component: null, output: "text" };
   }
+  if (command === "bootstrap-runtime") {
+    return {
+      command,
+      projectRoot,
+      component: null,
+      output: "text",
+      mode: noInstall ? "no-install" : "install-and-build",
+    };
+  }
   return { command, projectRoot, component: null, output: json ? "json" : "text" };
 }
 
@@ -120,6 +149,13 @@ export function formatContextResult(result: ContextCommandResult): string {
     lines.push(`AGENTS.md: ${result.hasAgents ? "present" : "absent"}`);
     lines.push(`Codex config: ${result.hasCodexConfig ? "present" : "absent"}`);
     lines.push(`Codex hooks: ${result.hasCodexHooks ? "present" : "absent"}`);
+    return lines.join("\n");
+  }
+  if (result.command === "bootstrap-runtime") {
+    lines.push(`mode: ${result.mode}`);
+    lines.push(`status: ${result.status}`);
+    lines.push(`operational: ${result.operational ? "yes" : "no"}`);
+    lines.push(result.message);
     return lines.join("\n");
   }
   if (result.command === "doctor") {
@@ -175,6 +211,11 @@ async function execute(arguments_: ContextInstallerArguments): Promise<ContextCo
       return await doctorProject(arguments_.projectRoot, frameworkRoot);
     case "recover":
       return await recoverProject(arguments_.projectRoot);
+    case "bootstrap-runtime":
+      return await bootstrapRuntime({
+        projectRoot: arguments_.projectRoot,
+        mode: arguments_.mode,
+      });
   }
 }
 
