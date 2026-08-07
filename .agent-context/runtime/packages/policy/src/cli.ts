@@ -59,11 +59,7 @@ async function dispatch(request: PolicyCliRequest): Promise<object> {
     case "inspect":
       return await inspectRepository(root);
     case "inspect-workspace":
-      return {
-        operation: request.operation,
-        root,
-        units: await discoverWorkspaceUnits(root),
-      };
+      return await discoverWorkspaceUnits(root);
     case "doctor":
       return await doctorRepositoryPolicy(root, request.configPath, request.invariantPath);
     case "verify":

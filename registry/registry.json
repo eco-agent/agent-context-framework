@@ -1381,7 +1381,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/cli.ts",
-          "sourceSha256": "a3c875df93864e3d8845e0e8b1c62325ceb91f0465d2397cbb03cafc660206e7",
+          "sourceSha256": "54b779aa4c69fa7e33ecb42ea064c55835a80a209af9d2b8a66d56ec898350d9",
           "targetPath": ".agent-context/runtime/packages/policy/src/cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
