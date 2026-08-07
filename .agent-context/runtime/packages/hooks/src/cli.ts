@@ -4,17 +4,23 @@ import { readFileSync } from "node:fs";
 import process from "node:process";
 
 import {
+  classifyHookFailureEvent,
   decodeHookInput,
   evaluateHook,
+  failureEventForHookInput,
   loadScopedSessionBinding,
   type HookDecision,
+  type HookFailureEvent,
 } from "./index.js";
 
-let rawInput = "";
+let failureEvent: HookFailureEvent = "unclassified";
 try {
   const request = parseArguments(process.argv.slice(2));
-  rawInput = readFileSync(0, "utf8");
-  const input = decodeHookInput(JSON.parse(rawInput) as unknown);
+  const rawInput = readFileSync(0, "utf8");
+  const parsedInput = JSON.parse(rawInput) as unknown;
+  failureEvent = classifyHookFailureEvent(parsedInput);
+  const input = decodeHookInput(parsedInput);
+  failureEvent = failureEventForHookInput(input);
   if (input.event === "unsupported") {
     process.exitCode = 0;
   } else {
@@ -27,7 +33,7 @@ try {
   }
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
-  if (rawInput.includes('"hook_event_name":"SessionStart"')) {
+  if (failureEvent === "session-start") {
     writeDecision({
       kind: "context",
       additionalContext: `Scoped session binding is invalid: ${message}`,

@@ -19,6 +19,9 @@ Create a source-owned `.agent-context/runtime` workspace that builds and runs wi
 | Policy boundary | Extract strict registry/config/lock decoding, deterministic dependency resolution, repository workspace inspection, and canonical instruction checks. Phase 6 will own project policy configuration and verification profiles. | `policy` |
 | Bootstrap | Add one typed `bootstrapRuntime` operation whose only modes are install-and-build and no-install. Commands and arguments are fixed in source and never supplied by registry data. | Development installer |
 | Operational status | Represent materialized-but-unbootstrapped, dependencies-missing, build-missing, operational, and invalid states explicitly. `--no-install` succeeds with a visible non-operational status. | Runtime doctor |
+| Hook failure identity | Parse stdin once, preserve the structurally classified hook event independently from strict decoding, and translate failures from that state. Invalid JSON has no trusted event and remains fail-closed as a `PreToolUse` denial. | `hooks` CLI boundary |
+| Package-manager resolution | Invoke the pinned `pnpm@10.22.0` through Corepack's public version-qualified command. Do not inspect `PNPM_HOME`, Corepack caches, or pnpm installation internals. | Development installer |
+| Isolation acceptance gate | Own the non-Node isolation fixture as one cross-platform TypeScript command that snapshots tracked runtime source, bootstraps it, exercises every runtime surface, rebuilds an edit, verifies host hashes, and emits compact JSON. | Development installer verification |
 
 ## State
 
@@ -70,6 +73,9 @@ development installer
 - Explicit repository-root authority propagates through policy, repository-context, hook, bootstrap, and test entry points.
 - The fixed bootstrap contract propagates through the installer API, CLI parsing, subprocess arguments, `--no-install` reporting, and mutation tests.
 - Source editability propagates through tracked TypeScript, ignored generated output, rebuild behavior, and an isolation fixture.
+- Hook event identity propagates from parsed stdin through strict decoding failures to the one output translation boundary; raw JSON formatting has no semantic role.
+- Corepack resolution propagates through pinned version checks and a bootstrap test with `PNPM_HOME` absent.
+- The manual isolation evidence propagates into the checked-in `verify:isolation` command and its compact machine-readable result.
 - Objective exclusion propagates through package manifests, imports, file inventory assertions, and full repository checks.
 
 ## Verification evidence

@@ -19,6 +19,7 @@
 - `invalid`: the runtime root, manifest, lockfile, package-manager pin, or source topology violates the fixed contract.
 - Bootstrap request is exactly `install-and-build` or `no-install`.
 - Hook evaluation is exactly `allow`, `deny`, `context`, or `noop`.
+- Hook failure routing is exactly `session-start`, `pre-tool-use`, or `unclassified`; only a structurally parsed `SessionStart` may produce session context, while `unclassified` fails closed as `PreToolUse`.
 
 ## Invalid states to exclude
 
@@ -46,6 +47,7 @@
 | Registry/config/lock | Parsed JSON unknown | Existing strict decoders | Context installation contracts |
 | Repository-context CLI | Argument strings and cursors | Existing exact parser and cursor decoder | Read/search request |
 | Hook stdin | Parsed JSON unknown | Strict hook-input decoder | Hook input variant |
+| Hook failure routing | Parsed JSON unknown or JSON parse failure | Structural event classifier | Preserved event identity or `unclassified` |
 | Hook binding | Parsed JSON unknown | Strict scoped-session decoder and source-hash validation | Active hook scope |
 
 ## Representations and conversions
@@ -64,6 +66,7 @@
 - Expected outcomes: materialized but not operational, no repository search match, hook no-op, hook denial.
 - Exceptional failures: invalid runtime topology, path escape, source mutation during read, malformed cursor, missing required executable, install/build failure.
 - Translation boundaries: bootstrap CLI and hook CLI translate exceptions once into stable exit/output behavior while preserving error causes internally.
+- A strictly decoded `SessionStart` or structurally identified malformed `SessionStart` translates failures to session context. Invalid JSON cannot establish event identity and translates to a fail-closed patch denial.
 
 ## Public contracts affected
 
@@ -77,6 +80,8 @@
 - Rejected copying whole framework packages because each contains out-of-scope objective or host-workspace concerns.
 - Rejected registry-provided bootstrap commands because executable data must remain fixed and typed in the installer.
 - Rejected optional-field lifecycle objects because they permit false operational states.
+- Rejected raw substring inspection because JSON whitespace and key order are representation details, not hook event identity.
+- Rejected pnpm/Corepack cache-path discovery because those layouts are private installation details; the bootstrap uses Corepack's public version-qualified command.
 
 ## Verification evidence
 

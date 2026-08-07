@@ -39,6 +39,36 @@ export type HookDecision =
   | { readonly kind: "context"; readonly additionalContext: string }
   | { readonly kind: "noop" };
 
+export type HookFailureEvent =
+  | "session-start"
+  | "pre-tool-use"
+  | "unclassified";
+
+export function classifyHookFailureEvent(value: unknown): HookFailureEvent {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return "unclassified";
+  }
+  const event = Reflect.get(value, "hook_event_name");
+  if (event === "SessionStart") {
+    return "session-start";
+  }
+  if (event === "PreToolUse") {
+    return "pre-tool-use";
+  }
+  return "unclassified";
+}
+
+export function failureEventForHookInput(input: HookInput): HookFailureEvent {
+  switch (input.event) {
+    case "session-start-compact":
+      return "session-start";
+    case "pre-tool-use-patch":
+      return "pre-tool-use";
+    case "unsupported":
+      return "unclassified";
+  }
+}
+
 export function decodeHookInput(value: unknown): HookInput {
   const record = strictRecord(value, "Hook input", [
     "hook_event_name",
