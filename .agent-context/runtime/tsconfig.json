@@ -17,11 +17,5 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "files": [],
-  "references": [
-    { "path": "./packages/shared" },
-    { "path": "./packages/policy" },
-    { "path": "./packages/repo-context" },
-    { "path": "./packages/hooks" }
-  ]
+  "files": []
 }

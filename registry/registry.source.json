@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.3.0",
-  "decisionPath": "registry/decisions/0.3.0-wave-two.md",
+  "revision": "0.4.0",
+  "decisionPath": "registry/decisions/0.4.0-wave-three.md",
   "components": [
     {
       "name": "core",
@@ -459,6 +459,75 @@
           "targetPath": "AGENTS.md",
           "sectionId": "skill-authoring",
           "markerStyle": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "runtime-base",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "runtime", "name": "node", "requirement": "required" },
+        { "kind": "runtime", "name": "corepack", "requirement": "required" }
+      ],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": ".agent-context/runtime",
+          "targetDirectory": ".agent-context/runtime",
+          "excludedPrefixes": ["node_modules/", "packages/"],
+          "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": ".agent-context/runtime/packages/shared",
+          "targetDirectory": ".agent-context/runtime/packages/shared",
+          "excludedPrefixes": ["dist/", "node_modules/"],
+          "workspaceId": "agent-context-runtime"
+        }
+      ]
+    },
+    {
+      "name": "repository-policy",
+      "dependencies": ["core", "runtime-base"],
+      "capabilities": [],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": ".agent-context/runtime/packages/policy",
+          "targetDirectory": ".agent-context/runtime/packages/policy",
+          "excludedPrefixes": ["dist/", "node_modules/"],
+          "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/repository-policy.md",
+          "targetPath": "AGENTS.md",
+          "sectionId": "repository-policy",
+          "markerStyle": "markdown"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/policy/policy.json",
+          "targetPath": ".agent-context/policy.json",
+          "mediaType": "application/json"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/policy/invariants.json",
+          "targetPath": ".agent-context/policy-invariants.json",
+          "mediaType": "application/json"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/policy/policy.mjs",
+          "targetPath": ".agent-context/policy.mjs",
+          "mediaType": "text/javascript"
         }
       ]
     }

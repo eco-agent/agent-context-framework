@@ -28,7 +28,10 @@ interface RegistrySourceComponent {
   readonly artifacts: readonly RegistrySourceArtifact[];
 }
 
-type RegistrySourceArtifact = RegistryDirectArtifact | RegistryDirectoryArtifact;
+type RegistrySourceArtifact =
+  | RegistryDirectArtifact
+  | RegistryDirectoryArtifact
+  | RegistryRuntimeDirectoryArtifact;
 
 interface RegistryDirectArtifact {
   readonly kind: "artifact";
@@ -41,6 +44,15 @@ interface RegistryDirectoryArtifact {
   readonly targetDirectory: string;
   readonly excludedPrefixes: readonly string[];
   readonly excludedPaths: readonly string[];
+}
+
+interface RegistryRuntimeDirectoryArtifact {
+  readonly kind: "runtime-directory";
+  readonly sourceDirectory: string;
+  readonly targetDirectory: string;
+  readonly excludedPrefixes: readonly string[];
+  readonly excludedPaths: readonly string[];
+  readonly workspaceId: string;
 }
 
 export async function buildContextRegistry(root: string): Promise<ContextRegistryV2> {
@@ -65,7 +77,7 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
         continue;
       }
       const sourceDirectory = repositoryPath(resolvedRoot, declaration.sourceDirectory);
-      const files = await listFiles(sourceDirectory);
+      const files = await listFiles(sourceDirectory, declaration.excludedPrefixes);
       for (const relativeFile of files) {
         const portableRelativeFile = portablePath(relativeFile);
         if (
@@ -77,13 +89,22 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
         const sourcePathValue = joinPortable(declaration.sourceDirectory, portableRelativeFile);
         const targetPath = joinPortable(declaration.targetDirectory, portableRelativeFile);
         const bytes = await readSourceBytes(resolvedRoot, sourcePathValue);
-        artifacts.push({
-          operation: "file",
-          sourcePath: sourcePathValue,
-          sourceSha256: contentHash(bytes),
-          targetPath,
-          mediaType: mediaTypeFor(targetPath),
-        });
+        artifacts.push(declaration.kind === "runtime-directory"
+          ? {
+              operation: "runtime-workspace",
+              sourcePath: sourcePathValue,
+              sourceSha256: contentHash(bytes),
+              targetPath,
+              workspaceId: declaration.workspaceId,
+              mediaType: mediaTypeFor(targetPath),
+            }
+          : {
+              operation: "file",
+              sourcePath: sourcePathValue,
+              sourceSha256: contentHash(bytes),
+              targetPath,
+              mediaType: mediaTypeFor(targetPath),
+            });
       }
     }
     components.push({
@@ -161,13 +182,14 @@ function decodeSourceComponent(value: unknown): RegistrySourceComponent {
 
 function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
   if (!isRecord(value)) throw new Error("Registry source artifact must be an object.");
-  if (value.kind === "directory") {
+  if (value.kind === "directory" || value.kind === "runtime-directory") {
     const record = strictRecord(value, "Registry directory artifact", [
       "kind",
       "sourceDirectory",
       "targetDirectory",
       "excludedPrefixes",
       "excludedPaths",
+      ...(value.kind === "runtime-directory" ? ["workspaceId"] : []),
     ]);
     const excludedPrefixes = decodeArray(
       record.excludedPrefixes,
@@ -181,16 +203,24 @@ function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
           "Registry directory excludedPaths",
           (candidate) => portablePathValue(candidate, "Registry excluded path"),
         );
-    return {
-      kind: "directory",
+    const directory = {
       sourceDirectory: portableRelativePath(record, "sourceDirectory"),
       targetDirectory: portableRelativePath(record, "targetDirectory"),
       excludedPrefixes,
       excludedPaths,
     };
+    return value.kind === "runtime-directory"
+      ? {
+          kind: "runtime-directory",
+          ...directory,
+          workspaceId: componentName(record.workspaceId, "Registry runtime workspaceId"),
+        }
+      : { kind: "directory", ...directory };
   }
   if (value.kind !== "artifact") {
-    throw new Error("Registry source artifact kind must be artifact or directory.");
+    throw new Error(
+      "Registry source artifact kind must be artifact, directory, or runtime-directory.",
+    );
   }
   const fields = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "kind"));
   if (Object.keys(fields).length === 0) throw new Error("Direct registry artifact must not be empty.");
@@ -292,7 +322,10 @@ async function validatePackagedMarkdownReferences(
   }
 }
 
-async function listFiles(root: string): Promise<readonly string[]> {
+async function listFiles(
+  root: string,
+  excludedPrefixes: readonly string[],
+): Promise<readonly string[]> {
   const result: string[] = [];
   const visit = async (directory: string): Promise<void> => {
     const entries = await readdir(directory, { withFileTypes: true });
@@ -301,6 +334,8 @@ async function listFiles(root: string): Promise<readonly string[]> {
       const absolute = path.join(directory, entry.name);
       if (entry.isSymbolicLink()) throw new Error(`Registry directories cannot contain symbolic links: ${absolute}.`);
       if (entry.isDirectory()) {
+        const relativeDirectory = `${portablePath(path.relative(root, absolute))}/`;
+        if (excludedPrefixes.some((prefix) => relativeDirectory.startsWith(prefix))) continue;
         await visit(absolute);
       } else if (entry.isFile()) {
         result.push(path.relative(root, absolute));
@@ -444,6 +479,13 @@ function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
 function requiredString(record: Readonly<Record<string, unknown>>, key: string): string {
   const value = record[key];
   if (typeof value !== "string" || value.length === 0) throw new Error(`${key} must be a non-empty string.`);
+  return value;
+}
+
+function componentName(value: unknown, label: string): string {
+  if (typeof value !== "string" || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/u.test(value)) {
+    throw new Error(`${label} must be a lowercase kebab-case identifier.`);
+  }
   return value;
 }
 

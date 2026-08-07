@@ -3,20 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { runtimeRoot } from "./tooling.mjs";
-
-const requiredSources = [
-  "packages/shared/src/index.ts",
-  "packages/policy/src/index.ts",
-  "packages/repo-context/src/index.ts",
-  "packages/hooks/src/index.ts",
-];
-const requiredOutputs = [
-  "packages/shared/dist/src/index.js",
-  "packages/policy/dist/src/index.js",
-  "packages/repo-context/dist/src/index.js",
-  "packages/hooks/dist/src/index.js",
-];
+import { runtimePackageProjects, runtimeRoot } from "./tooling.mjs";
 
 const state = classify();
 process.stdout.write(`${JSON.stringify(state, undefined, 2)}\n`);
@@ -36,9 +23,23 @@ function classify() {
     ) {
       return invalid("Runtime package-manager and Node versions must match the fixed contract.");
     }
-    const missingSource = requiredSources.find(
-      (candidate) => !existsSync(path.join(runtimeRoot, candidate)),
-    );
+    const projects = runtimePackageProjects();
+    const packages = projects.map((project) => {
+      const packageManifestPath = path.join(runtimeRoot, project, "package.json");
+      const packageManifest = JSON.parse(readFileSync(packageManifestPath, "utf8"));
+      if (
+        typeof packageManifest?.name !== "string" ||
+        !packageManifest.name.startsWith("@agent-context-runtime/") ||
+        typeof packageManifest?.main !== "string" ||
+        !packageManifest.main.startsWith("./dist/")
+      ) {
+        throw new Error(`Runtime package contract is invalid: ${project}.`);
+      }
+      return { project, main: packageManifest.main.slice(2) };
+    });
+    const missingSource = packages
+      .map(({ project }) => path.join(project, "src", "index.ts"))
+      .find((candidate) => !existsSync(path.join(runtimeRoot, candidate)));
     if (missingSource !== undefined) {
       return invalid(`Required runtime source is missing: ${missingSource}.`);
     }
@@ -49,9 +50,9 @@ function classify() {
         message: "Runtime source is materialized but dependencies are not installed.",
       };
     }
-    const missingOutput = requiredOutputs.find(
-      (candidate) => !existsSync(path.join(runtimeRoot, candidate)),
-    );
+    const missingOutput = packages
+      .map(({ project, main }) => path.join(project, main))
+      .find((candidate) => !existsSync(path.join(runtimeRoot, candidate)));
     if (missingOutput !== undefined) {
       return {
         status: "build-missing",

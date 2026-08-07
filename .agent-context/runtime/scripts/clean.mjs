@@ -2,16 +2,24 @@
 
 import { spawnSync } from "node:child_process";
 
-import { runtimeRoot, typescriptCli } from "./tooling.mjs";
+import {
+  runtimePackageProjects,
+  runtimeRoot,
+  typescriptCli,
+} from "./tooling.mjs";
 
 try {
-  const result = spawnSync(process.execPath, [typescriptCli(), "-b", "--clean"], {
+  const result = spawnSync(
+    process.execPath,
+    [typescriptCli(), "-b", "--clean", ...runtimePackageProjects()],
+    {
     cwd: runtimeRoot,
     encoding: "utf8",
     shell: false,
     stdio: "inherit",
     windowsHide: true,
-  });
+    },
+  );
   if (result.error !== undefined) {
     throw result.error;
   }

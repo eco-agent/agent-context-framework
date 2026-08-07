@@ -1,13 +1,18 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import {
+  decodeRepositoryPolicyConfiguration,
+  decodeRepositoryPolicyInvariantManifest,
   decodeContextRegistry,
   discoverWorkspaceUnits,
+  doctorRepositoryPolicy,
+  inspectRepository,
   resolveContextComponents,
+  verifyRepositoryPolicy,
 } from "../src/index.js";
 
 test("policy registry decoding remains strict and resolution is deterministic", () => {
@@ -65,3 +70,165 @@ test("workspace inspection accepts a non-Node repository", async () => {
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("repository policy excludes partial decisions and invalid profile references", () => {
+  assert.deepEqual(decodeRepositoryPolicyConfiguration({
+    schemaVersion: 1,
+    state: "unconfigured",
+  }), {
+    schemaVersion: 1,
+    state: "unconfigured",
+  });
+  assert.throws(
+    () => decodeRepositoryPolicyConfiguration({
+      schemaVersion: 1,
+      state: "unconfigured",
+      repository: {},
+    }),
+    /unknown fields: repository/u,
+  );
+  assert.throws(
+    () => decodeRepositoryPolicyConfiguration({
+      ...configuredPolicy(),
+      profiles: [{ id: "default", commands: ["missing"] }],
+    }),
+    /references unknown command missing/u,
+  );
+  assert.throws(
+    () => decodeRepositoryPolicyInvariantManifest({
+      schemaVersion: 1,
+      invariants: ["explicit-project-facts"],
+    }),
+    /must be exactly/u,
+  );
+});
+
+test("policy doctor requires explicit configuration and validates declared paths", async () => {
+  const root = await createPolicyFixture();
+  try {
+    await writeJson(path.join(root, ".agent-context", "policy.json"), {
+      schemaVersion: 1,
+      state: "unconfigured",
+    });
+    assert.deepEqual(
+      await doctorRepositoryPolicy(root),
+      {
+        operation: "doctor",
+        ok: false,
+        status: "configuration-required",
+        diagnostics: [
+          ".agent-context/policy.json is unconfigured; record explicit repository facts and verification profiles.",
+        ],
+      },
+    );
+
+    await writeJson(path.join(root, ".agent-context", "policy.json"), configuredPolicy());
+    const missingDocs = await doctorRepositoryPolicy(root);
+    assert.equal(missingDocs.status, "invalid");
+    assert.match(missingDocs.diagnostics[0] ?? "", /documentation root does not exist/u);
+
+    await mkdir(path.join(root, "docs"));
+    const ready = await doctorRepositoryPolicy(root);
+    assert.equal(ready.ok, true);
+    assert.equal(ready.status, "ready");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("policy verification executes only the selected tokenized profile", async () => {
+  const root = await createPolicyFixture();
+  try {
+    await mkdir(path.join(root, "docs"));
+    await writeJson(path.join(root, ".agent-context", "policy.json"), configuredPolicy());
+    const result = await verifyRepositoryPolicy(root, null);
+    assert.equal(result.status, "completed");
+    assert.equal(result.profile, "default");
+    assert.equal(result.ok, true);
+    assert.deepEqual(result.commands.map((command) => [command.id, command.status]), [
+      ["node-check", "passed"],
+    ]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("repository inspection reports observations without creating policy", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-policy-inspect-"));
+  try {
+    await writeFile(path.join(root, "pyproject.toml"), "[project]\nname = \"fixture\"\n", "utf8");
+    await mkdir(path.join(root, "docs"));
+    const result = await inspectRepository(root);
+    assert.deepEqual(result.observations.languageMarkers, ["pyproject.toml"]);
+    assert.equal(result.observations.rootEntries.includes("docs/"), true);
+    assert.equal(result.observations.packageManifests.length, 0);
+    assert.equal(await fileExists(path.join(root, ".agent-context", "policy.json")), false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+function configuredPolicy(): object {
+  return {
+    schemaVersion: 1,
+    state: "configured",
+    repository: {
+      repositoryType: "framework",
+      languages: ["typescript"],
+      documentationRoots: ["docs"],
+      packageManager: { state: "declared", name: "pnpm", version: "10.22.0" },
+      layout: "monorepo",
+      frontend: false,
+    },
+    commands: [
+      {
+        id: "node-check",
+        executable: process.execPath,
+        arguments: ["-e", "process.exit(0)"],
+        timeoutMs: 5_000,
+      },
+    ],
+    profiles: [{ id: "default", commands: ["node-check"] }],
+    defaultProfile: "default",
+  };
+}
+
+async function createPolicyFixture(): Promise<string> {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-policy-"));
+  await mkdir(path.join(root, ".agent-context"), { recursive: true });
+  await writeJson(path.join(root, ".agent-context", "config.json"), {
+    schemaVersion: 2,
+    adapter: "codex",
+    components: ["core", "repository-policy"],
+  });
+  await writeJson(path.join(root, ".agent-context", "lock.json"), {
+    schemaVersion: 2,
+    registryRevision: "0.4.0",
+    components: ["core", "runtime-base", "repository-policy"],
+    artifacts: [],
+  });
+  await writeJson(path.join(root, ".agent-context", "policy-invariants.json"), {
+    schemaVersion: 1,
+    invariants: [
+      "explicit-project-facts",
+      "explicit-verification-profiles",
+      "observation-only-inspection",
+      "tokenized-command-execution",
+    ],
+  });
+  return root;
+}
+
+async function writeJson(candidate: string, value: unknown): Promise<void> {
+  await writeFile(candidate, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+async function fileExists(candidate: string): Promise<boolean> {
+  try {
+    await stat(candidate);
+    return true;
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return false;
+    throw error;
+  }
+}

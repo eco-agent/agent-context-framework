@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.3.0",
-  "decisionPath": "registry/decisions/0.3.0-wave-two.md",
+  "revision": "0.4.0",
+  "decisionPath": "registry/decisions/0.4.0-wave-three.md",
   "components": [
     {
       "name": "core",
@@ -1211,6 +1211,265 @@
           "targetPath": "AGENTS.md",
           "sectionId": "skill-authoring",
           "markerStyle": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "runtime-base",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "corepack",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/.gitignore",
+          "sourceSha256": "818a8406309a4f48eddc7a6614c9354a20123b80cf91e75038c5a376ae76a968",
+          "targetPath": ".agent-context/runtime/.gitignore",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/package.json",
+          "sourceSha256": "2011bf486ddafd4512fb055da8f54652b942987426e29d3dea343998e9d53bf2",
+          "targetPath": ".agent-context/runtime/package.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/pnpm-lock.yaml",
+          "sourceSha256": "15b4078977376f49bc544368474a86808d5a714e37e33e47fc39813aec404d2b",
+          "targetPath": ".agent-context/runtime/pnpm-lock.yaml",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/pnpm-workspace.yaml",
+          "sourceSha256": "0fb360452b0231d114d0b0ad6cc76bb48fe528382f55827cf93739bf64ec79e1",
+          "targetPath": ".agent-context/runtime/pnpm-workspace.yaml",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/scripts/build.mjs",
+          "sourceSha256": "b28af8a402f69cfd64f30488a260c8efa088bd70e28012d02bfd88bf32a8a2b8",
+          "targetPath": ".agent-context/runtime/scripts/build.mjs",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/scripts/clean.mjs",
+          "sourceSha256": "8e5ce55dfc730ae4f0a4db56662ead797dba08a601dab59c9777a541297639ab",
+          "targetPath": ".agent-context/runtime/scripts/clean.mjs",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/scripts/doctor.mjs",
+          "sourceSha256": "82cbe32da7bebebf95f2fcd663096ba45d6bb45a442b12eab038e0310adbc0f0",
+          "targetPath": ".agent-context/runtime/scripts/doctor.mjs",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/scripts/tooling.mjs",
+          "sourceSha256": "a203faba1174df3fbab944a8228b330dca199487df8ad38893add6de7f9fac27",
+          "targetPath": ".agent-context/runtime/scripts/tooling.mjs",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/tsconfig.json",
+          "sourceSha256": "c3d286b48eba0c6adea2d13a3c2341b228f40305d29fdc05fbcdf7a9fa53b161",
+          "targetPath": ".agent-context/runtime/tsconfig.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/shared/package.json",
+          "sourceSha256": "afbfecdef10ac50d3869c24b180bc215fdfc40284342d85f89ce9b13abf90179",
+          "targetPath": ".agent-context/runtime/packages/shared/package.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/shared/src/decoding.ts",
+          "sourceSha256": "c88b25a87ebef1aea6754aa5c5a5a0c214eb5116d93ea6d48a0bbdf46ceaf8e3",
+          "targetPath": ".agent-context/runtime/packages/shared/src/decoding.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/shared/src/filesystem.ts",
+          "sourceSha256": "8b7e444ab25a32ec2bc893586fed8b632836a2da991ea837b1be4f45dce19ab9",
+          "targetPath": ".agent-context/runtime/packages/shared/src/filesystem.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/shared/src/index.ts",
+          "sourceSha256": "961f3bbac6e19fe0061d32ca92d5ef8fc936b30fd9485d2fa280e001dc0716ee",
+          "targetPath": ".agent-context/runtime/packages/shared/src/index.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/shared/test/decoding.test.ts",
+          "sourceSha256": "d9a537af70f50ddf7b56991d8cdc04686c64c3e8005ef455145da5841f48f86a",
+          "targetPath": ".agent-context/runtime/packages/shared/test/decoding.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/shared/tsconfig.json",
+          "sourceSha256": "26e84a4e129c35d22402a8fd53ed72d384ec7ac79e64e111c622f13ec9513405",
+          "targetPath": ".agent-context/runtime/packages/shared/tsconfig.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "repository-policy",
+      "dependencies": [
+        "core",
+        "runtime-base"
+      ],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/package.json",
+          "sourceSha256": "0e0d98d692e8815b46127a593210ffe8826700acca8918e7f1f800b95e98279a",
+          "targetPath": ".agent-context/runtime/packages/policy/package.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/src/cli.ts",
+          "sourceSha256": "a3c875df93864e3d8845e0e8b1c62325ceb91f0465d2397cbb03cafc660206e7",
+          "targetPath": ".agent-context/runtime/packages/policy/src/cli.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/src/context-governance.ts",
+          "sourceSha256": "fa2c23b30ab3cae9b8814fc234e84dee3a34700e90dcebea725e282b34086090",
+          "targetPath": ".agent-context/runtime/packages/policy/src/context-governance.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
+          "sourceSha256": "6f166c7119ceebe2299f7f341ac9359ceb0ea97ace1b72d26ed9c862584f33e3",
+          "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/src/index.ts",
+          "sourceSha256": "48a39dcf76977a48fb676c7df71a651ecbaafa6aec2d420d1b6c249d2a53e69b",
+          "targetPath": ".agent-context/runtime/packages/policy/src/index.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
+          "sourceSha256": "3e08adda93789e3060f5bc5d127d834b3e70e9d0603fe08b6aa6d13b0c00ae24",
+          "targetPath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/src/workspace.ts",
+          "sourceSha256": "cbf889f12415cd987886f66f011ee3b66ac37d0c14946377676a8a6d43dfedef",
+          "targetPath": ".agent-context/runtime/packages/policy/src/workspace.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
+          "sourceSha256": "c7ef0d5c2fad1651f3ff27863cc4d2276f271a86fe8cc01802339cc689475df7",
+          "targetPath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/policy/tsconfig.json",
+          "sourceSha256": "a4baf50b7650a9960c62923e654f33c43c6e7776b641a613a8c89ca2265d3526",
+          "targetPath": ".agent-context/runtime/packages/policy/tsconfig.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/repository-policy.md",
+          "sourceSha256": "1c14d50931afa0be1dadc27dd620796f865744477fb096f160ef99bd30519cb7",
+          "targetPath": "AGENTS.md",
+          "sectionId": "repository-policy",
+          "markerStyle": "markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/policy/policy.json",
+          "sourceSha256": "d8ed30e1ebc01d0eeac79730e541299006aaadeda6134b2fa258276f14b9d517",
+          "targetPath": ".agent-context/policy.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/policy/invariants.json",
+          "sourceSha256": "580108cc0c45ce5db2d96c0d333049626171a3a744d7d6c40b36376cd3f4e62b",
+          "targetPath": ".agent-context/policy-invariants.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/policy/policy.mjs",
+          "sourceSha256": "18e0dc9cd7b3d82be7ee426be13be96b5105bf7e8e9f5e5ea8ea278e8f823b3d",
+          "targetPath": ".agent-context/policy.mjs",
+          "mediaType": "text/javascript"
         }
       ]
     }

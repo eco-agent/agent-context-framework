@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "invariants": [
+    "explicit-project-facts",
+    "explicit-verification-profiles",
+    "observation-only-inspection",
+    "tokenized-command-execution"
+  ]
+}
