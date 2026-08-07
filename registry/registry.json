@@ -1445,7 +1445,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/repository-policy.md",
-          "sourceSha256": "1c14d50931afa0be1dadc27dd620796f865744477fb096f160ef99bd30519cb7",
+          "sourceSha256": "bfdea84cce03924deb656807a83b9bf74ec50fa7d086289cc7228752efd0d6ff",
           "targetPath": "AGENTS.md",
           "sectionId": "repository-policy",
           "markerStyle": "markdown"
