@@ -124,4 +124,23 @@
 
 ## Verification evidence
 
-- Pending implementation.
+- Strict decoder tests reject partial configured states, fields on the
+  `unconfigured` variant, duplicate identifiers, missing profiles, unknown
+  command references, unsupported invariant sets, unsafe paths, and timer values
+  outside Node's supported boundary.
+- Runtime tests prove both `process` and version-qualified `package-script`
+  commands while preserving ordered `passed`, `failed`, and `timed-out` result
+  variants.
+- The non-Node integration fixture proves the full transition from installed
+  `unconfigured` policy through explicit project configuration to ready doctor
+  and completed verification, followed by removal that preserves the modified
+  project-owned configuration.
+- The partial runtime bootstrap proves package discovery requires and builds
+  only materialized `shared` and `policy`; the full development runtime continues
+  to build and test all four Phase 5 packages.
+- Installer doctor accepts only decoded runtime and policy doctor results,
+  reports materialized runtime and configuration-required states, and recognizes
+  a ready configured policy as expected project-owned divergence.
+- TypeScript 7, the 13-test runtime suite, the 36-test development installer
+  suite, the complete workspace suite, registry/governance checks, and the
+  executable Phase 5 isolation proof all pass.

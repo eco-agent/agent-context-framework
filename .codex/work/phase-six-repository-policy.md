@@ -113,4 +113,44 @@ the resolved Wave 3 component graph.
 
 ## Verification evidence
 
-- Pending implementation.
+- Planning and type contracts are commit `de16387`.
+- Runtime packaging and policy contracts are commit `51d7dab`; installer lifecycle
+  integration and the non-Node fixture are commit `0ace2c5`; portable typed
+  package-script execution is commit `1fa57f8`; canonical instruction wording is
+  commit `fb5512c`; the Phase 5 `inspect-workspace` response contract restoration
+  is commit `ce5b252`.
+- Registry `0.4.0` contains 24 components. `repository-policy` resolves exactly
+  `core`, `runtime-base`, and `repository-policy`; its runtime artifacts contain
+  only root/shared/policy source and no hooks, repository-context, Codex, or
+  objective source.
+- The non-Node fixture materializes policy without a host manifest or lockfile,
+  reports `dependencies-missing`, bootstraps through the fixed Corepack path,
+  reports `operational`, inspects without writing policy, requires explicit
+  configuration, verifies an empty project-selected profile, reports healthy,
+  and preserves modified policy configuration through removal.
+- `pnpm --dir .agent-context/runtime test` passes 13/13, including strict policy
+  states, exact invariant manifests, missing documentation roots, process
+  commands, version-qualified package scripts, and observation-only inspection.
+- `pnpm --filter @agent-context/dev-tooling test` passes 36/36, including Wave 3
+  graph exclusion, materialization, real partial-runtime bootstrap, healthy
+  configured doctor state, and modified-policy removal.
+- `pnpm --filter @agent-context/dev-tooling verify:isolation` passes with compact
+  JSON: non-Node fixture, Git-tracked archive, `dependencies-missing` to
+  `operational`, policy/repository-context/hooks surfaces, source rebuild,
+  unchanged host hashes, and absent host `package.json`.
+- `pnpm typecheck`, the complete `pnpm test` workspace suite, and
+  `pnpm registry:check` pass. Registry check reports `0.4.0` with 24 components.
+- `pnpm check` reports zero errors and the same four pre-existing warnings in
+  objective/runtime test code. The optional changed-line invariant script named
+  by the installed TypeScript skill is not present in this framework repository;
+  TypeScript 7 and repository lint are the applicable invariant gates.
+- Clean Control Tower is installed and configured at
+  `0e4dabff97592580f49f025359d446e6a9269dfb`. The installed wrapper doctor is
+  `ready`; installer doctor is `healthy` with runtime `operational`; the default
+  policy profile passes `typecheck` and the complete product test suite.
+- Clean Control Tower `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, and
+  `tsconfig.json` retain their pre-install SHA-256 hashes. Generated dependencies
+  and output remain ignored inside `.agent-context/runtime`.
+- No Wave 4 component, Codex configuration, hook configuration, objective
+  orchestration component, frontend change, host dependency change, deployment,
+  publication, or push was performed.
