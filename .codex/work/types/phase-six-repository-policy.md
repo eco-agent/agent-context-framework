@@ -26,6 +26,8 @@
 - Runtime doctor requires source and generated output only for packages that are
   actually materialized beneath `packages/`.
 - Policy doctor is exactly `configuration-required`, `ready`, or `invalid`.
+- A command is exactly a shell-free process argument vector or a named package
+  script bound to the configured versioned package manager.
 - Command execution is exactly `passed`, `failed`, or `timed-out`.
 
 ## Invalid states to exclude
@@ -76,7 +78,7 @@
 | `UnconfiguredRepositoryPolicy` | Carries no invented project decisions | Installed baseline JSON |
 | `ConfiguredRepositoryPolicy` | Complete explicit facts and resolvable profiles | Project-owned JSON |
 | `RepositoryFacts` | Repository type, language, documentation, package-manager, layout, and frontend decisions are present | Configured policy |
-| `PolicyCommand` | Tokenized executable, arguments, and timer-safe timeout | Configured policy |
+| `PolicyCommand` | Process tokens or package-script tokens plus a timer-safe timeout | Configured policy |
 | `VerificationProfile` | Ordered references to declared commands | Configured policy |
 | `RepositoryInspection` | Observations only; never a configuration | Filesystem reads |
 | `PolicyDoctorResult` | Exhaustive readiness classification plus diagnostics | Config/invariant/context evidence |

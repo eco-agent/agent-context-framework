@@ -1413,7 +1413,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
-          "sourceSha256": "b17723a8a8d385026589e530321c6b8b7ba6c1206a8a3b0ad6cd867b4cac0133",
+          "sourceSha256": "1ab3b5c461b8c9e08be3fd52e4ff7a5e8dc4147fcad702c0d62a3416d3cd3e6f",
           "targetPath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1429,7 +1429,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
-          "sourceSha256": "c7ef0d5c2fad1651f3ff27863cc4d2276f271a86fe8cc01802339cc689475df7",
+          "sourceSha256": "a4c849696373f2b448407c5e17cbc568127e12c11ecf0dabf5abbe4f47b71e5f",
           "targetPath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"

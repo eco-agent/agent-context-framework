@@ -21,7 +21,7 @@ observations but never promotes them into policy.
 | Policy configuration | Install `.agent-context/policy.json` in the valid `unconfigured` state. Only an explicit project edit may create the `configured` state. | Project policy |
 | Repository facts | Configured policy names repository type, languages, documentation roots, package manager presence, layout, and frontend presence exactly once. | Project policy |
 | Verification profiles | A configured project declares tokenized commands and named profiles explicitly. Profiles select command identifiers; registry data never supplies commands. | Project policy |
-| Command execution | Execute an argument vector with no user-authored shell command string. Bound timeout values by Node's timer maximum and report failed or timed-out commands as typed outcomes. | Policy runtime |
+| Command execution | Execute either a process argument vector or a named package script through the declared versioned package manager, with no user-authored shell command string. Bound timeout values by Node's timer maximum and report failed or timed-out commands as typed outcomes. | Policy runtime |
 | Inspection | Report observable root/package/language/documentation markers only. Do not write configuration or claim that an observation is a policy decision. | Policy runtime |
 | Invariants | Install a fixed manifest naming the explicit-facts, explicit-profiles, observation-only, and tokenized-command invariants; policy doctor validates the exact manifest. | Policy runtime |
 | Bootstrap | Component installation materializes source only. Existing `bootstrap-runtime` remains the sole fixed install/build operation, and doctor reports non-operational runtime states. | Development installer |

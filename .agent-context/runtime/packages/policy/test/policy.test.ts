@@ -148,6 +148,19 @@ test("policy verification executes only the selected tokenized profile", async (
     assert.deepEqual(result.commands.map((command) => [command.id, command.status]), [
       ["node-check", "passed"],
     ]);
+
+    await writeJson(path.join(root, "package.json"), {
+      scripts: { "policy-check": "node -e \"process.exit(0)\"" },
+    });
+    await writeJson(
+      path.join(root, ".agent-context", "policy.json"),
+      configuredPolicy("package-script"),
+    );
+    const packageScript = await verifyRepositoryPolicy(root, null);
+    assert.equal(packageScript.ok, true);
+    assert.deepEqual(packageScript.commands.map((command) => [command.id, command.status]), [
+      ["node-check", "passed"],
+    ]);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -168,7 +181,7 @@ test("repository inspection reports observations without creating policy", async
   }
 });
 
-function configuredPolicy(): object {
+function configuredPolicy(kind: "process" | "package-script" = "process"): object {
   return {
     schemaVersion: 1,
     state: "configured",
@@ -180,14 +193,21 @@ function configuredPolicy(): object {
       layout: "monorepo",
       frontend: false,
     },
-    commands: [
-      {
-        id: "node-check",
-        executable: process.execPath,
-        arguments: ["-e", "process.exit(0)"],
-        timeoutMs: 5_000,
-      },
-    ],
+    commands: [kind === "process"
+      ? {
+          id: "node-check",
+          kind,
+          executable: process.execPath,
+          arguments: ["-e", "process.exit(0)"],
+          timeoutMs: 5_000,
+        }
+      : {
+          id: "node-check",
+          kind,
+          script: "policy-check",
+          arguments: [],
+          timeoutMs: 30_000,
+        }],
     profiles: [{ id: "default", commands: ["node-check"] }],
     defaultProfile: "default",
   };

@@ -65,12 +65,24 @@ export type PackageManagerDeclaration =
       readonly version: string | null;
     };
 
-export interface PolicyCommand {
+interface PolicyCommandBase {
   readonly id: string;
-  readonly executable: string;
-  readonly arguments: readonly string[];
   readonly timeoutMs: number;
 }
+
+export interface ProcessPolicyCommand extends PolicyCommandBase {
+  readonly kind: "process";
+  readonly executable: string;
+  readonly arguments: readonly string[];
+}
+
+export interface PackageScriptPolicyCommand extends PolicyCommandBase {
+  readonly kind: "package-script";
+  readonly script: string;
+  readonly arguments: readonly string[];
+}
+
+export type PolicyCommand = ProcessPolicyCommand | PackageScriptPolicyCommand;
 
 export interface VerificationProfile {
   readonly id: string;
@@ -181,6 +193,15 @@ export function decodeRepositoryPolicyConfiguration(
   }
   requireUnique(profiles.map((profile) => profile.id), "Repository policy profile IDs");
   const commandIds = new Set(commands.map((command) => command.id));
+  if (
+    commands.some((command) => command.kind === "package-script") &&
+    (repository.packageManager.state !== "declared" ||
+      repository.packageManager.version === null)
+  ) {
+    throw new Error(
+      "Package-script policy commands require a declared package manager with an exact version.",
+    );
+  }
   for (const profile of profiles) {
     const unknown = profile.commands.find((command) => !commandIds.has(command));
     if (unknown !== undefined) {
@@ -357,7 +378,11 @@ export async function verifyRepositoryPolicy(
     if (command === undefined) {
       throw new Error(`Validated profile references missing command ${commandId}.`);
     }
-    const outcome = await runPolicyCommand(await realpath(root), command);
+    const outcome = await runPolicyCommand(
+      await realpath(root),
+      command,
+      doctor.configuration.repository.packageManager,
+    );
     outcomes.push(outcome);
     if (outcome.status !== "passed") break;
   }
@@ -434,13 +459,15 @@ function decodePackageManager(value: unknown): PackageManagerDeclaration {
 }
 
 function decodePolicyCommand(value: unknown): PolicyCommand {
-  const record = strictRecord(value, "Repository policy command", [
+  const stateRecord = strictRecord(value, "Repository policy command", [
     "id",
+    "kind",
     "executable",
+    "script",
     "arguments",
     "timeoutMs",
   ]);
-  const timeoutMs = record.timeoutMs;
+  const timeoutMs = stateRecord.timeoutMs;
   if (
     typeof timeoutMs !== "number" ||
     !Number.isSafeInteger(timeoutMs) ||
@@ -451,16 +478,43 @@ function decodePolicyCommand(value: unknown): PolicyCommand {
       "Repository policy command timeoutMs must be within Node's 1..2147483647 timer range.",
     );
   }
-  const executable = commandToken(record.executable, "Repository policy command executable");
-  const arguments_ = stringArray(record.arguments, "Repository policy command arguments").map(
+  const id = identifier(stateRecord.id, "Repository policy command id");
+  const arguments_ = stringArray(stateRecord.arguments, "Repository policy command arguments").map(
     (argument) => commandToken(argument, "Repository policy command argument"),
   );
-  return {
-    id: identifier(record.id, "Repository policy command id"),
-    executable,
-    arguments: arguments_,
-    timeoutMs,
-  };
+  if (stateRecord.kind === "process") {
+    const record = strictRecord(value, "Process repository policy command", [
+      "id",
+      "kind",
+      "executable",
+      "arguments",
+      "timeoutMs",
+    ]);
+    return {
+      id,
+      kind: "process",
+      executable: commandToken(record.executable, "Repository policy command executable"),
+      arguments: arguments_,
+      timeoutMs,
+    };
+  }
+  if (stateRecord.kind === "package-script") {
+    const record = strictRecord(value, "Package-script repository policy command", [
+      "id",
+      "kind",
+      "script",
+      "arguments",
+      "timeoutMs",
+    ]);
+    return {
+      id,
+      kind: "package-script",
+      script: packageScriptName(record.script),
+      arguments: arguments_,
+      timeoutMs,
+    };
+  }
+  throw new Error("Repository policy command kind must be process or package-script.");
 }
 
 function decodeVerificationProfile(value: unknown): VerificationProfile {
@@ -509,10 +563,14 @@ async function checkContextInstallation(root: string): Promise<void> {
 async function runPolicyCommand(
   root: string,
   command: PolicyCommand,
+  packageManager: PackageManagerDeclaration,
 ): Promise<PolicyCommandOutcome> {
   const started = performance.now();
+  const invocation = command.kind === "process"
+    ? { executable: command.executable, arguments: command.arguments }
+    : packageScriptInvocation(command, packageManager);
   return await new Promise<PolicyCommandOutcome>((resolve) => {
-    const child = spawn(command.executable, command.arguments, {
+    const child = spawn(invocation.executable, invocation.arguments, {
       cwd: root,
       env: { ...process.env, NO_COLOR: "1" },
       shell: false,
@@ -568,6 +626,36 @@ async function runPolicyCommand(
   });
 }
 
+function packageScriptInvocation(
+  command: PackageScriptPolicyCommand,
+  packageManager: PackageManagerDeclaration,
+): { readonly executable: string; readonly arguments: readonly string[] } {
+  if (packageManager.state !== "declared" || packageManager.version === null) {
+    throw new Error("Package-script policy command requires a versioned package manager.");
+  }
+  if (packageManager.name !== "pnpm" && packageManager.name !== "yarn") {
+    throw new Error(
+      `Package-script policy command does not support package manager ${packageManager.name}.`,
+    );
+  }
+  const corepackArguments = [
+    `${packageManager.name}@${packageManager.version}`,
+    "run",
+    command.script,
+    ...command.arguments,
+  ];
+  if (process.platform !== "win32") {
+    return { executable: "corepack", arguments: corepackArguments };
+  }
+  if (corepackArguments.some((argument) => !/^[A-Za-z0-9@./_:-]+$/u.test(argument))) {
+    throw new Error("Package-script policy command contains an unsafe Windows token.");
+  }
+  return {
+    executable: process.env.ComSpec ?? "cmd.exe",
+    arguments: ["/d", "/s", "/c", ["corepack", ...corepackArguments].join(" ")],
+  };
+}
+
 async function presentRootFiles(root: string, candidates: readonly string[]): Promise<readonly string[]> {
   const present: string[] = [];
   for (const candidate of candidates) {
@@ -609,6 +697,13 @@ function commandToken(value: unknown, label: string): string {
     throw new Error(`${label} must be one non-empty process argument token.`);
   }
   return token;
+}
+
+function packageScriptName(value: unknown): string {
+  if (typeof value !== "string" || !/^[A-Za-z0-9][A-Za-z0-9:._-]*$/u.test(value)) {
+    throw new Error("Repository policy package script name is invalid.");
+  }
+  return value;
 }
 
 function requireSchemaVersion(value: unknown, label: string): void {

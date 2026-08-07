@@ -12,6 +12,7 @@ import {
   diffProject,
   doctorProject,
   initProject,
+  removeComponent,
 } from "../src/context-installer.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
 import { bootstrapRuntime } from "../src/runtime-bootstrap.js";
@@ -115,6 +116,17 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
           assessment.status === "locally-modified"),
       true,
     );
+
+    const removed = await removeComponent(projectRoot, frameworkRoot, "repository-policy");
+    assert.equal(removed.plan.status, "ready");
+    assert.equal(await exists(path.join(projectRoot, ".agent-context", "policy.json")), true);
+    assert.equal(await exists(path.join(projectRoot, ".agent-context", "policy-invariants.json")), false);
+    assert.equal(await exists(path.join(projectRoot, ".agent-context", "policy.mjs")), false);
+    assert.equal(
+      await exists(path.join(projectRoot, ".agent-context", "runtime", "packages", "policy", "src", "index.ts")),
+      false,
+    );
+    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }
