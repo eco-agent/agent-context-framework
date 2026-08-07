@@ -89,4 +89,4 @@
 - Runtime doctor decodes one exhaustive lifecycle status and rejects inconsistent operational claims.
 - Shared, policy, repository-context, and hook packages compile with strict TypeScript 7 settings including exact optional properties and unchecked index access.
 - Package-local tests exercise valid and invalid registry, path, hook, cursor, scope, and lifecycle boundaries.
-- The non-Node isolation fixture demonstrates `dependencies-missing` -> `operational`, then source edit -> rebuilt operational behavior without a host manifest or lock mutation.
+- The checked-in non-Node isolation gate demonstrates `dependencies-missing` -> `operational`, exercises policy/repository-context/hooks, then proves source edit -> rebuilt behavior without a host manifest or host-file hash mutation.

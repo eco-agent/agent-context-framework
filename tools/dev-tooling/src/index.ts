@@ -28,3 +28,7 @@ export {
   type RuntimeBootstrapStatus,
   type RuntimeBootstrapStep,
 } from "./runtime-bootstrap.js";
+export {
+  verifyRuntimeIsolation,
+  type RuntimeIsolationResult,
+} from "./runtime-isolation.js";
