@@ -88,6 +88,26 @@ test("--no-install reports materialized runtime state without installing", async
   }
 });
 
+test("runtime bootstrap resolves pinned pnpm through Corepack without PNPM_HOME", async () => {
+  const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+  const previousPnpmHome = process.env.PNPM_HOME;
+  delete process.env.PNPM_HOME;
+  try {
+    const result = await bootstrapRuntime({
+      projectRoot: frameworkRoot,
+      mode: "install-and-build",
+    });
+    assert.equal(result.status, "operational");
+    assert.equal(result.operational, true);
+  } finally {
+    if (previousPnpmHome === undefined) {
+      delete process.env.PNPM_HOME;
+    } else {
+      process.env.PNPM_HOME = previousPnpmHome;
+    }
+  }
+});
+
 async function createRuntimeFixture(): Promise<{
   readonly root: string;
   readonly remove: () => Promise<void>;

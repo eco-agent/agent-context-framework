@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { access, readFile, realpath, stat } from "node:fs/promises";
+import { readFile, realpath, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { promisify } from "node:util";
@@ -108,10 +108,10 @@ async function runFixedPnpm(
   arguments_: readonly string[],
   runtimeRoot: string,
 ): Promise<{ readonly stdout: string }> {
-  const invocation = await resolvePnpmInvocation(runtimeRoot);
+  const invocation = corepackInvocation([RUNTIME_PACKAGE_MANAGER, "--version"]);
   const version = await execFileAsync(
     invocation.file,
-    [...invocation.prefixArguments, "--version"],
+    invocation.arguments,
     {
       cwd: runtimeRoot,
       encoding: "utf8",
@@ -124,9 +124,10 @@ async function runFixedPnpm(
       `Runtime bootstrap requires pnpm 10.22.0; found ${version.stdout.trim() || "unknown"}.`,
     );
   }
+  const command = corepackInvocation([RUNTIME_PACKAGE_MANAGER, ...arguments_]);
   const result = await execFileAsync(
-    invocation.file,
-    [...invocation.prefixArguments, ...arguments_],
+    command.file,
+    command.arguments,
     {
       cwd: runtimeRoot,
       encoding: "utf8",
@@ -137,65 +138,25 @@ async function runFixedPnpm(
   return { stdout: result.stdout };
 }
 
-async function resolvePnpmInvocation(runtimeRoot: string): Promise<{
+function corepackInvocation(arguments_: readonly string[]): {
   readonly file: string;
-  readonly prefixArguments: readonly string[];
-}> {
-  const pnpmHome = process.env.PNPM_HOME;
-  if (pnpmHome !== undefined && pnpmHome.length > 0) {
-    const pinnedCli = path.join(
-      pnpmHome,
-      ".tools",
-      "pnpm",
-      "10.22.0",
-      "node_modules",
-      "pnpm",
-      "bin",
-      "pnpm.cjs",
-    );
-    try {
-      await access(pinnedCli);
-      const resolved = await realpath(pinnedCli);
-      if (!isInside(runtimeRoot, resolved)) {
-        return {
-          file: process.execPath,
-          prefixArguments: [resolved],
-        };
-      }
-    } catch (error) {
-      if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) {
-        throw error;
-      }
-    }
-  }
+  readonly arguments: readonly string[];
+} {
   if (process.platform === "win32") {
-    throw new Error(
-      "Runtime bootstrap requires the pinned pnpm 10.22.0 CLI under PNPM_HOME.",
-    );
-  }
-  const searchPaths = [
-    ...(process.env.PATH ?? "").split(path.delimiter),
-  ].filter((candidate): candidate is string =>
-    candidate !== undefined && candidate.length > 0
-  );
-  const scriptName = "pnpm";
-  for (const searchPath of [...new Set(searchPaths)]) {
-    const candidate = path.resolve(searchPath, scriptName);
-    try {
-      await access(candidate);
-      const resolved = await realpath(candidate);
-      if (isInside(runtimeRoot, resolved)) {
-        continue;
-      }
-      return { file: resolved, prefixArguments: [] };
-    } catch (error) {
-      if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-        continue;
-      }
-      throw error;
+    if (arguments_.some((argument) => !/^[A-Za-z0-9@./_-]+$/u.test(argument))) {
+      throw new Error("Corepack received an unsafe internal argument.");
     }
+    return {
+      file: process.env.ComSpec ?? "cmd.exe",
+      arguments: [
+        "/d",
+        "/s",
+        "/c",
+        ["corepack", ...arguments_].join(" "),
+      ],
+    };
   }
-  throw new Error("Runtime bootstrap could not locate pnpm outside the target workspace.");
+  return { file: "corepack", arguments: arguments_ };
 }
 
 async function resolveRuntimeWorkspace(projectRoot: string): Promise<{
