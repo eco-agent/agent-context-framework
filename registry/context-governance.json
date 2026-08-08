@@ -21,7 +21,7 @@
     {
       "invariantId": "verification",
       "sourcePath": "registry/sources/instructions/verification.md",
-      "sha256": "a284e58185bf12c62bb320e9277c1155a7e8c6f0aa71bb7c8189559eb1c18490"
+      "sha256": "47344a314dd82b6896efff0160e6fc10d95903e5686d31b9479abd7525466c30"
     },
     {
       "invariantId": "documentation-prose",

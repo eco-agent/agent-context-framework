@@ -313,7 +313,13 @@ function stageDefinitions(
       commands: workspaceScripts.map(([id, script]) => ({
         id,
         invocation: processRequest(
-          corepackInvocation([packageManager, "run", script]),
+          corepackInvocation([
+            packageManager,
+            "--reporter",
+            "append-only",
+            "run",
+            script,
+          ]),
           frameworkRoot,
         ),
       })),
@@ -326,6 +332,8 @@ function stageDefinitions(
           invocation: processRequest(
             corepackInvocation([
               packageManager,
+              "--reporter",
+              "append-only",
               "--filter",
               "@agent-context/dev-tooling",
               "verify:isolation",

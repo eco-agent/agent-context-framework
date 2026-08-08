@@ -41,6 +41,12 @@ test("acceptance verification runs each proof layer once in order", async () => 
       "verify:isolation",
       "downstream-policy",
     ]);
+    assert.equal(
+      executor.proofArguments
+        .filter((arguments_) => !arguments_.includes("policy.mjs"))
+        .every((arguments_) => arguments_.includes("--reporter append-only")),
+      true,
+    );
     assert.equal(result.framework?.revision, FRAMEWORK_REVISION);
     assert.equal(result.fixture?.revision, FIXTURE_REVISION);
   } finally {
@@ -247,6 +253,7 @@ test("acceptance process execution retains a disclosed bounded failure tail", as
 
 class SequencedExecutor implements AcceptanceCommandExecutor {
   readonly proofCalls: string[] = [];
+  readonly proofArguments: string[] = [];
   readonly #headReads = new Map<string, number>();
 
   constructor(
@@ -262,6 +269,7 @@ class SequencedExecutor implements AcceptanceCommandExecutor {
     if (request.file === "git") return this.#git(request);
     const proof = proofId(request);
     this.proofCalls.push(proof);
+    this.proofArguments.push(request.arguments.join(" "));
     return execution(
       proof === this.failedProof ? 1 : 0,
       proof === this.failedProof ? "proof failed" : "",
