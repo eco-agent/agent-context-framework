@@ -84,4 +84,31 @@ pnpm --silent verify:acceptance -- --fixture <absolute-path>
 
 ## Verification evidence
 
-Pending implementation.
+- Contract commit `28ca52d` defines the sequence and type state space before
+  implementation. Commit `0fed9fc` adds the sequencer, compact CLI, root entry
+  point, shared Windows-safe Corepack invocation, and focused tests.
+- Focused dev-tooling TypeScript and sequencing tests passed. The focused suite
+  covers exact stage order, one execution per proof command, intra-stage and
+  inter-stage stop behavior, dirty and duplicate worktrees, revision changes,
+  repository mutation after a proof failure, CLI forwarding, and bounded
+  failure-output tails. The existing real Corepack bootstrap test also passed.
+- The first clean candidate, `0fed9fc0adf79d8315fb2e13ee69b4fcb756d7c2`,
+  was correctly rejected in the workspace stage: typecheck passed, test failed,
+  and isolation/downstream remained `not-run`. Focused diagnosis found that the
+  new verification guidance had changed the `AGENTS.md` projection without its
+  canonical registry source.
+- Repair commit `4ea0db6` moves the guidance into
+  `registry/sources/instructions/verification.md`, updates its protected hash,
+  and selects pnpm's append-only reporter so piped failures retain diagnostics.
+  The six focused registry/governance tests and the sequencing tests pass.
+- One acceptance sequence for clean repaired revision
+  `4ea0db62cc485783b10df4f9b6aa67eba31ff8ef` passed against clean downstream
+  fixture revision `0e4dabff97592580f49f025359d446e6a9269dfb`.
+  Workspace passed once in 59,563 ms (`typecheck`, `test`, `check`, and
+  `registry:check`, each once); isolation passed once in 13,345 ms; downstream
+  default policy verification passed once in 18,956 ms.
+- Final Git postflight reported the same clean framework and fixture revisions.
+  This evidence update is documentation-only, so broad executable gates are not
+  repeated after it.
+- No push, publication, deployment, host package-graph change, or downstream
+  fixture commit was performed.

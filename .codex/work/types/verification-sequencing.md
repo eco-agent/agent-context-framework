@@ -103,4 +103,20 @@ preflight
 
 ## Verification evidence
 
-Pending implementation.
+- Passed-result types require the exact ordered tuple of passed workspace,
+  isolation, and downstream stages.
+- Failure-result variants bind each failure phase to its valid ordered stage
+  tuple. A failed stage requires zero or more passed command outcomes followed
+  by exactly one failed command outcome; later stages are typed `not-run`.
+- Focused tests cover preflight, every proof-stage transition, postflight
+  revision change, post-failure repository mutation, and passed completion.
+- The process boundary test emits more than the 32,768-byte retained limit on
+  both stdout and stderr and verifies exact total byte counts, bounded tails,
+  and explicit truncation disclosure.
+- The public root command accepts pnpm's forwarded `--`, requires an absolute
+  fixture path, derives the exact pinned pnpm version from the framework
+  manifest, and emits a single compact JSON object under `pnpm --silent`.
+- Acceptance passed for framework revision
+  `4ea0db62cc485783b10df4f9b6aa67eba31ff8ef` and downstream fixture revision
+  `0e4dabff97592580f49f025359d446e6a9269dfb`; all three stages passed and Git
+  postflight retained both clean revisions.
