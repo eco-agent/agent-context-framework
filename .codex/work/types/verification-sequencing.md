@@ -14,8 +14,14 @@
 
 - A passed sequence contains three passed stages and unchanged clean framework
   and fixture snapshots.
-- A failed sequence contains zero or more passed stages, exactly one failed
+- A proof-stage failure contains zero or more passed stages, exactly one failed
   stage, and every later stage as `not-run`.
+- A proof-stage failure still revalidates both repository snapshots before it is
+  returned. If that revalidation fails, postflight becomes the reported phase
+  and retains the original proof-failure detail.
+- A preflight failure contains only `not-run` stages. A postflight failure may
+  contain three passed proof stages because repository stability is validated
+  after those proofs complete.
 - A passed stage contains only passed command outcomes.
 - A failed stage contains preceding passed outcomes and exactly one failed
   command outcome.
@@ -79,7 +85,7 @@ preflight
 
 ## Public contracts affected
 
-- New root command: `pnpm verify:acceptance -- --fixture <absolute-path>`.
+- New root command: `pnpm --silent verify:acceptance -- --fixture <absolute-path>`.
 - New dev-tooling command and exported result/request types.
 - Existing verification commands and policy contracts remain unchanged.
 

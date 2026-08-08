@@ -21,6 +21,7 @@
     "registry:check": "node --import tsx src/context-registry-cli.ts check",
     "task:handoff": "node --import tsx src/task-handoff-cli.ts",
     "task:doctor": "node --import tsx src/task-preflight-cli.ts",
+    "verify:acceptance": "node --import tsx src/acceptance-verification-cli.ts",
     "verify:isolation": "node --import tsx src/runtime-isolation-cli.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc -b --pretty false"

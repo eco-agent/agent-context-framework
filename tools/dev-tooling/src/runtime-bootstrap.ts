@@ -4,6 +4,8 @@ import path from "node:path";
 import process from "node:process";
 import { promisify } from "node:util";
 
+import { corepackInvocation } from "./corepack-command.js";
+
 const execFileAsync = promisify(execFile);
 const RUNTIME_RELATIVE_PATH = ".agent-context/runtime";
 const RUNTIME_PACKAGE_MANAGER = "pnpm@10.22.0";
@@ -136,27 +138,6 @@ async function runFixedPnpm(
     },
   );
   return { stdout: result.stdout };
-}
-
-function corepackInvocation(arguments_: readonly string[]): {
-  readonly file: string;
-  readonly arguments: readonly string[];
-} {
-  if (process.platform === "win32") {
-    if (arguments_.some((argument) => !/^[A-Za-z0-9@./_-]+$/u.test(argument))) {
-      throw new Error("Corepack received an unsafe internal argument.");
-    }
-    return {
-      file: process.env.ComSpec ?? "cmd.exe",
-      arguments: [
-        "/d",
-        "/s",
-        "/c",
-        ["corepack", ...arguments_].join(" "),
-      ],
-    };
-  }
-  return { file: "corepack", arguments: arguments_ };
 }
 
 async function resolveRuntimeWorkspace(projectRoot: string): Promise<{

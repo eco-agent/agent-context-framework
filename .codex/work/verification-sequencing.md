@@ -16,7 +16,7 @@ stage, and emit compact revision-bound evidence.
 | Full workspace | Treat the four existing root commands as one ordered `workspace` proof stage. Run each command exactly once inside that stage. | Acceptance sequencer |
 | Revision authority | Refuse to start unless the framework and downstream fixture are clean Git worktrees. Capture both full revisions and revalidate them after all stages. | Git preflight/postflight |
 | Downstream fixture | Require an explicit absolute fixture path. Run its configured default repository-policy profile rather than duplicating downstream commands in framework code. | Downstream policy |
-| Failure behavior | Stop after the first failed command. Mark later proof stages `not-run`; never return a successful top-level result for a partial sequence. | Acceptance result contract |
+| Failure behavior | Stop after the first failed command, mark later proof stages `not-run`, and still run Git postflight. Never return a successful top-level result for a partial or repository-mutating sequence. | Acceptance result contract |
 | Output | Suppress successful child output, retain bounded failure tails with byte counts and truncation disclosure, and emit one compact JSON result. | Acceptance CLI |
 | Documentation-only follow-up | Do not rerun broad executable gates after a documentation-only commit. Record the previously tested revision and verify that the later diff contains only documentation. | Maintainer workflow |
 
@@ -33,7 +33,7 @@ stage, and emit compact revision-bound evidence.
 ## Topology
 
 ```text
-pnpm verify:acceptance -- --fixture <absolute-path>
+pnpm --silent verify:acceptance -- --fixture <absolute-path>
 └── acceptance sequencer
     ├── Git preflight: framework + fixture clean revisions
     ├── workspace stage (once)
@@ -45,7 +45,7 @@ pnpm verify:acceptance -- --fixture <absolute-path>
     │   └── existing dev-tooling verify:isolation command
     ├── downstream stage (once)
     │   └── node <fixture>/.agent-context/policy.mjs verify
-    └── Git postflight: same clean revisions
+    └── Git postflight after pass or failure: same clean revisions
 ```
 
 ## Slice

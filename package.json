@@ -32,6 +32,7 @@
     "registry:check": "pnpm policy:build && pnpm --filter @agent-context/dev-tooling registry:check",
     "policy": "node tools/repo-policy/dist/src/cli.js",
     "verify": "pnpm policy:build && pnpm policy verify",
+    "verify:acceptance": "node --import tsx tools/dev-tooling/src/acceptance-verification-cli.ts",
     "verify:task": "pnpm policy:build && pnpm policy verify-task",
     "verify:branch": "pnpm policy:build && pnpm policy verify-branch",
     "verify:changed": "pnpm verify:task",
