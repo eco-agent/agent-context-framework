@@ -55,7 +55,7 @@ test("codex-agents resolves the explicit Wave 4 model profile", async () => {
     assert.equal(profile.model, expected.model);
     assert.equal(profile.model_reasoning_effort, expected.effort);
   }
-  const config = parseToml(await readFile(configArtifact.sourcePath, "utf8")) as {
+  const config = parseToml(await readFile(path.join(frameworkRoot, configArtifact.sourcePath), "utf8")) as {
     agents: { max_concurrent_threads_per_session: number };
   };
   assert.equal(config.agents.max_concurrent_threads_per_session, 2);
