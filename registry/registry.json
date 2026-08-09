@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.4.0",
-  "decisionPath": "registry/decisions/0.4.0-wave-three.md",
+  "revision": "0.5.0",
+  "decisionPath": "registry/decisions/0.5.0-wave-four.md",
   "components": [
     {
       "name": "core",
@@ -1397,7 +1397,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "6f166c7119ceebe2299f7f341ac9359ceb0ea97ace1b72d26ed9c862584f33e3",
+          "sourceSha256": "5b291575933053e32ad5adcd3c32796de17dbeaf41cc9986cc5a92f732cbae49",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1470,6 +1470,57 @@
           "sourceSha256": "18e0dc9cd7b3d82be7ee426be13be96b5105bf7e8e9f5e5ea8ea278e8f823b3d",
           "targetPath": ".agent-context/policy.mjs",
           "mediaType": "text/javascript"
+        }
+      ]
+    },
+    {
+      "name": "codex-agents",
+      "dependencies": [
+        "core"
+      ],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/default.toml",
+          "sourceSha256": "78301787ca3846fd7174dedf14c07e44f4310eff845409d490409aaf6270f1fb",
+          "targetPath": ".codex/agents/default.toml",
+          "mediaType": "application/toml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/scout.toml",
+          "sourceSha256": "454756eebc847d0ac1938f1c793c7043f5f5622414741c93c9e41d1c1814b165",
+          "targetPath": ".codex/agents/scout.toml",
+          "mediaType": "application/toml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/worker.toml",
+          "sourceSha256": "cdf2c5dca187c5d4ec4cf83332e3acab3261d01b1f7cf345236608b727084088",
+          "targetPath": ".codex/agents/worker.toml",
+          "mediaType": "application/toml"
+        },
+        {
+          "operation": "toml-members",
+          "sourcePath": "registry/sources/codex/agents.toml",
+          "sourceSha256": "c092093d454c1fb2f463220294d78aef1612d70f25d9b18701b755141fe01822",
+          "targetPath": ".codex/config.toml",
+          "ownedMembers": [
+            "agents.default",
+            "agents.default_subagent_model",
+            "agents.default_subagent_reasoning_effort",
+            "agents.enabled",
+            "agents.interrupt_message",
+            "agents.max_concurrent_threads_per_session",
+            "agents.scout",
+            "agents.worker"
+          ]
         }
       ]
     }

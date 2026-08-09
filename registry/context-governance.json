@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.4.0",
-  "decisionPath": "registry/decisions/0.4.0-wave-three.md",
+  "registryRevision": "0.5.0",
+  "decisionPath": "registry/decisions/0.5.0-wave-four.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",

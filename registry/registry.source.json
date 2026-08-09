@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.4.0",
-  "decisionPath": "registry/decisions/0.4.0-wave-three.md",
+  "revision": "0.5.0",
+  "decisionPath": "registry/decisions/0.5.0-wave-four.md",
   "components": [
     {
       "name": "core",
@@ -528,6 +528,51 @@
           "sourcePath": "registry/sources/policy/policy.mjs",
           "targetPath": ".agent-context/policy.mjs",
           "mediaType": "text/javascript"
+        }
+      ]
+    },
+    {
+      "name": "codex-agents",
+      "dependencies": ["core"],
+      "capabilities": [],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/default.toml",
+          "targetPath": ".codex/agents/default.toml",
+          "mediaType": "application/toml"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/scout.toml",
+          "targetPath": ".codex/agents/scout.toml",
+          "mediaType": "application/toml"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/worker.toml",
+          "targetPath": ".codex/agents/worker.toml",
+          "mediaType": "application/toml"
+        },
+        {
+          "kind": "artifact",
+          "operation": "toml-members",
+          "sourcePath": "registry/sources/codex/agents.toml",
+          "targetPath": ".codex/config.toml",
+          "ownedMembers": [
+            "agents.default",
+            "agents.default_subagent_model",
+            "agents.default_subagent_reasoning_effort",
+            "agents.enabled",
+            "agents.interrupt_message",
+            "agents.max_concurrent_threads_per_session",
+            "agents.scout",
+            "agents.worker"
+          ]
         }
       ]
     }
