@@ -19,6 +19,8 @@ import {
 } from "../src/context-installer.js";
 import { formatContextResult, parseContextInstallerArguments } from "../src/context-installer-cli.js";
 
+const componentRevision = `sha256:${"b".repeat(64)}`;
+
 interface Fixture {
   readonly frameworkRoot: string;
   readonly projectRoot: string;
@@ -86,23 +88,27 @@ test("explicit update distinguishes upstream, local, and diverged changes", asyn
     const upstream = await diffProject(fixture.projectRoot, fixture.frameworkRoot);
     assert.equal(upstream.plan.assessments[0]?.status, "upstream-changed");
     assert.match(upstream.plan.assessments[0]?.difference ?? "", /Core rules v2/u);
-    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null);
+    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "preserve-local");
     assert.equal(updated.plan.status, "ready");
     assert.match(await readFile(path.join(fixture.projectRoot, "AGENTS.md"), "utf8"), /Core rules v2/u);
 
     const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
     await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("Core rules v2", "Local rules v2"));
     assert.equal((await diffProject(fixture.projectRoot, fixture.frameworkRoot)).plan.assessments[0]?.status, "locally-modified");
-    const localUpdate = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null);
+    const localUpdate = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "preserve-local");
     assert.equal(localUpdate.plan.status, "ready");
     assert.match(await readFile(agentsPath, "utf8"), /Local rules v2/u);
 
     await writeCore(fixture.frameworkRoot, "# Core rules v3\n", "0.2.2");
-    const diverged = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null);
+    const diverged = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "preserve-local");
     assert.equal(diverged.plan.status, "blocked");
     assert.equal(diverged.plan.assessments[0]?.status, "diverged");
     assert.deepEqual(diverged.writtenPaths, []);
     assert.match(await readFile(agentsPath, "utf8"), /Local rules v2/u);
+    const overwritten = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "overwrite-selected");
+    assert.equal(overwritten.plan.status, "ready");
+    assert.match(await readFile(agentsPath, "utf8"), /Core rules v3/u);
+    assert.doesNotMatch(await readFile(agentsPath, "utf8"), /Local rules v2/u);
   } finally {
     await fixture.remove();
   }
@@ -189,6 +195,7 @@ test("structured ownership rejects overlapping TOML paths and duplicate JSON ite
     );
     registry.components.push({
       name: "collision",
+      revision: componentRevision,
       dependencies: ["structured"],
       capabilities: [],
       licenses: [{
@@ -215,6 +222,7 @@ test("structured ownership rejects overlapping TOML paths and duplicate JSON ite
     );
     registry.components[registry.components.length - 1] = {
       name: "collision",
+      revision: componentRevision,
       dependencies: ["structured"],
       capabilities: [],
       licenses: [{
@@ -247,6 +255,17 @@ test("structured member updates replace owned values and removal preserves local
   const fixture = await createFixture();
   try {
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await mkdir(path.join(fixture.projectRoot, ".codex"), { recursive: true });
+    await writeFile(
+      path.join(fixture.projectRoot, ".codex", "hooks.json"),
+      '{"hooks":{"PreToolUse":[{"matcher":"^Bash$","hooks":[{"type":"command","command":"project"}]}]}}\n',
+      "utf8",
+    );
+    await writeFile(
+      path.join(fixture.projectRoot, ".codex", "config.toml"),
+      "[features]\ninterrupt_message = false\n",
+      "utf8",
+    );
     await addComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
     const hooksSourcePath = path.join(fixture.frameworkRoot, "registry", "sources", "structured-hooks.json");
     const membersSourcePath = path.join(fixture.frameworkRoot, "registry", "sources", "structured-members.toml");
@@ -259,7 +278,12 @@ test("structured member updates replace owned values and removal preserves local
       (await readFile(membersSourcePath, "utf8")).replace("max_concurrent_threads_per_session = 2", "max_concurrent_threads_per_session = 3"),
     );
     await writeRegistry(fixture.frameworkRoot, "0.2.1");
-    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, "structured");
+    const updated = await updateProject(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      "structured",
+      "preserve-local",
+    );
     assert.equal(updated.plan.status, "ready");
     const hooksPath = path.join(fixture.projectRoot, ".codex", "hooks.json");
     const configPath = path.join(fixture.projectRoot, ".codex", "config.toml");
@@ -274,10 +298,48 @@ test("structured member updates replace owned values and removal preserves local
       configPath,
       (await readFile(configPath, "utf8")).replace("max_concurrent_threads_per_session = 3", "max_concurrent_threads_per_session = 4"),
     );
+    await writeFile(
+      hooksSourcePath,
+      (await readFile(hooksSourcePath, "utf8")).replace('"command":"owned-v2"', '"command":"owned-v3"'),
+    );
+    await writeFile(
+      membersSourcePath,
+      (await readFile(membersSourcePath, "utf8")).replace("max_concurrent_threads_per_session = 3", "max_concurrent_threads_per_session = 5"),
+    );
+    await writeRegistry(fixture.frameworkRoot, "0.2.2");
+    assert.equal(
+      (await updateProject(
+        fixture.projectRoot,
+        fixture.frameworkRoot,
+        "structured",
+        "preserve-local",
+      )).plan.status,
+      "blocked",
+    );
+    const overwritten = await updateProject(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      "structured",
+      "overwrite-selected",
+    );
+    assert.equal(overwritten.plan.status, "ready");
+    assert.match(await readFile(hooksPath, "utf8"), /owned-v3/u);
+    assert.doesNotMatch(await readFile(hooksPath, "utf8"), /project-owned/u);
+    assert.match(await readFile(hooksPath, "utf8"), /\^Bash\$/u);
+    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 5/u);
+    assert.match(await readFile(configPath, "utf8"), /interrupt_message = false/u);
+    await writeFile(
+      hooksPath,
+      (await readFile(hooksPath, "utf8")).replace("owned-v3", "project-owned-after-overwrite"),
+    );
+    await writeFile(
+      configPath,
+      (await readFile(configPath, "utf8")).replace("max_concurrent_threads_per_session = 5", "max_concurrent_threads_per_session = 6"),
+    );
     const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
     assert.equal(removed.plan.status, "ready");
-    assert.match(await readFile(hooksPath, "utf8"), /project-owned/u);
-    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 4/u);
+    assert.match(await readFile(hooksPath, "utf8"), /project-owned-after-overwrite/u);
+    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 6/u);
     const lock = JSON.parse(await readFile(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH), "utf8")) as {
       components: string[];
       artifacts: Array<{ component: string }>;
@@ -339,9 +401,15 @@ test("doctor explains an interrupted transaction and mutators refuse it", async 
     assert.equal(doctor.health, "attention");
     assert.match(doctor.diagnostics[0] ?? "", /Incomplete update transaction/u);
     assert.equal(doctor.transaction.status, "resumable");
-    await assert.rejects(updateProject(fixture.projectRoot, fixture.frameworkRoot, null), /incomplete context transaction/u);
+    await assert.rejects(
+      updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "preserve-local"),
+      /incomplete context transaction/u,
+    );
     assert.equal((await recoverProject(fixture.projectRoot)).status, "resumed");
-    assert.equal((await updateProject(fixture.projectRoot, fixture.frameworkRoot, null)).plan.status, "ready");
+    assert.equal(
+      (await updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "preserve-local")).plan.status,
+      "ready",
+    );
   } finally {
     await fixture.remove();
   }
@@ -367,7 +435,10 @@ test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
     command: "init", projectRoot: path.resolve("D:/repo", "fixture"), component: null, output: "text",
   });
   assert.deepEqual(parseContextInstallerArguments(["update", "frontend"], "D:/repo"), {
-    command: "update", projectRoot: "D:/repo", component: "frontend", output: "text",
+    command: "update", projectRoot: "D:/repo", component: "frontend", output: "text", mode: "preserve-local",
+  });
+  assert.deepEqual(parseContextInstallerArguments(["update", "frontend", "--overwrite"], "D:/repo"), {
+    command: "update", projectRoot: "D:/repo", component: "frontend", output: "text", mode: "overwrite-selected",
   });
   assert.deepEqual(parseContextInstallerArguments(["doctor", "--json"], "D:/repo"), {
     command: "doctor", projectRoot: "D:/repo", component: null, output: "json",
@@ -377,6 +448,8 @@ test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
   });
   assert.throws(() => parseContextInstallerArguments(["add"], "D:/repo"), /requires a component/u);
   assert.throws(() => parseContextInstallerArguments(["init", "--json"], "D:/repo"), /read-only/u);
+  assert.throws(() => parseContextInstallerArguments(["remove", "frontend", "--overwrite"], "D:/repo"), /valid only.*update/u);
+  assert.throws(() => parseContextInstallerArguments(["update", "--overwrite", "--overwrite"], "D:/repo"), /only once/u);
   assert.match(formatContextResult({
     command: "inspect",
     projectRoot: "D:/repo",
@@ -445,7 +518,7 @@ async function writeRegistry(
     decisionPath: "registry/decisions/0.2.0.md",
     components: [
       {
-        name: "core", dependencies: [], capabilities: [],
+        name: "core", revision: componentRevision, dependencies: [], capabilities: [],
         licenses: [{
           kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",
           noticeSha256: "a".repeat(64),
@@ -457,7 +530,7 @@ async function writeRegistry(
       },
       ...(includeStructured
         ? [{
-            name: "structured", dependencies: ["core"], capabilities: [],
+            name: "structured", revision: componentRevision, dependencies: ["core"], capabilities: [],
             licenses: [{
               kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",
               noticeSha256: "a".repeat(64),
@@ -466,7 +539,7 @@ async function writeRegistry(
           }]
         : []),
       {
-        name: "tools", dependencies: ["core"],
+        name: "tools", revision: componentRevision, dependencies: ["core"],
         capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
         licenses: [{
           kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",

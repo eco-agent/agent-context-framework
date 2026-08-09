@@ -16,6 +16,7 @@ import {
   type ContextInspection,
   type ContextOperationResult,
   type ContextRecoveryResult,
+  type ContextUpdateMode,
 } from "./context-installer.js";
 import {
   bootstrapRuntime,
@@ -47,6 +48,7 @@ type ContextInstallerArguments =
       readonly projectRoot: string;
       readonly component: string | null;
       readonly output: "text";
+      readonly mode: ContextUpdateMode;
     }
   | {
       readonly command: "bootstrap-runtime";
@@ -74,6 +76,7 @@ export function parseContextInstallerArguments(
   let projectRoot = currentDirectory;
   let json = false;
   let noInstall = false;
+  let updateMode: ContextUpdateMode = "preserve-local";
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
     if (argument === "--cwd") {
@@ -85,6 +88,9 @@ export function parseContextInstallerArguments(
       json = true;
     } else if (argument === "--no-install") {
       noInstall = true;
+    } else if (argument === "--overwrite") {
+      if (updateMode === "overwrite-selected") throw new Error("--overwrite may be specified only once.");
+      updateMode = "overwrite-selected";
     } else if (!argument || argument.startsWith("-")) {
       throw new Error(`Unknown agent-context argument ${argument ?? ""}.`);
     } else {
@@ -105,7 +111,7 @@ export function parseContextInstallerArguments(
     command !== "bootstrap-runtime"
   ) {
     throw new Error(
-      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]> [--cwd PROJECT] [--json].",
+      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]> [--cwd PROJECT] [--json].",
     );
   }
   if (json && command !== "inspect" && command !== "diff" && command !== "doctor") {
@@ -113,6 +119,9 @@ export function parseContextInstallerArguments(
   }
   if (noInstall && command !== "bootstrap-runtime") {
     throw new Error("--no-install is valid only with agent-context bootstrap-runtime.");
+  }
+  if (updateMode === "overwrite-selected" && command !== "update") {
+    throw new Error("--overwrite is valid only with agent-context update.");
   }
   if (command === "add" || command === "remove") {
     const component = positionals[1];
@@ -122,7 +131,7 @@ export function parseContextInstallerArguments(
   }
   if (command === "update") {
     if (positionals.length > 2) throw new Error("agent-context update received too many arguments.");
-    return { command, projectRoot, component: positionals[1] ?? null, output: "text" };
+    return { command, projectRoot, component: positionals[1] ?? null, output: "text", mode: updateMode };
   }
   if (positionals[1]) throw new Error(`agent-context ${command} does not accept a component name.`);
   if (command === "init" || command === "recover") {
@@ -213,7 +222,7 @@ async function execute(arguments_: ContextInstallerArguments): Promise<ContextCo
     case "diff":
       return await diffProject(arguments_.projectRoot, frameworkRoot);
     case "update":
-      return await updateProject(arguments_.projectRoot, frameworkRoot, arguments_.component);
+      return await updateProject(arguments_.projectRoot, frameworkRoot, arguments_.component, arguments_.mode);
     case "remove":
       return await removeComponent(arguments_.projectRoot, frameworkRoot, arguments_.component);
     case "doctor":

@@ -50,6 +50,8 @@ export const CONTEXT_LOCK_PATH = ".agent-context/lock.json";
 export const CONTEXT_REGISTRY_PATH = "registry/registry.json";
 export const DEFAULT_CONTEXT_COMPONENT = "core";
 
+export type ContextUpdateMode = "preserve-local" | "overwrite-selected";
+
 export type ArtifactAssessmentStatus =
   | "uninstalled"
   | "unchanged"
@@ -150,7 +152,11 @@ export interface ContextRecoveryResult {
 type PlanningIntent =
   | { readonly kind: "observe" }
   | { readonly kind: "install" }
-  | { readonly kind: "update"; readonly components: ReadonlySet<string> }
+  | {
+      readonly kind: "update";
+      readonly mode: ContextUpdateMode;
+      readonly components: ReadonlySet<string>;
+    }
   | { readonly kind: "remove" };
 
 interface DesiredArtifact {
@@ -202,6 +208,7 @@ export async function updateProject(
   projectRoot: string,
   frameworkRoot: string,
   componentName: string | null,
+  mode: ContextUpdateMode,
 ): Promise<ContextOperationResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const config = await requireConfig(resolvedProjectRoot);
@@ -215,7 +222,7 @@ export async function updateProject(
     frameworkRoot,
     config,
     false,
-    { kind: "update", components: new Set(resolved.map((component) => component.name)) },
+    { kind: "update", mode, components: new Set(resolved.map((component) => component.name)) },
     registry,
   );
 }
@@ -567,11 +574,23 @@ export async function planContextInstallation(
     assessments.push(assessment);
 
     const shouldUpdate = intent.kind === "update" && intent.components.has(desired.component);
+    const shouldOverwrite = intent.kind === "update" &&
+      intent.mode === "overwrite-selected" &&
+      intent.components.has(desired.component);
     if (assessment.status === "uninstalled" && (intent.kind === "install" || shouldUpdate)) {
       virtualTargets.set(desired.artifact.targetPath, desired.projection.install(target));
       nextLockedByIdentity.set(identity, lockedArtifact(desired));
     } else if (assessment.status === "upstream-changed" && shouldUpdate && target !== null) {
       virtualTargets.set(desired.artifact.targetPath, desired.projection.replace(target));
+      nextLockedByIdentity.set(identity, lockedArtifact(desired));
+    } else if (
+      shouldOverwrite &&
+      (assessment.status === "locally-modified" || assessment.status === "diverged")
+    ) {
+      virtualTargets.set(
+        desired.artifact.targetPath,
+        target === null ? desired.projection.install(target) : desired.projection.replace(target),
+      );
       nextLockedByIdentity.set(identity, lockedArtifact(desired));
     } else if (locked) {
       nextLockedByIdentity.set(identity, locked);
@@ -613,7 +632,12 @@ export async function planContextInstallation(
         if (current.state === "malformed") {
           nextLockedByIdentity.set(identity, locked);
         } else {
-          virtualTargets.set(locked.targetPath, projection.remove(target, !unchanged));
+          const preserveLocal = !unchanged && !(
+            intent.kind === "update" &&
+            intent.mode === "overwrite-selected" &&
+            intent.components.has(locked.component)
+          );
+          virtualTargets.set(locked.targetPath, projection.remove(target, preserveLocal));
         }
       }
     } else {
@@ -839,7 +863,9 @@ function isBlockingAssessment(
     return intent.kind !== "remove";
   }
   if (assessment.status === "diverged") {
-    return intent.kind === "update" && intent.components.has(assessment.component);
+    return intent.kind === "update" &&
+      intent.mode === "preserve-local" &&
+      intent.components.has(assessment.component);
   }
   if (
     assessment.status === "obsolete-modified" &&
