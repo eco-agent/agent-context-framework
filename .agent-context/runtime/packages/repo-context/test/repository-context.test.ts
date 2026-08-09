@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -44,6 +44,29 @@ test("repository context rejects targets outside its explicit root", async () =>
       tool.read({ path: path.join(outside, "source.txt") }),
       /outside the root/u,
     );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+    await rm(outside, { recursive: true, force: true });
+  }
+});
+
+test("repository context rejects symlink escape from its explicit root", async (t) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-symlink-root-"));
+  const outside = await mkdtemp(path.join(os.tmpdir(), "agent-context-symlink-outside-"));
+  try {
+    const outsideFile = path.join(outside, "source.txt");
+    await writeFile(outsideFile, "outside", "utf8");
+    try {
+      await symlink(outsideFile, path.join(root, "linked.txt"), "file");
+    } catch (error) {
+      if (error instanceof Error && "code" in error && error.code === "EPERM") {
+        t.skip("This Windows environment does not permit symbolic-link creation.");
+        return;
+      }
+      throw error;
+    }
+    const tool = await RepositoryContextTool.open(root);
+    await assert.rejects(tool.read({ path: "linked.txt" }), /links outside the root/u);
   } finally {
     await rm(root, { recursive: true, force: true });
     await rm(outside, { recursive: true, force: true });

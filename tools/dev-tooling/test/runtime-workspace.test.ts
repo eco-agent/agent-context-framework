@@ -29,7 +29,11 @@ test("isolated runtime owns an exact static package graph", async () => {
   const expectedDependencies = new Map<string, readonly string[]>([
     ["@agent-context-runtime/shared", []],
     ["@agent-context-runtime/policy", ["@agent-context-runtime/shared"]],
-    ["@agent-context-runtime/repo-context", ["@agent-context-runtime/shared"]],
+    ["@agent-context-runtime/repo-context", [
+      "@agent-context-runtime/shared",
+      "@modelcontextprotocol/server",
+      "zod",
+    ]],
     ["@agent-context-runtime/hooks", ["@agent-context-runtime/shared"]],
   ]);
   for (const directory of ["shared", "policy", "repo-context", "hooks"]) {

@@ -99,7 +99,11 @@ export class RepositoryContextTool {
   }
 
   public static async open(root: string): Promise<RepositoryContextTool> {
-    return new RepositoryContextTool(await realpath(root));
+    const resolvedRoot = await realpath(root);
+    if (!(await stat(resolvedRoot)).isDirectory()) {
+      throw new Error("Authorized repository root must be a directory.");
+    }
+    return new RepositoryContextTool(resolvedRoot);
   }
 
   public async read(

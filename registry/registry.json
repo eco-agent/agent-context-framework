@@ -1254,7 +1254,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/pnpm-lock.yaml",
-          "sourceSha256": "15b4078977376f49bc544368474a86808d5a714e37e33e47fc39813aec404d2b",
+          "sourceSha256": "380e8d3ef1e17643555d31ec80e7d05c8ac384e3453ffd33d71d50f1ec43b5eb",
           "targetPath": ".agent-context/runtime/pnpm-lock.yaml",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/yaml"
@@ -1610,6 +1610,109 @@
               "identity": "^compact$"
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "codex-repo-context",
+      "dependencies": [
+        "core",
+        "runtime-base"
+      ],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "ripgrep",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/package.json",
+          "sourceSha256": "d10e16e87bc582df1e2af1e42234bc65dfc08d523035a0e7ba669916f4f54fb4",
+          "targetPath": ".agent-context/runtime/packages/repo-context/package.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/src/cli.ts",
+          "sourceSha256": "5da9fc5ae914879e4d2544e210de9ecbcf9c774c3f04ab42d8a238c5ac6c2ce9",
+          "targetPath": ".agent-context/runtime/packages/repo-context/src/cli.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/src/index.ts",
+          "sourceSha256": "188b34f74d033965b799219a9483cd216302ad09b233008ab9bc4ff2a1eafa60",
+          "targetPath": ".agent-context/runtime/packages/repo-context/src/index.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/src/mcp-cli.ts",
+          "sourceSha256": "846ce7590e7dbac4ecf95d6649637a758fd66814d301fbb087fa993e20cd360d",
+          "targetPath": ".agent-context/runtime/packages/repo-context/src/mcp-cli.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/src/mcp-server.ts",
+          "sourceSha256": "5f3b38f886cd7956c94add76837e5adc54a79866fcf039c6fa20ef3a742646da",
+          "targetPath": ".agent-context/runtime/packages/repo-context/src/mcp-server.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/src/repository-context.ts",
+          "sourceSha256": "500eb9ada75de1d90b20eb35752ca9a900306bf5a4cb0db354bcf479396c80c2",
+          "targetPath": ".agent-context/runtime/packages/repo-context/src/repository-context.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/test/mcp.test.ts",
+          "sourceSha256": "8564360e660f6480298d0afa6707b9d40e54c133c129700bcca9e82b94a0c0bf",
+          "targetPath": ".agent-context/runtime/packages/repo-context/test/mcp.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/test/repository-context.test.ts",
+          "sourceSha256": "0e3b72c57c38333efdcd3f9aa1589ea83bc633ebf135e502f9eb28c855c05fbd",
+          "targetPath": ".agent-context/runtime/packages/repo-context/test/repository-context.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/repo-context/tsconfig.json",
+          "sourceSha256": "a4baf50b7650a9960c62923e654f33c43c6e7776b641a613a8c89ca2265d3526",
+          "targetPath": ".agent-context/runtime/packages/repo-context/tsconfig.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "toml-tables",
+          "sourcePath": "registry/sources/codex/repo-context.toml",
+          "sourceSha256": "d7fab50fac720634711723d68602ff9396132aa785c50d904d9f47dcbd2d3836",
+          "targetPath": ".codex/config.toml",
+          "ownedTables": [
+            "mcp_servers.repo_context"
+          ],
+          "sectionId": "codex-repo-context"
         }
       ]
     }
