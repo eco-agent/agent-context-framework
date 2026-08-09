@@ -29,19 +29,17 @@ objective orchestration outside the distributable graph.
 
 ## State
 
-- Phase 6 is complete at `c74f0b0b618e91186c3509f43e9ecf938bc66eaa`.
-- Registry `0.4.0` contains 24 components, including internal `runtime-base` and
-  independent `repository-policy`.
-- `toml-tables` can own complete tables but not a scalar beside independently
-  owned role tables. `json-members` can own event arrays but not individual
-  matcher entries.
-- The isolated runtime already owns hook evaluation and bounded repository
-  read/search. Neither package is yet exposed through project Codex configuration.
-- The existing host MCP server is coupled to objective bindings and ledgers and
-  is not a reusable Wave 4 entrypoint.
-- The existing acceptance sequencer runs one workspace, one isolation, and one
-  downstream stage; Phase 7 will extend the latter two without adding another
-  broad command.
+- Phase 7 is implemented on `codex/phase-seven-codex-interface` from the clean
+  Phase 6 baseline `c74f0b0b618e91186c3509f43e9ecf938bc66eaa`.
+- Registry `0.5.0` contains 28 components. `codex-runtime` owns no artifacts and
+  resolves only `codex-agents`, `codex-hooks`, and `codex-repo-context` plus their
+  `core` and `runtime-base` dependencies.
+- `toml-members` and `json-array-items` provide the required precise lifecycle
+  ownership without taking over unrelated configuration.
+- Installed hook and MCP commands resolve through `.agent-context/runtime`; the
+  downstream host manifest and application lockfile remain unchanged.
+- The acceptance sequencer now proves the workspace, a real-materializer non-Node
+  isolation fixture, and the committed downstream Wave 4 fixture.
 
 ## Topology
 
@@ -108,4 +106,26 @@ codex-runtime
 
 ## Verification evidence
 
-- Pending implementation.
+- Focused projection, installer, recovery, collision, agent, hook, MCP protocol,
+  registry-resolution, doctor, acceptance-runner, TypeScript 7, registry, and
+  isolation checks passed during implementation.
+- The first pre-evidence acceptance attempt at framework revision
+  `85d050f5dddf7017bb41fe50fc5d165ba831ca31` stopped in the workspace stage. It
+  exposed two test-only assumptions: a cwd-relative registry source read and the
+  previous 27-component inventory count. Isolation and downstream stages did not
+  run in that attempt. Both assertions were corrected and committed before the
+  final evidence run.
+- Final tested framework revision:
+  `d7eb0a9131dd147bb4adfeaabb03dae81c9a4f7b`.
+- Final tested downstream fixture revision:
+  `dd76c19bad1d81bf0301dbbb41753239fecb1032`.
+- The final committed-revision invocation
+  `pnpm --silent verify:acceptance -- --fixture D:\dev\control-tower-clean`
+  passed once: workspace `78,577 ms`, isolation `40,125 ms`, and downstream
+  `24,201 ms`. The downstream stage passed both the installed Codex runtime
+  verifier and the independent repository-policy verifier.
+- The controlled fixture retained root `package.json` SHA-256
+  `869b96384be085f0065f43f0d17b8e36cfdd1bc0d2a78bd11991074b5fbdffaa7`
+  and root `pnpm-lock.yaml` SHA-256
+  `71ea96a0b215da8002ddc8def9b0dfc1c35ee01d55f5e963f4afb0967de3d5a5`.
+- No broad suite was rerun after this documentation-only evidence update.
