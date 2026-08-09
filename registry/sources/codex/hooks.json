@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel)\" && exec node \"$root/.agent-context/runtime/packages/hooks/dist/src/codex-cli.js\" --root \"$root\"'",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -Command \"$root = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & node (Join-Path $root '.agent-context/runtime/packages/hooks/dist/src/codex-cli.js') --root $root; exit $LASTEXITCODE\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "^compact$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel)\" && exec node \"$root/.agent-context/runtime/packages/hooks/dist/src/codex-cli.js\" --root \"$root\"'",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -Command \"$root = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & node (Join-Path $root '.agent-context/runtime/packages/hooks/dist/src/codex-cli.js') --root $root; exit $LASTEXITCODE\""
+          }
+        ]
+      }
+    ]
+  }
+}

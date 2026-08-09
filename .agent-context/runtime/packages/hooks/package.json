@@ -11,7 +11,8 @@
     }
   },
   "bin": {
-    "agent-context-hook": "./dist/src/cli.js"
+    "agent-context-hook": "./dist/src/cli.js",
+    "agent-context-codex-hook": "./dist/src/codex-cli.js"
   },
   "dependencies": {
     "@agent-context-runtime/shared": "workspace:*"

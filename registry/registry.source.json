@@ -575,6 +575,39 @@
           ]
         }
       ]
+    },
+    {
+      "name": "codex-hooks",
+      "dependencies": ["core", "runtime-base"],
+      "capabilities": [],
+      "licenses": [{ "kind": "project" }],
+      "artifacts": [
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": ".agent-context/runtime/packages/hooks",
+          "targetDirectory": ".agent-context/runtime/packages/hooks",
+          "excludedPrefixes": ["dist/", "node_modules/"],
+          "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "artifact",
+          "operation": "json-array-items",
+          "sourcePath": "registry/sources/codex/hooks.json",
+          "targetPath": ".codex/hooks.json",
+          "ownedItems": [
+            {
+              "arrayPointer": "/hooks/PreToolUse",
+              "identityPointer": "/matcher",
+              "identity": "^apply_patch$"
+            },
+            {
+              "arrayPointer": "/hooks/SessionStart",
+              "identityPointer": "/matcher",
+              "identity": "^compact$"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

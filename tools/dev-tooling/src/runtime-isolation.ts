@@ -59,6 +59,7 @@ export async function verifyRuntimeIsolation(
       `${JSON.stringify({
         schemaVersion: 1,
         sessionId: "isolation-session",
+        expiresAtEpochMs: 4_102_444_800_000,
         writablePaths: ["README.md"],
         sources: [
           {

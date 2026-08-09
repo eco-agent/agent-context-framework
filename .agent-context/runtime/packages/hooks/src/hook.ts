@@ -25,6 +25,7 @@ export type HookInput =
 export interface ScopedSessionBinding {
   readonly schemaVersion: 1;
   readonly sessionId: string;
+  readonly expiresAtEpochMs: number;
   readonly writablePaths: readonly string[];
   readonly sources: readonly {
     readonly path: string;
@@ -32,6 +33,13 @@ export interface ScopedSessionBinding {
   }[];
   readonly compactContext: string;
 }
+
+export type CodexSessionBindingLookup =
+  | { readonly state: "missing" }
+  | { readonly state: "valid"; readonly binding: ScopedSessionBinding };
+
+export const CODEX_SESSION_BINDING_DIRECTORY =
+  ".agent-context/runtime/state/codex-hooks" as const;
 
 export type HookDecision =
   | { readonly kind: "allow" }
@@ -105,6 +113,7 @@ export function decodeScopedSessionBinding(value: unknown): ScopedSessionBinding
   const record = strictRecord(value, "Scoped session binding", [
     "schemaVersion",
     "sessionId",
+    "expiresAtEpochMs",
     "writablePaths",
     "sources",
     "compactContext",
@@ -128,6 +137,7 @@ export function decodeScopedSessionBinding(value: unknown): ScopedSessionBinding
   return {
     schemaVersion: 1,
     sessionId: sessionId(record.sessionId),
+    expiresAtEpochMs: positiveSafeInteger(record.expiresAtEpochMs, "expiresAtEpochMs"),
     writablePaths,
     sources,
     compactContext: requiredString(record, "compactContext"),
@@ -138,6 +148,7 @@ export async function loadScopedSessionBinding(
   root: string,
   bindingPath: string,
   expectedSessionId: string,
+  nowEpochMs = Date.now(),
 ): Promise<ScopedSessionBinding> {
   const resolvedRoot = await realpath(root);
   const binding = decodeScopedSessionBinding(
@@ -151,6 +162,9 @@ export async function loadScopedSessionBinding(
   if (binding.sessionId !== expectedSessionId) {
     throw new Error("Scoped session binding does not match the hook session.");
   }
+  if (binding.expiresAtEpochMs <= nowEpochMs) {
+    throw new Error("Scoped session binding is stale.");
+  }
   for (const source of binding.sources) {
     const bytes = await readFile(
       await resolveRepositoryFile(resolvedRoot, source.path),
@@ -161,6 +175,37 @@ export async function loadScopedSessionBinding(
     }
   }
   return binding;
+}
+
+export async function lookupCodexSessionBinding(
+  root: string,
+  expectedSessionId: string,
+  nowEpochMs = Date.now(),
+): Promise<CodexSessionBindingLookup> {
+  const validatedSessionId = sessionId(expectedSessionId);
+  const resolvedRoot = await realpath(root);
+  const bindingPath = `${CODEX_SESSION_BINDING_DIRECTORY}/${validatedSessionId}.json`;
+  const absoluteBindingPath = path.resolve(resolvedRoot, bindingPath);
+  if (!isInside(resolvedRoot, absoluteBindingPath)) {
+    throw new Error("Codex session binding path escapes the repository root.");
+  }
+  try {
+    await stat(absoluteBindingPath);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      return { state: "missing" };
+    }
+    throw error;
+  }
+  return {
+    state: "valid",
+    binding: await loadScopedSessionBinding(
+      resolvedRoot,
+      bindingPath,
+      validatedSessionId,
+      nowEpochMs,
+    ),
+  };
 }
 
 export function evaluateHook(
@@ -241,6 +286,13 @@ function normalizeRepositoryPath(value: string): string {
 function sessionId(value: unknown): string {
   if (typeof value !== "string" || !/^[A-Za-z0-9._-]+$/u.test(value)) {
     throw new Error("sessionId must contain only safe identifier characters.");
+  }
+  return value;
+}
+
+function positiveSafeInteger(value: unknown, label: string): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`${label} must be a positive safe integer.`);
   }
   return value;
 }

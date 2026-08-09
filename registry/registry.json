@@ -1238,7 +1238,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/.gitignore",
-          "sourceSha256": "818a8406309a4f48eddc7a6614c9354a20123b80cf91e75038c5a376ae76a968",
+          "sourceSha256": "186e39ea117084ad4758a1cb07593a984a1cd50d98edb81070bb8ed45fc7a97c",
           "targetPath": ".agent-context/runtime/.gitignore",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1520,6 +1520,95 @@
             "agents.max_concurrent_threads_per_session",
             "agents.scout",
             "agents.worker"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "codex-hooks",
+      "dependencies": [
+        "core",
+        "runtime-base"
+      ],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/package.json",
+          "sourceSha256": "1987d2684a0b872ed440dd15706f10f3b9343285a8e783afd1fedd6fe53c2aa2",
+          "targetPath": ".agent-context/runtime/packages/hooks/package.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/src/cli.ts",
+          "sourceSha256": "7c1044662947fb545c737a0d95b579808617c7057753426a177c6c76f143e13d",
+          "targetPath": ".agent-context/runtime/packages/hooks/src/cli.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/src/codex-cli.ts",
+          "sourceSha256": "4c0e7acfb97b5e3114a367598ea3ea4dac64de9e75837b0402b0987b5a2b4291",
+          "targetPath": ".agent-context/runtime/packages/hooks/src/codex-cli.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/src/hook.ts",
+          "sourceSha256": "f3954df9452c7927fe57e687902646f48ef9c5caa3681b3cb956d007311c3253",
+          "targetPath": ".agent-context/runtime/packages/hooks/src/hook.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/src/index.ts",
+          "sourceSha256": "a0f59f000a0da977d8ac03924d2c5fb24944a4f710942c7a5f3a55716d920c9b",
+          "targetPath": ".agent-context/runtime/packages/hooks/src/index.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/test/hook.test.ts",
+          "sourceSha256": "bb7624fabb1153ff8fcd2f72d22c1bc59def2fcff30c4665820bbbed1fa3878e",
+          "targetPath": ".agent-context/runtime/packages/hooks/test/hook.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": ".agent-context/runtime/packages/hooks/tsconfig.json",
+          "sourceSha256": "a4baf50b7650a9960c62923e654f33c43c6e7776b641a613a8c89ca2265d3526",
+          "targetPath": ".agent-context/runtime/packages/hooks/tsconfig.json",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "json-array-items",
+          "sourcePath": "registry/sources/codex/hooks.json",
+          "sourceSha256": "54fec77bb72d4fcb6ceedd1743fa47073a7dce47f1862407fff6c66197bbcc06",
+          "targetPath": ".codex/hooks.json",
+          "ownedItems": [
+            {
+              "arrayPointer": "/hooks/PreToolUse",
+              "identityPointer": "/matcher",
+              "identity": "^apply_patch$"
+            },
+            {
+              "arrayPointer": "/hooks/SessionStart",
+              "identityPointer": "/matcher",
+              "identity": "^compact$"
+            }
           ]
         }
       ]
