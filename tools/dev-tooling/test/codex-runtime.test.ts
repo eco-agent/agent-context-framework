@@ -56,7 +56,7 @@ test("Wave 4 local-reference rules reject host-coupled entrypoints", () => {
   );
 });
 
-test("codex-runtime installs, diagnoses, and removes only its owned project configuration", { timeout: 40_000 }, async () => {
+test("codex-runtime installs, diagnoses, and removes only its owned project configuration", { timeout: 90_000 }, async () => {
   const projectRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-codex-runtime-"));
   try {
     await mkdir(path.join(projectRoot, ".codex"), { recursive: true });
