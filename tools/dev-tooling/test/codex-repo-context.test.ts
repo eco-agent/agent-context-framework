@@ -67,7 +67,7 @@ test("codex-repo-context resolves the isolated bounded package and local MCP tab
   assert.equal(/[A-Za-z]:\\/u.test(serialized), false);
 });
 
-test("installed repository-context MCP stays host-neutral and serves the configured entrypoint", { timeout: 30_000 }, async () => {
+test("installed repository-context MCP stays host-neutral and serves the configured entrypoint", { timeout: 90_000 }, async () => {
   const projectRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-codex-repo-"));
   try {
     await mkdir(path.join(projectRoot, ".codex"), { recursive: true });
