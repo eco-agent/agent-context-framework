@@ -4,6 +4,8 @@ import path from "node:path";
 
 import {
   decodeContextRegistry,
+  resolveContextComponents,
+  type ContextLicense,
   type ContextRegistryV2,
 } from "@agent-context/repo-policy";
 
@@ -112,7 +114,12 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
       name: component.name,
       dependencies: component.dependencies,
       capabilities: component.capabilities,
-      licenses: component.licenses,
+      licenses: await materializeLicenses(
+        resolvedRoot,
+        component.name,
+        component.licenses,
+        artifacts,
+      ),
       artifacts,
     });
   }
@@ -123,9 +130,10 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
     decisionPath: catalog.decisionPath,
     components,
   });
-  validateNoticeCoverage(registry);
+  await validateNoticeCoverage(resolvedRoot, registry);
   await validateSourceAttribution(resolvedRoot, registry);
   await validatePackagedMarkdownReferences(resolvedRoot, registry);
+  await validateExternalCapabilityCoverage(resolvedRoot, registry);
   await validateWaveFourRegistryReferences(resolvedRoot, registry);
   return registry;
 }
@@ -232,13 +240,78 @@ function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
   return { kind: "artifact", fields };
 }
 
-function validateNoticeCoverage(registry: ContextRegistryV2): void {
+async function materializeLicenses(
+  root: string,
+  componentNameValue: unknown,
+  value: unknown,
+  artifacts: readonly Readonly<Record<string, unknown>>[],
+): Promise<readonly ContextLicense[]> {
+  const component = componentName(componentNameValue, "Registry component name");
+  if (!Array.isArray(value)) throw new Error(`Component ${component} licenses must be an array.`);
+  return await Promise.all(value.map(async (candidate) => {
+    if (!isRecord(candidate)) throw new Error(`Component ${component} license must be an object.`);
+    if (candidate.kind === "project") {
+      const record = strictRecord(candidate, `Component ${component} project license`, [
+        "kind",
+        "spdx",
+        "noticePath",
+      ]);
+      const noticePath = portableRelativePath(record, "noticePath");
+      const bytes = await readSourceBytes(root, noticePath);
+      return {
+        kind: "project",
+        spdx: requiredString(record, "spdx"),
+        noticePath,
+        noticeSha256: contentHash(bytes),
+      };
+    }
+    if (candidate.kind !== "third-party") {
+      throw new Error(`Component ${component} license kind must be project or third-party.`);
+    }
+    const record = strictRecord(candidate, `Component ${component} third-party license`, [
+      "kind",
+      "spdx",
+      "source",
+      "revision",
+      "noticePath",
+    ]);
+    const noticePath = portableRelativePath(record, "noticePath");
+    const noticeArtifact = artifacts.find((artifact) => artifact.targetPath === noticePath);
+    if (!noticeArtifact) {
+      throw new Error(`Component ${component} does not install declared notice ${noticePath}.`);
+    }
+    return {
+      kind: "third-party",
+      spdx: requiredString(record, "spdx"),
+      source: requiredString(record, "source"),
+      revision: requiredString(record, "revision"),
+      noticePath,
+      noticeSha256: requiredString(noticeArtifact, "sourceSha256"),
+    };
+  }));
+}
+
+async function validateNoticeCoverage(root: string, registry: ContextRegistryV2): Promise<void> {
   for (const component of registry.components) {
-    const targets = new Set(component.artifacts.map((artifact) => artifact.targetPath));
     for (const license of component.licenses) {
-      if (license.kind === "third-party" && !targets.has(license.noticePath)) {
+      if (license.kind === "project") {
+        const actual = contentHash(await readSourceBytes(root, license.noticePath));
+        if (actual !== license.noticeSha256) {
+          throw new Error(
+            `Component ${component.name} project notice ${license.noticePath} does not match its hash.`,
+          );
+        }
+        continue;
+      }
+      const notice = component.artifacts.find((artifact) => artifact.targetPath === license.noticePath);
+      if (!notice) {
         throw new Error(
           `Component ${component.name} does not install declared notice ${license.noticePath}.`,
+        );
+      }
+      if (notice.sourceSha256 !== license.noticeSha256) {
+        throw new Error(
+          `Component ${component.name} notice ${license.noticePath} does not match its license hash.`,
         );
       }
     }
@@ -300,6 +373,42 @@ function decodeSourceAttributions(value: unknown, label: string): readonly Sourc
 
 function attributionIdentity(repository: string, revision: string, license: string): string {
   return `${repository}\n${revision}\n${license}`;
+}
+
+const EXTERNAL_CAPABILITY_RULES = [
+  {
+    name: "git",
+    pattern: /(?:spawn(?:Sync)?|execFile(?:Sync)?)\s*\(\s*["']git["']|\bgit rev-parse --show-toplevel\b/u,
+  },
+  {
+    name: "shell",
+    pattern: /"command"\s*:\s*"sh\s|"commandWindows"\s*:\s*"powershell(?:\.exe)?\s/iu,
+  },
+] as const;
+
+async function validateExternalCapabilityCoverage(
+  root: string,
+  registry: ContextRegistryV2,
+): Promise<void> {
+  for (const component of registry.components) {
+    const closure = resolveContextComponents(registry, [component.name]);
+    const declared = new Set(closure.flatMap((candidate) =>
+      candidate.capabilities
+        .filter((capability) => capability.kind === "runtime")
+        .map((capability) => capability.name)));
+    for (const artifact of component.artifacts) {
+      if (!/\.(?:c?js|mjs|json|ts)$/u.test(artifact.sourcePath)) continue;
+      const source = await readStrictUtf8(repositoryPath(root, artifact.sourcePath), artifact.sourcePath);
+      for (const rule of EXTERNAL_CAPABILITY_RULES) {
+        if (rule.pattern.test(source) && !declared.has(rule.name)) {
+          throw new Error(
+            `Component ${component.name} invokes ${rule.name} in ${artifact.sourcePath} ` +
+            `without a required runtime capability declaration.`,
+          );
+        }
+      }
+    }
+  }
 }
 
 async function validatePackagedMarkdownReferences(

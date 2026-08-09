@@ -44,6 +44,10 @@ test("codex-hooks resolves only the isolated hook runtime and precise matcher ow
   );
   const component = registry.components.find((candidate) => candidate.name === "codex-hooks");
   assert.ok(component);
+  assert.deepEqual(component.capabilities, [
+    { kind: "runtime", name: "git", requirement: "required" },
+    { kind: "runtime", name: "shell", requirement: "required" },
+  ]);
   const hooksArtifact = component.artifacts.find((artifact) => artifact.operation === "json-array-items");
   assert.ok(hooksArtifact?.operation === "json-array-items");
   assert.deepEqual(hooksArtifact.ownedItems, [

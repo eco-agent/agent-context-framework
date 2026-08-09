@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.5.0",
-  "decisionPath": "registry/decisions/0.5.0-wave-four.md",
+  "revision": "0.5.1",
+  "decisionPath": "registry/decisions/0.5.1-distribution-hardening.md",
   "components": [
     {
       "name": "core",
@@ -9,7 +9,7 @@
       "capabilities": [
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -27,7 +27,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "network", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -41,7 +41,7 @@
       "name": "skill-choose-react-animation",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -147,7 +147,7 @@
       "capabilities": [
         { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -165,7 +165,7 @@
         { "kind": "runtime", "name": "network", "requirement": "recommended" },
         { "kind": "runtime", "name": "python", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -190,7 +190,7 @@
         { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" },
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -209,7 +209,7 @@
         { "kind": "runtime", "name": "network", "requirement": "recommended" },
         { "kind": "runtime", "name": "python", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": []
     },
     {
@@ -218,7 +218,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "node", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -255,7 +255,7 @@
       "name": "skill-diagnose",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -271,7 +271,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "network", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -341,10 +341,11 @@
       "dependencies": [],
       "capabilities": [
         { "kind": "runtime", "name": "codex-session-log", "requirement": "required" },
+        { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "repository-context", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -367,7 +368,7 @@
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -405,7 +406,7 @@
       "name": "typescript-engineering",
       "dependencies": ["engineering", "skill-design-typescript-invariants"],
       "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -429,10 +430,11 @@
       "dependencies": ["skill-optimize-codex-sessions"],
       "capabilities": [
         { "kind": "runtime", "name": "codex-session-log", "requirement": "required" },
+        { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "repository-context", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -450,7 +452,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -469,7 +471,7 @@
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "corepack", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
@@ -491,7 +493,7 @@
       "name": "repository-policy",
       "dependencies": ["core", "runtime-base"],
       "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
@@ -535,7 +537,7 @@
       "name": "codex-agents",
       "dependencies": ["core"],
       "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -579,8 +581,11 @@
     {
       "name": "codex-hooks",
       "dependencies": ["core", "runtime-base"],
-      "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "capabilities": [
+        { "kind": "runtime", "name": "git", "requirement": "required" },
+        { "kind": "runtime", "name": "shell", "requirement": "required" }
+      ],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
@@ -615,7 +620,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "ripgrep", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
@@ -638,7 +643,7 @@
       "name": "codex-runtime",
       "dependencies": ["codex-agents", "codex-hooks", "codex-repo-context"],
       "capabilities": [],
-      "licenses": [{ "kind": "project" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "noticePath": "LICENSE" }],
       "artifacts": []
     }
   ]

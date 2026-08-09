@@ -1,7 +1,7 @@
 {
   "name": "@types/node",
   "version": "24.13.3",
-  "source": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+  "source": "https://registry.npmjs.org/@types/node/-/node-24.13.3.tgz",
   "license": "MIT",
   "integrity": "sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==",
   "purpose": "Node.js type declarations for repository tooling.",
@@ -12,5 +12,6 @@
   "securityEvidence": "Registry metadata and package integrity recorded; package contains declarations only.",
   "modifications": "None; package dependency.",
   "requiredNotices": "Preserve the MIT license text when redistribution requires it.",
+  "noticeFiles": ["LICENSE"],
   "owner": "platform"
 }

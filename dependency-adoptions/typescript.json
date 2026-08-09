@@ -1,7 +1,7 @@
 {
   "name": "typescript",
   "version": "7.0.2",
-  "source": "https://github.com/microsoft/TypeScript",
+  "source": "https://github.com/microsoft/TypeScript/tree/2bd066d87f5bafd315be9f40889d0a60b9e58e0b",
   "license": "Apache-2.0",
   "integrity": "sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==",
   "purpose": "Authoritative TypeScript 7 native compiler for project-reference builds and type checks.",
@@ -13,5 +13,6 @@
   "securityEvidence": "Registry metadata and package integrity recorded; repository audit runs after lockfile installation.",
   "modifications": "None; package dependency.",
   "requiredNotices": "Preserve the Apache-2.0 license terms in distributions that require notices.",
+  "noticeFiles": ["LICENSE", "NOTICE.txt"],
   "owner": "platform"
 }

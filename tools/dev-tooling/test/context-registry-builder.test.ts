@@ -60,8 +60,60 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
   for (const component of first.components) {
     const targets = new Set(component.artifacts.map((artifact) => artifact.targetPath));
     for (const license of component.licenses) {
-      if (license.kind === "third-party") assert.equal(targets.has(license.noticePath), true);
+      assert.match(license.noticeSha256, /^[a-f0-9]{64}$/u);
+      if (license.kind === "third-party") {
+        assert.equal(targets.has(license.noticePath), true);
+      } else {
+        assert.equal(license.spdx, "MIT");
+        assert.equal(license.noticePath, "LICENSE");
+      }
     }
+  }
+});
+
+test("registry construction requires explicit project license terms", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-project-license-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await copyPackagedSkills(temporaryRoot);
+    const catalogPath = path.join(temporaryRoot, "registry", "registry.source.json");
+    const catalog = JSON.parse(await readFile(catalogPath, "utf8")) as {
+      components: Array<{ licenses: Array<Record<string, unknown>> }>;
+    };
+    catalog.components[0]!.licenses = [{ kind: "project" }];
+    await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
+    await assert.rejects(
+      buildContextRegistry(temporaryRoot),
+      /unknown fields|spdx must be a non-empty string|noticePath must be a non-empty string/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("registry construction rejects invoked external executables without capabilities", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-capabilities-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await copyPackagedSkills(temporaryRoot);
+    const catalogPath = path.join(temporaryRoot, "registry", "registry.source.json");
+    const catalog = JSON.parse(await readFile(catalogPath, "utf8")) as {
+      components: Array<{
+        name: string;
+        capabilities: Array<{ kind: string; name: string; requirement: string }>;
+      }>;
+    };
+    const optimizer = catalog.components.find((component) =>
+      component.name === "skill-optimize-codex-sessions");
+    assert.ok(optimizer);
+    optimizer.capabilities = optimizer.capabilities.filter((capability) => capability.name !== "git");
+    await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
+    await assert.rejects(
+      buildContextRegistry(temporaryRoot),
+      /skill-optimize-codex-sessions invokes git .* without a required runtime capability/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
 
@@ -226,6 +278,7 @@ function componentNames(
 }
 
 async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
+  await cp(path.join(frameworkRoot, "LICENSE"), path.join(temporaryRoot, "LICENSE"));
   await mkdir(path.join(temporaryRoot, ".codex", "skills"), { recursive: true });
   for (const skill of packagedSkills) {
     await cp(

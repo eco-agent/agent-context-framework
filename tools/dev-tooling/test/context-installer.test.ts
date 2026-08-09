@@ -66,6 +66,12 @@ test("add resolves dependencies, reports capabilities, and refuses untracked who
     const doctor = await doctorProject(fixture.projectRoot, fixture.frameworkRoot);
     assert.equal(doctor.health, "healthy");
     assert.deepEqual(doctor.capabilities, [{ kind: "runtime", name: "network", requirement: "required" }]);
+    assert.deepEqual(doctor.licenses, [{
+      kind: "project",
+      spdx: "MIT",
+      noticePath: "LICENSE",
+      noticeSha256: "a".repeat(64),
+    }]);
   } finally {
     await fixture.remove();
   }
@@ -184,7 +190,7 @@ test("structured ownership rejects overlapping TOML paths and duplicate JSON ite
       name: "collision",
       dependencies: ["structured"],
       capabilities: [],
-      licenses: [{ kind: "project" }],
+      licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: "a".repeat(64) }],
       artifacts: [{
         operation: "toml-members",
         sourcePath: "registry/sources/structured-members.toml",
@@ -207,7 +213,7 @@ test("structured ownership rejects overlapping TOML paths and duplicate JSON ite
       name: "collision",
       dependencies: ["structured"],
       capabilities: [],
-      licenses: [{ kind: "project" }],
+      licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: "a".repeat(64) }],
       artifacts: [{
         operation: "json-array-items",
         sourcePath: "registry/sources/structured-hooks.json",
@@ -432,7 +438,8 @@ async function writeRegistry(
     decisionPath: "registry/decisions/0.2.0.md",
     components: [
       {
-        name: "core", dependencies: [], capabilities: [], licenses: [{ kind: "project" }],
+        name: "core", dependencies: [], capabilities: [],
+        licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: "a".repeat(64) }],
         artifacts: [{
           operation: "text-section", sourcePath: "registry/sources/core.md", sourceSha256: sha(core),
           targetPath: "AGENTS.md", sectionId: "core", markerStyle: "markdown",
@@ -440,14 +447,15 @@ async function writeRegistry(
       },
       ...(includeStructured
         ? [{
-            name: "structured", dependencies: ["core"], capabilities: [], licenses: [{ kind: "project" }],
+            name: "structured", dependencies: ["core"], capabilities: [],
+            licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: "a".repeat(64) }],
             artifacts: structuredArtifacts,
           }]
         : []),
       {
         name: "tools", dependencies: ["core"],
         capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
-        licenses: [{ kind: "project" }],
+        licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: "a".repeat(64) }],
         artifacts: [{
           operation: "file", sourcePath: "registry/sources/tool.md", sourceSha256: sha(tool),
           targetPath: toolsTarget, mediaType: "text/markdown",

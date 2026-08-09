@@ -1,5 +1,5 @@
 import path from "node:path";
-import { findFiles, readJsonFile } from "../filesystem.js";
+import { findFiles, pathExists, readJsonFile } from "../filesystem.js";
 
 interface AdoptionRecord {
   readonly name: string;
@@ -13,6 +13,7 @@ interface AdoptionRecord {
   readonly securityEvidence: string;
   readonly modifications: string;
   readonly requiredNotices: string;
+  readonly noticeFiles?: readonly string[];
   readonly owner: string;
 }
 
@@ -20,7 +21,13 @@ export async function checkDependencyAdoptions(root: string): Promise<readonly s
   const diagnostics: string[] = [];
   const records = await loadRecords(root, diagnostics);
   const manifests = await findFiles(root, (relativePath) => relativePath.endsWith("package.json"));
+  const runtimeRoot = path.join(root, ".agent-context", "runtime");
+  const runtimeManifests = await pathExists(runtimeRoot)
+    ? await findFiles(runtimeRoot, (relativePath) => relativePath.endsWith("package.json"))
+    : [];
   const externalDependencies = new Map<string, Set<string>>();
+  const manifestPathsByDependency = new Map<string, Set<string>>();
+  const distributableDependencies = new Set<string>();
 
   for (const manifestPath of manifests) {
     const manifest = await readJsonFile(path.join(root, manifestPath));
@@ -40,6 +47,23 @@ export async function checkDependencyAdoptions(root: string): Promise<readonly s
         const versions = externalDependencies.get(name) ?? new Set<string>();
         versions.add(rawVersion);
         externalDependencies.set(name, versions);
+        const manifestPaths = manifestPathsByDependency.get(name) ?? new Set<string>();
+        manifestPaths.add(manifestPath);
+        manifestPathsByDependency.set(name, manifestPaths);
+      }
+    }
+  }
+
+  for (const manifestPath of runtimeManifests) {
+    const manifest = await readJsonFile(path.join(runtimeRoot, manifestPath));
+    if (!isRecord(manifest)) continue;
+    for (const group of ["dependencies", "devDependencies", "optionalDependencies"] as const) {
+      const dependencies = manifest[group];
+      if (!isRecord(dependencies)) continue;
+      for (const [name, rawVersion] of Object.entries(dependencies)) {
+        if (typeof rawVersion === "string" && !rawVersion.startsWith("workspace:")) {
+          distributableDependencies.add(name);
+        }
       }
     }
   }
@@ -60,6 +84,37 @@ export async function checkDependencyAdoptions(root: string): Promise<readonly s
   for (const name of records.keys()) {
     if (!externalDependencies.has(name)) {
       diagnostics.push(`Adoption record ${name} does not match an installed manifest dependency.`);
+    }
+  }
+
+  for (const name of distributableDependencies) {
+    const record = records.get(name);
+    if (!record) continue;
+    if (!isImmutableSource(record.source)) {
+      diagnostics.push(
+        `Distributable dependency ${name} source must name an exact Git commit or immutable npm archive.`,
+      );
+    }
+    if (!record.noticeFiles || record.noticeFiles.length === 0) {
+      diagnostics.push(`Distributable dependency ${name} must declare its packaged notice files.`);
+      continue;
+    }
+    for (const noticeFile of record.noticeFiles) {
+      const installed = await Promise.all(
+        [...(manifestPathsByDependency.get(name) ?? [])].map(async (manifestPath) =>
+          await pathExists(path.join(
+            root,
+            path.dirname(manifestPath),
+            "node_modules",
+            ...name.split("/"),
+            noticeFile,
+          ))),
+      );
+      if (!installed.some(Boolean)) {
+        diagnostics.push(
+          `Distributable dependency ${name} packaged notice is missing from the frozen install: ${noticeFile}.`,
+        );
+      }
     }
   }
 
@@ -106,8 +161,24 @@ function isAdoptionRecord(value: unknown): value is AdoptionRecord {
     nonEmptyString(value.securityEvidence) &&
     nonEmptyString(value.modifications) &&
     nonEmptyString(value.requiredNotices) &&
+    (value.noticeFiles === undefined ||
+      (Array.isArray(value.noticeFiles) &&
+        value.noticeFiles.length > 0 &&
+        value.noticeFiles.every(portableNoticeFile))) &&
     nonEmptyString(value.owner)
   );
+}
+
+function isImmutableSource(value: string): boolean {
+  return /^https:\/\/github\.com\/[^/]+\/[^/]+\/tree\/[a-f0-9]{40}(?:\/|$)/u.test(value) ||
+    /^https:\/\/registry\.npmjs\.org\/.+\/-\/.+\.tgz$/u.test(value);
+}
+
+function portableNoticeFile(value: unknown): value is string {
+  return nonEmptyString(value) &&
+    !value.includes("\\") &&
+    !value.startsWith("/") &&
+    !value.split("/").some((part) => part === "" || part === "." || part === "..");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

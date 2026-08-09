@@ -13,6 +13,7 @@ import {
   resolveContextComponents,
   type ContextCapability,
   type ContextInstallationLockV2,
+  type ContextLicense,
   type ContextLockedArtifact,
   type ContextProjectConfigV2,
   type ContextRegistryArtifact,
@@ -119,6 +120,7 @@ export interface ContextDoctorResult {
   readonly health: "healthy" | "attention";
   readonly diagnostics: readonly string[];
   readonly capabilities: readonly ContextCapability[];
+  readonly licenses: readonly ContextLicense[];
   readonly diff: ContextDiffResult | null;
   readonly transaction: ContextTransactionInspection;
   readonly runtime: ContextRuntimeHealth | null;
@@ -317,6 +319,7 @@ export async function doctorProject(
       health: "attention",
       diagnostics,
       capabilities: [],
+      licenses: [],
       diff: null,
       transaction,
       runtime: null,
@@ -327,10 +330,19 @@ export async function doctorProject(
   const registry = await loadContextRegistry(frameworkRoot);
   const components = resolveContextComponents(registry, config.components);
   const capabilities = uniqueCapabilities(components);
+  const licenses = uniqueLicenses(components);
   for (const capability of capabilities) {
     diagnostics.push(
       `${capability.requirement} ${capability.kind} capability declared: ${capability.name}; ` +
       "availability is project-controlled and is not inferred by the installer.",
+    );
+  }
+  for (const license of licenses) {
+    diagnostics.push(
+      license.kind === "project"
+        ? `project license declared: ${license.spdx}; notice ${license.noticePath} (${license.noticeSha256}).`
+        : `third-party license declared: ${license.spdx} from ${license.source}@${license.revision}; ` +
+          `notice ${license.noticePath} (${license.noticeSha256}).`,
     );
   }
   let runtime: ContextRuntimeHealth | null = null;
@@ -386,6 +398,7 @@ export async function doctorProject(
     health: healthy ? "healthy" : "attention",
     diagnostics,
     capabilities,
+    licenses,
     diff,
     transaction,
     runtime,
@@ -952,6 +965,23 @@ function uniqueCapabilities(components: readonly ContextRegistryComponent[]): re
   }
   return [...result.values()].sort((left, right) =>
     `${left.kind}:${left.name}`.localeCompare(`${right.kind}:${right.name}`));
+}
+
+function uniqueLicenses(components: readonly ContextRegistryComponent[]): readonly ContextLicense[] {
+  const result = new Map<string, ContextLicense>();
+  for (const component of components) {
+    for (const license of component.licenses) {
+      const key = license.kind === "project"
+        ? `${license.kind}:${license.spdx}:${license.noticePath}:${license.noticeSha256}`
+        : `${license.kind}:${license.source}:${license.revision}:${license.spdx}:${license.noticeSha256}`;
+      result.set(key, license);
+    }
+  }
+  return [...result.values()].sort((left, right) => {
+    const leftKey = left.kind === "project" ? `project:${left.spdx}` : `third-party:${left.source}`;
+    const rightKey = right.kind === "project" ? `project:${right.spdx}` : `third-party:${right.source}`;
+    return leftKey.localeCompare(rightKey);
+  });
 }
 
 function boundedDifference(

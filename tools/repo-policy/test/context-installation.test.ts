@@ -18,7 +18,7 @@ const registryValue = {
       name: "base",
       dependencies: [],
       capabilities: [],
-      licenses: [{ kind: "project" }],
+      licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: hash }],
       artifacts: [{
         operation: "text-section",
         sourcePath: "registry/base.md",
@@ -32,7 +32,7 @@ const registryValue = {
       name: "tools",
       dependencies: ["base"],
       capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
-      licenses: [{ kind: "project" }],
+      licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: hash }],
       artifacts: [{
         operation: "file",
         sourcePath: "registry/tool.md",
@@ -52,6 +52,13 @@ test("v2 registry decoding is exact and dependency resolution is deterministic",
   );
   assert.throws(() => decodeContextRegistry({ ...registryValue, schemaVersion: 1 }), /schemaVersion must be 2/u);
   assert.throws(() => decodeContextRegistry({ ...registryValue, inferredDefaults: true }), /unknown fields/u);
+  assert.throws(() => decodeContextRegistry({
+    ...registryValue,
+    components: [{
+      ...registryValue.components[0],
+      licenses: [{ kind: "project" }],
+    }],
+  }), /unknown fields|spdx must be a non-empty string/u);
   assert.throws(() => decodeContextRegistry({
     ...registryValue,
     components: [{

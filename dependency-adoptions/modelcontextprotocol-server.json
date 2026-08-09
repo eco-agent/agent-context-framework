@@ -1,7 +1,7 @@
 {
   "name": "@modelcontextprotocol/server",
   "version": "2.0.0",
-  "source": "https://github.com/modelcontextprotocol/typescript-sdk/tree/f3c9ec03ba7a28ae72d25cc295f38674bee0f559/packages/server",
+  "source": "https://github.com/modelcontextprotocol/typescript-sdk/tree/cc4b41617ce3601b1290d67216ea0b194a3cd9ac/packages/server",
   "license": "MIT",
   "integrity": "sha512-YhHWdHfpFMQfd0prsEnxKeS3Qz3ytIGmsS0sth4KDjnacIT7hxk6hXHkJ9KysxlkvTM+WZAtQbbcUhdoP4Hvtw==",
   "purpose": "Expose the bounded repository-context owner as one persistent local MCP tool.",
@@ -13,5 +13,6 @@
   "securityEvidence": "Registry metadata, package integrity, upstream source commit, and the stdio-only transport surface were reviewed.",
   "modifications": "None; repository context and accounting remain project-owned.",
   "requiredNotices": "Preserve the package MIT license notice in distributions.",
+  "noticeFiles": ["LICENSE"],
   "owner": "platform"
 }

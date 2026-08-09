@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { checkAgents } from "../src/checks/agents.js";
@@ -38,4 +39,45 @@ test("workspace package boundaries are valid", async () => {
 
 test("every external manifest dependency has an adoption record", async () => {
   assert.deepEqual(await checkDependencyAdoptions(root), []);
+});
+
+test("distributable dependencies require immutable sources and packaged notices", async () => {
+  const fixture = await mkdtemp(path.join(os.tmpdir(), "agent-context-adoption-"));
+  try {
+    await mkdir(path.join(fixture, "dependency-adoptions"), { recursive: true });
+    await mkdir(path.join(fixture, ".agent-context", "runtime"), { recursive: true });
+    await mkdir(path.join(fixture, "node_modules", "example"), { recursive: true });
+    await writeFile(
+      path.join(fixture, "package.json"),
+      `${JSON.stringify({ dependencies: { example: "1.0.0" } }, null, 2)}\n`,
+    );
+    await writeFile(
+      path.join(fixture, ".agent-context", "runtime", "package.json"),
+      `${JSON.stringify({ dependencies: { example: "1.0.0" } }, null, 2)}\n`,
+    );
+    await writeFile(path.join(fixture, "node_modules", "example", "LICENSE"), "MIT\n");
+    await writeFile(
+      path.join(fixture, "dependency-adoptions", "example.json"),
+      `${JSON.stringify({
+        name: "example",
+        version: "1.0.0",
+        source: "https://github.com/example/example/tree/v1.0.0",
+        license: "MIT",
+        integrity: "sha512-example",
+        purpose: "fixture",
+        alternativesConsidered: ["none"],
+        maintenanceStatus: "fixture",
+        securityEvidence: "fixture",
+        modifications: "none",
+        requiredNotices: "Preserve MIT.",
+        owner: "test",
+      }, null, 2)}\n`,
+    );
+    assert.deepEqual(await checkDependencyAdoptions(fixture), [
+      "Distributable dependency example source must name an exact Git commit or immutable npm archive.",
+      "Distributable dependency example must declare its packaged notice files.",
+    ]);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
 });

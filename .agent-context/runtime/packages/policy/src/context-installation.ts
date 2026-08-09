@@ -23,13 +23,19 @@ export interface ContextCapability {
 }
 
 export type ContextLicense =
-  | { readonly kind: "project" }
+  | {
+      readonly kind: "project";
+      readonly spdx: string;
+      readonly noticePath: string;
+      readonly noticeSha256: string;
+    }
   | {
       readonly kind: "third-party";
       readonly spdx: string;
       readonly source: string;
       readonly revision: string;
       readonly noticePath: string;
+      readonly noticeSha256: string;
     };
 
 interface ContextArtifactBase {
@@ -304,8 +310,18 @@ function decodeCapability(value: unknown): ContextCapability {
 function decodeLicense(value: unknown): ContextLicense {
   if (!isRecord(value)) throw new Error("Context license must be an object.");
   if (value.kind === "project") {
-    strictRecord(value, "Project context license", ["kind"]);
-    return { kind: "project" };
+    const record = strictRecord(value, "Project context license", [
+      "kind",
+      "spdx",
+      "noticePath",
+      "noticeSha256",
+    ]);
+    return {
+      kind: "project",
+      spdx: requiredString(record, "spdx"),
+      noticePath: portableRelativePath(record, "noticePath"),
+      noticeSha256: sha256(record, "noticeSha256"),
+    };
   }
   if (value.kind !== "third-party") {
     throw new Error("Context license kind must be project or third-party.");
@@ -316,6 +332,7 @@ function decodeLicense(value: unknown): ContextLicense {
     "source",
     "revision",
     "noticePath",
+    "noticeSha256",
   ]);
   return {
     kind: "third-party",
@@ -323,6 +340,7 @@ function decodeLicense(value: unknown): ContextLicense {
     source: requiredString(record, "source"),
     revision: requiredRevision(record, "revision"),
     noticePath: portableRelativePath(record, "noticePath"),
+    noticeSha256: sha256(record, "noticeSha256"),
   };
 }
 

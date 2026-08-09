@@ -1,6 +1,7 @@
 {
   "name": "@agent-context-runtime/hooks",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
