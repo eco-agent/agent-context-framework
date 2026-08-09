@@ -5,6 +5,17 @@ import path from "node:path";
 import type { ContextRegistryV2 } from "@agent-context/repo-policy";
 
 export const CONTEXT_GOVERNANCE_PATH = "registry/context-governance.json";
+const CONTEXT_CODEOWNERS_PATH = ".github/CODEOWNERS";
+const REQUIRED_REVIEW_OWNER = "@bet01";
+const REQUIRED_REVIEW_PATTERNS = [
+  "/AGENTS.md",
+  "/.codex/skills/",
+  "/.agent-context/runtime/",
+  "/.github/CODEOWNERS",
+  "/registry/",
+  "/tools/dev-tooling/",
+  "/tools/repo-policy/",
+] as const;
 
 interface ContextGovernanceManifest {
   readonly schemaVersion: 1;
@@ -41,6 +52,7 @@ export async function checkContextGovernance(
     throw new Error("Context governance and registry must name the same decision record.");
   }
   await readStrictUtf8(repositoryPath(root, manifest.decisionPath), "Context governance decision");
+  await checkReviewOwnership(root);
 
   const protectedByPath = new Map<string, ProtectedSource>();
   for (const source of manifest.protectedSources) {
@@ -81,6 +93,21 @@ export async function checkContextGovernance(
       if (artifact.operation === "text-section" && !protectedPaths.has(artifact.sourcePath)) {
         throw new Error(`Text instruction artifact is not protected by governance: ${artifact.sourcePath}.`);
       }
+    }
+  }
+}
+
+async function checkReviewOwnership(root: string): Promise<void> {
+  const source = normalizeLf(await readStrictUtf8(
+    repositoryPath(root, CONTEXT_CODEOWNERS_PATH),
+    CONTEXT_CODEOWNERS_PATH,
+  ));
+  const entries = new Set(
+    source.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("#")),
+  );
+  for (const pattern of REQUIRED_REVIEW_PATTERNS) {
+    if (!entries.has(`${pattern} ${REQUIRED_REVIEW_OWNER}`)) {
+      throw new Error(`Context review ownership is missing ${pattern} ${REQUIRED_REVIEW_OWNER}.`);
     }
   }
 }

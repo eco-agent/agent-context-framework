@@ -50,6 +50,9 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
   ];
   assert.equal(first.components.filter((component) =>
     component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 15);
+  for (const component of first.components) {
+    assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
+  }
   assert.deepEqual(
     first.components.filter((component) => waveTwoSkills.includes(component.name)).map((component) => component.name),
     waveTwoSkills,
@@ -69,6 +72,28 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
         assert.equal(license.noticePath, ".agent-context/LICENSE.agent-context-framework");
       }
     }
+  }
+});
+
+test("component revisions change with canonical component bytes", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-component-revision-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await copyPackagedSkills(temporaryRoot);
+    const baseline = await buildContextRegistry(temporaryRoot);
+    const skillPath = path.join(temporaryRoot, ".codex", "skills", "diagnose", "SKILL.md");
+    await writeFile(skillPath, `${await readFile(skillPath, "utf8")}\nRevision probe.\n`, "utf8");
+    const changed = await buildContextRegistry(temporaryRoot);
+    assert.notEqual(
+      changed.components.find((component) => component.name === "skill-diagnose")?.revision,
+      baseline.components.find((component) => component.name === "skill-diagnose")?.revision,
+    );
+    assert.equal(
+      changed.components.find((component) => component.name === "skill-codebase-inventory")?.revision,
+      baseline.components.find((component) => component.name === "skill-codebase-inventory")?.revision,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
 
@@ -224,6 +249,8 @@ test("governance rejects stale protected projections", async () => {
     await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
     await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
     await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+    await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+    await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"), { recursive: true });
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
     const agentsPath = path.join(temporaryRoot, "AGENTS.md");
@@ -231,6 +258,27 @@ test("governance rejects stale protected projections", async () => {
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
       /Protected context projection differs/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance requires human review ownership for protected framework surfaces", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-review-ownership-"));
+  try {
+    await mkdir(path.join(temporaryRoot, "registry"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+    await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
+    await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+    await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+    await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+    await writeFile(path.join(temporaryRoot, ".github", "CODEOWNERS"), "/registry/ @bet01\n", "utf8");
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /review ownership is missing/u,
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.5.1",
-  "decisionPath": "registry/decisions/0.5.1-distribution-hardening.md",
+  "revision": "0.5.2",
+  "decisionPath": "registry/decisions/0.5.2-phase-ten-closure.md",
   "components": [
     {
       "name": "core",

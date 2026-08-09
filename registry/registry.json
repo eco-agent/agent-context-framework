@@ -1,10 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.5.1",
-  "decisionPath": "registry/decisions/0.5.1-distribution-hardening.md",
+  "revision": "0.5.2",
+  "decisionPath": "registry/decisions/0.5.2-phase-ten-closure.md",
   "components": [
     {
       "name": "core",
+      "revision": "sha256:d8e0b4784b95607e1915871f0bdd523161360606f7fa2e4d1f03463ef12f3796",
       "dependencies": [],
       "capabilities": [
         {
@@ -42,6 +43,7 @@
     },
     {
       "name": "skill-adopt-established-product",
+      "revision": "sha256:250fd52c39332fc719aad90529eb43d650fbcdd99b99306412c071543686565a",
       "dependencies": [],
       "capabilities": [
         {
@@ -78,6 +80,7 @@
     },
     {
       "name": "skill-choose-react-animation",
+      "revision": "sha256:b339cca8da0d08014c33d7b7969815c4fc393299fec1b2e6096c96536d53c443",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -108,6 +111,7 @@
     },
     {
       "name": "skill-design-accessible-interfaces",
+      "revision": "sha256:7de3d5b17954fc7a56495ee9df4f6e35aa19a664d4b0f7f9499e89f46128ac24",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -195,6 +199,7 @@
     },
     {
       "name": "skill-design-color-systems",
+      "revision": "sha256:91351ca136c36f8ceb7f385fde13a0be2fd1404970a74d6ca3a8b8cca87ce84c",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -268,6 +273,7 @@
     },
     {
       "name": "skill-design-interface-details",
+      "revision": "sha256:ba0bace8634b6a48e1d7461402e9aca2f9ff1a2b717269f831bf3d82c2822302",
       "dependencies": [],
       "capabilities": [
         {
@@ -333,6 +339,7 @@
     },
     {
       "name": "skill-design-web-typography",
+      "revision": "sha256:a9e2e0d97189091395aeaef6bb79394e32a3c480e8f1866835f9901c852026e8",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -406,6 +413,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
+      "revision": "sha256:73504eeba1963bb7122b0d83ab1c0a0d21f8e9cf0c3ecf283620deb4991e6105",
       "dependencies": [],
       "capabilities": [
         {
@@ -456,6 +464,7 @@
     },
     {
       "name": "skill-responsive-css-architect",
+      "revision": "sha256:867d9b260a88c2ef86503dbcbb49c79d6cfb0d55c11c25e446949487171f6743",
       "dependencies": [],
       "capabilities": [
         {
@@ -565,6 +574,7 @@
     },
     {
       "name": "frontend",
+      "revision": "sha256:8bc844a520abe96eb1af9960fabbe2d8589e46713c77fb70745cab6f1563fa56",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -608,6 +618,7 @@
     },
     {
       "name": "frontend-tailwind",
+      "revision": "sha256:1e0475d958d426c9d5b3da3fc153f57e77f263fb4a658ffa54aafc6cfd0a0475",
       "dependencies": [
         "frontend",
         "skill-responsive-css-architect"
@@ -637,6 +648,7 @@
     },
     {
       "name": "skill-codebase-inventory",
+      "revision": "sha256:90ba318485a1fa8b415bbd955e11e91617f0f2883e407c23ec947a1b2168331e",
       "dependencies": [],
       "capabilities": [
         {
@@ -750,6 +762,7 @@
     },
     {
       "name": "skill-design-typescript-invariants",
+      "revision": "sha256:6c751546bcf1d4cc3d4d1b52cd9037dd6c682aa5156ff76c99491707f36bfda1",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -837,6 +850,7 @@
     },
     {
       "name": "skill-diagnose",
+      "revision": "sha256:1bb67febef6b2874d862a661e2a5ee91d51bc6325924dcb68d62885504a10efc",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -867,6 +881,7 @@
     },
     {
       "name": "skill-reuse-before-implementation",
+      "revision": "sha256:003495622adfb4a68ae54cb6f8a1e459f40f3e2dc9c69d919bf149062a228c6d",
       "dependencies": [],
       "capabilities": [
         {
@@ -903,6 +918,7 @@
     },
     {
       "name": "skill-write-technical-prose",
+      "revision": "sha256:8a5c1867f827c87eee908f2ca50379ae5306dfb285d9bb31775350986d795ad6",
       "dependencies": [],
       "capabilities": [
         {
@@ -969,6 +985,7 @@
     },
     {
       "name": "skill-writing-great-skills",
+      "revision": "sha256:51b2b06057ad6a961438b0fac004e7e16f293c56fbad940dcf9173d930365fb8",
       "dependencies": [],
       "capabilities": [
         {
@@ -1027,6 +1044,7 @@
     },
     {
       "name": "skill-optimize-codex-sessions",
+      "revision": "sha256:627ec8efda0bbb0c54662ecb6b571c104e23139cf1a734170ec667cf9746bd78",
       "dependencies": [],
       "capabilities": [
         {
@@ -1120,6 +1138,7 @@
     },
     {
       "name": "engineering",
+      "revision": "sha256:38efb4713689a5f938988ef0820c8dd8be74df1b2e222d1c7f6db647b2880ab4",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-diagnose",
@@ -1187,6 +1206,7 @@
     },
     {
       "name": "typescript-engineering",
+      "revision": "sha256:4cdc829df63135fa5fb2fbb59f218ae770e679168ea11a0deeb3d7af664fda2e",
       "dependencies": [
         "engineering",
         "skill-design-typescript-invariants"
@@ -1221,6 +1241,7 @@
     },
     {
       "name": "session-quality",
+      "revision": "sha256:da85a171c6cae42c7a6c32da15be4c87c7071c7908f8961738aaca8a97929e0e",
       "dependencies": [
         "skill-optimize-codex-sessions"
       ],
@@ -1268,6 +1289,7 @@
     },
     {
       "name": "skill-authoring",
+      "revision": "sha256:fb2f8b7040a445e3a461c6e9e6e40caead5f83f1893d49f3233254acdab54729",
       "dependencies": [
         "skill-write-technical-prose",
         "skill-writing-great-skills"
@@ -1301,6 +1323,7 @@
     },
     {
       "name": "runtime-base",
+      "revision": "sha256:9a41e98531ce5f49811aaa71c94d538a555db724b45ac74f7062d31b3cfdfc16",
       "dependencies": [],
       "capabilities": [
         {
@@ -1448,6 +1471,7 @@
     },
     {
       "name": "repository-policy",
+      "revision": "sha256:5b0d82f096e6f3844f019a4e878c6716efc610f2309d359abff2ff9dbd3f21f9",
       "dependencies": [
         "core",
         "runtime-base"
@@ -1490,7 +1514,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "58869a99e96534da19e51f5638bea1e65a08b2cdd9c49b03af3b0d3d2040b1e6",
+          "sourceSha256": "aba7b50743f96a1753c6484c7c8bb815ea90b1e43b5a0063e0137523a793d9d7",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1568,6 +1592,7 @@
     },
     {
       "name": "codex-agents",
+      "revision": "sha256:3b207d5aae0fe18f9ab39ad6490319d78958404d04a82e0536e1312f1754c28f",
       "dependencies": [
         "core"
       ],
@@ -1623,6 +1648,7 @@
     },
     {
       "name": "codex-hooks",
+      "revision": "sha256:ad8bbb4ddcd557461254a23e6411a237d12651d7245b9a33199e2f9e5ddb9b35",
       "dependencies": [
         "core",
         "runtime-base"
@@ -1727,6 +1753,7 @@
     },
     {
       "name": "codex-repo-context",
+      "revision": "sha256:671221c6fe2f40c2b824c3148459602f32285bf623215c2958757550d85cbb1b",
       "dependencies": [
         "core",
         "runtime-base"
@@ -1834,6 +1861,7 @@
     },
     {
       "name": "codex-runtime",
+      "revision": "sha256:769b333188a5ba72df3b1ced4af0607ccd36bf30fdbc26fd448043bec344437a",
       "dependencies": [
         "codex-agents",
         "codex-hooks",

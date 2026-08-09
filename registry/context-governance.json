@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.5.1",
-  "decisionPath": "registry/decisions/0.5.1-distribution-hardening.md",
+  "registryRevision": "0.5.2",
+  "decisionPath": "registry/decisions/0.5.2-phase-ten-closure.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",

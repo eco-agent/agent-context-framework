@@ -110,17 +110,26 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
             });
       }
     }
-    components.push({
+    const licenses = await materializeLicenses(
+      resolvedRoot,
+      component.name,
+      component.licenses,
+      artifacts,
+    );
+    const componentContract = {
       name: component.name,
       dependencies: component.dependencies,
       capabilities: component.capabilities,
-      licenses: await materializeLicenses(
-        resolvedRoot,
-        component.name,
-        component.licenses,
-        artifacts,
-      ),
+      licenses,
       artifacts,
+    };
+    components.push({
+      name: componentContract.name,
+      revision: `sha256:${contentHash(Buffer.from(JSON.stringify(componentContract), "utf8"))}`,
+      dependencies: componentContract.dependencies,
+      capabilities: componentContract.capabilities,
+      licenses: componentContract.licenses,
+      artifacts: componentContract.artifacts,
     });
   }
 

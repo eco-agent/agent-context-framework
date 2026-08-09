@@ -9,6 +9,7 @@ import {
 } from "../src/context-installation.js";
 
 const hash = "a".repeat(64);
+const componentRevision = `sha256:${hash}`;
 const registryValue = {
   schemaVersion: 2,
   revision: "0.2.0",
@@ -16,6 +17,7 @@ const registryValue = {
   components: [
     {
       name: "base",
+      revision: componentRevision,
       dependencies: [],
       capabilities: [],
       licenses: [{
@@ -32,6 +34,7 @@ const registryValue = {
     },
     {
       name: "tools",
+      revision: componentRevision,
       dependencies: ["base"],
       capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
       licenses: [{
@@ -55,7 +58,19 @@ test("v2 registry decoding is exact and dependency resolution is deterministic",
     ["base", "tools"],
   );
   assert.throws(() => decodeContextRegistry({ ...registryValue, schemaVersion: 1 }), /schemaVersion must be 2/u);
+  assert.throws(() => decodeContextRegistry({ ...registryValue, schemaVersion: 3 }), /schemaVersion must be 2/u);
   assert.throws(() => decodeContextRegistry({ ...registryValue, inferredDefaults: true }), /unknown fields/u);
+  assert.throws(() => decodeContextRegistry({
+    ...registryValue,
+    components: [{ ...registryValue.components[0], revision: "0.5.2" }],
+  }), /content-addressed SHA-256 identifier/u);
+  const componentWithoutRevision = Object.fromEntries(
+    Object.entries(registryValue.components[0]).filter(([key]) => key !== "revision"),
+  );
+  assert.throws(() => decodeContextRegistry({
+    ...registryValue,
+    components: [componentWithoutRevision],
+  }), /content-addressed SHA-256 identifier/u);
   assert.throws(() => decodeContextRegistry({
     ...registryValue,
     components: [{

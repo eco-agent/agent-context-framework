@@ -10,6 +10,7 @@ export interface ContextRegistryV2 {
 
 export interface ContextRegistryComponent {
   readonly name: string;
+  readonly revision: string;
   readonly dependencies: readonly string[];
   readonly capabilities: readonly ContextCapability[];
   readonly licenses: readonly ContextLicense[];
@@ -247,6 +248,7 @@ export function artifactIdentity(artifact: ContextRegistryArtifact | ContextLock
 function decodeComponent(value: unknown): ContextRegistryComponent {
   const record = strictRecord(value, "Context registry component", [
     "name",
+    "revision",
     "dependencies",
     "capabilities",
     "licenses",
@@ -286,11 +288,19 @@ function decodeComponent(value: unknown): ContextRegistryComponent {
   requireUnique(artifacts.map(artifactIdentity), "Context registry component artifact identities");
   return {
     name: componentName(record.name, "Context registry component name"),
+    revision: componentRevision(record.revision),
     dependencies,
     capabilities,
     licenses,
     artifacts,
   };
+}
+
+function componentRevision(value: unknown): string {
+  if (typeof value !== "string" || !/^sha256:[a-f0-9]{64}$/u.test(value)) {
+    throw new Error("Context registry component revision must be a content-addressed SHA-256 identifier.");
+  }
+  return value;
 }
 
 function decodeCapability(value: unknown): ContextCapability {
