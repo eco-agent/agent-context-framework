@@ -14,6 +14,8 @@ import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 import { bootstrapRuntime } from "./runtime-bootstrap.js";
+import { addComponent, initProject } from "./context-installer.js";
+import { verifyInstalledCodexRuntime } from "./codex-runtime-verification.js";
 
 const MAX_PROCESS_OUTPUT_BYTES = 1_000_000;
 const SOURCE_MARKER = "must be an isolation object";
@@ -34,6 +36,13 @@ export interface RuntimeIsolationResult {
   readonly sourceRebuild: "observed";
   readonly hostHashes: "unchanged";
   readonly hostPackageJson: "absent";
+  readonly waveFour: {
+    readonly materializer: "codex-runtime";
+    readonly bootstrap: "operational";
+    readonly installedEntrypoints: "verified";
+    readonly hostHashes: "unchanged";
+    readonly hostPackageJson: "absent";
+  };
 }
 
 export async function verifyRuntimeIsolation(
@@ -104,6 +113,10 @@ export async function verifyRuntimeIsolation(
     if (await exists(path.join(fixtureRoot, "package.json"))) {
       throw new Error("Isolation bootstrap created a host package.json.");
     }
+    const waveFour = await verifyMaterializedCodexRuntime(
+      frameworkRoot,
+      path.join(temporaryRoot, "wave-four-fixture"),
+    );
 
     return {
       schemaVersion: 1,
@@ -121,10 +134,45 @@ export async function verifyRuntimeIsolation(
       sourceRebuild: "observed",
       hostHashes: "unchanged",
       hostPackageJson: "absent",
+      waveFour,
     };
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
+}
+
+async function verifyMaterializedCodexRuntime(
+  frameworkRoot: string,
+  fixtureRoot: string,
+): Promise<RuntimeIsolationResult["waveFour"]> {
+  await mkdir(fixtureRoot, { recursive: true });
+  await runProcess("git", ["init", "--quiet"], fixtureRoot);
+  await writeFile(path.join(fixtureRoot, "README.md"), "Wave 4 isolated non-Node fixture.\n", "utf8");
+  await writeFile(path.join(fixtureRoot, "host.lock"), "host lock\n", "utf8");
+  const hostFiles = ["README.md", "host.lock"] as const;
+  const before = await hashFiles(fixtureRoot, hostFiles);
+
+  await initProject(fixtureRoot, frameworkRoot);
+  const added = await addComponent(fixtureRoot, frameworkRoot, "codex-runtime");
+  if (added.plan.status !== "ready") throw new Error("Codex runtime materialization was blocked.");
+  const noInstall = await bootstrapRuntime({ projectRoot: fixtureRoot, mode: "no-install" });
+  assertEqual(noInstall.status, "dependencies-missing", "Materialized runtime no-install status");
+  const installed = await bootstrapRuntime({ projectRoot: fixtureRoot, mode: "install-and-build" });
+  assertEqual(installed.status, "operational", "Materialized runtime installed status");
+  await verifyInstalledCodexRuntime(fixtureRoot);
+
+  const after = await hashFiles(fixtureRoot, hostFiles);
+  assertEqual(JSON.stringify(after), JSON.stringify(before), "Materialized host file hashes");
+  if (await exists(path.join(fixtureRoot, "package.json"))) {
+    throw new Error("Codex runtime materialization created a host package.json.");
+  }
+  return {
+    materializer: "codex-runtime",
+    bootstrap: "operational",
+    installedEntrypoints: "verified",
+    hostHashes: "unchanged",
+    hostPackageJson: "absent",
+  };
 }
 
 async function materializeArchivedRuntime(

@@ -1715,6 +1715,21 @@
           "sectionId": "codex-repo-context"
         }
       ]
+    },
+    {
+      "name": "codex-runtime",
+      "dependencies": [
+        "codex-agents",
+        "codex-hooks",
+        "codex-repo-context"
+      ],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project"
+        }
+      ],
+      "artifacts": []
     }
   ]
 }

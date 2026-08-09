@@ -33,6 +33,16 @@ export {
   type RuntimeIsolationResult,
 } from "./runtime-isolation.js";
 export {
+  inspectInstalledCodexInterface,
+  unsafeReferenceDiagnostics,
+  validateWaveFourRegistryReferences,
+  type CodexInterfaceHealth,
+} from "./codex-interface.js";
+export {
+  verifyInstalledCodexRuntime,
+  type InstalledCodexRuntimeVerification,
+} from "./codex-runtime-verification.js";
+export {
   verifyAcceptanceSequence,
   type AcceptanceCommandExecutor,
   type AcceptanceCommandOutcome,

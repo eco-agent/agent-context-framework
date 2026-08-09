@@ -9,6 +9,7 @@ import {
 
 import { exists } from "./workspace.js";
 import { checkContextGovernance } from "./context-governance.js";
+import { validateWaveFourRegistryReferences } from "./codex-interface.js";
 
 export const CONTEXT_REGISTRY_SOURCE_PATH = "registry/registry.source.json";
 export const CONTEXT_REGISTRY_OUTPUT_PATH = "registry/registry.json";
@@ -125,6 +126,7 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
   validateNoticeCoverage(registry);
   await validateSourceAttribution(resolvedRoot, registry);
   await validatePackagedMarkdownReferences(resolvedRoot, registry);
+  await validateWaveFourRegistryReferences(resolvedRoot, registry);
   return registry;
 }
 

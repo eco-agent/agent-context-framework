@@ -52,6 +52,36 @@
       "invariantId": "repository-policy-explicit",
       "sourcePath": "registry/sources/instructions/repository-policy.md",
       "sha256": "bfdea84cce03924deb656807a83b9bf74ec50fa7d086289cc7228752efd0d6ff"
+    },
+    {
+      "invariantId": "codex-agent-selection",
+      "sourcePath": "registry/sources/codex/agents.toml",
+      "sha256": "c092093d454c1fb2f463220294d78aef1612d70f25d9b18701b755141fe01822"
+    },
+    {
+      "invariantId": "codex-agent-default-profile",
+      "sourcePath": "registry/sources/codex/agents/default.toml",
+      "sha256": "78301787ca3846fd7174dedf14c07e44f4310eff845409d490409aaf6270f1fb"
+    },
+    {
+      "invariantId": "codex-agent-scout-profile",
+      "sourcePath": "registry/sources/codex/agents/scout.toml",
+      "sha256": "454756eebc847d0ac1938f1c793c7043f5f5622414741c93c9e41d1c1814b165"
+    },
+    {
+      "invariantId": "codex-agent-worker-profile",
+      "sourcePath": "registry/sources/codex/agents/worker.toml",
+      "sha256": "cdf2c5dca187c5d4ec4cf83332e3acab3261d01b1f7cf345236608b727084088"
+    },
+    {
+      "invariantId": "codex-hooks-project-local",
+      "sourcePath": "registry/sources/codex/hooks.json",
+      "sha256": "54fec77bb72d4fcb6ceedd1743fa47073a7dce47f1862407fff6c66197bbcc06"
+    },
+    {
+      "invariantId": "codex-repo-context-project-local",
+      "sourcePath": "registry/sources/codex/repo-context.toml",
+      "sha256": "d7fab50fac720634711723d68602ff9396132aa785c50d904d9f47dcbd2d3836"
     }
   ],
   "projections": [

@@ -39,11 +39,14 @@ test("acceptance verification runs each proof layer once in order", async () => 
       "check",
       "registry:check",
       "verify:isolation",
+      "downstream-codex-runtime",
       "downstream-policy",
     ]);
     assert.equal(
       executor.proofArguments
-        .filter((arguments_) => !arguments_.includes("policy.mjs"))
+        .filter((arguments_) =>
+          !arguments_.includes("policy.mjs") &&
+          !arguments_.includes("codex-runtime-verification-cli"))
         .every((arguments_) => arguments_.includes("--reporter append-only")),
       true,
     );
@@ -302,7 +305,11 @@ class SequencedExecutor implements AcceptanceCommandExecutor {
 }
 
 function proofId(request: AcceptanceProcessRequest): string {
-  if (request.file === process.execPath) return "downstream-policy";
+  if (request.file === process.execPath) {
+    return request.arguments.some((argument) => argument.includes("codex-runtime-verification-cli"))
+      ? "downstream-codex-runtime"
+      : "downstream-policy";
+  }
   const command = request.arguments.join(" ");
   for (const id of ["registry:check", "verify:isolation", "typecheck", "test", "check"]) {
     if (command.includes(id)) return id;

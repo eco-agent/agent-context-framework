@@ -347,6 +347,20 @@ function stageDefinitions(
       id: "downstream",
       commands: [
         {
+          id: "downstream-codex-runtime",
+          invocation: {
+            file: process.execPath,
+            arguments: [
+              "--import",
+              "tsx",
+              path.join(frameworkRoot, "tools", "dev-tooling", "src", "codex-runtime-verification-cli.ts"),
+              "--root",
+              fixtureRoot,
+            ],
+            cwd: frameworkRoot,
+          },
+        },
+        {
           id: "downstream-policy",
           invocation: {
             file: process.execPath,

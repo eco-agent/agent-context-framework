@@ -39,6 +39,10 @@ import {
   bootstrapRuntime,
   type RuntimeBootstrapStatus,
 } from "./runtime-bootstrap.js";
+import {
+  inspectInstalledCodexInterface,
+  type CodexInterfaceHealth,
+} from "./codex-interface.js";
 
 export const CONTEXT_CONFIG_PATH = ".agent-context/config.json";
 export const CONTEXT_LOCK_PATH = ".agent-context/lock.json";
@@ -119,6 +123,7 @@ export interface ContextDoctorResult {
   readonly transaction: ContextTransactionInspection;
   readonly runtime: ContextRuntimeHealth | null;
   readonly repositoryPolicy: ContextRepositoryPolicyHealth | null;
+  readonly codexInterface: CodexInterfaceHealth | null;
 }
 
 export interface ContextRuntimeHealth {
@@ -316,6 +321,7 @@ export async function doctorProject(
       transaction,
       runtime: null,
       repositoryPolicy: null,
+      codexInterface: null,
     };
   }
   const registry = await loadContextRegistry(frameworkRoot);
@@ -329,6 +335,11 @@ export async function doctorProject(
   }
   let runtime: ContextRuntimeHealth | null = null;
   let repositoryPolicy: ContextRepositoryPolicyHealth | null = null;
+  const codexInterface = await inspectInstalledCodexInterface(
+    resolvedProjectRoot,
+    components.map((component) => component.name),
+  );
+  if (codexInterface) diagnostics.push(...codexInterface.diagnostics);
   if (components.some((component) => component.name === "runtime-base")) {
     try {
       const result = await bootstrapRuntime({
@@ -367,7 +378,8 @@ export async function doctorProject(
   const healthy = transaction.status === "none" &&
     (diff.current || expectedPolicyConfiguration) &&
     (runtime === null || runtime.operational) &&
-    (repositoryPolicy === null || repositoryPolicy.ok);
+    (repositoryPolicy === null || repositoryPolicy.ok) &&
+    (codexInterface === null || codexInterface.ok);
   return {
     command: "doctor",
     projectRoot: resolvedProjectRoot,
@@ -378,6 +390,7 @@ export async function doctorProject(
     transaction,
     runtime,
     repositoryPolicy,
+    codexInterface,
   };
 }
 

@@ -166,6 +166,9 @@ export function formatContextResult(result: ContextCommandResult): string {
     if (result.repositoryPolicy) {
       lines.push(`repository policy: ${result.repositoryPolicy.status}`);
     }
+    if (result.codexInterface) {
+      lines.push(`Codex interface: ${result.codexInterface.status} (trusted project required)`);
+    }
     lines.push(...result.diagnostics.map((diagnostic) => `- ${diagnostic}`));
     return lines.join("\n");
   }
