@@ -28,8 +28,8 @@ component topology and host-manifest neutrality.
   third-party component revisions, but found unspecified project licensing, one
   incorrect MCP source commit, mutable or absent package source revisions, a
   non-byte-exact Woosal notice, and undeclared Git/shell capabilities.
-- The controlled fixture remains at
-  `dd76c19bad1d81bf0301dbbb41753239fecb1032` with its host package and lockfile
+- The controlled fixture is updated and committed at
+  `001e4d1e9a357b221fbef6806b3ffd1e1e414bbc` with its host package and lockfile
   hashes preserved.
 - The first `0.5.1` fixture materialization exposed that registry-only project
   license metadata did not retain the MIT text downstream. The license is now a
@@ -89,4 +89,44 @@ The four Wave 4 components and their dependency relationships do not change.
 
 ## Verification evidence
 
-- Pending implementation.
+- Registry `0.5.1` contains the same 28 components and dependency graph as
+  `0.5.0`, with 157 artifact declarations and 156 unique source files. The one
+  added artifact is the project MIT notice owned by `core`.
+- All 21 project-authored component license declarations resolve to MIT source
+  `LICENSE`, installed target `.agent-context/LICENSE.agent-context-framework`,
+  and SHA-256
+  `b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3`.
+  All eight third-party license entries carry exact notice hashes.
+- The retained Woosal notice now matches the pinned upstream bytes at SHA-256
+  `42ddcac0d383e9938dc80c93a1ce24a50b70cb37d22595cacdebda0afc9eda72`.
+- Focused TypeScript 7 builds and tests passed for the registry decoder,
+  dependency-adoption checker, registry builder, installer, agent, hook,
+  repository-policy, and dependency-only runtime owners. `registry:check` passed
+  for revision `0.5.1` with 28 components.
+- The first focused command could not start because the new worktree had no
+  `node_modules`; the frozen workspace lock was installed before rerunning. Two
+  focused registry-builder attempts then exposed test-only error-message regexes
+  that omitted the newly required `noticePath` and `sourcePath` diagnostics. The
+  assertions were corrected and their focused file passed. No product behavior
+  failed in either case.
+- The first fixture diff/doctor command was accidentally launched from the
+  downstream repository, which intentionally has no host `agent-context`
+  package script. It changed no source. The same checks passed through the
+  framework-owned CLI: runtime, repository policy, and Codex interface were
+  ready; doctor was healthy; project MIT, Git, and shell appeared in its report.
+- Tested framework revision:
+  `78419436b879c70007de0c7f3aeb8c27ab465e1c`.
+- Tested downstream fixture revision:
+  `001e4d1e9a357b221fbef6806b3ffd1e1e414bbc`.
+- The single final invocation
+  `pnpm --silent verify:acceptance -- --fixture D:\dev\control-tower-clean`
+  passed in `188,800 ms`: workspace `110,124 ms`, isolation `40,725 ms`, and
+  downstream `25,330 ms`. Workspace typecheck, tests, checks, and registry check;
+  real-materializer isolation; and downstream Codex-runtime and policy checks all
+  passed.
+- The downstream root `package.json` retained SHA-256
+  `869b96384be085f0065f43f0d17b8e36cfdd1bc0d2a78bd11991074b5fbdfaa7`.
+  Its root `pnpm-lock.yaml` retained SHA-256
+  `71ea96a0b215da8002ddc8def9b0dfc1c35ee01d55f5e963f4afb0967de3d5a5`.
+- Both repositories were clean after acceptance. This later change is
+  documentation-only; no broad executable gate was rerun.
