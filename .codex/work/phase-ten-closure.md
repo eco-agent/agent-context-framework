@@ -23,13 +23,13 @@ deterministic repository-owned evidence.
 
 ## State
 
-- Registry `0.5.1` contains 28 components and 157 artifact declarations.
-- The four waves, isolated runtime, repository policy, Codex interface, MIT
-  licensing, external capability declarations, and orchestration exclusion have
-  passed the existing acceptance sequence.
-- Remaining gaps are bounded to per-component revisions, explicit overwrite,
-  repository-local review ownership, missing installer/project fixture variants,
-  and semantic anti-dilution assertions.
+- Registry `0.5.2` contains the unchanged 28-component topology with a required
+  content-addressed revision on every component.
+- Explicit overwrite, repository-local review ownership, installer and project
+  matrices, CRLF behavior, and semantic anti-dilution checks are implemented.
+- The controlled fixture is committed at registry `0.5.2` while its host package
+  manifest, host lockfile, Codex configuration, hooks, and local repository policy
+  remain unchanged.
 
 ## Topology
 
@@ -92,3 +92,37 @@ existing focused tests + one acceptance sequencer
 - Installer contract fixtures, repository-policy project shapes, isolation result,
   acceptance sequencing, and durable evidence.
 
+## Verification evidence
+
+Focused verification passed before the final gate:
+
+- Repository-policy tests: 29 passed.
+- Dev-tooling tests: 68 passed when run as the focused owner suite.
+- Isolated policy tests: 7 passed, including the declared project-shape matrix.
+- Projection tests: 7 passed; installer tests: 15 passed; registry builder tests:
+  11 passed.
+- Registry governance validated revision `0.5.2` with 28 components.
+- Runtime isolation reported policy, project matrix, repository context, hooks,
+  installed entrypoints, and host hashes as valid.
+- The fixture doctor reported healthy, operational, policy-ready, and Codex-ready.
+
+The first acceptance process was externally terminated by the command wrapper at
+120 seconds before it produced a result. The next two completed attempts stopped
+in the workspace stage on test-only 30-second and 40-second integration deadlines.
+Those tests passed alone in 15.1 and 16.4 seconds, while the concurrent workspace
+run measured 40.5 seconds for the MCP smoke. Their test-only ceilings were raised
+to 90 seconds; production MCP timeouts were not changed.
+
+The completed acceptance sequence passed on 2026-08-09 with these immutable
+inputs:
+
+- Framework revision: `8d32a2811c4948a9ac6bc2c1166131fc60fe2e6a`.
+- Downstream fixture revision: `9454d473bfb0bdc9e6b806156dda030c5bc99b24`.
+- Workspace stage: passed in 134,501 ms. Typecheck, tests, repository checks, and
+  registry checks all passed.
+- Isolation stage: passed in 48,763 ms.
+- Downstream stage: passed in 41,103 ms. Codex runtime verification and repository
+  policy verification both passed.
+
+This evidence update is documentation-only. Broad verification was not rerun after
+it.
