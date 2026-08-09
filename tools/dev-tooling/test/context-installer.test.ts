@@ -49,6 +49,25 @@ test("init preserves project prose and is byte-for-byte idempotent", async () =>
   }
 });
 
+test("installer preserves CRLF documents across install, status, and update", async () => {
+  const fixture = await createFixture();
+  try {
+    const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
+    await writeFile(agentsPath, "# Project\r\n\r\nLocal prose.\r\n", "utf8");
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    assert.equal((await diffProject(fixture.projectRoot, fixture.frameworkRoot)).current, true);
+    await writeCore(fixture.frameworkRoot, "# Core rules v2\n", "0.2.1");
+    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, "core", "preserve-local");
+    assert.equal(updated.plan.status, "ready");
+    const installed = await readFile(agentsPath, "utf8");
+    assert.equal(installed.replaceAll("\r\n", "").includes("\n"), false);
+    assert.match(installed, /# Project\r\n\r\nLocal prose\.\r\n/u);
+    assert.match(installed, /# Core rules v2\r\n/u);
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("add resolves dependencies, reports capabilities, and refuses untracked whole files", async () => {
   const fixture = await createFixture();
   try {
@@ -127,6 +146,91 @@ test("remove deletes unchanged artifacts, preserves modified section content, an
     const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
     await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("# Core rules", "# Project-owned rules"));
     await assert.rejects(removeComponent(fixture.projectRoot, fixture.frameworkRoot, "core"), /cannot be removed/u);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("multiple owned sections share one document without cross-component replacement", async () => {
+  const fixture = await createFixture();
+  try {
+    await writeFile(path.join(fixture.projectRoot, "AGENTS.md"), "Project preface.\n", "utf8");
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await addComponent(fixture.projectRoot, fixture.frameworkRoot, "guidance");
+    const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
+    const before = await readFile(agentsPath, "utf8");
+    assert.match(before, /agent-context:core:start/u);
+    assert.match(before, /agent-context:guidance:start/u);
+    await writeCore(fixture.frameworkRoot, "# Core rules v2\n", "0.2.1");
+    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, "core", "preserve-local");
+    assert.equal(updated.plan.status, "ready");
+    const after = await readFile(agentsPath, "utf8");
+    assert.match(after, /Core rules v2/u);
+    assert.match(after, /# Guidance\n/u);
+    assert.match(after, /^Project preface\./u);
+    await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "guidance");
+    const removed = await readFile(agentsPath, "utf8");
+    assert.match(removed, /agent-context:core:start/u);
+    assert.doesNotMatch(removed, /agent-context:guidance/u);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("component additions in different orders produce the same owned artifacts", async () => {
+  const fixture = await createFixture();
+  try {
+    const projectA = fixture.projectRoot;
+    const projectB = path.join(path.dirname(projectA), "project-b");
+    await mkdir(projectB);
+    await initProject(projectA, fixture.frameworkRoot);
+    await initProject(projectB, fixture.frameworkRoot);
+    await addComponent(projectA, fixture.frameworkRoot, "tools");
+    await addComponent(projectA, fixture.frameworkRoot, "structured");
+    await addComponent(projectB, fixture.frameworkRoot, "structured");
+    await addComponent(projectB, fixture.frameworkRoot, "tools");
+    const ownedPaths = [
+      "AGENTS.md",
+      ".codex/tool.md",
+      ".codex/hooks.json",
+      ".codex/config.toml",
+      "settings.json",
+    ];
+    for (const relativePath of ownedPaths) {
+      assert.equal(
+        await readFile(path.join(projectA, relativePath), "utf8"),
+        await readFile(path.join(projectB, relativePath), "utf8"),
+      );
+    }
+    assert.equal((await diffProject(projectA, fixture.frameworkRoot)).current, true);
+    assert.equal((await diffProject(projectB, fixture.frameworkRoot)).current, true);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("locally modified skill files survive blocked update and component removal", async () => {
+  const fixture = await createFixture();
+  try {
+    const skillTarget = ".codex/skills/sample/SKILL.md";
+    await writeToolsTarget(fixture.frameworkRoot, skillTarget);
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
+    const installedSkill = path.join(fixture.projectRoot, ...skillTarget.split("/"));
+    await writeFile(installedSkill, "project-owned skill\n", "utf8");
+    await writeFile(path.join(fixture.frameworkRoot, "registry", "sources", "tool.md"), "upstream skill\n", "utf8");
+    await writeRegistry(fixture.frameworkRoot, "0.2.1", skillTarget);
+    const update = await updateProject(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      "tools",
+      "preserve-local",
+    );
+    assert.equal(update.plan.status, "blocked");
+    assert.equal(await readFile(installedSkill, "utf8"), "project-owned skill\n");
+    const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
+    assert.equal(removed.plan.status, "ready");
+    assert.equal(await readFile(installedSkill, "utf8"), "project-owned skill\n");
   } finally {
     await fixture.remove();
   }
@@ -471,6 +575,7 @@ async function createFixture(): Promise<Fixture> {
   await mkdir(projectRoot, { recursive: true });
   await writeFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "# Core rules\n");
   await writeFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "tool bytes\n");
+  await writeFile(path.join(frameworkRoot, "registry", "sources", "guidance.md"), "# Guidance\n");
   await writeFile(
     path.join(frameworkRoot, "registry", "sources", "structured.json"),
     '{"owned":{"enabled":true},"notOwned":true}\n',
@@ -509,6 +614,7 @@ async function writeRegistry(
 ): Promise<void> {
   const core = await readFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "utf8");
   const tool = await readFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "utf8");
+  const guidance = await readFile(path.join(frameworkRoot, "registry", "sources", "guidance.md"), "utf8");
   const structuredArtifacts = includeStructured
     ? await structuredRegistryArtifacts(frameworkRoot)
     : [];
@@ -526,6 +632,17 @@ async function writeRegistry(
         artifacts: [{
           operation: "text-section", sourcePath: "registry/sources/core.md", sourceSha256: sha(core),
           targetPath: "AGENTS.md", sectionId: "core", markerStyle: "markdown",
+        }],
+      },
+      {
+        name: "guidance", revision: componentRevision, dependencies: ["core"], capabilities: [],
+        licenses: [{
+          kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",
+          noticeSha256: "a".repeat(64),
+        }],
+        artifacts: [{
+          operation: "text-section", sourcePath: "registry/sources/guidance.md", sourceSha256: sha(guidance),
+          targetPath: "AGENTS.md", sectionId: "guidance", markerStyle: "markdown",
         }],
       },
       ...(includeStructured

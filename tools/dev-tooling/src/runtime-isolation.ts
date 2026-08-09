@@ -30,6 +30,7 @@ export interface RuntimeIsolationResult {
   };
   readonly surfaces: {
     readonly policy: "ok";
+    readonly projectMatrix: "ok";
     readonly repositoryContext: "ok";
     readonly hooks: "ok";
   };
@@ -100,6 +101,7 @@ export async function verifyRuntimeIsolation(
 
     const runtimeRoot = path.join(fixtureRoot, ".agent-context", "runtime");
     await verifyPolicySurface(runtimeRoot, fixtureRoot);
+    await verifyProjectMatrixSurface(runtimeRoot, fixtureRoot);
     await verifyRepositoryContextSurface(runtimeRoot, fixtureRoot);
     await verifyHookSurface(runtimeRoot, fixtureRoot, bindingPath);
     await verifySourceRebuild(runtimeRoot);
@@ -128,6 +130,7 @@ export async function verifyRuntimeIsolation(
       },
       surfaces: {
         policy: "ok",
+        projectMatrix: "ok",
         repositoryContext: "ok",
         hooks: "ok",
       },
@@ -213,6 +216,48 @@ async function verifyPolicySurface(
   const units = JSON.parse(result.stdout) as unknown;
   if (!Array.isArray(units) || units.length !== 0) {
     throw new Error("Policy inspection did not recognize the non-Node fixture.");
+  }
+}
+
+async function verifyProjectMatrixSurface(
+  runtimeRoot: string,
+  fixtureRoot: string,
+): Promise<void> {
+  const cli = path.join(runtimeRoot, "packages", "policy", "dist", "src", "cli.js");
+  const matrixRoot = path.join(fixtureRoot, ".agent-context", "validation-matrix");
+  const fixtures = [
+    { name: "minimal-typescript", files: [["package.json", "{}\n"], ["tsconfig.json", "{}\n"]], manifests: ["package.json"], markers: ["package.json", "tsconfig.json"] },
+    { name: "non-node", files: [["pyproject.toml", "[project]\nname = \"fixture\"\n"]], manifests: [], markers: ["pyproject.toml"] },
+    { name: "codex-configured", files: [[".codex/config.toml", "model = \"explicit\"\n"], [".codex/hooks.json", "{}\n"]], manifests: [], markers: [] },
+    { name: "monorepo", files: [["package.json", "{}\n"], ["packages/app/package.json", "{}\n"]], manifests: ["package.json", "packages/app/package.json"], markers: ["package.json"] },
+    { name: "single-package", files: [["package.json", "{}\n"]], manifests: ["package.json"], markers: ["package.json"] },
+    { name: "no-frontend", files: [["README.md", "No frontend.\n"]], manifests: [], markers: [] },
+    { name: "frontend-without-tailwind", files: [["package.json", '{"dependencies":{"react":"19.0.0"}}\n']], manifests: ["package.json"], markers: ["package.json"] },
+    { name: "frontend-with-tailwind", files: [["package.json", '{"dependencies":{"react":"19.0.0","tailwindcss":"4.0.0"}}\n']], manifests: ["package.json"], markers: ["package.json"] },
+  ] as const;
+  for (const fixture of fixtures) {
+    const root = path.join(matrixRoot, fixture.name);
+    await mkdir(root, { recursive: true });
+    for (const [relativePath, content] of fixture.files) {
+      const target = path.join(root, ...relativePath.split("/"));
+      await mkdir(path.dirname(target), { recursive: true });
+      await writeFile(target, content, "utf8");
+    }
+    const result = await runProcess(process.execPath, [cli, "inspect", "--root", root], root);
+    const inspection: unknown = JSON.parse(result.stdout);
+    if (!isRecord(inspection) || !isRecord(inspection.observations)) {
+      throw new Error(`Policy project-matrix inspection returned an invalid result for ${fixture.name}.`);
+    }
+    assertEqual(
+      JSON.stringify(inspection.observations.packageManifests),
+      JSON.stringify(fixture.manifests),
+      `${fixture.name} package manifests`,
+    );
+    assertEqual(
+      JSON.stringify(inspection.observations.languageMarkers),
+      JSON.stringify(fixture.markers),
+      `${fixture.name} language markers`,
+    );
   }
 }
 
@@ -431,4 +476,8 @@ function assertEqual(actual: unknown, expected: unknown, label: string): void {
       `${label} must be ${JSON.stringify(expected)}; found ${JSON.stringify(actual)}.`,
     );
   }
+}
+
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

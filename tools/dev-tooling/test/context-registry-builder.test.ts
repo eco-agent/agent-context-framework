@@ -39,6 +39,8 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
   const tailwind = first.components.find((component) => component.name === "skill-responsive-css-architect");
   assert.ok(tailwind);
   assert.equal(tailwind.artifacts.some((artifact) => artifact.sourcePath.includes("tailwind-docs/cache/")), false);
+  assert.equal(componentNames(first, "frontend").includes("skill-responsive-css-architect"), false);
+  assert.equal(componentNames(first, "frontend-tailwind").includes("skill-responsive-css-architect"), true);
   const waveTwoSkills = [
     "skill-codebase-inventory",
     "skill-design-typescript-invariants",
@@ -94,6 +96,44 @@ test("component revisions change with canonical component bytes", async () => {
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("installed frontend and skill bytes retain canonical anti-dilution semantics", async () => {
+  const registry = await buildContextRegistry(frameworkRoot);
+  const frontendSource = await readFile(
+    path.join(frameworkRoot, "registry", "sources", "instructions", "frontend.md"),
+    "utf8",
+  );
+  for (const required of [
+    "Never fill decisions from model priors or generic familiar UI.",
+    "Do not use text to frame text/elements or use cards for hierarchy.",
+    "Invent no content, controls, navigation, summaries, or features.",
+    "Default to minimalism",
+  ]) {
+    assert.match(frontendSource, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
+  }
+
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-anti-dilution-"));
+  try {
+    await initProject(root, frameworkRoot);
+    await addComponent(root, frameworkRoot, "frontend");
+    assert.equal((await diffProject(root, frameworkRoot)).current, true);
+    const installedAgents = await readFile(path.join(root, "AGENTS.md"), "utf8");
+    assert.equal(installedAgents.includes(frontendSource), true);
+
+    for (const component of resolveContextComponents(registry, ["frontend"])) {
+      for (const artifact of component.artifacts.filter((candidate) =>
+        candidate.targetPath.startsWith(".codex/skills/") && candidate.targetPath.endsWith("/SKILL.md"))) {
+        assert.equal(artifact.sourcePath, artifact.targetPath);
+        const source = await readFile(path.join(frameworkRoot, ...artifact.sourcePath.split("/")), "utf8");
+        const installed = await readFile(path.join(root, ...artifact.targetPath.split("/")), "utf8");
+        assert.equal(installed, source);
+        assert.match(source, /^---\nname: [a-z][a-z0-9-]*\ndescription: \S[^\n]*\n---\n/u);
+      }
+    }
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });
 

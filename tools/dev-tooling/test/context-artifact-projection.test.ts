@@ -28,6 +28,27 @@ test("text sections preserve surrounding prose and strip markers when preserving
   assert.equal(projection.read("<!-- agent-context:rules:start -->\nbroken\n").state, "malformed");
 });
 
+test("text sections preserve CRLF repositories while comparing canonical LF bytes", () => {
+  const projection = createArtifactProjection(artifact({
+    operation: "text-section",
+    sectionId: "core",
+    markerStyle: "markdown",
+  }), "# Canonical\n");
+  const installed = projection.install("# Project\r\n\r\nLocal prose.\r\n");
+  assert.equal(installed.includes("\r\n"), true);
+  assert.equal(installed.replaceAll("\r\n", "").includes("\n"), false);
+  const read = projection.read(installed);
+  assert.equal(read.state, "present");
+  if (read.state !== "present") assert.fail("Installed CRLF section must be readable.");
+  assert.equal(read.sha256, projection.sourceSha256);
+
+  const replaced = projection.replace(installed.replace("Canonical", "Local"));
+  assert.match(replaced, /# Canonical\r\n/u);
+  assert.match(replaced, /# Project\r\n\r\nLocal prose\.\r\n/u);
+  const removed = projection.remove(replaced, false);
+  assert.equal(removed, "# Project\r\n\r\nLocal prose.\r\n");
+});
+
 test("JSON member ownership preserves unrelated members and detects partial scopes", () => {
   const projection = createArtifactProjection(artifact({
     operation: "json-members",

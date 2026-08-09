@@ -123,10 +123,19 @@ function textSectionProjection(
   return {
     sourceSha256: contentHash(source),
     sourceDisplay: source,
-    read: (target) => readMarkedScope(target, markers, (inner) => inner),
-    install: (target) => appendMarkedSection(target ?? "", source, markers),
-    replace: (target) => replaceMarkedSection(target, source, markers),
-    remove: (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+    read: (target) => readMarkedScope(target === null ? null : normalizeLf(target), markers, (inner) => inner),
+    install: (target) => withLineEnding(
+      appendMarkedSection(normalizeLf(target ?? ""), source, markers),
+      lineEndingFor(target),
+    ),
+    replace: (target) => withLineEnding(
+      replaceMarkedSection(normalizeLf(target), source, markers),
+      lineEndingFor(target),
+    ),
+    remove: (target, preserveContent) => {
+      const removed = removeMarkedSection(normalizeLf(target), preserveContent, markers);
+      return removed === null ? null : withLineEnding(removed, lineEndingFor(target));
+    },
   };
 }
 
@@ -549,6 +558,18 @@ function removeMarkedSection(
   const result = `${target.slice(0, removalStart)}${replacement}${target.slice(section.blockEnd)}`;
   const normalized = result.replace(/^\n+/u, "").replace(/\n{3,}/gu, "\n\n");
   return normalized.length === 0 ? null : normalized;
+}
+
+function lineEndingFor(target: string | null): "\n" | "\r\n" {
+  return target?.includes("\r\n") === true ? "\r\n" : "\n";
+}
+
+function normalizeLf(value: string): string {
+  return value.replaceAll("\r\n", "\n");
+}
+
+function withLineEnding(value: string, lineEnding: "\n" | "\r\n"): string {
+  return lineEnding === "\n" ? value : value.replaceAll("\n", "\r\n");
 }
 
 function locateMarkedSection(

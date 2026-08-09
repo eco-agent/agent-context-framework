@@ -23,6 +23,7 @@ test("policy registry decoding remains strict and resolution is deterministic", 
     components: [
       {
         name: "source",
+        revision: `sha256:${"b".repeat(64)}`,
         dependencies: [],
         capabilities: [],
         licenses: [{
@@ -44,6 +45,7 @@ test("policy registry decoding remains strict and resolution is deterministic", 
       },
       {
         name: "bundle",
+        revision: `sha256:${"c".repeat(64)}`,
         dependencies: ["source"],
         capabilities: [],
         licenses: [{
@@ -188,6 +190,81 @@ test("repository inspection reports observations without creating policy", async
     assert.equal(result.observations.rootEntries.includes("docs/"), true);
     assert.equal(result.observations.packageManifests.length, 0);
     assert.equal(await fileExists(path.join(root, ".agent-context", "policy.json")), false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("repository inspection covers the declared project-shape matrix without inference or writes", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-policy-matrix-"));
+  const fixtures = [
+    {
+      name: "minimal-typescript",
+      files: [["package.json", "{}\n"], ["tsconfig.json", "{}\n"]],
+      manifests: ["package.json"],
+      markers: ["package.json", "tsconfig.json"],
+    },
+    {
+      name: "non-node",
+      files: [["pyproject.toml", "[project]\nname = \"fixture\"\n"]],
+      manifests: [],
+      markers: ["pyproject.toml"],
+    },
+    {
+      name: "codex-configured",
+      files: [[".codex/config.toml", "model = \"explicit\"\n"], [".codex/hooks.json", "{}\n"]],
+      manifests: [],
+      markers: [],
+    },
+    {
+      name: "monorepo",
+      files: [["package.json", "{}\n"], ["packages/app/package.json", "{}\n"]],
+      manifests: ["package.json", "packages/app/package.json"],
+      markers: ["package.json"],
+    },
+    {
+      name: "single-package",
+      files: [["package.json", "{}\n"]],
+      manifests: ["package.json"],
+      markers: ["package.json"],
+    },
+    {
+      name: "no-frontend",
+      files: [["README.md", "No frontend.\n"]],
+      manifests: [],
+      markers: [],
+    },
+    {
+      name: "frontend-without-tailwind",
+      files: [["package.json", '{"dependencies":{"react":"19.0.0"}}\n']],
+      manifests: ["package.json"],
+      markers: ["package.json"],
+    },
+    {
+      name: "frontend-with-tailwind",
+      files: [["package.json", '{"dependencies":{"react":"19.0.0","tailwindcss":"4.0.0"}}\n']],
+      manifests: ["package.json"],
+      markers: ["package.json"],
+    },
+  ] as const;
+  try {
+    for (const fixture of fixtures) {
+      const fixtureRoot = path.join(root, fixture.name);
+      await mkdir(fixtureRoot, { recursive: true });
+      for (const [relativePath, content] of fixture.files) {
+        const target = path.join(fixtureRoot, ...relativePath.split("/"));
+        await mkdir(path.dirname(target), { recursive: true });
+        await writeFile(target, content, "utf8");
+      }
+      const inspection = await inspectRepository(fixtureRoot);
+      assert.deepEqual(inspection.observations.packageManifests, fixture.manifests);
+      assert.deepEqual(inspection.observations.languageMarkers, fixture.markers);
+      assert.equal(
+        inspection.observations.rootEntries.includes(".codex/"),
+        fixture.name === "codex-configured",
+      );
+      assert.equal(await fileExists(path.join(fixtureRoot, ".agent-context", "policy.json")), false);
+    }
   } finally {
     await rm(root, { recursive: true, force: true });
   }

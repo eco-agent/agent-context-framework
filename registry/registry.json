@@ -1471,7 +1471,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:5b0d82f096e6f3844f019a4e878c6716efc610f2309d359abff2ff9dbd3f21f9",
+      "revision": "sha256:7b4618bb7cf0520ba3de8904213dcc5f1d4b411746f90448a4a57248bc5833b3",
       "dependencies": [
         "core",
         "runtime-base"
@@ -1546,7 +1546,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
-          "sourceSha256": "95309f53cbdcbe68679ac9290568afebe693bb00e922a70ee021790a4ccd8b9a",
+          "sourceSha256": "cf0ed0de9c7f414943423ddc43dbf885671e7da30a62aaef109c7a7e57dc5737",
           "targetPath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
