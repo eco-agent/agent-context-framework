@@ -135,4 +135,66 @@ test("format-specific ownership rejects unsorted or invalid paths", () => {
       }],
     }],
   }), /dotted bare-key path/u);
+  assert.throws(() => decodeContextRegistry({
+    ...registryValue,
+    components: [{
+      ...component,
+      artifacts: [{
+        operation: "toml-members",
+        sourcePath: "source.toml",
+        sourceSha256: hash,
+        targetPath: ".codex/config.toml",
+        ownedMembers: ["agents"],
+      }],
+    }],
+  }), /below the root/u);
+  assert.throws(() => decodeContextRegistry({
+    ...registryValue,
+    components: [{
+      ...component,
+      artifacts: [{
+        operation: "json-array-items",
+        sourcePath: "source.json",
+        sourceSha256: hash,
+        targetPath: ".codex/hooks.json",
+        ownedItems: [
+          { arrayPointer: "/hooks/SessionStart", identityPointer: "/matcher", identity: "^compact$" },
+          { arrayPointer: "/hooks/PreToolUse", identityPointer: "/matcher", identity: "^ApplyPatch$" },
+        ],
+      }],
+    }],
+  }), /must be sorted/u);
+});
+
+test("member and identified-array-item ownership decode as closed artifact variants", () => {
+  const component = registryValue.components[0];
+  const registry = decodeContextRegistry({
+    ...registryValue,
+    components: [{
+      ...component,
+      artifacts: [
+        {
+          operation: "json-array-items",
+          sourcePath: "source.json",
+          sourceSha256: hash,
+          targetPath: ".codex/hooks.json",
+          ownedItems: [
+            { arrayPointer: "/hooks/PreToolUse", identityPointer: "/matcher", identity: "^ApplyPatch$" },
+            { arrayPointer: "/hooks/SessionStart", identityPointer: "/matcher", identity: "^compact$" },
+          ],
+        },
+        {
+          operation: "toml-members",
+          sourcePath: "source.toml",
+          sourceSha256: hash,
+          targetPath: ".codex/config.toml",
+          ownedMembers: ["agents.max_concurrent_threads_per_session", "agents.worker"],
+        },
+      ],
+    }],
+  });
+  assert.deepEqual(
+    registry.components[0]?.artifacts.map((artifact) => artifact.operation),
+    ["json-array-items", "toml-members"],
+  );
 });

@@ -123,19 +123,154 @@ test("obsolete structured artifacts are removed after their registry sources are
   const fixture = await createFixture();
   try {
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await mkdir(path.join(fixture.projectRoot, ".codex"), { recursive: true });
+    await writeFile(
+      path.join(fixture.projectRoot, ".codex", "config.toml"),
+      "[agents]\ninterrupt_message = false\n",
+    );
+    await writeFile(
+      path.join(fixture.projectRoot, ".codex", "hooks.json"),
+      '{"hooks":{"PreToolUse":[{"matcher":"^Bash$","hooks":[{"type":"command","command":"local"}]}]}}\n',
+    );
     const added = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
     assert.equal(added.plan.status, "ready");
     const tomlPath = path.join(fixture.projectRoot, ".codex", "config.toml");
-    assert.match(await readFile(tomlPath, "utf8"), /\[mcp_servers\.context\]/u);
-    assert.doesNotMatch(await readFile(tomlPath, "utf8"), /not_owned/u);
+    const installedToml = await readFile(tomlPath, "utf8");
+    assert.match(installedToml, /\[mcp_servers\.context\]/u);
+    assert.match(installedToml, /interrupt_message = false/u);
+    assert.match(installedToml, /max_concurrent_threads_per_session = 2/u);
+    assert.match(installedToml, /\[agents\.worker\]/u);
+    assert.doesNotMatch(installedToml, /not_owned/u);
+    const installedHooks = JSON.parse(
+      await readFile(path.join(fixture.projectRoot, ".codex", "hooks.json"), "utf8"),
+    ) as { hooks: { PreToolUse: Array<{ matcher: string }>; SessionStart: Array<{ matcher: string }> } };
+    assert.deepEqual(installedHooks.hooks.PreToolUse.map((item) => item.matcher), ["^Bash$", "^ApplyPatch$"]);
+    assert.deepEqual(installedHooks.hooks.SessionStart.map((item) => item.matcher), ["^compact$"]);
 
     await rm(path.join(fixture.frameworkRoot, "registry", "sources", "structured.json"));
     await rm(path.join(fixture.frameworkRoot, "registry", "sources", "structured.toml"));
+    await rm(path.join(fixture.frameworkRoot, "registry", "sources", "structured-hooks.json"));
+    await rm(path.join(fixture.frameworkRoot, "registry", "sources", "structured-members.toml"));
     await writeRegistry(fixture.frameworkRoot, "0.2.1", ".codex/tool.md", false);
     const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
     assert.equal(removed.plan.status, "ready");
     assert.deepEqual(JSON.parse(await readFile(path.join(fixture.projectRoot, "settings.json"), "utf8")), {});
-    assert.equal(await fileExists(tomlPath), false);
+    const removedToml = await readFile(tomlPath, "utf8");
+    assert.match(removedToml, /interrupt_message = false/u);
+    assert.doesNotMatch(removedToml, /max_concurrent_threads_per_session|agents\.worker|mcp_servers/u);
+    const removedHooks = JSON.parse(
+      await readFile(path.join(fixture.projectRoot, ".codex", "hooks.json"), "utf8"),
+    ) as { hooks: { PreToolUse: Array<{ matcher: string }>; SessionStart: unknown[] } };
+    assert.deepEqual(removedHooks.hooks.PreToolUse.map((item) => item.matcher), ["^Bash$"]);
+    assert.deepEqual(removedHooks.hooks.SessionStart, []);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("structured ownership rejects overlapping TOML paths and duplicate JSON item identities", async () => {
+  const fixture = await createFixture();
+  try {
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    const registryPath = path.join(fixture.frameworkRoot, "registry", "registry.json");
+    const registry = JSON.parse(await readFile(registryPath, "utf8")) as {
+      components: Array<Record<string, unknown>>;
+    } & Record<string, unknown>;
+    const members = await readFile(
+      path.join(fixture.frameworkRoot, "registry", "sources", "structured-members.toml"),
+      "utf8",
+    );
+    registry.components.push({
+      name: "collision",
+      dependencies: ["structured"],
+      capabilities: [],
+      licenses: [{ kind: "project" }],
+      artifacts: [{
+        operation: "toml-members",
+        sourcePath: "registry/sources/structured-members.toml",
+        sourceSha256: sha(members),
+        targetPath: ".codex/config.toml",
+        ownedMembers: ["agents.worker.config_file"],
+      }],
+    });
+    await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+    await assert.rejects(
+      addComponent(fixture.projectRoot, fixture.frameworkRoot, "collision"),
+      /overlapping ownership paths agents\.worker and agents\.worker\.config_file/u,
+    );
+
+    const hooks = await readFile(
+      path.join(fixture.frameworkRoot, "registry", "sources", "structured-hooks.json"),
+      "utf8",
+    );
+    registry.components[registry.components.length - 1] = {
+      name: "collision",
+      dependencies: ["structured"],
+      capabilities: [],
+      licenses: [{ kind: "project" }],
+      artifacts: [{
+        operation: "json-array-items",
+        sourcePath: "registry/sources/structured-hooks.json",
+        sourceSha256: sha(hooks),
+        targetPath: ".codex/hooks.json",
+        ownedItems: [{
+          arrayPointer: "/hooks/PreToolUse",
+          identityPointer: "/matcher",
+          identity: "^ApplyPatch$",
+        }],
+      }],
+    };
+    await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+    await assert.rejects(
+      addComponent(fixture.projectRoot, fixture.frameworkRoot, "collision"),
+      /duplicate array item ownership/u,
+    );
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("structured member updates replace owned values and removal preserves locally modified scopes", async () => {
+  const fixture = await createFixture();
+  try {
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await addComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
+    const hooksSourcePath = path.join(fixture.frameworkRoot, "registry", "sources", "structured-hooks.json");
+    const membersSourcePath = path.join(fixture.frameworkRoot, "registry", "sources", "structured-members.toml");
+    await writeFile(
+      hooksSourcePath,
+      (await readFile(hooksSourcePath, "utf8")).replace('"command":"owned"', '"command":"owned-v2"'),
+    );
+    await writeFile(
+      membersSourcePath,
+      (await readFile(membersSourcePath, "utf8")).replace("max_concurrent_threads_per_session = 2", "max_concurrent_threads_per_session = 3"),
+    );
+    await writeRegistry(fixture.frameworkRoot, "0.2.1");
+    const updated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, "structured");
+    assert.equal(updated.plan.status, "ready");
+    const hooksPath = path.join(fixture.projectRoot, ".codex", "hooks.json");
+    const configPath = path.join(fixture.projectRoot, ".codex", "config.toml");
+    assert.match(await readFile(hooksPath, "utf8"), /owned-v2/u);
+    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 3/u);
+
+    await writeFile(
+      hooksPath,
+      (await readFile(hooksPath, "utf8")).replace("owned-v2", "project-owned"),
+    );
+    await writeFile(
+      configPath,
+      (await readFile(configPath, "utf8")).replace("max_concurrent_threads_per_session = 3", "max_concurrent_threads_per_session = 4"),
+    );
+    const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
+    assert.equal(removed.plan.status, "ready");
+    assert.match(await readFile(hooksPath, "utf8"), /project-owned/u);
+    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 4/u);
+    const lock = JSON.parse(await readFile(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH), "utf8")) as {
+      components: string[];
+      artifacts: Array<{ component: string }>;
+    };
+    assert.deepEqual(lock.components, ["core"]);
+    assert.equal(lock.artifacts.some((artifact) => artifact.component === "structured"), false);
   } finally {
     await fixture.remove();
   }
@@ -258,6 +393,14 @@ async function createFixture(): Promise<Fixture> {
     path.join(frameworkRoot, "registry", "sources", "structured.toml"),
     '[mcp_servers.context]\ncommand = "node"\n\n[mcp_servers.not_owned]\ncommand = "other"\n',
   );
+  await writeFile(
+    path.join(frameworkRoot, "registry", "sources", "structured-hooks.json"),
+    '{"hooks":{"PreToolUse":[{"matcher":"^ApplyPatch$","hooks":[{"type":"command","command":"owned"}]}],"SessionStart":[{"matcher":"^compact$","hooks":[{"type":"command","command":"compact"}]}]}}\n',
+  );
+  await writeFile(
+    path.join(frameworkRoot, "registry", "sources", "structured-members.toml"),
+    '[agents]\nmax_concurrent_threads_per_session = 2\n\n[agents.worker]\ndescription = "Worker"\nconfig_file = "agents/worker.toml"\n',
+  );
   await writeFile(path.join(frameworkRoot, "registry", "decisions", "0.2.0.md"), "# Decision\n");
   await writeRegistry(frameworkRoot, "0.2.0");
   return { frameworkRoot, projectRoot, remove: async () => await rm(root, { recursive: true, force: true }) };
@@ -318,14 +461,30 @@ async function writeRegistry(
 async function structuredRegistryArtifacts(frameworkRoot: string): Promise<readonly Record<string, unknown>[]> {
   const json = await readFile(path.join(frameworkRoot, "registry", "sources", "structured.json"), "utf8");
   const toml = await readFile(path.join(frameworkRoot, "registry", "sources", "structured.toml"), "utf8");
+  const hooks = await readFile(path.join(frameworkRoot, "registry", "sources", "structured-hooks.json"), "utf8");
+  const members = await readFile(path.join(frameworkRoot, "registry", "sources", "structured-members.toml"), "utf8");
   return [
     {
       operation: "json-members", sourcePath: "registry/sources/structured.json", sourceSha256: sha(json),
       targetPath: "settings.json", ownedPointers: ["/owned"],
     },
     {
+      operation: "json-array-items", sourcePath: "registry/sources/structured-hooks.json", sourceSha256: sha(hooks),
+      targetPath: ".codex/hooks.json", ownedItems: [
+        { arrayPointer: "/hooks/PreToolUse", identityPointer: "/matcher", identity: "^ApplyPatch$" },
+        { arrayPointer: "/hooks/SessionStart", identityPointer: "/matcher", identity: "^compact$" },
+      ],
+    },
+    {
       operation: "toml-tables", sourcePath: "registry/sources/structured.toml", sourceSha256: sha(toml),
       targetPath: ".codex/config.toml", ownedTables: ["mcp_servers.context"], sectionId: "context-runtime",
+    },
+    {
+      operation: "toml-members", sourcePath: "registry/sources/structured-members.toml", sourceSha256: sha(members),
+      targetPath: ".codex/config.toml", ownedMembers: [
+        "agents.max_concurrent_threads_per_session",
+        "agents.worker",
+      ],
     },
   ];
 }

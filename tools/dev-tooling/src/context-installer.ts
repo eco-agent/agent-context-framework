@@ -875,10 +875,28 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
     }
     const jsonPointers = targetArtifacts.flatMap((artifact) =>
       artifact.operation === "json-members" ? artifact.ownedPointers : []);
-    requireNoOverlappingPaths(jsonPointers, `JSON target ${targetPath}`);
-    const tomlTables = targetArtifacts.flatMap((artifact) =>
-      artifact.operation === "toml-tables" ? artifact.ownedTables : []);
-    requireNoOverlappingPaths(tomlTables, `TOML target ${targetPath}`);
+    const jsonArrayPointers = targetArtifacts.flatMap((artifact) =>
+      artifact.operation === "json-array-items"
+        ? artifact.ownedItems.map((item) => item.arrayPointer)
+        : []);
+    requireNoOverlappingPaths(
+      [...jsonPointers, ...new Set(jsonArrayPointers)],
+      `JSON target ${targetPath}`,
+    );
+    const jsonArrayIdentities = targetArtifacts.flatMap((artifact) =>
+      artifact.operation === "json-array-items"
+        ? artifact.ownedItems.map((item) =>
+            `${item.arrayPointer}:${item.identityPointer}:${JSON.stringify(item.identity)}`)
+        : []);
+    if (new Set(jsonArrayIdentities).size !== jsonArrayIdentities.length) {
+      throw new Error(`JSON target ${targetPath} contains duplicate array item ownership.`);
+    }
+    const tomlPaths = targetArtifacts.flatMap((artifact) => {
+      if (artifact.operation === "toml-tables") return artifact.ownedTables;
+      if (artifact.operation === "toml-members") return artifact.ownedMembers;
+      return [];
+    });
+    requireNoOverlappingPaths(tomlPaths, `TOML target ${targetPath}`);
   }
 }
 

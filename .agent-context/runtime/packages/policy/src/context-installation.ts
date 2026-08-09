@@ -54,10 +54,26 @@ export interface ContextJsonMembersArtifact extends ContextArtifactBase {
   readonly ownedPointers: readonly string[];
 }
 
+export interface ContextJsonArrayItemOwnership {
+  readonly arrayPointer: string;
+  readonly identityPointer: string;
+  readonly identity: string;
+}
+
+export interface ContextJsonArrayItemsArtifact extends ContextArtifactBase {
+  readonly operation: "json-array-items";
+  readonly ownedItems: readonly ContextJsonArrayItemOwnership[];
+}
+
 export interface ContextTomlTablesArtifact extends ContextArtifactBase {
   readonly operation: "toml-tables";
   readonly ownedTables: readonly string[];
   readonly sectionId: string;
+}
+
+export interface ContextTomlMembersArtifact extends ContextArtifactBase {
+  readonly operation: "toml-members";
+  readonly ownedMembers: readonly string[];
 }
 
 export interface ContextRuntimeWorkspaceArtifact extends ContextArtifactBase {
@@ -70,7 +86,9 @@ export type ContextRegistryArtifact =
   | ContextFileArtifact
   | ContextTextSectionArtifact
   | ContextJsonMembersArtifact
+  | ContextJsonArrayItemsArtifact
   | ContextTomlTablesArtifact
+  | ContextTomlMembersArtifact
   | ContextRuntimeWorkspaceArtifact;
 
 export interface ContextProjectConfigV2 {
@@ -208,8 +226,12 @@ export function artifactIdentity(artifact: ContextRegistryArtifact | ContextLock
       return `text-section:${artifact.targetPath}:${artifact.sectionId}`;
     case "json-members":
       return `json-members:${artifact.targetPath}:${artifact.ownedPointers.join(",")}`;
+    case "json-array-items":
+      return `json-array-items:${artifact.targetPath}:${artifact.ownedItems.map(jsonArrayItemIdentity).join(",")}`;
     case "toml-tables":
       return `toml-tables:${artifact.targetPath}:${artifact.ownedTables.join(",")}`;
+    case "toml-members":
+      return `toml-members:${artifact.targetPath}:${artifact.ownedMembers.join(",")}`;
     case "runtime-workspace":
       return `runtime-workspace:${artifact.workspaceId}:${artifact.targetPath}`;
   }
@@ -355,12 +377,33 @@ function decodeArtifact(record: Record<string, unknown>, label: string): Context
       requireSortedUnique(ownedPointers, "JSON member ownedPointers");
       return { operation, ...base(), ownedPointers };
     }
+    case "json-array-items": {
+      strictRecord(record, label, [...baseKeys, "ownedItems"]);
+      const ownedItems = decodeArray(
+        record.ownedItems,
+        "JSON array ownedItems",
+        decodeJsonArrayItemOwnership,
+      );
+      if (ownedItems.length === 0) throw new Error("JSON array ownedItems must not be empty.");
+      requireSortedUnique(
+        ownedItems.map(jsonArrayItemIdentity),
+        "JSON array ownedItems",
+      );
+      return { operation, ...base(), ownedItems };
+    }
     case "toml-tables": {
       strictRecord(record, label, [...baseKeys, "ownedTables", "sectionId"]);
       const ownedTables = decodeArray(record.ownedTables, "TOML ownedTables", tomlTablePath);
       if (ownedTables.length === 0) throw new Error("TOML ownedTables must not be empty.");
       requireSortedUnique(ownedTables, "TOML ownedTables");
       return { operation, ...base(), ownedTables, sectionId: sectionId(record.sectionId) };
+    }
+    case "toml-members": {
+      strictRecord(record, label, [...baseKeys, "ownedMembers"]);
+      const ownedMembers = decodeArray(record.ownedMembers, "TOML ownedMembers", tomlMemberPath);
+      if (ownedMembers.length === 0) throw new Error("TOML ownedMembers must not be empty.");
+      requireSortedUnique(ownedMembers, "TOML ownedMembers");
+      return { operation, ...base(), ownedMembers };
     }
     case "runtime-workspace": {
       strictRecord(record, label, [...baseKeys, "workspaceId", "mediaType"]);
@@ -373,9 +416,26 @@ function decodeArtifact(record: Record<string, unknown>, label: string): Context
     }
     default:
       throw new Error(
-        "Context registry artifact operation must be file, text-section, json-members, toml-tables, or runtime-workspace.",
+        "Context registry artifact operation must be file, text-section, json-members, json-array-items, toml-tables, toml-members, or runtime-workspace.",
       );
   }
+}
+
+function decodeJsonArrayItemOwnership(value: unknown): ContextJsonArrayItemOwnership {
+  const record = strictRecord(value, "JSON array item ownership", [
+    "arrayPointer",
+    "identityPointer",
+    "identity",
+  ]);
+  return {
+    arrayPointer: jsonPointer(record.arrayPointer),
+    identityPointer: jsonPointer(record.identityPointer),
+    identity: requiredString(record, "identity"),
+  };
+}
+
+function jsonArrayItemIdentity(item: ContextJsonArrayItemOwnership): string {
+  return `${item.arrayPointer}:${item.identityPointer}:${JSON.stringify(item.identity)}`;
 }
 
 function requireSchemaVersion(value: unknown, label: string): void {
@@ -405,6 +465,13 @@ function jsonPointer(value: unknown): string {
 function tomlTablePath(value: unknown): string {
   if (typeof value !== "string" || !/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/u.test(value)) {
     throw new Error("TOML table path must be a dotted bare-key path.");
+  }
+  return value;
+}
+
+function tomlMemberPath(value: unknown): string {
+  if (typeof value !== "string" || !/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+$/u.test(value)) {
+    throw new Error("TOML member path must be a dotted bare-key path below the root.");
   }
   return value;
 }

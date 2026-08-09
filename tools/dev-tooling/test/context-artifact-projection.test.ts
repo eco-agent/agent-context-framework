@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import type { ContextRegistryArtifact } from "@agent-context/repo-policy";
+import type {
+  ContextJsonArrayItemOwnership,
+  ContextRegistryArtifact,
+} from "@agent-context/repo-policy";
+import { parse as parseToml } from "smol-toml";
 
 import {
   createArtifactProjection,
@@ -49,7 +53,7 @@ test("TOML table ownership installs only declared tables, preserves project tabl
   }), "[mcp_servers.context]\ncommand = \"node\"\n\n[mcp_servers.not_owned]\ncommand = \"other\"\n");
   const installed = projection.install("[project]\nname = \"fixture\"\n");
   assert.match(installed, /^\[project\]/u);
-  assert.match(installed, /# agent-context:context-runtime:start\n\[mcp_servers\.context\]/u);
+  assert.match(installed, /\[mcp_servers\.context\]/u);
   assert.doesNotMatch(installed, /not_owned/u);
   assert.equal(projection.read(installed).state, "present");
   assert.throws(
@@ -57,6 +61,102 @@ test("TOML table ownership installs only declared tables, preserves project tabl
     /already contains owned table/u,
   );
   assert.equal(projection.remove(installed, false), "[project]\nname = \"fixture\"\n");
+});
+
+test("JSON array item ownership preserves unrelated matchers and identifies items independently of order", () => {
+  const projection = createArtifactProjection(artifact({
+    operation: "json-array-items",
+    ownedItems: [
+      { arrayPointer: "/hooks/PreToolUse", identityPointer: "/matcher", identity: "^ApplyPatch$" },
+      { arrayPointer: "/hooks/SessionStart", identityPointer: "/matcher", identity: "^compact$" },
+    ],
+  }), `${JSON.stringify({
+    hooks: {
+      PreToolUse: [{ matcher: "^ApplyPatch$", hooks: [{ type: "command", command: "owned" }] }],
+      SessionStart: [{ matcher: "^compact$", hooks: [{ type: "command", command: "compact" }] }],
+    },
+  }, null, 2)}\n`);
+  const installed = projection.install(`${JSON.stringify({
+    description: "local",
+    hooks: { PreToolUse: [{ matcher: "^Bash$", hooks: [{ type: "command", command: "local" }] }] },
+  }, null, 2)}\n`);
+  const installedValue = JSON.parse(installed) as {
+    description: string;
+    hooks: { PreToolUse: Array<{ matcher: string }>; SessionStart: Array<{ matcher: string }> };
+  };
+  assert.equal(installedValue.description, "local");
+  assert.deepEqual(installedValue.hooks.PreToolUse.map((item) => item.matcher), ["^Bash$", "^ApplyPatch$"]);
+  assert.deepEqual(installedValue.hooks.SessionStart.map((item) => item.matcher), ["^compact$"]);
+  assert.equal(projection.read(installed).state, "present");
+
+  const reordered = `${JSON.stringify({
+    hooks: {
+      SessionStart: installedValue.hooks.SessionStart,
+      PreToolUse: [...installedValue.hooks.PreToolUse].reverse(),
+    },
+    description: "local",
+  }, null, 2)}\n`;
+  assert.equal(projection.read(reordered).state, "present");
+  assert.equal(projection.read('{"hooks":{"PreToolUse":[]}}\n').state, "absent");
+  assert.equal(
+    projection.read('{"hooks":{"PreToolUse":[{"matcher":"^ApplyPatch$"}]}}\n').state,
+    "malformed",
+  );
+  const removed = JSON.parse(projection.remove(installed, false) ?? "") as {
+    description: string;
+    hooks: { PreToolUse: Array<{ matcher: string }>; SessionStart: unknown[] };
+  };
+  assert.equal(removed.description, "local");
+  assert.deepEqual(removed.hooks.PreToolUse.map((item) => item.matcher), ["^Bash$"]);
+  assert.deepEqual(removed.hooks.SessionStart, []);
+});
+
+test("TOML member ownership preserves unrelated agent settings and removes only declared paths", () => {
+  const projection = createArtifactProjection(artifact({
+    operation: "toml-members",
+    ownedMembers: [
+      "agents.max_concurrent_threads_per_session",
+      "agents.worker",
+    ],
+  }), [
+    "[agents]",
+    "max_concurrent_threads_per_session = 2",
+    "",
+    "[agents.worker]",
+    'description = "Implementation worker"',
+    'config_file = "agents/worker.toml"',
+    "",
+  ].join("\n"));
+  const installed = projection.install([
+    "[project]",
+    'name = "fixture"',
+    "",
+    "[agents]",
+    "interrupt_message = false",
+    "",
+  ].join("\n"));
+  const value = parseToml(installed) as {
+    project: { name: string };
+    agents: { interrupt_message: boolean; max_concurrent_threads_per_session: number; worker: { config_file: string } };
+  };
+  assert.equal(value.project.name, "fixture");
+  assert.equal(value.agents.interrupt_message, false);
+  assert.equal(value.agents.max_concurrent_threads_per_session, 2);
+  assert.equal(value.agents.worker.config_file, "agents/worker.toml");
+  assert.equal(projection.read(installed).state, "present");
+  assert.equal(projection.read("[agents]\nmax_concurrent_threads_per_session = 2\n").state, "malformed");
+  assert.throws(
+    () => projection.install("[agents]\nmax_concurrent_threads_per_session = 4\n"),
+    /already contains owned member/u,
+  );
+  const removed = parseToml(projection.remove(installed, false) ?? "") as {
+    project: { name: string };
+    agents: { interrupt_message: boolean; worker?: unknown; max_concurrent_threads_per_session?: number };
+  };
+  assert.equal(removed.project.name, "fixture");
+  assert.equal(removed.agents.interrupt_message, false);
+  assert.equal(removed.agents.worker, undefined);
+  assert.equal(removed.agents.max_concurrent_threads_per_session, undefined);
 });
 
 test("ownership-only projections read and remove structured artifacts without source bytes", () => {
@@ -81,12 +181,20 @@ function artifact(
   fields:
     | { readonly operation: "text-section"; readonly sectionId: string; readonly markerStyle: "markdown" }
     | { readonly operation: "json-members"; readonly ownedPointers: readonly string[] }
-    | { readonly operation: "toml-tables"; readonly ownedTables: readonly string[]; readonly sectionId: string },
+    | { readonly operation: "json-array-items"; readonly ownedItems: readonly ContextJsonArrayItemOwnership[] }
+    | { readonly operation: "toml-tables"; readonly ownedTables: readonly string[]; readonly sectionId: string }
+    | { readonly operation: "toml-members"; readonly ownedMembers: readonly string[] },
 ): ContextRegistryArtifact {
   return {
     sourcePath: "registry/source.txt",
     sourceSha256: hash,
-    targetPath: fields.operation === "json-members" ? "package.json" : fields.operation === "toml-tables" ? ".codex/config.toml" : "AGENTS.md",
+    targetPath: fields.operation === "json-members"
+      ? "package.json"
+      : fields.operation === "json-array-items"
+        ? ".codex/hooks.json"
+        : fields.operation === "toml-tables" || fields.operation === "toml-members"
+          ? ".codex/config.toml"
+          : "AGENTS.md",
     ...fields,
   };
 }

@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 
-import type { ContextRegistryArtifact } from "@agent-context/repo-policy";
+import type {
+  ContextJsonArrayItemOwnership,
+  ContextRegistryArtifact,
+} from "@agent-context/repo-policy";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 
 export type ProjectedScope =
@@ -36,8 +39,12 @@ export function createArtifactProjection(
       return textSectionProjection(source, markerPair(artifact.sectionId, artifact.markerStyle));
     case "json-members":
       return jsonMembersProjection(source, artifact.ownedPointers);
+    case "json-array-items":
+      return jsonArrayItemsProjection(source, artifact.ownedItems);
     case "toml-tables":
-      return tomlTablesProjection(source, artifact.ownedTables, artifact.sectionId);
+      return tomlTablesProjection(source, artifact.ownedTables);
+    case "toml-members":
+      return tomlMembersProjection(source, artifact.ownedMembers);
   }
 }
 
@@ -60,16 +67,21 @@ export function createArtifactRemovalProjection(
         (target) => readJsonMembers(target, artifact.ownedPointers),
         (target, preserveContent) => removeJsonMembers(target, preserveContent, artifact.ownedPointers),
       );
-    case "toml-tables": {
-      const markers = markerPair(artifact.sectionId, "toml");
+    case "json-array-items":
       return removalOnlyProjection(
-        (target) => readMarkedScope(target, markers, (inner) => {
-          const value = parseTomlObject(inner, "TOML owned section");
-          return stableJson(projectObjectPaths(value, artifact.ownedTables, true));
-        }),
-        (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+        (target) => readJsonArrayItems(target, artifact.ownedItems),
+        (target, preserveContent) => removeJsonArrayItems(target, preserveContent, artifact.ownedItems),
       );
-    }
+    case "toml-tables":
+      return removalOnlyProjection(
+        (target) => readTomlMembers(target, artifact.ownedTables),
+        (target, preserveContent) => removeTomlMembers(target, preserveContent, artifact.ownedTables),
+      );
+    case "toml-members":
+      return removalOnlyProjection(
+        (target) => readTomlMembers(target, artifact.ownedMembers),
+        (target, preserveContent) => removeTomlMembers(target, preserveContent, artifact.ownedMembers),
+      );
   }
 }
 
@@ -172,24 +184,171 @@ function removeJsonMembers(
   return stableJson(targetValue);
 }
 
-function tomlTablesProjection(
+function jsonArrayItemsProjection(
   source: string,
-  tablePaths: readonly string[],
-  sectionId: string,
+  ownedItems: readonly ContextJsonArrayItemOwnership[],
 ): ArtifactProjection {
-  if (!source.endsWith("\n")) throw new Error("TOML table source must end with a newline.");
-  const sourceValue = parseTomlObject(source, "TOML table source");
-  const sourceScope = projectObjectPaths(sourceValue, tablePaths, true);
-  const sourceDisplay = stableJson(sourceScope);
-  const ownedSource = stringifyToml(selectObjectPaths(sourceValue, tablePaths));
-  const markers = markerPair(sectionId, "toml");
+  const sourceValue = parseJsonObject(source, "JSON array item source");
+  const sourceItems = selectJsonArrayItems(sourceValue, ownedItems, "source");
+  const sourceDisplay = stableJson(sourceItems);
   return {
     sourceSha256: contentHash(sourceDisplay),
     sourceDisplay,
-    read: (target) => readMarkedScope(target, markers, (inner) => {
-      const value = parseTomlObject(inner, "TOML owned section");
-      return stableJson(projectObjectPaths(value, tablePaths, true));
-    }),
+    read: (target) => readJsonArrayItems(target, ownedItems),
+    install: (target) => {
+      const targetValue = target === null ? {} : parseJsonObject(target, "JSON array item target");
+      for (const [index, ownership] of ownedItems.entries()) {
+        const targetArray = getOrCreateJsonArray(targetValue, ownership.arrayPointer);
+        if (findJsonArrayItemIndexes(targetArray, ownership).length > 0) {
+          throw new Error(`JSON target already contains owned array item ${jsonArrayItemLabel(ownership)}.`);
+        }
+        targetArray.push(cloneJson(sourceItems[index]));
+      }
+      return stableJson(targetValue);
+    },
+    replace: (target) => {
+      const targetValue = parseJsonObject(target, "JSON array item target");
+      for (const [index, ownership] of ownedItems.entries()) {
+        const targetArray = requireJsonArray(targetValue, ownership.arrayPointer, "target");
+        const matches = findJsonArrayItemIndexes(targetArray, ownership);
+        if (matches.length !== 1) {
+          throw new Error(`JSON target must contain exactly one owned array item ${jsonArrayItemLabel(ownership)}.`);
+        }
+        const match = matches[0];
+        if (match === undefined) throw new Error("JSON array item match disappeared unexpectedly.");
+        targetArray[match] = cloneJson(sourceItems[index]);
+      }
+      return stableJson(targetValue);
+    },
+    remove: (target, preserveContent) => removeJsonArrayItems(target, preserveContent, ownedItems),
+  };
+}
+
+function readJsonArrayItems(
+  target: string | null,
+  ownedItems: readonly ContextJsonArrayItemOwnership[],
+): ProjectedScope {
+  if (target === null) return { state: "absent" };
+  let targetValue: Record<string, unknown>;
+  try {
+    targetValue = parseJsonObject(target, "JSON array item target");
+  } catch (error) {
+    return { state: "malformed", detail: error instanceof Error ? error.message : String(error) };
+  }
+  const selected: unknown[] = [];
+  const presence: boolean[] = [];
+  for (const ownership of ownedItems) {
+    if (!hasJsonPointer(targetValue, ownership.arrayPointer)) {
+      presence.push(false);
+      continue;
+    }
+    let targetArray: unknown[];
+    try {
+      targetArray = requireJsonArray(targetValue, ownership.arrayPointer, "target");
+    } catch (error) {
+      return { state: "malformed", detail: error instanceof Error ? error.message : String(error) };
+    }
+    const matches = findJsonArrayItemIndexes(targetArray, ownership);
+    if (matches.length > 1) {
+      return {
+        state: "malformed",
+        detail: `JSON target contains duplicate owned array item ${jsonArrayItemLabel(ownership)}.`,
+      };
+    }
+    const match = matches[0];
+    presence.push(match !== undefined);
+    if (match !== undefined) selected.push(cloneJson(targetArray[match]));
+  }
+  if (presence.every((present) => !present)) return { state: "absent" };
+  if (presence.some((present) => !present)) {
+    return { state: "malformed", detail: "JSON target contains only part of the owned array item set." };
+  }
+  const display = stableJson(selected);
+  return { state: "present", sha256: contentHash(display), display };
+}
+
+function removeJsonArrayItems(
+  target: string,
+  preserveContent: boolean,
+  ownedItems: readonly ContextJsonArrayItemOwnership[],
+): string {
+  if (preserveContent) return target;
+  const targetValue = parseJsonObject(target, "JSON array item target");
+  for (const ownership of ownedItems) {
+    if (!hasJsonPointer(targetValue, ownership.arrayPointer)) continue;
+    const targetArray = requireJsonArray(targetValue, ownership.arrayPointer, "target");
+    const matches = findJsonArrayItemIndexes(targetArray, ownership);
+    if (matches.length > 1) {
+      throw new Error(`JSON target contains duplicate owned array item ${jsonArrayItemLabel(ownership)}.`);
+    }
+    const match = matches[0];
+    if (match !== undefined) targetArray.splice(match, 1);
+  }
+  return stableJson(targetValue);
+}
+
+function selectJsonArrayItems(
+  value: Record<string, unknown>,
+  ownedItems: readonly ContextJsonArrayItemOwnership[],
+  label: string,
+): readonly unknown[] {
+  return ownedItems.map((ownership) => {
+    const sourceArray = requireJsonArray(value, ownership.arrayPointer, label);
+    const matches = findJsonArrayItemIndexes(sourceArray, ownership);
+    if (matches.length !== 1) {
+      throw new Error(
+        `JSON ${label} must contain exactly one owned array item ${jsonArrayItemLabel(ownership)}.`,
+      );
+    }
+    const match = matches[0];
+    if (match === undefined) throw new Error("JSON array item match disappeared unexpectedly.");
+    return cloneJson(sourceArray[match]);
+  });
+}
+
+function findJsonArrayItemIndexes(
+  items: readonly unknown[],
+  ownership: ContextJsonArrayItemOwnership,
+): readonly number[] {
+  const matches: number[] = [];
+  for (const [index, item] of items.entries()) {
+    if (!isObject(item) || !hasJsonPointer(item, ownership.identityPointer)) continue;
+    if (getJsonPointer(item, ownership.identityPointer) === ownership.identity) matches.push(index);
+  }
+  return matches;
+}
+
+function requireJsonArray(
+  value: Record<string, unknown>,
+  pointer: string,
+  label: string,
+): unknown[] {
+  const selected = getJsonPointerValue(value, pointer);
+  if (!Array.isArray(selected)) throw new Error(`JSON ${label} pointer is not an array: ${pointer}.`);
+  return selected;
+}
+
+function getOrCreateJsonArray(value: Record<string, unknown>, pointer: string): unknown[] {
+  if (!hasJsonPointer(value, pointer)) setJsonPointer(value, pointer, []);
+  return requireJsonArray(value, pointer, "target");
+}
+
+function jsonArrayItemLabel(ownership: ContextJsonArrayItemOwnership): string {
+  return `${ownership.arrayPointer} where ${ownership.identityPointer} is ${JSON.stringify(ownership.identity)}`;
+}
+
+function tomlTablesProjection(
+  source: string,
+  tablePaths: readonly string[],
+): ArtifactProjection {
+  const sourceValue = parseTomlObject(source, "TOML table source");
+  const sourceScope = projectObjectPaths(sourceValue, tablePaths, true);
+  const sourceDisplay = stableJson(sourceScope);
+  selectObjectPaths(sourceValue, tablePaths);
+  return {
+    sourceSha256: contentHash(sourceDisplay),
+    sourceDisplay,
+    read: (target) => readTomlMembers(target, tablePaths),
     install: (target) => {
       const targetValue = target === null || target.trim().length === 0
         ? {}
@@ -198,12 +357,80 @@ function tomlTablesProjection(
         if (hasObjectPath(targetValue, tablePath)) {
           throw new Error(`TOML target already contains owned table ${tablePath}.`);
         }
+        setObjectPath(targetValue, tablePath, getObjectPath(sourceValue, tablePath));
       }
-      return appendMarkedSection(target ?? "", ownedSource, markers);
+      return serializeTomlObject(targetValue);
     },
-    replace: (target) => replaceMarkedSection(target, ownedSource, markers),
-    remove: (target, preserveContent) => removeMarkedSection(target, preserveContent, markers),
+    replace: (target) => {
+      const targetValue = parseTomlObject(target, "TOML table target");
+      for (const tablePath of tablePaths) {
+        setObjectPath(targetValue, tablePath, getObjectPath(sourceValue, tablePath));
+      }
+      return serializeTomlObject(targetValue);
+    },
+    remove: (target, preserveContent) => removeTomlMembers(target, preserveContent, tablePaths),
   };
+}
+
+function tomlMembersProjection(source: string, memberPaths: readonly string[]): ArtifactProjection {
+  const sourceValue = parseTomlObject(source, "TOML member source");
+  const sourceScope = projectObjectPaths(sourceValue, memberPaths, true);
+  const sourceDisplay = stableJson(sourceScope);
+  return {
+    sourceSha256: contentHash(sourceDisplay),
+    sourceDisplay,
+    read: (target) => readTomlMembers(target, memberPaths),
+    install: (target) => {
+      const targetValue = target === null || target.trim().length === 0
+        ? {}
+        : parseTomlObject(target, "TOML member target");
+      for (const memberPath of memberPaths) {
+        if (hasObjectPath(targetValue, memberPath)) {
+          throw new Error(`TOML target already contains owned member ${memberPath}.`);
+        }
+        setObjectPath(targetValue, memberPath, getObjectPath(sourceValue, memberPath));
+      }
+      return serializeTomlObject(targetValue);
+    },
+    replace: (target) => {
+      const targetValue = parseTomlObject(target, "TOML member target");
+      for (const memberPath of memberPaths) {
+        setObjectPath(targetValue, memberPath, getObjectPath(sourceValue, memberPath));
+      }
+      return serializeTomlObject(targetValue);
+    },
+    remove: (target, preserveContent) => removeTomlMembers(target, preserveContent, memberPaths),
+  };
+}
+
+function readTomlMembers(target: string | null, memberPaths: readonly string[]): ProjectedScope {
+  if (target === null) return { state: "absent" };
+  let targetValue: Record<string, unknown>;
+  try {
+    targetValue = parseTomlObject(target, "TOML member target");
+  } catch (error) {
+    return { state: "malformed", detail: error instanceof Error ? error.message : String(error) };
+  }
+  const presence = memberPaths.map((memberPath) => hasObjectPath(targetValue, memberPath));
+  if (presence.every((present) => !present)) return { state: "absent" };
+  if (presence.some((present) => !present)) {
+    return { state: "malformed", detail: "TOML target contains only part of the owned member set." };
+  }
+  const display = stableJson(projectObjectPaths(targetValue, memberPaths, true));
+  return { state: "present", sha256: contentHash(display), display };
+}
+
+function removeTomlMembers(
+  target: string,
+  preserveContent: boolean,
+  memberPaths: readonly string[],
+): string | null {
+  if (preserveContent) return target;
+  const targetValue = parseTomlObject(target, "TOML member target");
+  for (const memberPath of [...memberPaths].sort((left, right) => right.length - left.length)) {
+    deleteObjectPath(targetValue, memberPath);
+  }
+  return Object.keys(targetValue).length === 0 ? null : serializeTomlObject(targetValue);
 }
 
 function selectObjectPaths(
@@ -243,6 +470,30 @@ function setObjectPath(
     }
   }
   current[leaf] = cloneJson(nextValue);
+}
+
+function deleteObjectPath(value: Record<string, unknown>, objectPath: string): void {
+  const segments = objectPath.split(".");
+  const parents: Array<{ readonly parent: Record<string, unknown>; readonly segment: string }> = [];
+  let current = value;
+  for (const segment of segments.slice(0, -1)) {
+    const child = current[segment];
+    if (!isObject(child)) return;
+    parents.push({ parent: current, segment });
+    current = child;
+  }
+  const leaf = segments.at(-1);
+  if (!leaf) return;
+  delete current[leaf];
+  for (const { parent, segment } of parents.reverse()) {
+    const child = parent[segment];
+    if (isObject(child) && Object.keys(child).length === 0) delete parent[segment];
+  }
+}
+
+function serializeTomlObject(value: Record<string, unknown>): string {
+  const serialized = stringifyToml(value);
+  return serialized.endsWith("\n") ? serialized : `${serialized}\n`;
 }
 
 function readMarkedScope(
@@ -406,6 +657,10 @@ function hasJsonPointer(value: Record<string, unknown>, pointer: string): boolea
 }
 
 function getJsonPointer(value: Record<string, unknown>, pointer: string): unknown {
+  return cloneJson(getJsonPointerValue(value, pointer));
+}
+
+function getJsonPointerValue(value: Record<string, unknown>, pointer: string): unknown {
   const segments = jsonPointerSegments(pointer);
   let current: unknown = value;
   for (const segment of segments) {
@@ -414,7 +669,7 @@ function getJsonPointer(value: Record<string, unknown>, pointer: string): unknow
     }
     current = current[segment];
   }
-  return cloneJson(current);
+  return current;
 }
 
 function setJsonPointer(value: Record<string, unknown>, pointer: string, nextValue: unknown): void {
