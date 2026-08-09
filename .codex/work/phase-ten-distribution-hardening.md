@@ -15,7 +15,7 @@ component topology and host-manifest neutrality.
 | Worktree | Implement on `codex/phase-ten-distribution-hardening` in `D:\dev\agent-context-framework-phase10`, based on clean Phase 7 evidence head `d37697611e9b0e4cf3496bc33c0e00eaefa2b14d`. | Git |
 | Project license | License project-authored distributable components under MIT, using the repository-root `LICENSE` text and `Agent Context Framework contributors` as the copyright holder. | Project licensing |
 | Registry revision | Advance the governed registry from `0.5.0` to `0.5.1`; retain the exact Phase 7 dependency graph. | Registry governance |
-| License contract | A `project` license is no longer an unspecified marker. It declares `spdx` and `noticePath`, and validation requires the installed component closure to contain the exact notice. | Registry schema and builder |
+| License contract | A `project` license is no longer an unspecified marker. It declares `spdx`, `sourcePath`, and `noticePath`, records the exact notice hash, and the non-removable `core` owner installs those bytes as `.agent-context/LICENSE.agent-context-framework`. | Registry schema and builder |
 | Source revisions | Dependency adoption records use immutable Git commit URLs when upstream exposes a source revision. The MCP, Zod, and TypeScript records are corrected to their verified package revisions; the declaration-only Node types package records the strongest reproducible upstream identity available. | Dependency adoption policy |
 | Third-party notices | Required notices retain the exact verified upstream bytes. The Woosal notice is restored to its pinned upstream form. | Registry sources |
 | Capabilities | Components declare every external executable they invoke. Git and shell requirements are explicit for Codex hooks and session optimization; dependency bundles inherit them through the existing closure. | Registry capabilities |
@@ -31,6 +31,9 @@ component topology and host-manifest neutrality.
 - The controlled fixture remains at
   `dd76c19bad1d81bf0301dbbb41753239fecb1032` with its host package and lockfile
   hashes preserved.
+- The first `0.5.1` fixture materialization exposed that registry-only project
+  license metadata did not retain the MIT text downstream. The license is now a
+  core-owned installed artifact; no dependency edge changed.
 
 ## Topology
 

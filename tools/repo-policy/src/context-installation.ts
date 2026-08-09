@@ -26,6 +26,7 @@ export type ContextLicense =
   | {
       readonly kind: "project";
       readonly spdx: string;
+      readonly sourcePath: string;
       readonly noticePath: string;
       readonly noticeSha256: string;
     }
@@ -313,12 +314,14 @@ function decodeLicense(value: unknown): ContextLicense {
     const record = strictRecord(value, "Project context license", [
       "kind",
       "spdx",
+      "sourcePath",
       "noticePath",
       "noticeSha256",
     ]);
     return {
       kind: "project",
       spdx: requiredString(record, "spdx"),
+      sourcePath: portableRelativePath(record, "sourcePath"),
       noticePath: portableRelativePath(record, "noticePath"),
       noticeSha256: sha256(record, "noticeSha256"),
     };

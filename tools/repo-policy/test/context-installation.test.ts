@@ -18,7 +18,9 @@ const registryValue = {
       name: "base",
       dependencies: [],
       capabilities: [],
-      licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: hash }],
+      licenses: [{
+        kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE", noticeSha256: hash,
+      }],
       artifacts: [{
         operation: "text-section",
         sourcePath: "registry/base.md",
@@ -32,7 +34,9 @@ const registryValue = {
       name: "tools",
       dependencies: ["base"],
       capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],
-      licenses: [{ kind: "project", spdx: "MIT", noticePath: "LICENSE", noticeSha256: hash }],
+      licenses: [{
+        kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE", noticeSha256: hash,
+      }],
       artifacts: [{
         operation: "file",
         sourcePath: "registry/tool.md",

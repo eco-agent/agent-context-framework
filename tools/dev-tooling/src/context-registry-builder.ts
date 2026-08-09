@@ -254,13 +254,16 @@ async function materializeLicenses(
       const record = strictRecord(candidate, `Component ${component} project license`, [
         "kind",
         "spdx",
+        "sourcePath",
         "noticePath",
       ]);
+      const sourcePath = portableRelativePath(record, "sourcePath");
       const noticePath = portableRelativePath(record, "noticePath");
-      const bytes = await readSourceBytes(root, noticePath);
+      const bytes = await readSourceBytes(root, sourcePath);
       return {
         kind: "project",
         spdx: requiredString(record, "spdx"),
+        sourcePath,
         noticePath,
         noticeSha256: contentHash(bytes),
       };
@@ -295,10 +298,22 @@ async function validateNoticeCoverage(root: string, registry: ContextRegistryV2)
   for (const component of registry.components) {
     for (const license of component.licenses) {
       if (license.kind === "project") {
-        const actual = contentHash(await readSourceBytes(root, license.noticePath));
+        const actual = contentHash(await readSourceBytes(root, license.sourcePath));
         if (actual !== license.noticeSha256) {
           throw new Error(
             `Component ${component.name} project notice ${license.noticePath} does not match its hash.`,
+          );
+        }
+        const installedNotice = registry.components
+          .flatMap((candidate) => candidate.artifacts)
+          .find((artifact) => artifact.targetPath === license.noticePath);
+        if (
+          !installedNotice ||
+          installedNotice.sourcePath !== license.sourcePath ||
+          installedNotice.sourceSha256 !== license.noticeSha256
+        ) {
+          throw new Error(
+            `Project notice ${license.noticePath} must install exact source ${license.sourcePath}.`,
           );
         }
         continue;

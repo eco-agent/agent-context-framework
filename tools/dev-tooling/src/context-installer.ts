@@ -340,7 +340,8 @@ export async function doctorProject(
   for (const license of licenses) {
     diagnostics.push(
       license.kind === "project"
-        ? `project license declared: ${license.spdx}; notice ${license.noticePath} (${license.noticeSha256}).`
+        ? `project license declared: ${license.spdx}; ${license.sourcePath} installs as ` +
+          `${license.noticePath} (${license.noticeSha256}).`
         : `third-party license declared: ${license.spdx} from ${license.source}@${license.revision}; ` +
           `notice ${license.noticePath} (${license.noticeSha256}).`,
     );
@@ -972,7 +973,7 @@ function uniqueLicenses(components: readonly ContextRegistryComponent[]): readon
   for (const component of components) {
     for (const license of component.licenses) {
       const key = license.kind === "project"
-        ? `${license.kind}:${license.spdx}:${license.noticePath}:${license.noticeSha256}`
+        ? `${license.kind}:${license.spdx}:${license.sourcePath}:${license.noticePath}:${license.noticeSha256}`
         : `${license.kind}:${license.source}:${license.revision}:${license.spdx}:${license.noticeSha256}`;
       result.set(key, license);
     }

@@ -65,7 +65,8 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
         assert.equal(targets.has(license.noticePath), true);
       } else {
         assert.equal(license.spdx, "MIT");
-        assert.equal(license.noticePath, "LICENSE");
+        assert.equal(license.sourcePath, "LICENSE");
+        assert.equal(license.noticePath, ".agent-context/LICENSE.agent-context-framework");
       }
     }
   }
@@ -84,7 +85,7 @@ test("registry construction requires explicit project license terms", async () =
     await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
     await assert.rejects(
       buildContextRegistry(temporaryRoot),
-      /unknown fields|spdx must be a non-empty string|noticePath must be a non-empty string/u,
+      /unknown fields|spdx must be a non-empty string|sourcePath must be a non-empty string|noticePath must be a non-empty string/u,
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });

@@ -17,7 +17,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -29,6 +30,13 @@
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "LICENSE",
+          "sourceSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3",
+          "targetPath": ".agent-context/LICENSE.agent-context-framework",
+          "mediaType": "text/plain"
         }
       ]
     },
@@ -46,7 +54,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -75,7 +84,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -408,7 +418,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -467,7 +478,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -578,7 +590,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -615,7 +628,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -635,7 +649,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -828,7 +843,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -863,7 +879,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1037,7 +1054,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1129,7 +1147,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1177,7 +1196,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1230,7 +1250,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1262,7 +1283,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1296,7 +1318,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1434,7 +1457,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1466,7 +1490,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "135959ebc52d5c78a6ccf3b470f1bea283f091fd62544618ea13f86e572d2712",
+          "sourceSha256": "58869a99e96534da19e51f5638bea1e65a08b2cdd9c49b03af3b0d3d2040b1e6",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1498,7 +1522,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
-          "sourceSha256": "b9a2658fdee8d3ed561abdff1b5587620e99fe17266339e958cf7d2acd050ecf",
+          "sourceSha256": "95309f53cbdcbe68679ac9290568afebe693bb00e922a70ee021790a4ccd8b9a",
           "targetPath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1552,7 +1576,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1618,7 +1643,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1716,7 +1742,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1817,7 +1844,8 @@
         {
           "kind": "project",
           "spdx": "MIT",
-          "noticePath": "LICENSE",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
