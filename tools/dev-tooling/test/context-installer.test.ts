@@ -550,10 +550,15 @@ test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
   assert.deepEqual(parseContextInstallerArguments(["recover"], "D:/repo"), {
     command: "recover", projectRoot: "D:/repo", component: null, output: "text",
   });
+  assert.deepEqual(parseContextInstallerArguments(["setup", "--port", "4312", "--no-open"], "D:/repo"), {
+    command: "setup", projectRoot: "D:/repo", component: null, output: "text", port: 4312, openBrowser: false,
+  });
   assert.throws(() => parseContextInstallerArguments(["add"], "D:/repo"), /requires a component/u);
   assert.throws(() => parseContextInstallerArguments(["init", "--json"], "D:/repo"), /read-only/u);
   assert.throws(() => parseContextInstallerArguments(["remove", "frontend", "--overwrite"], "D:/repo"), /valid only.*update/u);
   assert.throws(() => parseContextInstallerArguments(["update", "--overwrite", "--overwrite"], "D:/repo"), /only once/u);
+  assert.throws(() => parseContextInstallerArguments(["doctor", "--no-open"], "D:/repo"), /valid only.*setup/u);
+  assert.throws(() => parseContextInstallerArguments(["setup", "--port", "70000"], "D:/repo"), /integer from 0/u);
   assert.match(formatContextResult({
     command: "inspect",
     projectRoot: "D:/repo",

@@ -1,0 +1,17 @@
+{
+  "name": "@types/react",
+  "version": "19.2.14",
+  "source": "https://registry.npmjs.org/@types/react/-/react-19.2.14.tgz",
+  "license": "MIT",
+  "integrity": "sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==",
+  "purpose": "Type-check the copied and adapted React setup interface under the repository's strict TypeScript settings.",
+  "alternativesConsidered": [
+    "Local ambient React declarations"
+  ],
+  "maintenanceStatus": "Pinned to the declaration version selected by the T3 Code package set.",
+  "securityEvidence": "Immutable npm archive, MIT package license, declaration-only contents, frozen integrity, and packaged license were inspected.",
+  "modifications": "None; development-only declaration package.",
+  "requiredNotices": "Retain the packaged MIT license when redistribution requires it.",
+  "noticeFiles": ["LICENSE"],
+  "owner": "frontend"
+}

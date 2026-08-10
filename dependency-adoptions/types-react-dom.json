@@ -1,0 +1,17 @@
+{
+  "name": "@types/react-dom",
+  "version": "19.2.3",
+  "source": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.3.tgz",
+  "license": "MIT",
+  "integrity": "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==",
+  "purpose": "Type-check React DOM mounting for the local setup application.",
+  "alternativesConsidered": [
+    "Local ambient React DOM declarations"
+  ],
+  "maintenanceStatus": "Pinned to the declaration version selected by the T3 Code package set.",
+  "securityEvidence": "Immutable npm archive, MIT package license, declaration-only contents, frozen integrity, and packaged license were inspected.",
+  "modifications": "None; development-only declaration package.",
+  "requiredNotices": "Retain the packaged MIT license when redistribution requires it.",
+  "noticeFiles": ["LICENSE"],
+  "owner": "frontend"
+}

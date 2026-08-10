@@ -1,0 +1,26 @@
+{
+  "name": "@agent-context/setup-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build && tsc -b",
+    "clean": "tsc -b --clean",
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@agent-context/dev-tooling": "workspace:*",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.6"
+  },
+  "agentContext": {
+    "category": "tooling",
+    "owner": "frontend"
+  }
+}

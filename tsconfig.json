@@ -18,6 +18,9 @@
     },
     {
       "path": "./tools/dev-tooling"
+    },
+    {
+      "path": "./tools/setup-ui"
     }
   ]
 }

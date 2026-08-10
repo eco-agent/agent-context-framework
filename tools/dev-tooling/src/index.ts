@@ -66,3 +66,37 @@ export {
   type AcceptanceWorkspaceFailureStages,
   type RepositorySnapshot,
 } from "./acceptance-verification.js";
+export {
+  addComponent,
+  doctorProject,
+  initProject,
+  inspectProject,
+  loadContextRegistry,
+  removeComponent,
+  updateProject,
+  type ArtifactAssessment,
+  type ContextDiffResult,
+  type ContextDoctorResult,
+  type ContextInspection,
+  type ContextOperationResult,
+  type ContextRecoveryResult,
+  type ContextUpdateMode,
+} from "./context-installer.js";
+export {
+  installSetupComponents,
+  readSetupSnapshot,
+  startSetupServer,
+  type RunningSetupServer,
+  type SetupServerOptions,
+} from "./setup-server.js";
+export {
+  decodeSetupInstallOutcome,
+  decodeSetupSnapshot,
+  parseSetupInstallCommand,
+  type SetupCapabilitySummary,
+  type SetupComponentSummary,
+  type SetupConflict,
+  type SetupInstallCommand,
+  type SetupInstallOutcome,
+  type SetupSnapshot,
+} from "./setup-contract.js";

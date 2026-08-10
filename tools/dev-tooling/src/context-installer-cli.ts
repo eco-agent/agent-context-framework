@@ -23,6 +23,7 @@ import {
   type RuntimeBootstrapMode,
   type RuntimeBootstrapResult,
 } from "./runtime-bootstrap.js";
+import { startSetupServer } from "./setup-server.js";
 
 type ContextInstallerArguments =
   | {
@@ -56,7 +57,17 @@ type ContextInstallerArguments =
       readonly component: null;
       readonly output: "text";
       readonly mode: RuntimeBootstrapMode;
+    }
+  | {
+      readonly command: "setup";
+      readonly projectRoot: string;
+      readonly component: null;
+      readonly output: "text";
+      readonly port: number;
+      readonly openBrowser: boolean;
     };
+
+type ExecutableContextArguments = Exclude<ContextInstallerArguments, { readonly command: "setup" }>;
 
 type ContextCommandResult =
   | ContextOperationResult
@@ -77,6 +88,9 @@ export function parseContextInstallerArguments(
   let json = false;
   let noInstall = false;
   let updateMode: ContextUpdateMode = "preserve-local";
+  let setupPort: number | null = null;
+  let openBrowser = true;
+  let noOpen = false;
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
     if (argument === "--cwd") {
@@ -91,6 +105,18 @@ export function parseContextInstallerArguments(
     } else if (argument === "--overwrite") {
       if (updateMode === "overwrite-selected") throw new Error("--overwrite may be specified only once.");
       updateMode = "overwrite-selected";
+    } else if (argument === "--port") {
+      const value = arguments_[index + 1];
+      if (value === undefined) throw new Error("--port requires a number.");
+      const parsed = Number(value);
+      if (!Number.isInteger(parsed) || parsed < 0 || parsed > 65_535) {
+        throw new Error("--port must be an integer from 0 through 65535.");
+      }
+      setupPort = parsed;
+      index += 1;
+    } else if (argument === "--no-open") {
+      openBrowser = false;
+      noOpen = true;
     } else if (!argument || argument.startsWith("-")) {
       throw new Error(`Unknown agent-context argument ${argument ?? ""}.`);
     } else {
@@ -108,10 +134,11 @@ export function parseContextInstallerArguments(
     command !== "remove" &&
     command !== "doctor" &&
     command !== "recover" &&
-    command !== "bootstrap-runtime"
+    command !== "bootstrap-runtime" &&
+    command !== "setup"
   ) {
     throw new Error(
-      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]> [--cwd PROJECT] [--json].",
+      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]|setup [--port PORT] [--no-open]> [--cwd PROJECT] [--json].",
     );
   }
   if (json && command !== "inspect" && command !== "diff" && command !== "doctor") {
@@ -122,6 +149,12 @@ export function parseContextInstallerArguments(
   }
   if (updateMode === "overwrite-selected" && command !== "update") {
     throw new Error("--overwrite is valid only with agent-context update.");
+  }
+  if (setupPort !== null && command !== "setup") {
+    throw new Error("--port is valid only with agent-context setup.");
+  }
+  if (noOpen && command !== "setup") {
+    throw new Error("--no-open is valid only with agent-context setup.");
   }
   if (command === "add" || command === "remove") {
     const component = positionals[1];
@@ -144,6 +177,16 @@ export function parseContextInstallerArguments(
       component: null,
       output: "text",
       mode: noInstall ? "no-install" : "install-and-build",
+    };
+  }
+  if (command === "setup") {
+    return {
+      command,
+      projectRoot,
+      component: null,
+      output: "text",
+      port: setupPort ?? 0,
+      openBrowser,
     };
   }
   return { command, projectRoot, component: null, output: json ? "json" : "text" };
@@ -211,7 +254,7 @@ function indent(value: string): string {
   return value.split("\n").map((line) => `  ${line}`).join("\n").trimEnd();
 }
 
-async function execute(arguments_: ContextInstallerArguments): Promise<ContextCommandResult> {
+async function execute(arguments_: ExecutableContextArguments): Promise<ContextCommandResult> {
   switch (arguments_.command) {
     case "inspect":
       return await inspectProject(arguments_.projectRoot, frameworkRoot);
@@ -239,6 +282,18 @@ async function execute(arguments_: ContextInstallerArguments): Promise<ContextCo
 
 async function main(): Promise<void> {
   const arguments_ = parseContextInstallerArguments(process.argv.slice(2), process.cwd());
+  if (arguments_.command === "setup") {
+    const running = await startSetupServer({
+      projectRoot: arguments_.projectRoot,
+      frameworkRoot,
+      port: arguments_.port,
+      openBrowser: arguments_.openBrowser,
+    });
+    console.log(`Agent Context Setup: ${running.url}`);
+    console.log("Press Ctrl+C to stop the local setup server.");
+    await waitForShutdown(running.close);
+    return;
+  }
   const result = await execute(arguments_);
   console.log(arguments_.output === "json" ? JSON.stringify(result, null, 2) : formatContextResult(result));
   if (
@@ -248,6 +303,18 @@ async function main(): Promise<void> {
   ) {
     process.exitCode = 1;
   }
+}
+
+async function waitForShutdown(close: () => Promise<void>): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const shutdown = () => {
+      process.off("SIGINT", shutdown);
+      process.off("SIGTERM", shutdown);
+      void close().then(resolve, reject);
+    };
+    process.once("SIGINT", shutdown);
+    process.once("SIGTERM", shutdown);
+  });
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

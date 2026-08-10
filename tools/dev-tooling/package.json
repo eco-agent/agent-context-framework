@@ -9,6 +9,10 @@
     ".": {
       "types": "./dist/src/index.d.ts",
       "import": "./dist/src/index.js"
+    },
+    "./setup-contract": {
+      "types": "./dist/src/setup-contract.d.ts",
+      "import": "./dist/src/setup-contract.js"
     }
   },
   "sideEffects": false,

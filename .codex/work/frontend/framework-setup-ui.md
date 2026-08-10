@@ -7,10 +7,11 @@ The interface helps a maintainer inspect one explicitly authorized repository an
 ## Evidence and ownership
 
 - Product precedent: T3 Code settings at pinned revision `67ef189d8b7b68c3096350db404bd649704ec6f2`.
-- Evidence: `.codex/work/frontend/framework-setup-ui-reference.md`.
+- Source evidence: `.codex/work/frontend/framework-setup-ui-reference.md`.
+- Live localhost evidence: `.codex/work/frontend/framework-setup-ui-live-reference.md`.
 - Source/materialization contract: `.codex/work/framework-setup-ui.implementation.json` and `.codex/work/frontend/framework-setup-ui-materialization.json`.
-- Browser application, layout, and interaction owner: `tools/setup-ui`.
-- Registry and mutation owner: `tools/dev-tooling` plus existing `tools/repo-policy` contracts.
+- Browser application, layout, interaction, and compiled-asset owner: `tools/setup-ui`.
+- Loopback HTTP, registry, and mutation owner: `tools/dev-tooling` plus existing `tools/repo-policy` contracts.
 
 ## Information topology
 

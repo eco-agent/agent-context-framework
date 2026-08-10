@@ -6,8 +6,8 @@ Create the first bounded slice of a local-first framework setup application: a t
 
 ## Decisions
 
-- Owner: `tools/setup-ui` owns the browser application, HTTP boundary, and setup launcher.
-- Owner: `tools/dev-tooling` remains the only installer implementation. The setup application calls its exported inspection, registry, initialization, and add operations.
+- Owner: `tools/setup-ui` owns the browser application and its compiled static assets.
+- Owner: `tools/dev-tooling` owns the loopback HTTP boundary and setup launcher beside the installer implementation. The setup boundary calls its existing inspection, registry, initialization, and add operations directly.
 - T3 Code at commit `67ef189d8b7b68c3096350db404bd649704ec6f2` is the pinned product precedent. Its MIT-licensed settings shell, search interaction, controls, and visual tokens are copied before adaptation.
 - The first slice is additive. Existing selected components are shown as installed and cannot be removed in this flow. Removal, update, repair, and overwrite controls are non-goals for this slice.
 - The server binds only to `127.0.0.1`. A random token is required on the initial document request and every API request. The target root is fixed when the process starts and cannot be supplied by browser input.
@@ -23,6 +23,7 @@ Create the first bounded slice of a local-first framework setup application: a t
 - Upstream precedent: `https://github.com/pingdotgg/t3code.git` at `67ef189d8b7b68c3096350db404bd649704ec6f2`
 - Upstream license: MIT, copyright 2026 T3 Tools Inc.
 - Live `app.t3.codes` inspection was attempted on 2026-08-10; the hosted application returned `Non-compliant action` to the automated browser. The pinned repository source is therefore the authoritative implementation evidence.
+- The official `npx t3` package was subsequently launched locally through its generated Windows binary and paired successfully. Its live settings route confirmed the open-row surface and compact navigation recorded in `.codex/work/frontend/framework-setup-ui-live-reference.md`.
 
 ## Topology
 
@@ -77,7 +78,8 @@ The slice covers loading, uninitialized, populated, empty-search, hover, focus-v
 
 ## Verification
 
-- Focused TypeScript build for `tools/setup-ui` and `tools/dev-tooling`.
-- Focused tests for token enforcement, request parsing, additive installation sequencing, and CLI argument parsing.
-- Local smoke against a temporary non-Node repository, including loading the page and applying a component.
+- Focused TypeScript builds pass for `tools/setup-ui` and `tools/dev-tooling`.
+- Focused tests pass for token enforcement, malformed and unknown requests, real materializer installation, and CLI argument parsing.
+- Dependency adoption policy passes for React, React DOM, their declarations, and the Vite Plus core alias.
+- Local browser smoke passed against a temporary non-Node repository: the setup page loaded registry `0.5.2`, installed `core`, refreshed to `Installed`, and reported four written paths.
 - No broad acceptance run unless a regression requires it.
