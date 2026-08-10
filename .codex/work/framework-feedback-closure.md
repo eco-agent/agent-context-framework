@@ -24,7 +24,11 @@ explain the real installed closure before an operator applies it.
 ## State
 
 - Audit and owner discovery are complete.
-- Implementation and focused verification are in progress.
+- The bounded correction slices and their focused verification are complete.
+- Registry revision `0.6.0` contains 29 governed components and passes generation
+  and exact-closure checks.
+- Broad acceptance and live-browser visual review were not run in this bounded
+  pass; those gates remain explicitly request-owned.
 - No push or deployment is authorized.
 
 ## Topology
@@ -35,9 +39,11 @@ project policy ----------------------> declared contract paths
       v                                         v
 seed-file ownership                    installed core instructions
 
-frontend ----------------------------> neutral responsive CSS skill
+skill-responsive-css-architect ------> neutral responsive CSS workflow
+
+frontend-tailwind -------------------> frontend + responsive skill
       |
-      +-- frontend-tailwind ----------> Tailwind instruction + skill
+      +------------------------------> Tailwind instruction + skill
 
 registry + project state ------------> inspect / dry-run / setup disclosure
 ```
@@ -89,5 +95,25 @@ registry + project state ------------> inspect / dry-run / setup disclosure
 
 ## Verification evidence
 
-- Pending focused owner checks. Broad acceptance remains outside this bounded
+- Both responsive-CSS skills passed the skill package validator. A bounded
+  forward-use exercise kept the plain-CSS workflow neutral and selected the
+  Tailwind-only references, helper, plugins, and operating model only for the
+  explicit Tailwind workflow.
+- Repository-policy contract and doctor tests passed `7/7`. Seed projection and
+  installer lifecycle tests passed `24/24`; the isolated repository-policy suite
+  passed `29/29`.
+- Component-plan installer and CLI tests passed `19/19`; the focused dormant-hook
+  disclosure assertion passed `1/1`.
+- `pnpm registry:build` and `pnpm registry:check` passed for revision `0.6.0`.
+  The integrated registry, policy, Codex-agent, and Codex-runtime selection set
+  passed `21/21`, including instruction anti-dilution, neutral/Tailwind closure,
+  seed-file behavior, non-Node installation, licensing/notices, and Wave 4
+  exclusion assertions.
+- Localhost setup-server tests passed `3/3`. Dev-tooling and setup-UI TypeScript
+  checks passed. The setup package now invokes the repository's pinned Vite Plus
+  `vp` executable; its production bundle completed successfully (22 modules,
+  209.83 kB JavaScript before gzip). A focused review also found and closed the
+  stale-preview race: installation now requires a ready preview whose canonical
+  selection key exactly matches the current selection.
+- Broad acceptance and downstream fixture migration remain outside this bounded
   correction pass unless explicitly requested as the final acceptance contract.
