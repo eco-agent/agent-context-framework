@@ -18,6 +18,34 @@ export interface CodexInterfaceHealth {
   readonly diagnostics: readonly string[];
 }
 
+export interface ContextActivationDisclosure {
+  readonly id: "codex-project-trust" | "codex-hooks-session-binding";
+  readonly status: "required" | "dormant";
+  readonly message: string;
+}
+
+export function codexInterfaceSelectionDisclosures(
+  resolvedComponents: readonly string[],
+): readonly ContextActivationDisclosure[] {
+  const selected = new Set(resolvedComponents);
+  const disclosures: ContextActivationDisclosure[] = [];
+  if ([...selected].some((component) => WAVE_FOUR_COMPONENTS.has(component))) {
+    disclosures.push({
+      id: "codex-project-trust",
+      status: "required",
+      message: "Codex must trust this repository before it loads project-scoped configuration.",
+    });
+  }
+  if (selected.has("codex-hooks") || selected.has("codex-runtime")) {
+    disclosures.push({
+      id: "codex-hooks-session-binding",
+      status: "dormant",
+      message: "Hooks emit no decision until a valid scoped session binding exists; no binding producer is distributed.",
+    });
+  }
+  return disclosures;
+}
+
 export async function validateWaveFourRegistryReferences(
   frameworkRoot: string,
   registry: ContextRegistryV2,

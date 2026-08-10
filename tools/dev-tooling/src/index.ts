@@ -33,9 +33,11 @@ export {
   type RuntimeIsolationResult,
 } from "./runtime-isolation.js";
 export {
+  codexInterfaceSelectionDisclosures,
   inspectInstalledCodexInterface,
   unsafeReferenceDiagnostics,
   validateWaveFourRegistryReferences,
+  type ContextActivationDisclosure,
   type CodexInterfaceHealth,
 } from "./codex-interface.js";
 export {
@@ -72,6 +74,7 @@ export {
   initProject,
   inspectProject,
   loadContextRegistry,
+  planProjectSelection,
   removeComponent,
   updateProject,
   type ArtifactAssessment,
@@ -80,6 +83,11 @@ export {
   type ContextInspection,
   type ContextOperationResult,
   type ContextRecoveryResult,
+  type ContextAssessmentCount,
+  type ContextSelectionDrift,
+  type ContextSelectionFootprint,
+  type ContextSelectionPreview,
+  type ContextSelectionStatus,
   type ContextUpdateMode,
 } from "./context-installer.js";
 export {

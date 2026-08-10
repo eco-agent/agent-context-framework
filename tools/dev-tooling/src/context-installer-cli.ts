@@ -7,6 +7,7 @@ import {
   doctorProject,
   initProject,
   inspectProject,
+  planProjectSelection,
   recoverProject,
   removeComponent,
   updateProject,
@@ -16,6 +17,7 @@ import {
   type ContextInspection,
   type ContextOperationResult,
   type ContextRecoveryResult,
+  type ContextSelectionPreview,
   type ContextUpdateMode,
 } from "./context-installer.js";
 import {
@@ -36,6 +38,13 @@ type ContextInstallerArguments =
       readonly command: "inspect" | "diff" | "doctor";
       readonly projectRoot: string;
       readonly component: null;
+      readonly output: "text" | "json";
+    }
+  | {
+      readonly command: "plan";
+      readonly projectRoot: string;
+      readonly component: null;
+      readonly components: readonly string[];
       readonly output: "text" | "json";
     }
   | {
@@ -84,6 +93,7 @@ type ContextCommandResult =
   | ContextInspection
   | ContextDoctorResult
   | ContextRecoveryResult
+  | ContextSelectionPreview
   | RuntimeBootstrapResult;
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -93,6 +103,7 @@ export const CONTEXT_INSTALLER_HELP = `Agent Context Framework
 Usage:
   pnpm agent-context init [--cwd PROJECT]
   pnpm agent-context inspect [--cwd PROJECT] [--json]
+  pnpm agent-context plan [COMPONENT...] [--cwd PROJECT] [--json]
   pnpm agent-context diff [--cwd PROJECT] [--json]
   pnpm agent-context add COMPONENT [--cwd PROJECT]
   pnpm agent-context update [COMPONENT] [--overwrite] [--cwd PROJECT]
@@ -104,7 +115,8 @@ Usage:
   pnpm agent-context help
 
 Behavior:
-  inspect, diff, and doctor are read-only. setup starts a token-protected
+  inspect, plan, diff, and doctor are read-only. plan resolves proposed additions
+  through the real installer planner without writing. setup starts a token-protected
   loopback UI and installs through the same transactional materializer.
   Normal update preserves local managed edits; --overwrite replaces only the
   selected registry-owned scopes. The CLI never pushes or deploys.`;
@@ -163,6 +175,7 @@ export function parseContextInstallerArguments(
   }
   if (
     command !== "inspect" &&
+    command !== "plan" &&
     command !== "init" &&
     command !== "add" &&
     command !== "diff" &&
@@ -174,10 +187,10 @@ export function parseContextInstallerArguments(
     command !== "setup"
   ) {
     throw new Error(
-      "Usage: pnpm agent-context <inspect|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]|setup [--port PORT] [--no-open]> [--cwd PROJECT] [--json].",
+      "Usage: pnpm agent-context <inspect|plan [COMPONENT...]|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]|setup [--port PORT] [--no-open]> [--cwd PROJECT] [--json].",
     );
   }
-  if (json && command !== "inspect" && command !== "diff" && command !== "doctor") {
+  if (json && command !== "inspect" && command !== "plan" && command !== "diff" && command !== "doctor") {
     throw new Error(`--json is read-only and cannot be used with agent-context ${command}.`);
   }
   if (noInstall && command !== "bootstrap-runtime") {
@@ -197,6 +210,20 @@ export function parseContextInstallerArguments(
     if (!component) throw new Error(`agent-context ${command} requires a component name.`);
     if (positionals.length > 2) throw new Error(`agent-context ${command} received too many arguments.`);
     return { command, projectRoot, component, output: "text" };
+  }
+  if (command === "plan") {
+    const components = positionals.slice(1);
+    const duplicate = components.find((component, index) => components.indexOf(component) !== index);
+    if (duplicate !== undefined) {
+      throw new Error(`agent-context plan contains duplicate component ${duplicate}.`);
+    }
+    return {
+      command,
+      projectRoot,
+      component: null,
+      components,
+      output: json ? "json" : "text",
+    };
   }
   if (command === "update") {
     if (positionals.length > 2) throw new Error("agent-context update received too many arguments.");
@@ -233,10 +260,14 @@ export function formatContextResult(result: ContextCommandResult): string {
   if (result.command === "inspect") {
     lines.push(`initialized: ${result.initialized ? "yes" : "no"}`);
     lines.push(`registry: ${result.registryRevision}`);
-    lines.push(`components: ${result.selectedComponents.join(", ") || "none"}`);
+    lines.push(...formatSelectionSummary(result.selection));
     lines.push(`AGENTS.md: ${result.hasAgents ? "present" : "absent"}`);
     lines.push(`Codex config: ${result.hasCodexConfig ? "present" : "absent"}`);
     lines.push(`Codex hooks: ${result.hasCodexHooks ? "present" : "absent"}`);
+    return lines.join("\n");
+  }
+  if (result.command === "plan") {
+    lines.push(...formatSelectionSummary(result));
     return lines.join("\n");
   }
   if (result.command === "bootstrap-runtime") {
@@ -278,6 +309,33 @@ export function formatContextResult(result: ContextCommandResult): string {
   return lines.join("\n");
 }
 
+function formatSelectionSummary(selection: ContextSelectionPreview): readonly string[] {
+  const capabilities = selection.capabilities.map((capability) =>
+    `${capability.requirement} ${capability.kind}:${capability.name}`);
+  const licenses = selection.licenses.map((license) =>
+    license.kind === "project"
+      ? `${license.spdx} project notice ${license.noticePath}`
+      : `${license.spdx} ${license.source}@${license.revision} notice ${license.noticePath}`);
+  return [
+    `selection: ${selection.status}`,
+    `direct components: ${selection.directComponents.join(", ") || "none"}`,
+    `requested additions: ${selection.requestedComponents.join(", ") || "none"}`,
+    `resolved components: ${selection.resolvedComponents.join(", ") || "none"}`,
+    `transitive components: ${selection.transitiveComponents.join(", ") || "none"}`,
+    `bundles: ${selection.bundleComponents.join(", ") || "none"}`,
+    `footprint: ${selection.footprint.componentCount} components, ${selection.footprint.artifactCount} artifacts, ` +
+      `${selection.footprint.targetCount} targets, ${selection.footprint.skillTargetCount} skill targets, ` +
+      `${selection.footprint.runtimeTargetCount} runtime targets`,
+    `capabilities (${selection.capabilityAvailability}): ${capabilities.join(", ") || "none"}`,
+    `licenses: ${licenses.join(", ") || "none"}`,
+    `planned writes: ${selection.drift.plannedWritePaths.join(", ") || "none"}`,
+    ...selection.drift.assessmentCounts.map((entry) => `assessment ${entry.status}: ${entry.count}`),
+    ...selection.activations.map((activation) => `${activation.status} ${activation.id}: ${activation.message}`),
+    ...selection.drift.conflicts.map((conflict) =>
+      `conflict: ${conflict.targetPath} [${conflict.component}] (${conflict.detail})`),
+  ];
+}
+
 function formatAssessment(assessment: ArtifactAssessment): string {
   const lines = [
     `${assessment.status}: ${assessment.targetPath} [${assessment.component}] (${assessment.detail})`,
@@ -294,6 +352,12 @@ async function execute(arguments_: ExecutableContextArguments): Promise<ContextC
   switch (arguments_.command) {
     case "inspect":
       return await inspectProject(arguments_.projectRoot, frameworkRoot);
+    case "plan":
+      return await planProjectSelection(
+        arguments_.projectRoot,
+        frameworkRoot,
+        arguments_.components,
+      );
     case "init":
       return await initProject(arguments_.projectRoot, frameworkRoot);
     case "add":
@@ -340,6 +404,7 @@ async function main(): Promise<void> {
     ("plan" in result && result.plan.status === "blocked") ||
     (result.command === "diff" && !result.current) ||
     (result.command === "doctor" && result.health === "attention")
+    || (result.command === "plan" && result.status === "blocked")
   ) {
     process.exitCode = 1;
   }

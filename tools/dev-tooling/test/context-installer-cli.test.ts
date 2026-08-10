@@ -14,8 +14,32 @@ test("CLI help is explicit and repository-independent", () => {
     output: "text",
   });
   assert.equal(parseContextInstallerArguments(["add", "core", "-h"], "D:\\project").command, "help");
-  assert.match(CONTEXT_INSTALLER_HELP, /inspect, diff, and doctor are read-only/u);
+  assert.match(CONTEXT_INSTALLER_HELP, /inspect, plan, diff, and doctor are read-only/u);
   assert.match(CONTEXT_INSTALLER_HELP, /token-protected\s+loopback UI/u);
   assert.match(CONTEXT_INSTALLER_HELP, /--overwrite replaces only the\s+selected registry-owned scopes/u);
   assert.match(CONTEXT_INSTALLER_HELP, /never pushes or deploys/u);
+});
+
+test("CLI plan accepts zero or many unique component additions as read-only JSON", () => {
+  assert.deepEqual(
+    parseContextInstallerArguments(["plan", "codex-runtime", "repository-policy", "--json"], "D:\\project"),
+    {
+      command: "plan",
+      projectRoot: "D:\\project",
+      component: null,
+      components: ["codex-runtime", "repository-policy"],
+      output: "json",
+    },
+  );
+  assert.deepEqual(parseContextInstallerArguments(["plan"], "D:\\project"), {
+    command: "plan",
+    projectRoot: "D:\\project",
+    component: null,
+    components: [],
+    output: "text",
+  });
+  assert.throws(
+    () => parseContextInstallerArguments(["plan", "core", "core"], "D:\\project"),
+    /duplicate component core/u,
+  );
 });

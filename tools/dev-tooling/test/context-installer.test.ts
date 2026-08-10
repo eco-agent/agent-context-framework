@@ -13,8 +13,10 @@ import {
   doctorProject,
   initProject,
   inspectProject,
+  planProjectSelection,
   recoverProject,
   removeComponent,
+  type ContextSelectionPreview,
   updateProject,
 } from "../src/context-installer.js";
 import { formatContextResult, parseContextInstallerArguments } from "../src/context-installer-cli.js";
@@ -74,6 +76,14 @@ test("add resolves dependencies, reports capabilities, and refuses untracked who
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
     await mkdir(path.join(fixture.projectRoot, ".codex"), { recursive: true });
     await writeFile(path.join(fixture.projectRoot, ".codex", "tool.md"), "project owned\n");
+    const preview = await planProjectSelection(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      ["tools"],
+    );
+    assert.equal(preview.status, "blocked");
+    assert.deepEqual(preview.drift.plannedWritePaths, []);
+    assert.equal(preview.drift.conflicts.some((item) => item.status === "untracked-conflict"), true);
     const blocked = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
     assert.equal(blocked.plan.status, "blocked");
     assert.deepEqual(blocked.writtenPaths, []);
@@ -83,7 +93,13 @@ test("add resolves dependencies, reports capabilities, and refuses untracked who
     const added = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "tools");
     assert.equal(added.plan.status, "ready");
     assert.deepEqual(added.writtenPaths, [".codex/tool.md", CONTEXT_CONFIG_PATH, CONTEXT_LOCK_PATH]);
-    assert.deepEqual((await inspectProject(fixture.projectRoot, fixture.frameworkRoot)).selectedComponents, ["core", "tools"]);
+    assert.deepEqual(
+      (await inspectProject(fixture.projectRoot, fixture.frameworkRoot)).selection,
+      {
+        ...(await planProjectSelection(fixture.projectRoot, fixture.frameworkRoot, [])),
+        command: "plan",
+      },
+    );
     const doctor = await doctorProject(fixture.projectRoot, fixture.frameworkRoot);
     assert.equal(doctor.health, "healthy");
     assert.deepEqual(doctor.capabilities, [{ kind: "runtime", name: "network", requirement: "required" }]);
@@ -99,6 +115,51 @@ test("add resolves dependencies, reports capabilities, and refuses untracked who
   }
 });
 
+test("selection preview resolves direct and transitive components through the real planner without writes", async () => {
+  const fixture = await createFixture();
+  try {
+    const preview = await planProjectSelection(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      ["bundle"],
+    );
+    assert.equal(preview.status, "changes-ready");
+    assert.equal(preview.initialized, false);
+    assert.deepEqual(preview.currentDirectComponents, []);
+    assert.deepEqual(preview.requestedComponents, ["bundle"]);
+    assert.deepEqual(preview.directComponents, ["core", "bundle"]);
+    assert.deepEqual(preview.resolvedComponents, ["core", "tools", "bundle"]);
+    assert.deepEqual(preview.transitiveComponents, ["tools"]);
+    assert.deepEqual(preview.bundleComponents, ["bundle"]);
+    assert.deepEqual(preview.footprint, {
+      componentCount: 3,
+      directComponentCount: 2,
+      transitiveComponentCount: 1,
+      bundleCount: 1,
+      artifactCount: 2,
+      targetCount: 2,
+      skillTargetCount: 0,
+      runtimeTargetCount: 0,
+    });
+    assert.deepEqual(preview.capabilities, [
+      { kind: "runtime", name: "network", requirement: "required" },
+    ]);
+    assert.equal(preview.licenses.length, 1);
+    assert.equal(preview.capabilityAvailability, "not-inspected");
+    assert.equal(preview.trustRequired, false);
+    assert.deepEqual(preview.activations, []);
+    assert.equal(preview.drift.plannedWritePaths.includes("AGENTS.md"), true);
+    assert.equal(preview.drift.plannedWritePaths.includes(".codex/tool.md"), true);
+    assert.equal(preview.drift.plannedWritePaths.includes(CONTEXT_CONFIG_PATH), true);
+    assert.equal(preview.drift.plannedWritePaths.includes(CONTEXT_LOCK_PATH), true);
+    assert.equal(await fileExists(path.join(fixture.projectRoot, "AGENTS.md")), false);
+    assert.equal(await fileExists(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH)), false);
+    assert.equal(await fileExists(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH)), false);
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("seed-file adopts existing content and preserves it across update, remove, and re-add", async () => {
   const fixture = await createFixture();
   try {
@@ -106,6 +167,10 @@ test("seed-file adopts existing content and preserves it across update, remove, 
     await mkdir(path.dirname(seedPath), { recursive: true });
     await writeFile(seedPath, "{\"project\":true}\n", "utf8");
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
+
+    const preview = await planProjectSelection(fixture.projectRoot, fixture.frameworkRoot, ["seed"]);
+    assert.equal(preview.status, "changes-ready");
+    assert.deepEqual(preview.drift.plannedWritePaths, [CONTEXT_CONFIG_PATH, CONTEXT_LOCK_PATH]);
 
     const added = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "seed");
     assert.equal(added.plan.status, "ready");
@@ -640,7 +705,7 @@ test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
     hasCodexConfig: false,
     hasCodexHooks: false,
     registryRevision: "0.2.0",
-    selectedComponents: [],
+    selection: selectionPreviewFixture("D:/repo"),
   }), /initialized: no/u);
 });
 
@@ -758,6 +823,14 @@ async function writeRegistry(
           targetPath: toolsTarget, mediaType: "text/markdown",
         }],
       },
+      {
+        name: "bundle", revision: componentRevision, dependencies: ["tools"], capabilities: [],
+        licenses: [{
+          kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",
+          noticeSha256: "a".repeat(64),
+        }],
+        artifacts: [],
+      },
     ],
   };
   await writeFile(path.join(frameworkRoot, "registry", "registry.json"), `${JSON.stringify(registry, null, 2)}\n`);
@@ -796,6 +869,44 @@ async function structuredRegistryArtifacts(frameworkRoot: string): Promise<reado
 
 function sha(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
+}
+
+function selectionPreviewFixture(projectRoot: string): ContextSelectionPreview {
+  return {
+    command: "plan",
+    projectRoot,
+    initialized: false,
+    registryRevision: "0.2.0",
+    status: "changes-ready",
+    currentDirectComponents: [],
+    requestedComponents: [],
+    directComponents: ["core"],
+    resolvedComponents: ["core"],
+    transitiveComponents: [],
+    bundleComponents: [],
+    footprint: {
+      componentCount: 1,
+      directComponentCount: 1,
+      transitiveComponentCount: 0,
+      bundleCount: 0,
+      artifactCount: 1,
+      targetCount: 1,
+      skillTargetCount: 0,
+      runtimeTargetCount: 0,
+    },
+    capabilities: [],
+    capabilityAvailability: "not-inspected",
+    licenses: [],
+    trustRequired: false,
+    activations: [],
+    drift: {
+      assessmentCounts: [{ status: "uninstalled", count: 1 }],
+      conflicts: [],
+      plannedWritePaths: ["AGENTS.md", CONTEXT_CONFIG_PATH, CONTEXT_LOCK_PATH],
+      configChangeRequired: true,
+      lockChangeRequired: true,
+    },
+  };
 }
 
 async function snapshotProject(projectRoot: string): Promise<readonly string[]> {

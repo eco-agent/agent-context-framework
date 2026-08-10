@@ -55,7 +55,7 @@ export async function readSetupSnapshot(
     projectRoot: inspection.projectRoot,
     initialized: inspection.initialized,
     registryRevision: inspection.registryRevision,
-    selectedComponents: inspection.selectedComponents,
+    selectedComponents: inspection.selection.directComponents,
     components,
   };
 }

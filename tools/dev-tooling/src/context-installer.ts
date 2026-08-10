@@ -41,7 +41,9 @@ import {
   type RuntimeBootstrapStatus,
 } from "./runtime-bootstrap.js";
 import {
+  codexInterfaceSelectionDisclosures,
   inspectInstalledCodexInterface,
+  type ContextActivationDisclosure,
   type CodexInterfaceHealth,
 } from "./codex-interface.js";
 
@@ -61,6 +63,17 @@ export type ArtifactAssessmentStatus =
   | "untracked-conflict"
   | "obsolete-unchanged"
   | "obsolete-modified";
+
+const ARTIFACT_ASSESSMENT_STATUSES: readonly ArtifactAssessmentStatus[] = [
+  "uninstalled",
+  "unchanged",
+  "locally-modified",
+  "upstream-changed",
+  "diverged",
+  "untracked-conflict",
+  "obsolete-unchanged",
+  "obsolete-modified",
+];
 
 export interface ArtifactAssessment {
   readonly identity: string;
@@ -105,6 +118,53 @@ export interface ContextDiffResult {
   readonly current: boolean;
 }
 
+export type ContextSelectionStatus = "current" | "changes-ready" | "blocked";
+
+export interface ContextAssessmentCount {
+  readonly status: ArtifactAssessmentStatus;
+  readonly count: number;
+}
+
+export interface ContextSelectionFootprint {
+  readonly componentCount: number;
+  readonly directComponentCount: number;
+  readonly transitiveComponentCount: number;
+  readonly bundleCount: number;
+  readonly artifactCount: number;
+  readonly targetCount: number;
+  readonly skillTargetCount: number;
+  readonly runtimeTargetCount: number;
+}
+
+export interface ContextSelectionDrift {
+  readonly assessmentCounts: readonly ContextAssessmentCount[];
+  readonly conflicts: readonly ArtifactAssessment[];
+  readonly plannedWritePaths: readonly string[];
+  readonly configChangeRequired: boolean;
+  readonly lockChangeRequired: boolean;
+}
+
+export interface ContextSelectionPreview {
+  readonly command: "plan";
+  readonly projectRoot: string;
+  readonly initialized: boolean;
+  readonly registryRevision: string;
+  readonly status: ContextSelectionStatus;
+  readonly currentDirectComponents: readonly string[];
+  readonly requestedComponents: readonly string[];
+  readonly directComponents: readonly string[];
+  readonly resolvedComponents: readonly string[];
+  readonly transitiveComponents: readonly string[];
+  readonly bundleComponents: readonly string[];
+  readonly footprint: ContextSelectionFootprint;
+  readonly capabilities: readonly ContextCapability[];
+  readonly capabilityAvailability: "not-inspected";
+  readonly licenses: readonly ContextLicense[];
+  readonly trustRequired: boolean;
+  readonly activations: readonly ContextActivationDisclosure[];
+  readonly drift: ContextSelectionDrift;
+}
+
 export interface ContextInspection {
   readonly command: "inspect";
   readonly projectRoot: string;
@@ -113,7 +173,7 @@ export interface ContextInspection {
   readonly hasCodexConfig: boolean;
   readonly hasCodexHooks: boolean;
   readonly registryRevision: string;
-  readonly selectedComponents: readonly string[];
+  readonly selection: ContextSelectionPreview;
 }
 
 export interface ContextDoctorResult {
@@ -275,22 +335,105 @@ export async function diffProject(
   return { command: "diff", projectRoot: resolvedProjectRoot, plan, current };
 }
 
+export async function planProjectSelection(
+  projectRoot: string,
+  frameworkRoot: string,
+  requestedComponents: readonly string[],
+): Promise<ContextSelectionPreview> {
+  const resolvedProjectRoot = await realpath(projectRoot);
+  const registry = await loadContextRegistry(frameworkRoot);
+  requireKnownUniqueComponents(registry, requestedComponents);
+  const existingConfig = await readOptionalConfig(resolvedProjectRoot);
+  const previousLock = await readOptionalLock(resolvedProjectRoot);
+  const currentDirectComponents = existingConfig?.components ?? [];
+  const directComponents = existingConfig === null
+    ? uniqueInOrder([DEFAULT_CONTEXT_COMPONENT, ...requestedComponents])
+    : uniqueInOrder([...currentDirectComponents, ...requestedComponents]);
+  const config = createContextProjectConfig(directComponents);
+  const configChangeRequired = existingConfig === null ||
+    !sameOrderedValues(existingConfig.components, directComponents);
+  const plan = await planContextInstallation(
+    resolvedProjectRoot,
+    frameworkRoot,
+    registry,
+    config,
+    previousLock,
+    configChangeRequired ? { kind: "install" } : { kind: "observe" },
+  );
+  const components = resolveContextComponents(registry, directComponents);
+  const resolvedComponents = components.map((component) => component.name);
+  const directSet = new Set(directComponents);
+  const targetPaths = new Set(
+    components.flatMap((component) => component.artifacts.map((artifact) => artifact.targetPath)),
+  );
+  const activations = codexInterfaceSelectionDisclosures(resolvedComponents);
+  const lockChangeRequired = plan.status === "ready" && plan.lockChanged;
+  const plannedWritePaths = plan.status === "ready"
+    ? uniqueInOrder([
+        ...plan.mutations.map((mutation) => mutation.targetPath),
+        ...(configChangeRequired ? [CONTEXT_CONFIG_PATH] : []),
+        ...(lockChangeRequired ? [CONTEXT_LOCK_PATH] : []),
+      ])
+    : [];
+  const current = plan.status === "ready" &&
+    plan.assessments.every((assessment) => assessment.status === "unchanged") &&
+    plannedWritePaths.length === 0;
+  return {
+    command: "plan",
+    projectRoot: resolvedProjectRoot,
+    initialized: existingConfig !== null,
+    registryRevision: registry.revision,
+    status: plan.status === "blocked" ? "blocked" : current ? "current" : "changes-ready",
+    currentDirectComponents,
+    requestedComponents: [...requestedComponents],
+    directComponents,
+    resolvedComponents,
+    transitiveComponents: resolvedComponents.filter((component) => !directSet.has(component)),
+    bundleComponents: components
+      .filter((component) => component.dependencies.length > 0 && component.artifacts.length === 0)
+      .map((component) => component.name),
+    footprint: {
+      componentCount: components.length,
+      directComponentCount: directComponents.length,
+      transitiveComponentCount: resolvedComponents.length - directComponents.length,
+      bundleCount: components.filter((component) =>
+        component.dependencies.length > 0 && component.artifacts.length === 0).length,
+      artifactCount: components.reduce((count, component) => count + component.artifacts.length, 0),
+      targetCount: targetPaths.size,
+      skillTargetCount: [...targetPaths].filter((target) => target.startsWith(".codex/skills/")).length,
+      runtimeTargetCount: [...targetPaths].filter((target) =>
+        target.startsWith(".agent-context/runtime/")).length,
+    },
+    capabilities: uniqueCapabilities(components),
+    capabilityAvailability: "not-inspected",
+    licenses: uniqueLicenses(components),
+    trustRequired: activations.some((activation) => activation.id === "codex-project-trust"),
+    activations,
+    drift: {
+      assessmentCounts: assessmentCounts(plan.assessments),
+      conflicts: plan.status === "blocked" ? plan.conflicts : [],
+      plannedWritePaths,
+      configChangeRequired,
+      lockChangeRequired,
+    },
+  };
+}
+
 export async function inspectProject(
   projectRoot: string,
   frameworkRoot: string,
 ): Promise<ContextInspection> {
   const resolvedProjectRoot = await realpath(projectRoot);
-  const config = await readOptionalConfig(resolvedProjectRoot);
-  const registry = await loadContextRegistry(frameworkRoot);
+  const selection = await planProjectSelection(resolvedProjectRoot, frameworkRoot, []);
   return {
     command: "inspect",
     projectRoot: resolvedProjectRoot,
-    initialized: config !== null,
+    initialized: selection.initialized,
     hasAgents: await exists(path.join(resolvedProjectRoot, "AGENTS.md")),
     hasCodexConfig: await exists(path.join(resolvedProjectRoot, ".codex", "config.toml")),
     hasCodexHooks: await exists(path.join(resolvedProjectRoot, ".codex", "hooks.json")),
-    registryRevision: registry.revision,
-    selectedComponents: config?.components ?? [],
+    registryRevision: selection.registryRevision,
+    selection,
   };
 }
 
@@ -1010,6 +1153,37 @@ function uniqueCapabilities(components: readonly ContextRegistryComponent[]): re
   }
   return [...result.values()].sort((left, right) =>
     `${left.kind}:${left.name}`.localeCompare(`${right.kind}:${right.name}`));
+}
+
+function assessmentCounts(
+  assessments: readonly ArtifactAssessment[],
+): readonly ContextAssessmentCount[] {
+  return ARTIFACT_ASSESSMENT_STATUSES.map((status) => ({
+    status,
+    count: assessments.filter((assessment) => assessment.status === status).length,
+  })).filter((entry) => entry.count > 0);
+}
+
+function requireKnownUniqueComponents(
+  registry: ContextRegistryV2,
+  requestedComponents: readonly string[],
+): void {
+  const duplicate = requestedComponents.find((component, index) =>
+    requestedComponents.indexOf(component) !== index);
+  if (duplicate !== undefined) {
+    throw new Error(`Context selection contains duplicate component ${duplicate}.`);
+  }
+  const available = new Set(registry.components.map((component) => component.name));
+  const unknown = requestedComponents.find((component) => !available.has(component));
+  if (unknown !== undefined) throw new Error(`Unknown context component ${unknown}.`);
+}
+
+function uniqueInOrder(values: readonly string[]): readonly string[] {
+  return [...new Set(values)];
+}
+
+function sameOrderedValues(left: readonly string[], right: readonly string[]): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
 function uniqueLicenses(components: readonly ContextRegistryComponent[]): readonly ContextLicense[] {

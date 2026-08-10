@@ -7,7 +7,10 @@ import test from "node:test";
 import { resolveContextComponents } from "@agent-context/repo-policy";
 import { parse as parseToml } from "smol-toml";
 
-import { unsafeReferenceDiagnostics } from "../src/codex-interface.js";
+import {
+  codexInterfaceSelectionDisclosures,
+  unsafeReferenceDiagnostics,
+} from "../src/codex-interface.js";
 import {
   addComponent,
   diffProject,
@@ -54,6 +57,21 @@ test("Wave 4 local-reference rules reject host-coupled entrypoints", () => {
     unsafeReferenceDiagnostics('command = "node"\nargs = [".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js"]'),
     [],
   );
+});
+
+test("Codex selection disclosure makes trust and dormant hook activation explicit", () => {
+  assert.deepEqual(codexInterfaceSelectionDisclosures([]), []);
+  assert.deepEqual(codexInterfaceSelectionDisclosures(["codex-agents"]), [{
+    id: "codex-project-trust",
+    status: "required",
+    message: "Codex must trust this repository before it loads project-scoped configuration.",
+  }]);
+  const hooks = codexInterfaceSelectionDisclosures(["codex-hooks"]);
+  assert.equal(hooks.some((disclosure) => disclosure.id === "codex-project-trust"), true);
+  assert.equal(hooks.some((disclosure) =>
+    disclosure.id === "codex-hooks-session-binding" &&
+    disclosure.status === "dormant" &&
+    /no binding producer is distributed/u.test(disclosure.message)), true);
 });
 
 test("codex-runtime installs, diagnoses, and removes only its owned project configuration", { timeout: 90_000 }, async () => {
