@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tailwind CSS Architect"
+  short_description: "Implement bounded Tailwind CSS concerns"
+  default_prompt: "Use $tailwind-css-architect when the recorded frontend contract selects Tailwind CSS. Preserve neutral responsive CSS ownership and keep utility decisions explicit."

@@ -167,6 +167,20 @@
     {
       "name": "skill-responsive-css-architect",
       "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/responsive-css-architect",
+          "targetDirectory": ".codex/skills/responsive-css-architect",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-tailwind-css-architect",
+      "dependencies": [],
       "capabilities": [
         { "kind": "runtime", "name": "native-subagents", "requirement": "recommended" },
         { "kind": "runtime", "name": "network", "requirement": "recommended" },
@@ -176,8 +190,8 @@
       "artifacts": [
         {
           "kind": "directory",
-          "sourceDirectory": ".codex/skills/responsive-css-architect",
-          "targetDirectory": ".codex/skills/responsive-css-architect",
+          "sourceDirectory": ".codex/skills/tailwind-css-architect",
+          "targetDirectory": ".codex/skills/tailwind-css-architect",
           "excludedPrefixes": ["references/tailwind-docs/cache/"]
         }
       ]
@@ -211,13 +225,19 @@
     },
     {
       "name": "frontend-tailwind",
-      "dependencies": ["frontend", "skill-responsive-css-architect"],
-      "capabilities": [
-        { "kind": "runtime", "name": "network", "requirement": "recommended" },
-        { "kind": "runtime", "name": "python", "requirement": "recommended" }
-      ],
+      "dependencies": ["frontend", "skill-responsive-css-architect", "skill-tailwind-css-architect"],
+      "capabilities": [],
       "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
-      "artifacts": []
+      "artifacts": [
+        {
+          "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
+          "targetPath": "AGENTS.md",
+          "sectionId": "frontend-tailwind",
+          "markerStyle": "markdown"
+        }
+      ]
     },
     {
       "name": "skill-codebase-inventory",
@@ -519,10 +539,9 @@
         },
         {
           "kind": "artifact",
-          "operation": "file",
+          "operation": "seed-file",
           "sourcePath": "registry/sources/policy/policy.json",
-          "targetPath": ".agent-context/policy.json",
-          "mediaType": "application/json"
+          "targetPath": ".agent-context/policy.json"
         },
         {
           "kind": "artifact",

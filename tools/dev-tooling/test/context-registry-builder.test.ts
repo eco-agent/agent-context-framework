@@ -21,6 +21,7 @@ const packagedSkills = [
   "design-web-typography",
   "frontend-design-discipline",
   "responsive-css-architect",
+  "tailwind-css-architect",
   "codebase-inventory",
   "design-typescript-invariants",
   "diagnose",
@@ -36,11 +37,18 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
   assert.deepEqual(first, second);
   await checkContextRegistry(frameworkRoot);
 
-  const tailwind = first.components.find((component) => component.name === "skill-responsive-css-architect");
+  const responsive = first.components.find((component) => component.name === "skill-responsive-css-architect");
+  assert.ok(responsive);
+  assert.equal(responsive.artifacts.some((artifact) => artifact.sourcePath.includes("tailwind")), false);
+  assert.equal(responsive.artifacts.some((artifact) => artifact.sourcePath.includes("tw-fade")), false);
+  const tailwind = first.components.find((component) => component.name === "skill-tailwind-css-architect");
   assert.ok(tailwind);
-  assert.equal(tailwind.artifacts.some((artifact) => artifact.sourcePath.includes("tailwind-docs/cache/")), false);
+  assert.equal(tailwind.artifacts.some((artifact) => artifact.sourcePath.includes("tailwind-docs/")), true);
+  assert.equal(tailwind.artifacts.some((artifact) => artifact.sourcePath.endsWith("scripts/tailwind_doc_context.py")), true);
   assert.equal(componentNames(first, "frontend").includes("skill-responsive-css-architect"), false);
+  assert.equal(componentNames(first, "frontend").includes("skill-tailwind-css-architect"), false);
   assert.equal(componentNames(first, "frontend-tailwind").includes("skill-responsive-css-architect"), true);
+  assert.equal(componentNames(first, "frontend-tailwind").includes("skill-tailwind-css-architect"), true);
   const waveTwoSkills = [
     "skill-codebase-inventory",
     "skill-design-typescript-invariants",
@@ -51,7 +59,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
     "skill-optimize-codex-sessions",
   ];
   assert.equal(first.components.filter((component) =>
-    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 15);
+    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 16);
   for (const component of first.components) {
     assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
   }
@@ -132,6 +140,39 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
         assert.match(source, /^---\nname: [a-z][a-z0-9-]*\ndescription: \S[^\n]*\n---\n/u);
       }
     }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("frontend-tailwind owns the Tailwind instruction and skill closure", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-frontend-profiles-"));
+  try {
+    const plainRoot = path.join(root, "plain");
+    const tailwindRoot = path.join(root, "tailwind");
+    await mkdir(plainRoot);
+    await mkdir(tailwindRoot);
+    await initProject(plainRoot, frameworkRoot);
+    await initProject(tailwindRoot, frameworkRoot);
+    await addComponent(plainRoot, frameworkRoot, "frontend");
+    await addComponent(tailwindRoot, frameworkRoot, "frontend-tailwind");
+
+    const plainAgents = await readFile(path.join(plainRoot, "AGENTS.md"), "utf8");
+    const tailwindAgents = await readFile(path.join(tailwindRoot, "AGENTS.md"), "utf8");
+    assert.equal(plainAgents.includes("## Frontend Tailwind"), false);
+    assert.equal(tailwindAgents.includes("## Frontend Tailwind"), true);
+    assert.equal(
+      await exists(path.join(plainRoot, ".codex", "skills", "tailwind-css-architect", "SKILL.md")),
+      false,
+    );
+    assert.equal(
+      await exists(path.join(tailwindRoot, ".codex", "skills", "tailwind-css-architect", "SKILL.md")),
+      true,
+    );
+    assert.equal(
+      await exists(path.join(tailwindRoot, ".codex", "skills", "responsive-css-architect", "SKILL.md")),
+      true,
+    );
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -298,6 +339,34 @@ test("governance rejects stale protected projections", async () => {
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
       /Protected context projection differs/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance rejects semantic dilution even before protected hashes are refreshed", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-semantic-governance-"));
+  try {
+    await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+    await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+    await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
+    await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+    await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    const corePath = path.join(temporaryRoot, "registry", "sources", "instructions", "core.md");
+    await writeFile(
+      corePath,
+      (await readFile(corePath, "utf8")).replace(
+        "Do not edit,\n  remove, override, or weaken it from project work.",
+        "Project authors may weaken this section.",
+      ),
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /violates a maintainer-owned semantic requirement/u,
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
