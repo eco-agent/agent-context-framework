@@ -22,6 +22,22 @@
 - Git and previews provide recovery. Reduce, then propagate to entry points, clients, adapters, contracts, and reverse actions. Mark gaps.
 - Limits must protect a measured model, transport, storage, or runtime boundary. Derive them from that boundary, report when they are reached, and never silently truncate mandatory context or user-facing explanation.
 
+## Protected framework baseline
+
+- Treat framework-managed instructions as maintainer-owned policy. Do not edit,
+  remove, override, or weaken them from project work. Framework policy changes
+  originate in canonical registry sources and require maintainer review.
+- Project instructions and contracts may add repository-specific detail or
+  stricter requirements. When they conflict with this protected baseline, retain
+  the baseline and report the conflict.
+
+## Project contracts
+
+- Before implementation, read every exact path declared in a configured
+  `.agent-context/policy.json` under `repository.projectContracts`.
+- If a declared contract is missing, or repository policy is unconfigured, report
+  that state before relying on project architecture or documentation assumptions.
+
 ## Frontend
 
 - Never fill decisions from model priors or generic familiar UI.
@@ -33,16 +49,18 @@
 - Treat visual assets as first-class implementation inputs. Preserve required product, brand, and precedent assets first. Otherwise, create code-native SVG for icons, vectors, patterns, and animated artwork, and use the `imagegen` skill for raster textures or illustration. Do not approximate artwork with nested elements, CSS gradients, pseudo-elements, or generic glyphs when a purpose-built asset would serve the recorded role better.
 - Prefer a restrained animated SVG when motion adds state, feedback, direction, or product character. Provide a static `prefers-reduced-motion` result. An invented asset may fulfill an evidenced visual role, but it must not invent product meaning, content, controls, navigation, or features.
 - For a muted SVG with overlapping strokes or paths, keep `currentColor` fully opaque and apply CSS `opacity` once to the root `<svg>` or a wrapper around the complete icon. Do not use alpha-bearing `color`, `fill`, `stroke`, `fill-opacity`, or `stroke-opacity` for this effect because each paint operation compounds at intersections. Do not replace the neutral with a background-specific solid tint.
-- Represent state once. Use `tw-fade` on scrollable overflow.
-- Use `shadow-plugin` for elevated surfaces. Do not combine a border or ring with a shadow on the same elevated element. Use `smooth-shadow-ring-*`, or `smooth-shadow-*` when no edge is needed. Otherwise, default to spacing, color, and elevation instead of borders. Add a border only when evidence or a functional state requires one.
 - On every frontend, set `-webkit-font-smoothing: antialiased` and `-moz-osx-font-smoothing: grayscale` on `body` in the global base stylesheet.
 - Default to minimalism; use claymorphism, glassmorphism, or neumorphism only when specified.
 
 ## Verification
 
-- Browser, computer control, and repository-wide checks require a request.
-- Tests require a request or regression. Checks detect breakage; users judge visuals.
-- Run narrow TypeScript 7 checks. Report skips and unverified behavior. Reports follow `docs/AGENTS.md`.
+- For code changes, run the narrowest applicable type and behavior checks before
+  handoff. Read-only review, explanation, and status work do not authorize tests.
+- Browser control, computer control, and broad or repository-wide checks require
+  an explicit request or a declared final-acceptance contract. Checks detect
+  breakage; users judge visuals.
+- Run only repository-declared TypeScript, lint, invariant, and test gates. Report
+  skips and unverified behavior. Reports follow `docs/AGENTS.md`.
 - During implementation, run focused checks for the owner being changed. For final acceptance, commit first and run `pnpm --silent verify:acceptance -- --fixture <absolute-path>` once from a clean worktree; it owns the single full-workspace, isolation, and downstream-fixture proof sequence.
 - After that acceptance run, do not repeat broad executable gates for documentation-only commits. Record the tested revision and confirm the later diff is documentation-only.
 - Use `reuse-before-implementation` for substantial implementation.
@@ -50,7 +68,8 @@
 ## Repository policy
 
 - Treat `.agent-context/policy.json` as the project-owned authority for repository facts and verification profiles. Inspection output is observational and must never write or silently become policy.
-- Configure repository type, relevant languages, documentation roots, package manager, package layout, and frontend presence explicitly before relying on policy verification.
+- Configure repository type, relevant languages, documentation roots, exact project contract paths, package manager, package layout, and frontend presence explicitly before relying on policy verification.
+- Treat declared project contracts as additive or stricter repository policy. They do not disable, replace, or weaken the maintainer-owned framework baseline.
 - Run verification through a named project-declared profile. Commands are typed process or package-script tokens, not shell command strings, and registry components must not supply executable commands.
 - Bootstrap and rebuild the isolated `.agent-context/runtime` through its fixed project-local operation. Repository policy must not modify or depend on the host package graph.
 - Do not infer TypeScript, frontend, monorepo, package-manager, or verification requirements from framework defaults.

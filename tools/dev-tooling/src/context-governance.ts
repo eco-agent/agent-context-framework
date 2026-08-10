@@ -17,6 +17,25 @@ const REQUIRED_REVIEW_PATTERNS = [
   "/tools/repo-policy/",
 ] as const;
 
+const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
+  ["registry/sources/instructions/core.md", [
+    "Treat this framework-managed section as maintainer-owned policy.",
+    "Do not edit, remove, override, or weaken it from project work.",
+    "repository.projectContracts",
+    "For code changes, run the narrowest applicable type and behavior checks before handoff.",
+    "Read-only review, explanation, and status work do not authorize tests.",
+  ]],
+  ["registry/sources/instructions/verification.md", [
+    "For code changes, run the narrowest applicable type and behavior checks before handoff.",
+    "Read-only review, explanation, and status work do not authorize tests.",
+    "an explicit request or a declared final-acceptance contract",
+  ]],
+  ["registry/sources/instructions/repository-policy.md", [
+    "exact project contract paths",
+    "They do not disable, replace, or weaken the maintainer-owned framework baseline.",
+  ]],
+]);
+
 interface ContextGovernanceManifest {
   readonly schemaVersion: 1;
   readonly registryRevision: string;
@@ -57,6 +76,7 @@ export async function checkContextGovernance(
   const protectedByPath = new Map<string, ProtectedSource>();
   for (const source of manifest.protectedSources) {
     const content = await readStrictUtf8(repositoryPath(root, source.sourcePath), source.sourcePath);
+    checkProtectedSemantics(source.sourcePath, content);
     const actual = contentHash(content);
     if (actual !== source.sha256) {
       throw new Error(
@@ -93,6 +113,17 @@ export async function checkContextGovernance(
       if (artifact.operation === "text-section" && !protectedPaths.has(artifact.sourcePath)) {
         throw new Error(`Text instruction artifact is not protected by governance: ${artifact.sourcePath}.`);
       }
+    }
+  }
+}
+
+function checkProtectedSemantics(sourcePath: string, content: string): void {
+  const normalized = content.replace(/\s+/gu, " ").trim();
+  for (const requirement of PROTECTED_SEMANTIC_REQUIREMENTS.get(sourcePath) ?? []) {
+    if (!normalized.includes(requirement)) {
+      throw new Error(
+        `Protected context source violates a maintainer-owned semantic requirement: ${sourcePath} (${requirement}).`,
+      );
     }
   }
 }

@@ -22,6 +22,7 @@ export const REPOSITORY_POLICY_INVARIANTS_PATH =
 
 export const repositoryPolicyInvariantIds = [
   "explicit-project-facts",
+  "declared-project-contracts",
   "explicit-verification-profiles",
   "observation-only-inspection",
   "tokenized-command-execution",
@@ -52,6 +53,7 @@ export interface RepositoryFacts {
   readonly repositoryType: string;
   readonly languages: readonly string[];
   readonly documentationRoots: readonly string[];
+  readonly projectContracts: readonly string[];
   readonly packageManager: PackageManagerDeclaration;
   readonly layout: "none" | "single-package" | "monorepo";
   readonly frontend: boolean;
@@ -323,6 +325,18 @@ export async function doctorRepositoryPolicy(
         diagnostics: [`Declared documentation root does not exist: ${missingDocumentationRoot}.`],
       };
     }
+    const missingProjectContract = await firstMissingPath(
+      resolvedRoot,
+      configuration.repository.projectContracts,
+    );
+    if (missingProjectContract !== null) {
+      return {
+        operation: "doctor",
+        ok: false,
+        status: "invalid",
+        diagnostics: [`Declared project contract does not exist: ${missingProjectContract}.`],
+      };
+    }
     return {
       operation: "doctor",
       ok: true,
@@ -401,6 +415,7 @@ function decodeRepositoryFacts(value: unknown): RepositoryFacts {
     "repositoryType",
     "languages",
     "documentationRoots",
+    "projectContracts",
     "packageManager",
     "layout",
     "frontend",
@@ -417,6 +432,11 @@ function decodeRepositoryFacts(value: unknown): RepositoryFacts {
     "Repository policy documentationRoots",
   ).map((root) => portableRelativePath(root, "Repository policy documentation root"));
   requireUnique(documentationRoots, "Repository policy documentation roots");
+  const projectContracts = stringArray(
+    record.projectContracts,
+    "Repository policy projectContracts",
+  ).map((contract) => portableRelativePath(contract, "Repository policy project contract"));
+  requireUnique(projectContracts, "Repository policy project contracts");
   const layout = record.layout;
   if (layout !== "none" && layout !== "single-package" && layout !== "monorepo") {
     throw new Error("Repository policy layout must be none, single-package, or monorepo.");
@@ -428,6 +448,7 @@ function decodeRepositoryFacts(value: unknown): RepositoryFacts {
     repositoryType: identifier(record.repositoryType, "Repository policy repositoryType"),
     languages,
     documentationRoots,
+    projectContracts,
     packageManager: decodePackageManager(record.packageManager),
     layout,
     frontend: record.frontend,

@@ -145,6 +145,19 @@ test("policy doctor requires explicit configuration and validates declared paths
     const ready = await doctorRepositoryPolicy(root);
     assert.equal(ready.ok, true);
     assert.equal(ready.status, "ready");
+
+    await writeJson(
+      path.join(root, ".agent-context", "policy.json"),
+      configuredPolicy("process", ["docs/architecture.md"]),
+    );
+    const missingContract = await doctorRepositoryPolicy(root);
+    assert.equal(missingContract.status, "invalid");
+    assert.match(missingContract.diagnostics[0] ?? "", /project contract does not exist/u);
+
+    await writeFile(path.join(root, "docs", "architecture.md"), "# Architecture\n", "utf8");
+    const contractReady = await doctorRepositoryPolicy(root);
+    assert.equal(contractReady.ok, true);
+    assert.equal(contractReady.status, "ready");
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -270,7 +283,10 @@ test("repository inspection covers the declared project-shape matrix without inf
   }
 });
 
-function configuredPolicy(kind: "process" | "package-script" = "process"): object {
+function configuredPolicy(
+  kind: "process" | "package-script" = "process",
+  projectContracts: readonly string[] = [],
+): object {
   return {
     schemaVersion: 1,
     state: "configured",
@@ -278,6 +294,7 @@ function configuredPolicy(kind: "process" | "package-script" = "process"): objec
       repositoryType: "framework",
       languages: ["typescript"],
       documentationRoots: ["docs"],
+      projectContracts,
       packageManager: { state: "declared", name: "pnpm", version: "10.22.0" },
       layout: "monorepo",
       frontend: false,
@@ -320,6 +337,7 @@ async function createPolicyFixture(): Promise<string> {
     schemaVersion: 1,
     invariants: [
       "explicit-project-facts",
+      "declared-project-contracts",
       "explicit-verification-profiles",
       "observation-only-inspection",
       "tokenized-command-execution",

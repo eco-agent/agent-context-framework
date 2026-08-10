@@ -30,9 +30,26 @@
 - Derive limits from a measured model, transport, storage, or runtime boundary.
   Report when a limit is reached.
 
+## Protected framework baseline
+
+- Treat this framework-managed section as maintainer-owned policy. Do not edit,
+  remove, override, or weaken it from project work. Framework policy changes
+  originate in canonical registry sources and require maintainer review.
+- Project instructions and contracts may add repository-specific detail or
+  stricter requirements. When they conflict with this protected baseline, retain
+  the baseline and report the conflict.
+
+## Project contracts
+
+- Before implementation, read every exact path declared in a configured
+  `.agent-context/policy.json` under `repository.projectContracts`.
+- If a declared contract is missing, or repository policy is unconfigured, report
+  that state before relying on project architecture or documentation assumptions.
+
 ## Verification
 
-- Browser control and repository-wide checks require a request.
-- Tests require a request or a regression.
-- Run the narrowest applicable type and behavior checks. Report skipped checks
-  and unverified behavior.
+- For code changes, run the narrowest applicable type and behavior checks before
+  handoff. Read-only review, explanation, and status work do not authorize tests.
+- Browser control, computer control, and broad or repository-wide checks require
+  an explicit request or a declared final-acceptance contract.
+- Report skipped checks and unverified behavior.
