@@ -390,13 +390,11 @@ export async function doctorProject(
     }
   }
   const diff = await diffProject(resolvedProjectRoot, frameworkRoot);
-  const expectedPolicyConfiguration = repositoryPolicy?.status === "ready" &&
-    isExpectedPolicyConfigurationChange(diff);
-  if (!diff.current && !expectedPolicyConfiguration) {
+  if (!diff.current) {
     diagnostics.push("Installed context differs from its provenance baseline.");
   }
   const healthy = transaction.status === "none" &&
-    (diff.current || expectedPolicyConfiguration) &&
+    diff.current &&
     (runtime === null || runtime.operational) &&
     (repositoryPolicy === null || repositoryPolicy.ok) &&
     (codexInterface === null || codexInterface.ok);
@@ -413,15 +411,6 @@ export async function doctorProject(
     repositoryPolicy,
     codexInterface,
   };
-}
-
-function isExpectedPolicyConfigurationChange(diff: ContextDiffResult): boolean {
-  return diff.plan.status === "ready" &&
-    !diff.plan.lockChanged &&
-    diff.plan.assessments.every((assessment) =>
-      assessment.status === "unchanged" ||
-      (assessment.targetPath === ".agent-context/policy.json" &&
-        assessment.status === "locally-modified"));
 }
 
 async function inspectInstalledRepositoryPolicy(
@@ -733,6 +722,33 @@ function assessDesired(
     targetPath: desired.artifact.targetPath,
     operation: desired.artifact.operation,
   };
+  if (desired.artifact.operation === "seed-file") {
+    if (!locked) {
+      const absent = current.state === "absent";
+      return {
+        ...base,
+        status: "uninstalled",
+        previousSourceSha256: null,
+        currentSha256: current.state === "present" ? current.sha256 : null,
+        nextSourceSha256: desired.artifact.sourceSha256,
+        difference: absent
+          ? boundedDifference("absent", desired.artifact.targetPath, "", desired.projection.sourceDisplay)
+          : null,
+        detail: absent
+          ? "The seed source will be written because its project-owned target is missing."
+          : "An existing project target will be adopted without changing its bytes.",
+      };
+    }
+    return {
+      ...base,
+      status: "unchanged",
+      previousSourceSha256: locked.sourceSha256,
+      currentSha256: current.state === "present" ? current.sha256 : null,
+      nextSourceSha256: desired.artifact.sourceSha256,
+      difference: null,
+      detail: "The project-owned seed target is preserved; framework source changes are ignored.",
+    };
+  }
   if (!locked) {
     if (current.state === "absent") {
       return {
@@ -917,7 +933,9 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
   }
   for (const [targetPath, targetArtifacts] of byTarget) {
     const wholeFile = targetArtifacts.some(
-      (artifact) => artifact.operation === "file" || artifact.operation === "runtime-workspace",
+      (artifact) => artifact.operation === "file" ||
+        artifact.operation === "seed-file" ||
+        artifact.operation === "runtime-workspace",
     );
     if (wholeFile && targetArtifacts.length > 1) {
       throw new Error(`Whole-file target ${targetPath} cannot share ownership with another artifact.`);

@@ -99,6 +99,53 @@ test("add resolves dependencies, reports capabilities, and refuses untracked who
   }
 });
 
+test("seed-file adopts existing content and preserves it across update, remove, and re-add", async () => {
+  const fixture = await createFixture();
+  try {
+    const seedPath = path.join(fixture.projectRoot, ".agent-context", "project-seed.json");
+    await mkdir(path.dirname(seedPath), { recursive: true });
+    await writeFile(seedPath, "{\"project\":true}\n", "utf8");
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+
+    const added = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "seed");
+    assert.equal(added.plan.status, "ready");
+    assert.deepEqual(await readFile(seedPath, "utf8"), "{\"project\":true}\n");
+    assert.equal(
+      added.plan.assessments.some((assessment) =>
+        assessment.operation === "seed-file" && assessment.status === "uninstalled"),
+      true,
+    );
+
+    await writeFile(seedPath, "{\"project\":\"edited\"}\n", "utf8");
+    await writeFile(
+      path.join(fixture.frameworkRoot, "registry", "sources", "seed.json"),
+      "{\"canonical\":2}\n",
+      "utf8",
+    );
+    await writeRegistry(fixture.frameworkRoot, "0.2.1");
+    const updated = await updateProject(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      "seed",
+      "preserve-local",
+    );
+    assert.equal(updated.plan.status, "ready");
+    assert.equal(await readFile(seedPath, "utf8"), "{\"project\":\"edited\"}\n");
+    assert.equal((await diffProject(fixture.projectRoot, fixture.frameworkRoot)).current, true);
+
+    const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "seed");
+    assert.equal(removed.plan.status, "ready");
+    assert.equal(await readFile(seedPath, "utf8"), "{\"project\":\"edited\"}\n");
+
+    await rm(seedPath);
+    const readded = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "seed");
+    assert.equal(readded.plan.status, "ready");
+    assert.equal(await readFile(seedPath, "utf8"), "{\"canonical\":2}\n");
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("explicit update distinguishes upstream, local, and diverged changes", async () => {
   const fixture = await createFixture();
   try {
@@ -350,6 +397,32 @@ test("structured ownership rejects overlapping TOML paths and duplicate JSON ite
       addComponent(fixture.projectRoot, fixture.frameworkRoot, "collision"),
       /duplicate array item ownership/u,
     );
+
+    const seed = await readFile(
+      path.join(fixture.frameworkRoot, "registry", "sources", "seed.json"),
+      "utf8",
+    );
+    registry.components[registry.components.length - 1] = {
+      name: "collision",
+      revision: componentRevision,
+      dependencies: ["structured"],
+      capabilities: [],
+      licenses: [{
+        kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",
+        noticeSha256: "a".repeat(64),
+      }],
+      artifacts: [{
+        operation: "seed-file",
+        sourcePath: "registry/sources/seed.json",
+        sourceSha256: sha(seed),
+        targetPath: "settings.json",
+      }],
+    };
+    await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+    await assert.rejects(
+      addComponent(fixture.projectRoot, fixture.frameworkRoot, "collision"),
+      /Whole-file target settings\.json cannot share ownership/u,
+    );
   } finally {
     await fixture.remove();
   }
@@ -581,6 +654,7 @@ async function createFixture(): Promise<Fixture> {
   await writeFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "# Core rules\n");
   await writeFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "tool bytes\n");
   await writeFile(path.join(frameworkRoot, "registry", "sources", "guidance.md"), "# Guidance\n");
+  await writeFile(path.join(frameworkRoot, "registry", "sources", "seed.json"), "{\"canonical\":1}\n");
   await writeFile(
     path.join(frameworkRoot, "registry", "sources", "structured.json"),
     '{"owned":{"enabled":true},"notOwned":true}\n',
@@ -620,6 +694,7 @@ async function writeRegistry(
   const core = await readFile(path.join(frameworkRoot, "registry", "sources", "core.md"), "utf8");
   const tool = await readFile(path.join(frameworkRoot, "registry", "sources", "tool.md"), "utf8");
   const guidance = await readFile(path.join(frameworkRoot, "registry", "sources", "guidance.md"), "utf8");
+  const seed = await readFile(path.join(frameworkRoot, "registry", "sources", "seed.json"), "utf8");
   const structuredArtifacts = includeStructured
     ? await structuredRegistryArtifacts(frameworkRoot)
     : [];
@@ -660,6 +735,17 @@ async function writeRegistry(
             artifacts: structuredArtifacts,
           }]
         : []),
+      {
+        name: "seed", revision: componentRevision, dependencies: ["core"], capabilities: [],
+        licenses: [{
+          kind: "project", spdx: "MIT", sourcePath: "LICENSE", noticePath: "LICENSE",
+          noticeSha256: "a".repeat(64),
+        }],
+        artifacts: [{
+          operation: "seed-file", sourcePath: "registry/sources/seed.json", sourceSha256: sha(seed),
+          targetPath: ".agent-context/project-seed.json",
+        }],
+      },
       {
         name: "tools", revision: componentRevision, dependencies: ["core"],
         capabilities: [{ kind: "runtime", name: "network", requirement: "required" }],

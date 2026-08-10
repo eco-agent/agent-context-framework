@@ -87,6 +87,7 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
         repositoryType: "application",
         languages: ["python"],
         documentationRoots: ["docs"],
+        projectContracts: [],
         packageManager: { state: "none" },
         layout: "none",
         frontend: false,
@@ -108,12 +109,12 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     assert.equal(finalDoctor.health, "healthy");
     assert.equal(finalDoctor.runtime?.status, "operational");
     assert.equal(finalDoctor.repositoryPolicy?.status, "ready");
-    assert.equal(finalDoctor.diff?.current, false);
+    assert.equal(finalDoctor.diff?.current, true);
     assert.equal(
       finalDoctor.diff?.plan.status === "ready" &&
         finalDoctor.diff.plan.assessments.some((assessment) =>
           assessment.targetPath === ".agent-context/policy.json" &&
-          assessment.status === "locally-modified"),
+          assessment.status === "unchanged"),
       true,
     );
 

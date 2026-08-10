@@ -216,11 +216,17 @@ test("member and identified-array-item ownership decode as closed artifact varia
           targetPath: ".codex/config.toml",
           ownedMembers: ["agents.max_concurrent_threads_per_session", "agents.worker"],
         },
+        {
+          operation: "seed-file",
+          sourcePath: "policy.json",
+          sourceSha256: hash,
+          targetPath: ".agent-context/policy.json",
+        },
       ],
     }],
   });
   assert.deepEqual(
     registry.components[0]?.artifacts.map((artifact) => artifact.operation),
-    ["json-array-items", "toml-members"],
+    ["json-array-items", "toml-members", "seed-file"],
   );
 });

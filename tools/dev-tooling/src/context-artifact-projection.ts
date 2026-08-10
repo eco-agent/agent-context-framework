@@ -35,6 +35,8 @@ export function createArtifactProjection(
     case "file":
     case "runtime-workspace":
       return wholeFileProjection(source);
+    case "seed-file":
+      return seedFileProjection(source);
     case "text-section":
       return textSectionProjection(source, markerPair(artifact.sectionId, artifact.markerStyle));
     case "json-members":
@@ -55,6 +57,8 @@ export function createArtifactRemovalProjection(
     case "file":
     case "runtime-workspace":
       return wholeFileProjection("");
+    case "seed-file":
+      return seedFileRemovalProjection();
     case "text-section": {
       const markers = markerPair(artifact.sectionId, artifact.markerStyle);
       return removalOnlyProjection(
@@ -112,6 +116,36 @@ function wholeFileProjection(source: string): ArtifactProjection {
     install: () => source,
     replace: () => source,
     remove: (target, preserveContent) => preserveContent ? target : null,
+  };
+}
+
+function seedFileProjection(source: string): ArtifactProjection {
+  return {
+    sourceSha256: contentHash(source),
+    sourceDisplay: source,
+    read: (target) => target === null
+      ? { state: "absent" }
+      : { state: "present", sha256: contentHash(target), display: target },
+    install: (target) => target ?? source,
+    replace: (target) => target,
+    remove: (target) => target,
+  };
+}
+
+function seedFileRemovalProjection(): ArtifactProjection {
+  return {
+    sourceSha256: "",
+    sourceDisplay: "",
+    read: (target) => target === null
+      ? { state: "absent" }
+      : { state: "present", sha256: contentHash(target), display: target },
+    install: () => {
+      throw new Error("A seed-file removal projection cannot install content.");
+    },
+    replace: () => {
+      throw new Error("A seed-file removal projection cannot replace content.");
+    },
+    remove: (target) => target,
   };
 }
 

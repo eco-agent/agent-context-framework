@@ -198,8 +198,23 @@ test("ownership-only projections read and remove structured artifacts without so
   assert.equal(toml.remove(installed, false), "[project]\nname = \"local\"\n");
 });
 
+test("seed-file projections write only when missing and preserve project ownership", () => {
+  const projection = createArtifactProjection(artifact({ operation: "seed-file" }), "canonical\n");
+  assert.equal(projection.install(null), "canonical\n");
+  assert.equal(projection.install("project\n"), "project\n");
+  assert.equal(projection.replace("project\n"), "project\n");
+  assert.equal(projection.read("edited\n").state, "present");
+  assert.equal(projection.remove("edited\n", false), "edited\n");
+  assert.equal(projection.remove("edited\n", true), "edited\n");
+
+  const removal = createArtifactRemovalProjection(artifact({ operation: "seed-file" }));
+  assert.equal(removal.read(null).state, "absent");
+  assert.equal(removal.remove("project\n", false), "project\n");
+});
+
 function artifact(
   fields:
+    | { readonly operation: "seed-file" }
     | { readonly operation: "text-section"; readonly sectionId: string; readonly markerStyle: "markdown" }
     | { readonly operation: "json-members"; readonly ownedPointers: readonly string[] }
     | { readonly operation: "json-array-items"; readonly ownedItems: readonly ContextJsonArrayItemOwnership[] }
@@ -215,7 +230,9 @@ function artifact(
         ? ".codex/hooks.json"
         : fields.operation === "toml-tables" || fields.operation === "toml-members"
           ? ".codex/config.toml"
-          : "AGENTS.md",
+          : fields.operation === "seed-file"
+            ? ".agent-context/policy.json"
+            : "AGENTS.md",
     ...fields,
   };
 }

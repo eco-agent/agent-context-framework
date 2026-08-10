@@ -51,6 +51,10 @@ export interface ContextFileArtifact extends ContextArtifactBase {
   readonly mediaType: string;
 }
 
+export interface ContextSeedFileArtifact extends ContextArtifactBase {
+  readonly operation: "seed-file";
+}
+
 export interface ContextTextSectionArtifact extends ContextArtifactBase {
   readonly operation: "text-section";
   readonly sectionId: string;
@@ -92,6 +96,7 @@ export interface ContextRuntimeWorkspaceArtifact extends ContextArtifactBase {
 
 export type ContextRegistryArtifact =
   | ContextFileArtifact
+  | ContextSeedFileArtifact
   | ContextTextSectionArtifact
   | ContextJsonMembersArtifact
   | ContextJsonArrayItemsArtifact
@@ -230,6 +235,8 @@ export function artifactIdentity(artifact: ContextRegistryArtifact | ContextLock
   switch (artifact.operation) {
     case "file":
       return `file:${artifact.targetPath}`;
+    case "seed-file":
+      return `seed-file:${artifact.targetPath}`;
     case "text-section":
       return `text-section:${artifact.targetPath}:${artifact.sectionId}`;
     case "json-members":
@@ -389,6 +396,10 @@ function decodeArtifact(record: Record<string, unknown>, label: string): Context
       strictRecord(record, label, [...baseKeys, "mediaType"]);
       return { operation, ...base(), mediaType: requiredString(record, "mediaType") };
     }
+    case "seed-file": {
+      strictRecord(record, label, baseKeys);
+      return { operation, ...base() };
+    }
     case "text-section": {
       strictRecord(record, label, [...baseKeys, "sectionId", "markerStyle"]);
       const markerStyle = record.markerStyle;
@@ -447,7 +458,7 @@ function decodeArtifact(record: Record<string, unknown>, label: string): Context
     }
     default:
       throw new Error(
-        "Context registry artifact operation must be file, text-section, json-members, json-array-items, toml-tables, toml-members, or runtime-workspace.",
+        "Context registry artifact operation must be file, seed-file, text-section, json-members, json-array-items, toml-tables, toml-members, or runtime-workspace.",
       );
   }
 }
