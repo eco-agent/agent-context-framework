@@ -27,6 +27,12 @@ import { startSetupServer } from "./setup-server.js";
 
 type ContextInstallerArguments =
   | {
+      readonly command: "help";
+      readonly projectRoot: string;
+      readonly component: null;
+      readonly output: "text";
+    }
+  | {
       readonly command: "inspect" | "diff" | "doctor";
       readonly projectRoot: string;
       readonly component: null;
@@ -67,7 +73,10 @@ type ContextInstallerArguments =
       readonly openBrowser: boolean;
     };
 
-type ExecutableContextArguments = Exclude<ContextInstallerArguments, { readonly command: "setup" }>;
+type ExecutableContextArguments = Exclude<
+  ContextInstallerArguments,
+  { readonly command: "help" | "setup" }
+>;
 
 type ContextCommandResult =
   | ContextOperationResult
@@ -78,6 +87,27 @@ type ContextCommandResult =
   | RuntimeBootstrapResult;
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+
+export const CONTEXT_INSTALLER_HELP = `Agent Context Framework
+
+Usage:
+  pnpm agent-context init [--cwd PROJECT]
+  pnpm agent-context inspect [--cwd PROJECT] [--json]
+  pnpm agent-context diff [--cwd PROJECT] [--json]
+  pnpm agent-context add COMPONENT [--cwd PROJECT]
+  pnpm agent-context update [COMPONENT] [--overwrite] [--cwd PROJECT]
+  pnpm agent-context remove COMPONENT [--cwd PROJECT]
+  pnpm agent-context doctor [--cwd PROJECT] [--json]
+  pnpm agent-context recover [--cwd PROJECT]
+  pnpm agent-context bootstrap-runtime [--no-install] [--cwd PROJECT]
+  pnpm agent-context setup [--port PORT] [--no-open] [--cwd PROJECT]
+  pnpm agent-context help
+
+Behavior:
+  inspect, diff, and doctor are read-only. setup starts a token-protected
+  loopback UI and installs through the same transactional materializer.
+  Normal update preserves local managed edits; --overwrite replaces only the
+  selected registry-owned scopes. The CLI never pushes or deploys.`;
 
 export function parseContextInstallerArguments(
   arguments_: readonly string[],
@@ -91,9 +121,12 @@ export function parseContextInstallerArguments(
   let setupPort: number | null = null;
   let openBrowser = true;
   let noOpen = false;
+  let help = false;
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
-    if (argument === "--cwd") {
+    if (argument === "--help" || argument === "-h") {
+      help = true;
+    } else if (argument === "--cwd") {
       const value = arguments_[index + 1];
       if (!value) throw new Error("--cwd requires a project path.");
       projectRoot = path.resolve(currentDirectory, value);
@@ -125,6 +158,9 @@ export function parseContextInstallerArguments(
   }
 
   const command = positionals[0];
+  if (help || command === "help") {
+    return { command: "help", projectRoot, component: null, output: "text" };
+  }
   if (
     command !== "inspect" &&
     command !== "init" &&
@@ -282,6 +318,10 @@ async function execute(arguments_: ExecutableContextArguments): Promise<ContextC
 
 async function main(): Promise<void> {
   const arguments_ = parseContextInstallerArguments(process.argv.slice(2), process.cwd());
+  if (arguments_.command === "help") {
+    console.log(CONTEXT_INSTALLER_HELP);
+    return;
+  }
   if (arguments_.command === "setup") {
     const running = await startSetupServer({
       projectRoot: arguments_.projectRoot,
