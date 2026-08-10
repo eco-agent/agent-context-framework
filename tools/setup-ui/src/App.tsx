@@ -24,11 +24,15 @@ type AppState =
     };
 
 type PreviewState =
-  | { readonly status: "loading" }
-  | { readonly status: "error"; readonly message: string }
-  | { readonly status: "ready"; readonly preview: SetupSelectionPreview };
+  | { readonly status: "loading"; readonly selectionKey: string }
+  | { readonly status: "error"; readonly selectionKey: string; readonly message: string }
+  | { readonly status: "ready"; readonly selectionKey: string; readonly preview: SetupSelectionPreview };
 
 const token = captureLaunchToken();
+
+function selectionKey(components: Iterable<string>): string {
+  return JSON.stringify([...components].sort());
+}
 
 function ChevronIcon() {
   return (
@@ -102,7 +106,10 @@ export function App() {
   const [query, setQuery] = useState("");
   const [section, setSection] = useState<SetupSection>("components");
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
-  const [previewState, setPreviewState] = useState<PreviewState>({ status: "loading" });
+  const [previewState, setPreviewState] = useState<PreviewState>(() => ({
+    status: "loading",
+    selectionKey: selectionKey([]),
+  }));
 
   useEffect(() => {
     void fetchSetupSnapshot(token).then(
@@ -134,18 +141,21 @@ export function App() {
           component.dependencies.some((dependency) => dependency.toLowerCase().includes(normalized))
         );
   }, [query, section, selected, snapshot]);
-  const selectedKey = JSON.stringify([...selected]);
+  const selectedKey = selectionKey(selected);
   useEffect(() => {
     if (snapshot === null) return;
+    const requestedComponents = [...selected].sort();
+    const requestedKey = selectionKey(requestedComponents);
     let stale = false;
-    setPreviewState({ status: "loading" });
-    void fetchSetupPlan(token, [...selected]).then(
+    setPreviewState({ status: "loading", selectionKey: requestedKey });
+    void fetchSetupPlan(token, requestedComponents).then(
       (preview) => {
-        if (!stale) setPreviewState({ status: "ready", preview });
+        if (!stale) setPreviewState({ status: "ready", selectionKey: requestedKey, preview });
       },
       (error: unknown) => {
         if (!stale) setPreviewState({
           status: "error",
+          selectionKey: requestedKey,
           message: error instanceof Error ? error.message : String(error),
         });
       },
@@ -154,9 +164,10 @@ export function App() {
   }, [selectedKey, snapshot]);
 
   const applying = state.status === "applying";
-  const preview = previewState.status === "ready" ? previewState.preview : null;
+  const previewMatchesSelection = previewState.status === "ready" && previewState.selectionKey === selectedKey;
+  const preview = previewMatchesSelection ? previewState.preview : null;
   const previewBlocked = preview?.status === "blocked";
-  const installDisabled = selected.size === 0 || applying || previewState.status !== "ready" || previewBlocked;
+  const installDisabled = selected.size === 0 || applying || !previewMatchesSelection || previewBlocked;
 
   const toggle = (name: string) => {
     setSelected((current) => {
@@ -168,10 +179,12 @@ export function App() {
   };
 
   const apply = async () => {
-    if (snapshot === null || selected.size === 0 || applying || previewState.status !== "ready" || previewBlocked) return;
+    if (
+      snapshot === null || selected.size === 0 || applying || !previewMatchesSelection || previewBlocked
+    ) return;
     setState({ status: "applying", snapshot });
     try {
-      const outcome = await installSetupComponents(token, [...selected]);
+      const outcome = await installSetupComponents(token, [...selected].sort());
       setState({ status: "result", snapshot: outcome.snapshot, outcome });
       if (outcome.status === "applied") setSelected(new Set());
     } catch (error) {
