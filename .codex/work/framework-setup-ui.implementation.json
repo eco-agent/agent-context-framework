@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 2,
+  "replacements": [],
+  "skills": [
+    ".codex/skills/adopt-established-product/SKILL.md",
+    ".codex/skills/reuse-before-implementation/SKILL.md",
+    ".codex/skills/frontend-design-discipline/SKILL.md",
+    ".codex/skills/design-typescript-invariants/SKILL.md"
+  ],
+  "productPrecedent": {
+    "product": "T3 Code settings",
+    "source": {
+      "repository": "https://github.com/pingdotgg/t3code.git",
+      "revision": "67ef189d8b7b68c3096350db404bd649704ec6f2",
+      "license": "MIT"
+    },
+    "checkoutPath": ".codex/work/reference-checkouts/t3code",
+    "licensePath": "LICENSE",
+    "evidencePath": ".codex/work/frontend/framework-setup-ui-reference.md",
+    "materializationPath": ".codex/work/frontend/framework-setup-ui-materialization.json",
+    "adopt": [
+      "compact settings navigation beside one primary content surface",
+      "search-first keyboard interaction",
+      "dense rows with explicit hover focus active and disabled states",
+      "responsive navigation collapse without duplicate state"
+    ],
+    "deviations": [
+      {
+        "acceptanceGateId": "setup-domain",
+        "description": "Replace product settings with registry component selection and installation review."
+      },
+      {
+        "acceptanceGateId": "local-authority",
+        "description": "Replace authentication and pairing with a loopback-only process token and fixed repository root."
+      },
+      {
+        "acceptanceGateId": "bounded-runtime",
+        "description": "Use bounded HTTP requests and exclude T3 Code workspace orchestration, chat, terminal, and agent-loop topology."
+      }
+    ],
+    "implementation": {
+      "kind": "reuse",
+      "licenseNoticePath": "tools/setup-ui/LICENSE.t3code-upstream",
+      "files": [
+        {
+          "sourcePath": "apps/web/src/routes/settings.tsx",
+          "targetPath": "tools/setup-ui/src/App.tsx",
+          "mode": "adapt"
+        },
+        {
+          "sourcePath": "apps/web/src/components/settings/SettingsSidebarNav.tsx",
+          "targetPath": "tools/setup-ui/src/SetupSidebar.tsx",
+          "mode": "adapt"
+        },
+        {
+          "sourcePath": "apps/web/src/components/ui/button.tsx",
+          "targetPath": "tools/setup-ui/src/components/Button.tsx",
+          "mode": "adapt"
+        },
+        {
+          "sourcePath": "apps/web/src/components/ui/checkbox.tsx",
+          "targetPath": "tools/setup-ui/src/components/Checkbox.tsx",
+          "mode": "adapt"
+        },
+        {
+          "sourcePath": "apps/web/src/components/ui/input.tsx",
+          "targetPath": "tools/setup-ui/src/components/Input.tsx",
+          "mode": "adapt"
+        },
+        {
+          "sourcePath": "apps/web/src/index.css",
+          "targetPath": "tools/setup-ui/src/index.css",
+          "mode": "adapt"
+        },
+        {
+          "sourcePath": "apps/web/index.html",
+          "targetPath": "tools/setup-ui/index.html",
+          "mode": "adapt"
+        }
+      ]
+    }
+  }
+}
