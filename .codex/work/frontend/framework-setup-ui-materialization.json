@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "repository": "https://github.com/pingdotgg/t3code.git",
+  "resolvedOrigin": "https://github.com/pingdotgg/t3code.git",
+  "requestedRevision": "67ef189d8b7b68c3096350db404bd649704ec6f2",
+  "checkoutPath": ".codex/work/reference-checkouts/t3code",
+  "checkedOutRevision": "67ef189d8b7b68c3096350db404bd649704ec6f2",
+  "ancestry": "equal",
+  "license": {
+    "declared": "MIT",
+    "path": "LICENSE",
+    "noticePath": "tools/setup-ui/LICENSE.t3code-upstream",
+    "sha256": "935d8f2af0c703f9c39517ee57cc4930b19d02d533be930b63f0e82f93614b43"
+  },
+  "evidence": {
+    "path": ".codex/work/frontend/framework-setup-ui-reference.md",
+    "sha256": "d7e7cc3f7abdb70555bc0cb087735cff23d582bb3a6f6a1186d4c12028898c0d",
+    "artifact": {
+      "hash": "sha256:d7e7cc3f7abdb70555bc0cb087735cff23d582bb3a6f6a1186d4c12028898c0d",
+      "mediaType": "text/markdown",
+      "bytes": 3255,
+      "label": "Product precedent evidence: T3 Code settings"
+    }
+  },
+  "sourceFiles": [
+    {
+      "sourcePath": "apps/web/src/routes/settings.tsx",
+      "targetPath": "tools/setup-ui/src/App.tsx",
+      "mode": "adapt",
+      "sha256": "66438c3cf4b0bef3488039f2faa5e4acdd92b2bb3d9422101723c6d83eaa913a",
+      "bytes": 4515
+    },
+    {
+      "sourcePath": "apps/web/src/components/settings/SettingsSidebarNav.tsx",
+      "targetPath": "tools/setup-ui/src/SetupSidebar.tsx",
+      "mode": "adapt",
+      "sha256": "7fd5d9fbdb3b83fc83efc736a240c37ce103d34557b5ce4d9423f92372287f66",
+      "bytes": 11407
+    },
+    {
+      "sourcePath": "apps/web/src/components/ui/button.tsx",
+      "targetPath": "tools/setup-ui/src/components/Button.tsx",
+      "mode": "adapt",
+      "sha256": "98b290ee8ed80e23756425c6999828b2abdaee3152eb3664767d7239174a7e8e",
+      "bytes": 5068
+    },
+    {
+      "sourcePath": "apps/web/src/components/ui/checkbox.tsx",
+      "targetPath": "tools/setup-ui/src/components/Checkbox.tsx",
+      "mode": "adapt",
+      "sha256": "7873f001b086537e82aeb3855b968af5f46500c63e755588930978ea9efee21d",
+      "bytes": 2662
+    },
+    {
+      "sourcePath": "apps/web/src/components/ui/input.tsx",
+      "targetPath": "tools/setup-ui/src/components/Input.tsx",
+      "mode": "adapt",
+      "sha256": "57ef040233a902a3f960569155a6bf2b1cc708b583e78bf89306b1af7a3c2578",
+      "bytes": 3138
+    },
+    {
+      "sourcePath": "apps/web/src/index.css",
+      "targetPath": "tools/setup-ui/src/index.css",
+      "mode": "adapt",
+      "sha256": "f2eaf30ff5c0aee4206735c6e45a26b8cdc178570624c5a6de9c0858d5e3e82b",
+      "bytes": 66684
+    },
+    {
+      "sourcePath": "apps/web/index.html",
+      "targetPath": "tools/setup-ui/index.html",
+      "mode": "adapt",
+      "sha256": "558cba44814d558b782f45844e2218be57cffe880f50a0882665b821f8eedcec",
+      "bytes": 17175
+    }
+  ]
+}
