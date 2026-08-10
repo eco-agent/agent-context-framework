@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.5.2",
-  "decisionPath": "registry/decisions/0.5.2-phase-ten-closure.md",
+  "revision": "0.6.0",
+  "decisionPath": "registry/decisions/0.6.0-framework-feedback-closure.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:d8e0b4784b95607e1915871f0bdd523161360606f7fa2e4d1f03463ef12f3796",
+      "revision": "sha256:986561e85244683c0ba0651c3be32de9d4241f344572af6e97e3d6e9fe9bb8aa",
       "dependencies": [],
       "capabilities": [
         {
@@ -27,7 +27,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "3698c7e0f680ced0072e47b4f900a4444463f8f73383651f527715799d9578b6",
+          "sourceSha256": "8f073e79678d0a1572aedb56cc3663af380f67f72d0db9a688d21443e8b638ef",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -464,25 +464,9 @@
     },
     {
       "name": "skill-responsive-css-architect",
-      "revision": "sha256:867d9b260a88c2ef86503dbcbb49c79d6cfb0d55c11c25e446949487171f6743",
+      "revision": "sha256:4c8b3192ab50c3457ee4d03d5c80addf968616515e3b9f7f7e9f309f0b7fc9a6",
       "dependencies": [],
-      "capabilities": [
-        {
-          "kind": "runtime",
-          "name": "native-subagents",
-          "requirement": "recommended"
-        },
-        {
-          "kind": "runtime",
-          "name": "network",
-          "requirement": "recommended"
-        },
-        {
-          "kind": "runtime",
-          "name": "python",
-          "requirement": "recommended"
-        }
-      ],
+      "capabilities": [],
       "licenses": [
         {
           "kind": "project",
@@ -523,58 +507,105 @@
         },
         {
           "operation": "file",
-          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-doc-subagent.md",
-          "sourceSha256": "72a032a8e9309f583045f0330052cdea9bdedfb7c76ac987047655e7932202bf",
-          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-doc-subagent.md",
-          "mediaType": "text/markdown"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-docs/doc-manifest.json",
-          "sourceSha256": "2778da05fd51ba0b8baf888c887c6c035af5eea06f09ca6f3157959259917947",
-          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-docs/doc-manifest.json",
-          "mediaType": "application/json"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-docs/INDEX.md",
-          "sourceSha256": "36901e5335a7b147e0b84c3f472fc5010fe0ab58e84332bbd372b167eb3bd436",
-          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-docs/INDEX.md",
-          "mediaType": "text/markdown"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/responsive-css-architect/references/tailwind-v4-operating-model.md",
-          "sourceSha256": "0f5f35409118a2469eea9737c65ee4973fcc90b056dbe6d7f8dc8106822e8d8f",
-          "targetPath": ".codex/skills/responsive-css-architect/references/tailwind-v4-operating-model.md",
-          "mediaType": "text/markdown"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/responsive-css-architect/scripts/sync_tailwind_docs.py",
-          "sourceSha256": "cbcab5603215789d68fc4a10f466045bae4d27c2592225934c923cfd2a489fdf",
-          "targetPath": ".codex/skills/responsive-css-architect/scripts/sync_tailwind_docs.py",
-          "mediaType": "text/x-python"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/responsive-css-architect/scripts/tailwind_doc_context.py",
-          "sourceSha256": "f2c8da8532f0c58d0fd9adc0f19f9e052fb15f118b1a4151299f72d282092c85",
-          "targetPath": ".codex/skills/responsive-css-architect/scripts/tailwind_doc_context.py",
-          "mediaType": "text/x-python"
-        },
-        {
-          "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/SKILL.md",
-          "sourceSha256": "10a944fe4d7c52adb6a39fc6aff45633d4395d977c691ced7ad0106075e31853",
+          "sourceSha256": "84ee40eba170fca55449847ee71953b6a4da0246ad74004f961f9613fb4643a3",
           "targetPath": ".codex/skills/responsive-css-architect/SKILL.md",
           "mediaType": "text/markdown"
         }
       ]
     },
     {
+      "name": "skill-tailwind-css-architect",
+      "revision": "sha256:2e95fc3ea3d5cf7083ad63d11e68fee996dd58896426baa7e2995647dda8a51e",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "native-subagents",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "python",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/agents/openai.yaml",
+          "sourceSha256": "55ddadb04bb73a66e7751de85fdae930df1ded2988aee3b5e8d022917af8476a",
+          "targetPath": ".codex/skills/tailwind-css-architect/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/references/tailwind-doc-subagent.md",
+          "sourceSha256": "72a032a8e9309f583045f0330052cdea9bdedfb7c76ac987047655e7932202bf",
+          "targetPath": ".codex/skills/tailwind-css-architect/references/tailwind-doc-subagent.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/references/tailwind-docs/doc-manifest.json",
+          "sourceSha256": "2778da05fd51ba0b8baf888c887c6c035af5eea06f09ca6f3157959259917947",
+          "targetPath": ".codex/skills/tailwind-css-architect/references/tailwind-docs/doc-manifest.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/references/tailwind-docs/INDEX.md",
+          "sourceSha256": "36901e5335a7b147e0b84c3f472fc5010fe0ab58e84332bbd372b167eb3bd436",
+          "targetPath": ".codex/skills/tailwind-css-architect/references/tailwind-docs/INDEX.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/references/tailwind-v4-operating-model.md",
+          "sourceSha256": "0f5f35409118a2469eea9737c65ee4973fcc90b056dbe6d7f8dc8106822e8d8f",
+          "targetPath": ".codex/skills/tailwind-css-architect/references/tailwind-v4-operating-model.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/scripts/sync_tailwind_docs.py",
+          "sourceSha256": "cbcab5603215789d68fc4a10f466045bae4d27c2592225934c923cfd2a489fdf",
+          "targetPath": ".codex/skills/tailwind-css-architect/scripts/sync_tailwind_docs.py",
+          "mediaType": "text/x-python"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/scripts/tailwind_doc_context.py",
+          "sourceSha256": "f2c8da8532f0c58d0fd9adc0f19f9e052fb15f118b1a4151299f72d282092c85",
+          "targetPath": ".codex/skills/tailwind-css-architect/scripts/tailwind_doc_context.py",
+          "mediaType": "text/x-python"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
+          "sourceSha256": "76b036de2d6fb0df99d4c2098eef025f185af030c9ae2c3c7c68bf6110089c05",
+          "targetPath": ".codex/skills/tailwind-css-architect/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
       "name": "frontend",
-      "revision": "sha256:8bc844a520abe96eb1af9960fabbe2d8589e46713c77fb70745cab6f1563fa56",
+      "revision": "sha256:e11ab1e3eb629aab02979c3ba3f85abd95168426b5c9ee881924c0c6390bce9e",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -609,7 +640,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend.md",
-          "sourceSha256": "4006e1691e9008ebe9e5b5939ba234774b486860d9335a9dd7192129a6bff1d1",
+          "sourceSha256": "aeca2871ffe3bd9c788ae2972935ec252f3984bccae2fb94c6919e28546df34e",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend",
           "markerStyle": "markdown"
@@ -618,23 +649,13 @@
     },
     {
       "name": "frontend-tailwind",
-      "revision": "sha256:1e0475d958d426c9d5b3da3fc153f57e77f263fb4a658ffa54aafc6cfd0a0475",
+      "revision": "sha256:fa95ae69b258bae991f0a1fe9e21542d9d52d6ea6e30073f6a7672ebd4fcf32e",
       "dependencies": [
         "frontend",
-        "skill-responsive-css-architect"
+        "skill-responsive-css-architect",
+        "skill-tailwind-css-architect"
       ],
-      "capabilities": [
-        {
-          "kind": "runtime",
-          "name": "network",
-          "requirement": "recommended"
-        },
-        {
-          "kind": "runtime",
-          "name": "python",
-          "requirement": "recommended"
-        }
-      ],
+      "capabilities": [],
       "licenses": [
         {
           "kind": "project",
@@ -644,7 +665,16 @@
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
-      "artifacts": []
+      "artifacts": [
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
+          "sourceSha256": "111b50b53f026b8977a0bc51c8a652842646dbbbdf6ffc92b11304cfeb77e240",
+          "targetPath": "AGENTS.md",
+          "sectionId": "frontend-tailwind",
+          "markerStyle": "markdown"
+        }
+      ]
     },
     {
       "name": "skill-codebase-inventory",
@@ -1471,7 +1501,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:7b4618bb7cf0520ba3de8904213dcc5f1d4b411746f90448a4a57248bc5833b3",
+      "revision": "sha256:143dffeb1b8fa2ced8e188a4b019c686f37462e692b22546c7b7fbe22eada19b",
       "dependencies": [
         "core",
         "runtime-base"
@@ -1514,7 +1544,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "aba7b50743f96a1753c6484c7c8bb815ea90b1e43b5a0063e0137523a793d9d7",
+          "sourceSha256": "4e54ac4c38a238d88b59d758b3fc5826d1ac06123995a8f4f5024fd8d28a2b69",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1530,7 +1560,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
-          "sourceSha256": "1ab3b5c461b8c9e08be3fd52e4ff7a5e8dc4147fcad702c0d62a3416d3cd3e6f",
+          "sourceSha256": "e007c0e3fa2a0af1e862714c1b09f0a3e5745a2da24d70667c41d98b355fa1c1",
           "targetPath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1546,7 +1576,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
-          "sourceSha256": "cf0ed0de9c7f414943423ddc43dbf885671e7da30a62aaef109c7a7e57dc5737",
+          "sourceSha256": "ef2f307fe2336d881081584499ff5c8b6f985ccf8d16bba3593968d9152f1f40",
           "targetPath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1562,22 +1592,21 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/repository-policy.md",
-          "sourceSha256": "bfdea84cce03924deb656807a83b9bf74ec50fa7d086289cc7228752efd0d6ff",
+          "sourceSha256": "dc15236d52bbca122e135c11c92ea5d561c4738a31e9429ecf35617df638e889",
           "targetPath": "AGENTS.md",
           "sectionId": "repository-policy",
           "markerStyle": "markdown"
         },
         {
-          "operation": "file",
+          "operation": "seed-file",
           "sourcePath": "registry/sources/policy/policy.json",
           "sourceSha256": "d8ed30e1ebc01d0eeac79730e541299006aaadeda6134b2fa258276f14b9d517",
-          "targetPath": ".agent-context/policy.json",
-          "mediaType": "application/json"
+          "targetPath": ".agent-context/policy.json"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/policy/invariants.json",
-          "sourceSha256": "580108cc0c45ce5db2d96c0d333049626171a3a744d7d6c40b36376cd3f4e62b",
+          "sourceSha256": "ed6ac1816ad2938365e2e01fa88a2f3d89cdf634cf3b422628dbcb65b34263d5",
           "targetPath": ".agent-context/policy-invariants.json",
           "mediaType": "application/json"
         },

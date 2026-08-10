@@ -1,17 +1,22 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.5.2",
-  "decisionPath": "registry/decisions/0.5.2-phase-ten-closure.md",
+  "registryRevision": "0.6.0",
+  "decisionPath": "registry/decisions/0.6.0-framework-feedback-closure.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "3698c7e0f680ced0072e47b4f900a4444463f8f73383651f527715799d9578b6"
+      "sha256": "8f073e79678d0a1572aedb56cc3663af380f67f72d0db9a688d21443e8b638ef"
     },
     {
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
-      "sha256": "4006e1691e9008ebe9e5b5939ba234774b486860d9335a9dd7192129a6bff1d1"
+      "sha256": "aeca2871ffe3bd9c788ae2972935ec252f3984bccae2fb94c6919e28546df34e"
+    },
+    {
+      "invariantId": "frontend-tailwind-explicit",
+      "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
+      "sha256": "111b50b53f026b8977a0bc51c8a652842646dbbbdf6ffc92b11304cfeb77e240"
     },
     {
       "invariantId": "repository-work",
@@ -21,7 +26,7 @@
     {
       "invariantId": "verification",
       "sourcePath": "registry/sources/instructions/verification.md",
-      "sha256": "47344a314dd82b6896efff0160e6fc10d95903e5686d31b9479abd7525466c30"
+      "sha256": "452a234c6d75743905e01a662173f5ff62564087db629eae0f2591d3d577fcb6"
     },
     {
       "invariantId": "documentation-prose",
@@ -51,7 +56,7 @@
     {
       "invariantId": "repository-policy-explicit",
       "sourcePath": "registry/sources/instructions/repository-policy.md",
-      "sha256": "bfdea84cce03924deb656807a83b9bf74ec50fa7d086289cc7228752efd0d6ff"
+      "sha256": "dc15236d52bbca122e135c11c92ea5d561c4738a31e9429ecf35617df638e889"
     },
     {
       "invariantId": "codex-agent-selection",

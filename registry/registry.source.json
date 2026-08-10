@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.5.2",
-  "decisionPath": "registry/decisions/0.5.2-phase-ten-closure.md",
+  "revision": "0.6.0",
+  "decisionPath": "registry/decisions/0.6.0-framework-feedback-closure.md",
   "components": [
     {
       "name": "core",
