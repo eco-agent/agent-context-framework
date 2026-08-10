@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build && tsc -b",
+    "build": "vp build && tsc -b",
     "clean": "tsc -b --clean",
-    "dev": "vite --host 127.0.0.1",
+    "dev": "vp dev --host 127.0.0.1",
     "typecheck": "tsc -b --pretty false"
   },
   "dependencies": {
