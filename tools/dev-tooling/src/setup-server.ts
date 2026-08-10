@@ -9,10 +9,14 @@ import {
   initProject,
   inspectProject,
   loadContextRegistry,
+  planProjectSelection,
   type ContextOperationResult,
+  type ContextSelectionPreview,
 } from "./context-installer.js";
 import {
+  parseSetupPlanCommand,
   parseSetupInstallCommand,
+  type SetupSelectionPreview,
   type SetupComponentSummary,
   type SetupInstallOutcome,
   type SetupSnapshot,
@@ -46,18 +50,44 @@ export async function readSetupSnapshot(
   ]);
   const components: readonly SetupComponentSummary[] = registry.components.map((component) => ({
     name: component.name,
+    kind: component.dependencies.length > 0 && component.artifacts.length === 0 ? "bundle" : "component",
     dependencies: component.dependencies,
     capabilities: component.capabilities,
     licenseCount: component.licenses.length,
+    artifactCount: component.artifacts.length,
   }));
+  const installedDirectComponents = inspection.initialized
+    ? inspection.selection.currentDirectComponents
+    : [];
+  const installedResolvedComponents = inspection.initialized
+    ? inspection.selection.resolvedComponents
+    : [];
   return {
     status: "ready",
     projectRoot: inspection.projectRoot,
     initialized: inspection.initialized,
     registryRevision: inspection.registryRevision,
-    selectedComponents: inspection.selection.directComponents,
+    installedDirectComponents,
+    installedResolvedComponents,
     components,
   };
+}
+
+export async function planSetupSelection(
+  projectRoot: string,
+  frameworkRoot: string,
+  input: unknown,
+): Promise<SetupSelectionPreview> {
+  const snapshot = await readSetupSnapshot(projectRoot, frameworkRoot);
+  const command = parseSetupPlanCommand(
+    input,
+    new Set(snapshot.components.map((component) => component.name)),
+  );
+  return projectSelectionToSetupPreview(await planProjectSelection(
+    projectRoot,
+    frameworkRoot,
+    command.components,
+  ));
 }
 
 export async function installSetupComponents(
@@ -70,6 +100,10 @@ export async function installSetupComponents(
     input,
     new Set(snapshot.components.map((component) => component.name)),
   );
+  const preview = await planProjectSelection(projectRoot, frameworkRoot, command.components);
+  if (preview.status === "blocked") {
+    return blockedSelectionOutcome(snapshot, preview);
+  }
   const writtenPaths = new Set<string>();
 
   if (!snapshot.initialized) {
@@ -81,7 +115,7 @@ export async function installSetupComponents(
   }
 
   for (const component of command.components) {
-    if (snapshot.selectedComponents.includes(component)) continue;
+    if (snapshot.installedDirectComponents.includes(component)) continue;
     const result = await addComponent(projectRoot, frameworkRoot, component);
     const blocked = await blockedOutcome(result, projectRoot, frameworkRoot);
     if (blocked !== null) return blocked;
@@ -157,12 +191,22 @@ async function handleRequest(
       sendJson(response, 200, await readSetupSnapshot(context.projectRoot, context.frameworkRoot));
       return;
     }
+    if (requestUrl.pathname === "/api/plan" && request.method === "POST") {
+      requireApiToken(request, context.token);
+      const preview = await planSetupSelection(
+        context.projectRoot,
+        context.frameworkRoot,
+        await readJsonBody(request, "Setup plan request"),
+      );
+      sendJson(response, preview.status === "blocked" ? 409 : 200, preview);
+      return;
+    }
     if (requestUrl.pathname === "/api/install" && request.method === "POST") {
       requireApiToken(request, context.token);
       const outcome = await installSetupComponents(
         context.projectRoot,
         context.frameworkRoot,
-        await readJsonBody(request),
+        await readJsonBody(request, "Setup install request"),
       );
       sendJson(response, outcome.status === "blocked" ? 409 : 200, outcome);
       return;
@@ -188,7 +232,8 @@ async function handleRequest(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const status = message.startsWith("Invalid setup") ? 403 :
-      message.startsWith("Setup install request") || message.startsWith("Unknown setup") ? 400 :
+      message.startsWith("Setup plan request") || message.startsWith("Setup install request") ||
+        message.startsWith("Unknown setup") ? 400 :
       message === "Request body is too large." ? 413 : 500;
     sendText(response, status, message);
   }
@@ -211,6 +256,46 @@ async function blockedOutcome(
   };
 }
 
+function blockedSelectionOutcome(
+  snapshot: SetupSnapshot,
+  preview: ContextSelectionPreview,
+): SetupInstallOutcome {
+  return {
+    status: "blocked",
+    snapshot,
+    conflicts: preview.drift.conflicts.map((conflict) => ({
+      targetPath: conflict.targetPath,
+      status: conflict.status,
+      detail: conflict.detail,
+    })),
+  };
+}
+
+function projectSelectionToSetupPreview(preview: ContextSelectionPreview): SetupSelectionPreview {
+  return {
+    ...preview,
+    capabilities: preview.capabilities,
+    licenses: preview.licenses.map((license) => license.kind === "project"
+      ? { kind: license.kind, spdx: license.spdx, noticePath: license.noticePath }
+      : {
+          kind: license.kind,
+          spdx: license.spdx,
+          source: license.source,
+          revision: license.revision,
+          noticePath: license.noticePath,
+        }),
+    activations: preview.activations,
+    drift: {
+      ...preview.drift,
+      conflicts: preview.drift.conflicts.map((conflict) => ({
+        targetPath: conflict.targetPath,
+        status: conflict.status,
+        detail: conflict.detail,
+      })),
+    },
+  };
+}
+
 function requireApiToken(request: IncomingMessage, expected: string): void {
   const supplied = request.headers["x-agent-context-token"];
   if (typeof supplied !== "string" || !tokensEqual(supplied, expected)) {
@@ -224,7 +309,7 @@ function tokensEqual(left: string, right: string): boolean {
   return timingSafeEqual(leftDigest, rightDigest);
 }
 
-async function readJsonBody(request: IncomingMessage): Promise<unknown> {
+async function readJsonBody(request: IncomingMessage, label: string): Promise<unknown> {
   const chunks: Buffer[] = [];
   let bytes = 0;
   for await (const chunk of request) {
@@ -237,7 +322,7 @@ async function readJsonBody(request: IncomingMessage): Promise<unknown> {
   try {
     return JSON.parse(text) as unknown;
   } catch (error) {
-    throw new Error("Setup install request must be valid JSON.", { cause: error });
+    throw new Error(`${label} must be valid JSON.`, { cause: error });
   }
 }
 

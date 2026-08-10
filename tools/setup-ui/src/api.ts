@@ -1,7 +1,9 @@
 import {
+  decodeSetupSelectionPreview,
   decodeSetupInstallOutcome,
   decodeSetupSnapshot,
   type SetupInstallOutcome,
+  type SetupSelectionPreview,
   type SetupSnapshot,
 } from "@agent-context/dev-tooling/setup-contract";
 
@@ -22,6 +24,18 @@ export function captureLaunchToken(): string {
 export async function fetchSetupSnapshot(token: string): Promise<SetupSnapshot> {
   const response = await setupFetch(token, "/api/setup", { method: "GET" });
   return decodeSetupSnapshot(await response.json());
+}
+
+export async function fetchSetupPlan(
+  token: string,
+  components: readonly string[],
+): Promise<SetupSelectionPreview> {
+  const response = await setupFetch(token, "/api/plan", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ components }),
+  });
+  return decodeSetupSelectionPreview(await response.json());
 }
 
 export async function installSetupComponents(

@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import type {
   SetupComponentSummary,
   SetupInstallOutcome,
+  SetupSelectionPreview,
   SetupSnapshot,
 } from "@agent-context/dev-tooling/setup-contract";
 
-import { captureLaunchToken, fetchSetupSnapshot, installSetupComponents } from "./api.js";
+import { captureLaunchToken, fetchSetupPlan, fetchSetupSnapshot, installSetupComponents } from "./api.js";
 import { Button } from "./components/Button.js";
 import { Checkbox } from "./components/Checkbox.js";
 import { SetupSidebar, type SetupSection } from "./SetupSidebar.js";
@@ -22,6 +23,11 @@ type AppState =
       readonly outcome: SetupInstallOutcome;
     };
 
+type PreviewState =
+  | { readonly status: "loading" }
+  | { readonly status: "error"; readonly message: string }
+  | { readonly status: "ready"; readonly preview: SetupSelectionPreview };
+
 const token = captureLaunchToken();
 
 function ChevronIcon() {
@@ -30,21 +36,6 @@ function ChevronIcon() {
       <path d="m7.5 4.5 5.5 5.5-5.5 5.5" />
     </svg>
   );
-}
-
-function dependencyClosure(
-  selected: ReadonlySet<string>,
-  components: readonly SetupComponentSummary[],
-): readonly string[] {
-  const dependencies = new Map(components.map((component) => [component.name, component.dependencies]));
-  const resolved = new Set<string>();
-  const visit = (name: string) => {
-    if (resolved.has(name)) return;
-    for (const dependency of dependencies.get(name) ?? []) visit(dependency);
-    resolved.add(name);
-  };
-  for (const name of selected) visit(name);
-  return [...resolved];
 }
 
 function ComponentRow({
@@ -93,12 +84,13 @@ function ComponentRow({
       <span className="component-row__body">
         <span className="component-row__title">
           <code>{component.name}</code>
+          <span className="component-kind">{component.kind}</span>
           {installed ? <span className="installed-label">Installed</span> : null}
         </span>
         <span className="component-row__detail">{detail}</span>
       </span>
       <span className="component-row__meta">
-        {component.capabilities.length} capabilities · {component.licenseCount} licenses
+        {component.capabilities.length} capabilities · {component.licenseCount} licenses · {component.artifactCount} artifacts
       </span>
       <ChevronIcon />
     </label>
@@ -110,6 +102,7 @@ export function App() {
   const [query, setQuery] = useState("");
   const [section, setSection] = useState<SetupSection>("components");
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+  const [previewState, setPreviewState] = useState<PreviewState>({ status: "loading" });
 
   useEffect(() => {
     void fetchSetupSnapshot(token).then(
@@ -125,8 +118,8 @@ export function App() {
     ? null
     : state.snapshot;
   const installed = useMemo(
-    () => new Set(snapshot?.selectedComponents ?? []),
-    [snapshot?.selectedComponents],
+    () => new Set(snapshot?.installedResolvedComponents ?? []),
+    [snapshot?.installedResolvedComponents],
   );
   const visibleComponents = useMemo(() => {
     if (snapshot === null) return [];
@@ -141,11 +134,29 @@ export function App() {
           component.dependencies.some((dependency) => dependency.toLowerCase().includes(normalized))
         );
   }, [query, section, selected, snapshot]);
-  const closure = useMemo(
-    () => snapshot === null ? [] : dependencyClosure(selected, snapshot.components),
-    [selected, snapshot],
-  );
+  const selectedKey = JSON.stringify([...selected]);
+  useEffect(() => {
+    if (snapshot === null) return;
+    let stale = false;
+    setPreviewState({ status: "loading" });
+    void fetchSetupPlan(token, [...selected]).then(
+      (preview) => {
+        if (!stale) setPreviewState({ status: "ready", preview });
+      },
+      (error: unknown) => {
+        if (!stale) setPreviewState({
+          status: "error",
+          message: error instanceof Error ? error.message : String(error),
+        });
+      },
+    );
+    return () => { stale = true; };
+  }, [selectedKey, snapshot]);
+
   const applying = state.status === "applying";
+  const preview = previewState.status === "ready" ? previewState.preview : null;
+  const previewBlocked = preview?.status === "blocked";
+  const installDisabled = selected.size === 0 || applying || previewState.status !== "ready" || previewBlocked;
 
   const toggle = (name: string) => {
     setSelected((current) => {
@@ -157,7 +168,7 @@ export function App() {
   };
 
   const apply = async () => {
-    if (snapshot === null || selected.size === 0 || applying) return;
+    if (snapshot === null || selected.size === 0 || applying || previewState.status !== "ready" || previewBlocked) return;
     setState({ status: "applying", snapshot });
     try {
       const outcome = await installSetupComponents(token, [...selected]);
@@ -239,18 +250,87 @@ export function App() {
               />
             ))}
           </div>
+
+          <section className="preview-panel" aria-labelledby="preview-heading" aria-live="polite">
+            <div className="preview-panel__heading">
+              <div>
+                <h2 id="preview-heading">Selection preview</h2>
+                <p>Server-owned plan from the real installer; no files are written.</p>
+              </div>
+              {preview ? <span className="preview-status" data-status={preview.status}>{preview.status}</span> : null}
+            </div>
+            {previewState.status === "loading" ? <p className="preview-message">Planning selection…</p> : null}
+            {previewState.status === "error" ? <p className="preview-message preview-message--error" role="alert">{previewState.message}</p> : null}
+            {preview ? (
+              <>
+                <div className="preview-grid">
+                  <div>
+                    <strong>Direct</strong>
+                    <span>{preview.directComponents.join(", ") || "none"}</span>
+                  </div>
+                  <div>
+                    <strong>Transitive</strong>
+                    <span>{preview.transitiveComponents.join(", ") || "none"}</span>
+                  </div>
+                  <div>
+                    <strong>Footprint</strong>
+                    <span>{preview.footprint.componentCount} components · {preview.footprint.artifactCount} artifacts · {preview.footprint.targetCount} targets</span>
+                  </div>
+                  <div>
+                    <strong>Targets</strong>
+                    <span>{preview.footprint.skillTargetCount} skills · {preview.footprint.runtimeTargetCount} runtime</span>
+                  </div>
+                </div>
+                <div className="preview-detail">
+                  <strong>Capabilities</strong>
+                  <span>{preview.capabilities.length === 0
+                    ? "none"
+                    : preview.capabilities.map((capability) => `${capability.requirement} ${capability.kind}:${capability.name}`).join(" · ")}</span>
+                </div>
+                <div className="preview-detail">
+                  <strong>Licenses</strong>
+                  <span>{preview.licenses.length === 0
+                    ? "none"
+                    : preview.licenses.map((license) => license.kind === "project"
+                      ? `${license.spdx} project notice`
+                      : `${license.spdx} ${license.source}@${license.revision}`).join(" · ")}</span>
+                </div>
+                {preview.trustRequired ? <p className="preview-disclosure">Trust this repository before Codex loads project configuration.</p> : null}
+                {preview.activations.map((activation) => (
+                  <p key={activation.id} className="preview-disclosure" data-status={activation.status}>
+                    {activation.status}: {activation.message}
+                  </p>
+                ))}
+                {preview.drift.conflicts.length > 0 ? (
+                  <div className="preview-conflicts" role="alert">
+                    {preview.drift.conflicts.map((conflict) => (
+                      <span key={`${conflict.targetPath}-${conflict.status}`}>
+                        {conflict.targetPath}: {conflict.detail}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+          </section>
         </section>
 
         <footer className="action-bar">
           <div className="action-bar__summary">
             <strong>{selected.size > 0 ? `${selected.size} selected` : "No additions selected"}</strong>
             <span>
-              {closure.length > 0
-                ? `Resolved closure: ${closure.join(", ")}`
-                : "Choose at least one component to continue."}
+              {previewState.status === "loading"
+                ? "Waiting for the server-owned selection preview…"
+                : previewState.status === "error"
+                  ? "Selection preview failed; installation is disabled."
+                  : previewBlocked
+                    ? "Selection is blocked by an ownership conflict; installation is disabled."
+                    : preview
+                      ? `Resolved closure: ${preview.resolvedComponents.join(", ") || "none"}`
+                      : "Choose at least one component to continue."}
             </span>
           </div>
-          <Button disabled={selected.size === 0 || applying} onClick={() => void apply()}>
+          <Button disabled={installDisabled} onClick={() => void apply()}>
             {applying ? "Installing…" : "Install selected"}
           </Button>
         </footer>

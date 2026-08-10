@@ -92,6 +92,7 @@ export {
 } from "./context-installer.js";
 export {
   installSetupComponents,
+  planSetupSelection,
   readSetupSnapshot,
   startSetupServer,
   type RunningSetupServer,
@@ -99,12 +100,21 @@ export {
 } from "./setup-server.js";
 export {
   decodeSetupInstallOutcome,
+  decodeSetupSelectionPreview,
   decodeSetupSnapshot,
+  parseSetupPlanCommand,
   parseSetupInstallCommand,
   type SetupCapabilitySummary,
   type SetupComponentSummary,
   type SetupConflict,
   type SetupInstallCommand,
   type SetupInstallOutcome,
+  type SetupSelectionPreview,
+  type SetupPlanCommand,
+  type SetupFootprint,
+  type SetupLicenseSummary,
+  type SetupActivationDisclosure,
+  type SetupSelectionDrift,
+  type SetupAssessmentCount,
   type SetupSnapshot,
 } from "./setup-contract.js";
