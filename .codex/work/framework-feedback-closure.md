@@ -16,6 +16,7 @@ explain the real installed closure before an operator applies it.
 | Registry revision | Advance `0.5.2` to `0.6.0`; preserve schema version 2 unless the strict registry contract itself requires a schema break. | Registry governance |
 | Project contract discovery | Repository policy declares exact project contract paths. Installed core instructions require reading those declared contracts before implementation. | Repository policy and core instructions |
 | Verification default | Code changes require the narrowest applicable type and behavior checks. Read-only work is exempt; browser, computer control, and broad repository gates remain request- or acceptance-owned. | Core and verification instructions |
+| Protected baseline | Required framework instructions are maintainer-owned canonical policy. Project contracts may add narrower local detail, but neither local edits nor component/profile composition may remove, override, or weaken the protected rules. | Maintainer-owned instruction sources and semantic governance |
 | CSS profiles | Generic frontend and responsive-CSS components contain no Tailwind-specific commands, utilities, scripts, or references. `frontend-tailwind` explicitly selects the Tailwind instruction and skill closure. | Registry topology and skill sources |
 | Project-owned seed | Add one `seed-file` artifact operation. It writes a missing target once, preserves an existing target, ignores later content drift and upstream seed changes, and never removes the project-owned file. | Installer contract and planner |
 | Operator disclosure | Help, inspect, dry-run, and setup UI expose direct versus transitive components, installed footprint, drift, required capabilities, and dormant hook behavior. | CLI and setup UI |
@@ -46,7 +47,8 @@ registry + project state ------------> inspect / dry-run / setup disclosure
 1. Introduce and prove the `seed-file` state model across decode, projection,
    planning, locking, doctor, update, removal, recovery, and registry generation.
 2. Add exact project contract declarations and strengthen focused verification
-   language in canonical installed instructions.
+   language in canonical installed instructions. Bind protected core rules to a
+   semantic governance gate owned by maintainers.
 3. Split Tailwind-specific instruction and skill content from the generic CSS
    profile, then prove both exact closures semantically.
 4. Expose an operator plan and status model through CLI help, inspect, dry-run,
@@ -69,6 +71,8 @@ registry + project state ------------> inspect / dry-run / setup disclosure
 - No host package manifest or application dependency changes.
 - No compatibility layer, dual artifact representation, or inferred repository
   policy.
+- No project-level mechanism for disabling, replacing, or weakening protected
+  framework instructions. Local project rules are additive or more restrictive.
 - No claim that repository-context or hooks universally improve productivity;
   their bounded capabilities and activation conditions must be stated.
 
@@ -77,7 +81,7 @@ registry + project state ------------> inspect / dry-run / setup disclosure
 - Artifact union, strict decoder, registry builder input, installer planner,
   projection, lock assessment, doctor, generated registry, and focused tests.
 - Repository-policy schema, generated seed, installed core/verification sources,
-  and semantic governance checks.
+  maintainer ownership declarations, and semantic anti-dilution governance checks.
 - Generic and Tailwind instruction sources, skill assets and metadata, component
   dependencies, hashes, licenses, notices, and exact-closure tests.
 - CLI parser and help, inspect/dry-run contracts, setup server, setup client, and
