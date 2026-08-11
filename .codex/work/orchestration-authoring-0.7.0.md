@@ -14,12 +14,12 @@ or lockfiles.
 | Decision | Answer | Owner |
 | --- | --- | --- |
 | Worktree | Implement on `codex/orchestration-authoring` from clean framework head `77d9d8045076560e1e87a74034f5c7564a54a009`. | Git |
-| Registry revision | Advance `0.6.0` to `0.7.0`; preserve generated registry, project config, and lock schema version 2. | Registry governance |
-| Selection | Add only the leaf component `skill-orchestrate-codex-workflows`; no existing bundle selects it transitively. | Registry topology |
+| Registry revision | Advance `0.6.0` to `0.7.0`. Preserve generated registry, project config, and lock schema version 2. | Registry governance |
+| Selection | Add only the leaf component `skill-orchestrate-codex-workflows`. No existing bundle selects it transitively. | Registry topology |
 | Installed source | Own the complete skill under `.codex/skills/orchestrate-codex-workflows`, including UI metadata, loop reference, generic runtime assets, and mock tests. | Skill source |
-| Runtime boundary | Installation is source-only. A later explicit skill invocation may copy and adapt the template; live SDK execution remains separately authorized. | Skill and framework instructions |
+| Runtime boundary | Installation is source-only. A later explicit skill invocation may copy and adapt the template. Live SDK execution remains separately authorized. | Skill and framework instructions |
 | Internal workflow system | Keep `tools/codex-workflows`, objective kernels, objective runtimes, schedulers, stores, task envelopes, binding producers, and product integrations outside the component closure. | Distribution boundary |
-| Provenance | Reuse the existing maintained skill bytes. Record project MIT ownership only after repository evidence confirms authorship; preserve the pinned SDK's Apache-2.0 dependency disclosure. | Licensing governance |
+| Provenance | Reuse the existing maintained skill bytes. Record project MIT ownership only after repository evidence confirms authorship. Preserve the pinned SDK's Apache-2.0 dependency disclosure. | Licensing governance |
 | Safety governance | Protect fixed topology, finite budgets, evidence-before-transition, least authority, decoded control data, and explicit rejection of recursive roles and quorum loops. | Context governance |
 
 ## State
@@ -27,7 +27,7 @@ or lockfiles.
 - The named skill, loop catalog, UI metadata, and generic TypeScript runtime
   template have been read from the user-owned Codex skill installation.
 - The repository already contains an expanded internal consumer in
-  `tools/codex-workflows`; it is not the distributable owner.
+  `tools/codex-workflows`. It is not the distributable owner.
 - Repository policy is unconfigured because `.agent-context/policy.json` is
   absent. No project contract paths are available.
 - No live Codex workflow execution, push, or deployment is authorized.
@@ -81,7 +81,7 @@ generic template ----------------------------------X objective infrastructure
 - Registry source, generated registry, revision decision, README, governance
   manifest, semantic checks, CODEOWNERS-covered paths, and exact closure tests.
 - CLI and setup UI receive the component through the existing registry-driven
-  planner; code changes are required only if evidence shows they do not disclose
+  planner. Code changes are required only if evidence shows they do not disclose
   the new component correctly.
 
 The runtime invariants and deliberately excluded durability semantics are owned
@@ -89,5 +89,23 @@ by `.codex/work/types/orchestration-authoring-runtime.md`.
 
 ## Verification evidence
 
-Pending focused implementation checks. Broad acceptance and live Codex SDK
-execution are outside this bounded slice unless separately authorized.
+- The copied package passed its own strict build and all 30 mock tests in an
+  isolated temporary installation with Node.js `24.14.0`, TypeScript `6.0.2`,
+  `@types/node` `22.10.2`, and `@openai/codex-sdk` `0.145.0`.
+- Skill quick validation passed after the final instruction edits.
+- Registry generation and deterministic checking both reported revision
+  `0.7.0` with 30 components.
+- The focused registry builder suite passed 17 tests. It proves the leaf-only
+  raw closure, exclusion from every existing component, governed hashes and
+  semantics, license alignment, generated-directory exclusion, inert install,
+  unchanged consumer manifest and lockfile, and planner/setup disclosures.
+- The focused Codex-agent, Codex-runtime, repository-policy, and installer-CLI
+  group passed 10 tests. The setup-server suite passed 3 tests after its
+  assertion distinguished the uninitialized planner's default `core` selection
+  from the explicitly requested orchestration leaf.
+- Dev-tooling TypeScript checking and the setup-UI production build passed.
+- The repository technical-prose check passed for the six changed Markdown
+  owners.
+- Live Codex execution, the broad `verify:acceptance` run, downstream migration,
+  and live-browser visual review were not performed. They remain separate
+  acceptance boundaries.

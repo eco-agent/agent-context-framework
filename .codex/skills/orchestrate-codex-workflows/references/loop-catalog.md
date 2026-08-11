@@ -25,7 +25,7 @@ Let one fixed router select from a fixed role registry based on capability, scop
 
 ## Reviewer–repair spiral
 
-Let the implementer produce the artifact. Run review in fresh context when independence matters. The reviewer can repair only within explicit repair authority; otherwise return visible findings to the implementer.
+Let the implementer produce the artifact. Run review in fresh context when independence matters. The reviewer can repair only within explicit repair authority. Otherwise, return visible findings to the implementer.
 
 ## Autonomous environment loop
 
@@ -33,7 +33,7 @@ Observe, decide, act, and observe again. Measure change between observations. St
 
 ## Static scope reconciliation
 
-Traverse a scope tree declared before execution. Move to a parent or named sibling only through the nearest parent decision. Detect cycles. This loop reconciles known boundaries; it must not discover or create a recursive holarchy.
+Traverse a scope tree declared before execution. Move to a parent or named sibling only through the nearest parent decision. Detect cycles. This loop reconciles known boundaries. It must not discover or create a recursive holarchy.
 
 ## Subsidiarity escalation
 
@@ -45,7 +45,7 @@ Assign gaps against one durable artifact. Append attributed contributions, integ
 
 ## Progressive authority ladder
 
-Keep progress, user-journey, code-quality, and release decisions separate. Each stage has distinct evidence and authority. A later stage may return to a named earlier stage; it cannot silently assume that stage's authority.
+Keep progress, user-journey, code-quality, and release decisions separate. Each stage has distinct evidence and authority. A later stage may return to a named earlier stage. It cannot silently assume that stage's authority.
 
 ## Explicit exclusions
 

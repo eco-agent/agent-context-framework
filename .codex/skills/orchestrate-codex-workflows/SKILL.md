@@ -22,7 +22,7 @@ Use task structure, not task size, as the deciding signal.
 - Do not create subagents only because a task is large. Use them when parallel work has independent scopes and explicit return contracts.
 - Do not create a workflow only because a task has several steps. Use an ordinary plan when the primary can retain and verify the state directly.
 - Choose a workflow when a missed transition, lost observation, repeated attempt, or authority breach must be prevented by code rather than remembered by the model.
-- Keep native subagents outside workflow execution. SDK roles are the workflow workers; mixing unledgered subagents into the run bypasses its budgets and evidence contracts.
+- Keep native subagents outside workflow execution. SDK roles are the workflow workers. Mixing unledgered subagents into the run bypasses its budgets and evidence contracts.
 - Build or revise the harness when this skill triggers during a coding task. Do not run the harness as a hidden method for completing the current task unless the user asks to operate it.
 
 If uncertain, start with the primary agent. Add native subagents for independent throughput. Move to a workflow only when transition or evidence enforcement becomes a requirement.
@@ -44,11 +44,11 @@ If uncertain, start with the primary agent. Add native subagents for independent
 2. Choose an explicit project-owned package directory. Copy `assets/typescript-runtime/` into that directory without overlaying an existing package manifest, and preserve its tests until the project-specific workflow passes.
 3. Define the objective, acceptance criteria, static stages, role registry, budgets, and evidence contracts in project code.
 4. Construct `CodexWorkflowClient` with the validated plan, then implement role calls with `invoke()` against named task IDs. Supply the required per-turn timeout, structured output decoder, and output-evidence extractor for every control decision.
-5. Have the project controller evaluate each task criterion with concrete checks, decode and freeze that declaration with `validateTaskAcceptanceEvaluation()`, then pass it to `acceptTask(taskId, evaluation)`. The client requires exact criterion coverage with every result true, consumes only the latest successful attempt's evidence, and unlocks dependencies only after persisting acceptance; it does not interpret prose criteria.
-6. Compose loops around domain callbacks. Keep Codex prompts at the boundary; keep transition logic deterministic.
+5. Have the project controller evaluate each task criterion with concrete checks, decode and freeze that declaration with `validateTaskAcceptanceEvaluation()`, then pass it to `acceptTask(taskId, evaluation)`. The client requires exact criterion coverage with every result true, consumes only the latest successful attempt's evidence, and unlocks dependencies only after persisting acceptance. It does not interpret prose criteria.
+6. Compose loops around domain callbacks. Keep Codex prompts at the boundary. Keep transition logic deterministic.
 7. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
 8. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
-9. Inspect the JSONL ledger. Verify role calls record their actor, task, attempt, thread, and evidence; delegations stay within the fixed envelope; and completed, escalated, or budget-exhausted loops have a terminal reason. Wrap project callbacks at the outer runner when thrown callback failures must also produce a loop-terminal event.
+9. Inspect the JSONL ledger. Verify role calls record their actor, task, attempt, thread, and evidence. Confirm delegations stay within the fixed envelope and completed, escalated, or budget-exhausted loops have a terminal reason. Wrap project callbacks at the outer runner when thrown callback failures must also produce a loop-terminal event.
 
 ## Choose thread authority
 
@@ -87,7 +87,7 @@ The JSONL ledger is an audit record, not a complete process checkpoint, queue, s
 
 The project controller also owns the workflow-level acceptance decision. The template validates task transitions but does not infer whether the plan's final prose acceptance criteria are satisfied.
 
-Loop counters bound transitions, attempts, rounds, hops, and concurrency. They cannot bound arbitrary project callbacks; wrap non-Codex callbacks in consumer-owned deadlines when wall-clock completion is required.
+Loop counters bound transitions, attempts, rounds, hops, and concurrency. They cannot bound arbitrary project callbacks. Wrap non-Codex callbacks in consumer-owned deadlines when wall-clock completion is required.
 
 The template is verified against `@openai/codex-sdk` 0.145.0 and Node.js 22+. Review the official SDK types before changing the pinned SDK version.
 
@@ -95,9 +95,9 @@ The template is verified against `@openai/codex-sdk` 0.145.0 and Node.js 22+. Re
 
 Stop and redesign if a proposal introduces:
 
-- recursive task discovery;
-- dynamic creation of roles;
-- majority voting or consensus sampling;
-- unbounded retries, routes, transitions, or reviewer passes;
-- a manager-only primary agent;
+- recursive task discovery.
+- dynamic creation of roles.
+- majority voting or consensus sampling.
+- unbounded retries, routes, transitions, or reviewer passes.
+- a manager-only primary agent.
 - completion based on prose confidence without observable evidence.

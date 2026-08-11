@@ -27,16 +27,16 @@ removal preserve unrelated project content.
 Registry components declare their dependencies, artifacts, required and
 recommended capabilities, source revisions, licenses, notices, and
 content-addressed component revisions. Project-authored distributable source is
-MIT licensed; pinned third-party source retains its packaged attribution and
+MIT licensed. Pinned third-party source retains its packaged attribution and
 notices.
 
 Bounded Codex SDK workflow authoring is available only through the explicitly
 selected `skill-orchestrate-codex-workflows` component. It installs inert skill
-and template source; it does not install SDK dependencies, create or execute a
+and template source. It does not install SDK dependencies, create or execute a
 workflow, produce hook bindings, or edit the consumer's manifests or lockfiles.
 No existing
 bundle selects it transitively. Its plan and setup disclosures report required
-Node.js, network, and Codex-authentication capabilities; those declarations do
+Node.js, network, and Codex-authentication capabilities. Those declarations do
 not activate or test a live Codex session. Its bundled JSONL ledger is a
 single-process audit record, not a crash-restorable workflow checkpoint.
 Objective kernels, objective runtimes,
@@ -50,7 +50,7 @@ Required framework instructions are maintainer-owned canonical policy. Their
 sources, hashes, installed projections, registry decision, and CODEOWNERS paths
 move together under governance checks. Project instructions may add detail or
 stricter requirements, but they must not remove, override, or weaken the protected
-baseline; local edits to managed instruction scopes are reported as drift.
+baseline. Local edits to managed instruction scopes are reported as drift.
 
 A configured repository policy declares exact project contracts in
 `repository.projectContracts`, separately from documentation roots. Agents read
@@ -69,7 +69,7 @@ pnpm agent-context setup --cwd D:\path\to\project
 ```
 
 `setup` starts a token-protected loopback web interface and opens it locally. The
-browser client cannot write files directly; installation goes through the same
+browser client cannot write files directly. Installation goes through the same
 registry decoder, dependency resolver, ownership planner, and transactional
 materializer as the CLI. Use `--no-open` to print the local URL without launching
 a browser and `--port` to request a fixed loopback port.
@@ -93,7 +93,7 @@ transitive components, dependency-only bundles, artifact and target footprint,
 capabilities, licenses/notices, trust and activation requirements, planned writes,
 drift, and conflicts without changing project state. `inspect` embeds the same
 preview for the currently configured selection. The localhost setup UI requests
-that same server-owned preview before enabling installation; the browser does not
+that same server-owned preview before enabling installation. The browser does not
 reimplement dependency resolution or infer whether a component is a bundle.
 
 Normal update preserves locally modified managed content and blocks ambiguous
@@ -107,12 +107,12 @@ current hashes still match its journal boundary.
   repository.
 - `codex-hooks` installs hook definitions and entrypoints, but enforcement is
   dormant without a valid session-scoped binding. A missing binding emits no
-  decision; a present malformed, stale, or mismatched binding remains fail-closed.
+  decision. A present malformed, stale, or mismatched binding remains fail-closed.
 - `codex-repo-context` requires `ripgrep` and exposes only authorized-root,
   root-safe, bounded fixed-string read/search over MCP stdio.
 - Capability declarations are requirements, not claims that a host executable or
   service was detected. Doctor reports them without silently inferring policy.
-- The isolated runtime is bootstrapped under `.agent-context/runtime`; framework
+- The isolated runtime is bootstrapped under `.agent-context/runtime`. Framework
   installation does not modify the host package manifest, lockfile, or application
   dependency graph.
 
@@ -134,5 +134,5 @@ revision and controlled downstream fixture:
 pnpm --silent verify:acceptance -- --fixture D:\path\to\fixture
 ```
 
-Durable phase and closure evidence lives in `.codex/work`; governed registry
+Durable phase and closure evidence lives in `.codex/work`. Governed registry
 decisions live in `registry/decisions`.

@@ -123,7 +123,10 @@ test("loopback setup server requires its token and installs through the real mat
     });
     assert.equal(authoringPlanResponse.status, 200);
     const authoringPlan = decodeSetupSelectionPreview(await authoringPlanResponse.json());
-    assert.deepEqual(authoringPlan.resolvedComponents, ["skill-orchestrate-codex-workflows"]);
+    assert.deepEqual(authoringPlan.requestedComponents, ["skill-orchestrate-codex-workflows"]);
+    assert.deepEqual(authoringPlan.directComponents, ["core", "skill-orchestrate-codex-workflows"]);
+    assert.deepEqual(authoringPlan.resolvedComponents, ["core", "skill-orchestrate-codex-workflows"]);
+    assert.deepEqual(authoringPlan.transitiveComponents, []);
     assert.equal(authoringPlan.footprint.skillTargetCount > 0, true);
     assert.equal(authoringPlan.trustRequired, true);
     assert.equal(authoringPlan.capabilities.some((capability) =>
