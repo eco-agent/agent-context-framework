@@ -113,6 +113,25 @@ test("loopback setup server requires its token and installs through the real mat
     assert.ok(runtimePlan.activations.some((activation) => activation.id === "codex-hooks-session-binding" && activation.status === "dormant"));
     assert.ok(runtimePlan.licenses.length > 0);
 
+    const authoringPlanResponse = await fetch(`${origin}/api/plan`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-agent-context-token": "fixture-token",
+      },
+      body: JSON.stringify({ components: ["skill-orchestrate-codex-workflows"] }),
+    });
+    assert.equal(authoringPlanResponse.status, 200);
+    const authoringPlan = decodeSetupSelectionPreview(await authoringPlanResponse.json());
+    assert.deepEqual(authoringPlan.resolvedComponents, ["skill-orchestrate-codex-workflows"]);
+    assert.equal(authoringPlan.footprint.skillTargetCount > 0, true);
+    assert.equal(authoringPlan.trustRequired, true);
+    assert.equal(authoringPlan.capabilities.some((capability) =>
+      capability.kind === "runtime" && capability.name === "codex-authentication"), true);
+    assert.equal(authoringPlan.activations.some((activation) =>
+      activation.id === "codex-authenticated-execution" && activation.status === "dormant"), true);
+    assert.equal(authoringPlan.licenses.some((license) => license.spdx === "Apache-2.0"), true);
+
     const rejected = await fetch(`${origin}/api/install`, {
       method: "POST",
       headers: {

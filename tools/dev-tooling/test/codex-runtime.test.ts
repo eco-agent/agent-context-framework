@@ -64,7 +64,7 @@ test("Codex selection disclosure makes trust and dormant hook activation explici
   assert.deepEqual(codexInterfaceSelectionDisclosures(["codex-agents"]), [{
     id: "codex-project-trust",
     status: "required",
-    message: "Codex must trust this repository before it loads project-scoped configuration.",
+    message: "Codex must trust this repository before it loads project-scoped configuration or skills.",
   }]);
   const hooks = codexInterfaceSelectionDisclosures(["codex-hooks"]);
   assert.equal(hooks.some((disclosure) => disclosure.id === "codex-project-trust"), true);
@@ -72,6 +72,15 @@ test("Codex selection disclosure makes trust and dormant hook activation explici
     disclosure.id === "codex-hooks-session-binding" &&
     disclosure.status === "dormant" &&
     /no binding producer is distributed/u.test(disclosure.message)), true);
+  const authoring = codexInterfaceSelectionDisclosures([
+    "skill-orchestrate-codex-workflows",
+  ]);
+  assert.equal(authoring.some((disclosure) =>
+    disclosure.id === "codex-project-trust" && disclosure.status === "required"), true);
+  assert.equal(authoring.some((disclosure) =>
+    disclosure.id === "codex-authenticated-execution" &&
+    disclosure.status === "dormant" &&
+    /separate authorization/u.test(disclosure.message)), true);
 });
 
 test("codex-runtime installs, diagnoses, and removes only its owned project configuration", { timeout: 90_000 }, async () => {

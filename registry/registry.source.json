@@ -405,7 +405,11 @@
           "kind": "directory",
           "sourceDirectory": ".codex/skills/orchestrate-codex-workflows",
           "targetDirectory": ".codex/skills/orchestrate-codex-workflows",
-          "excludedPrefixes": ["assets/typescript-runtime/dist/", "assets/typescript-runtime/node_modules/"]
+          "excludedPrefixes": [
+            "assets/typescript-runtime/.codex-runs/",
+            "assets/typescript-runtime/dist/",
+            "assets/typescript-runtime/node_modules/"
+          ]
         }
       ]
     },

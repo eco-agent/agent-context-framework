@@ -10,6 +10,11 @@ const WAVE_FOUR_COMPONENTS = new Set([
   "codex-repo-context",
   "codex-runtime",
 ]);
+const ORCHESTRATION_AUTHORING_COMPONENT = "skill-orchestrate-codex-workflows";
+const PROJECT_SCOPED_CODEX_COMPONENTS = new Set([
+  ...WAVE_FOUR_COMPONENTS,
+  ORCHESTRATION_AUTHORING_COMPONENT,
+]);
 
 export interface CodexInterfaceHealth {
   readonly status: "ready" | "invalid";
@@ -19,7 +24,10 @@ export interface CodexInterfaceHealth {
 }
 
 export interface ContextActivationDisclosure {
-  readonly id: "codex-project-trust" | "codex-hooks-session-binding";
+  readonly id:
+    | "codex-project-trust"
+    | "codex-hooks-session-binding"
+    | "codex-authenticated-execution";
   readonly status: "required" | "dormant";
   readonly message: string;
 }
@@ -29,11 +37,11 @@ export function codexInterfaceSelectionDisclosures(
 ): readonly ContextActivationDisclosure[] {
   const selected = new Set(resolvedComponents);
   const disclosures: ContextActivationDisclosure[] = [];
-  if ([...selected].some((component) => WAVE_FOUR_COMPONENTS.has(component))) {
+  if ([...selected].some((component) => PROJECT_SCOPED_CODEX_COMPONENTS.has(component))) {
     disclosures.push({
       id: "codex-project-trust",
       status: "required",
-      message: "Codex must trust this repository before it loads project-scoped configuration.",
+      message: "Codex must trust this repository before it loads project-scoped configuration or skills.",
     });
   }
   if (selected.has("codex-hooks") || selected.has("codex-runtime")) {
@@ -41,6 +49,13 @@ export function codexInterfaceSelectionDisclosures(
       id: "codex-hooks-session-binding",
       status: "dormant",
       message: "Hooks emit no decision until a valid scoped session binding exists; no binding producer is distributed.",
+    });
+  }
+  if (selected.has(ORCHESTRATION_AUTHORING_COMPONENT)) {
+    disclosures.push({
+      id: "codex-authenticated-execution",
+      status: "dormant",
+      message: "The installed authoring source is inert; live workflow execution requires separate authorization, an authenticated Codex session, and network access.",
     });
   }
   return disclosures;

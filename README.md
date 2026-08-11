@@ -33,7 +33,8 @@ notices.
 Bounded Codex SDK workflow authoring is available only through the explicitly
 selected `skill-orchestrate-codex-workflows` component. It installs inert skill
 and template source; it does not install SDK dependencies, create or execute a
-workflow, produce hook bindings, or change the host package graph. No existing
+workflow, produce hook bindings, or edit the consumer's manifests or lockfiles.
+No existing
 bundle selects it transitively. Its plan and setup disclosures report required
 Node.js, network, and Codex-authentication capabilities; those declarations do
 not activate or test a live Codex session. Its bundled JSONL ledger is a

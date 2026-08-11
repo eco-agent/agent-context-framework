@@ -32,7 +32,10 @@ export interface SetupLicenseSummary {
 }
 
 export interface SetupActivationDisclosure {
-  readonly id: "codex-project-trust" | "codex-hooks-session-binding";
+  readonly id:
+    | "codex-project-trust"
+    | "codex-hooks-session-binding"
+    | "codex-authenticated-execution";
   readonly status: "required" | "dormant";
   readonly message: string;
 }
@@ -310,7 +313,11 @@ function decodeActivationDisclosure(value: unknown): SetupActivationDisclosure {
   requireExactKeys(record, ["id", "status", "message"], "Setup activation");
   const id = requiredString(record, "id");
   const status = requiredString(record, "status");
-  if (id !== "codex-project-trust" && id !== "codex-hooks-session-binding") {
+  if (
+    id !== "codex-project-trust" &&
+    id !== "codex-hooks-session-binding" &&
+    id !== "codex-authenticated-execution"
+  ) {
     throw new Error("Setup activation id is invalid.");
   }
   if (status !== "required" && status !== "dormant") throw new Error("Setup activation status is invalid.");

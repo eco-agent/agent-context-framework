@@ -85,8 +85,17 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
         assert.equal(targets.has(license.noticePath), true);
       } else {
         assert.equal(license.spdx, "MIT");
-        assert.equal(license.sourcePath, "LICENSE");
-        assert.equal(license.noticePath, ".agent-context/LICENSE.agent-context-framework");
+        if (component.name === "skill-orchestrate-codex-workflows") {
+          assert.equal(
+            license.sourcePath,
+            ".codex/skills/orchestrate-codex-workflows/LICENSE",
+          );
+          assert.equal(license.noticePath, license.sourcePath);
+          assert.equal(targets.has(license.noticePath), true);
+        } else {
+          assert.equal(license.sourcePath, "LICENSE");
+          assert.equal(license.noticePath, ".agent-context/LICENSE.agent-context-framework");
+        }
       }
     }
   }
@@ -108,6 +117,41 @@ test("component revisions change with canonical component bytes", async () => {
     assert.equal(
       changed.components.find((component) => component.name === "skill-codebase-inventory")?.revision,
       baseline.components.find((component) => component.name === "skill-codebase-inventory")?.revision,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("orchestration authoring excludes generated runtime directories", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-generated-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await copyPackagedSkills(temporaryRoot);
+    const baseline = await buildContextRegistry(temporaryRoot);
+    const runtimeRoot = path.join(
+      temporaryRoot,
+      ".codex",
+      "skills",
+      "orchestrate-codex-workflows",
+      "assets",
+      "typescript-runtime",
+    );
+    for (const generatedDirectory of [".codex-runs", "dist", "node_modules"]) {
+      const directory = path.join(runtimeRoot, generatedDirectory);
+      await mkdir(directory, { recursive: true });
+      await writeFile(path.join(directory, "generated.txt"), "generated\n", "utf8");
+    }
+    const withGeneratedOutput = await buildContextRegistry(temporaryRoot);
+    const componentName = "skill-orchestrate-codex-workflows";
+    assert.equal(
+      withGeneratedOutput.components.find((component) => component.name === componentName)?.revision,
+      baseline.components.find((component) => component.name === componentName)?.revision,
+    );
+    assert.equal(
+      withGeneratedOutput.components.find((component) => component.name === componentName)?.artifacts
+        .some((artifact) => /\/(?:\.codex-runs|dist|node_modules)\//u.test(artifact.targetPath)),
+      false,
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
@@ -384,6 +428,9 @@ test("orchestration authoring install and setup planning preserve the consumer p
     }
     assert.equal(preview.licenses.some((license) => license.spdx === "MIT"), true);
     assert.equal(preview.licenses.some((license) => license.spdx === "Apache-2.0"), true);
+    assert.equal(preview.trustRequired, true);
+    assert.equal(preview.activations.some((activation) =>
+      activation.id === "codex-authenticated-execution" && activation.status === "dormant"), true);
 
     const setupPreview = await planSetupSelection(root, frameworkRoot, { components: [componentName] });
     assert.deepEqual(setupPreview.requestedComponents, preview.requestedComponents);
@@ -391,6 +438,8 @@ test("orchestration authoring install and setup planning preserve the consumer p
     assert.deepEqual(setupPreview.footprint, preview.footprint);
     assert.deepEqual(setupPreview.capabilities, preview.capabilities);
     assert.equal(setupPreview.licenses.some((license) => license.spdx === "Apache-2.0"), true);
+    assert.equal(setupPreview.trustRequired, true);
+    assert.deepEqual(setupPreview.activations, preview.activations);
 
     const installed = await addComponent(root, frameworkRoot, componentName);
     assert.equal(installed.plan.status, "ready");
@@ -472,6 +521,7 @@ test("governance rejects stale protected projections", async () => {
     await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"), { recursive: true });
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    await copyGovernedOrchestrationSkill(temporaryRoot);
     const agentsPath = path.join(temporaryRoot, "AGENTS.md");
     await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("Never fill decisions", "Sometimes fill decisions"));
     await assert.rejects(
@@ -494,6 +544,7 @@ test("governance rejects semantic dilution even before protected hashes are refr
     await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    await copyGovernedOrchestrationSkill(temporaryRoot);
     const corePath = path.join(temporaryRoot, "registry", "sources", "instructions", "core.md");
     await writeFile(
       corePath,
@@ -501,6 +552,42 @@ test("governance rejects semantic dilution even before protected hashes are refr
         "Do not edit,\n  remove, override, or weaken it from project work.",
         "Project authors may weaken this section.",
       ),
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /violates a maintainer-owned semantic requirement/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance rejects dilution of orchestration safety semantics", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-governance-"));
+  try {
+    await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+    await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+    await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
+    await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+    await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    await copyGovernedOrchestrationSkill(temporaryRoot);
+    const skillPath = path.join(
+      temporaryRoot,
+      ".codex",
+      "skills",
+      "orchestrate-codex-workflows",
+      "SKILL.md",
+    );
+    await writeFile(
+      skillPath,
+      (await readFile(skillPath, "utf8")).replace(
+        "Persist evidence before each state transition.",
+        "Record evidence when convenient.",
+      ),
+      "utf8",
     );
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
@@ -523,6 +610,7 @@ test("governance requires human review ownership for protected framework surface
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
     await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
     await writeFile(path.join(temporaryRoot, ".github", "CODEOWNERS"), "/registry/ @bet01\n", "utf8");
+    await copyGovernedOrchestrationSkill(temporaryRoot);
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
       /review ownership is missing/u,
@@ -593,6 +681,16 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
         return !portable.includes("/node_modules") && !portable.includes("/dist");
       },
     },
+  );
+}
+
+async function copyGovernedOrchestrationSkill(temporaryRoot: string): Promise<void> {
+  const targetRoot = path.join(temporaryRoot, ".codex", "skills");
+  await mkdir(targetRoot, { recursive: true });
+  await cp(
+    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows"),
+    path.join(targetRoot, "orchestrate-codex-workflows"),
+    { recursive: true },
   );
 }
 

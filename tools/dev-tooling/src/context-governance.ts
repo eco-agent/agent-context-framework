@@ -34,6 +34,16 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "exact project contract paths",
     "They do not disable, replace, or weaken the maintainer-owned framework baseline.",
   ]],
+  [".codex/skills/orchestrate-codex-workflows/SKILL.md", [
+    "Exclude adaptive orchestrator holarchies and sibling quorum loops.",
+    "Fix the workflow topology, role registry, budgets, and authority before execution.",
+    "Do not let agents invent new agents or recursively decompose work.",
+    "Persist evidence before each state transition.",
+    "Give each role the least filesystem, network, and approval authority it needs.",
+    "Do not run the harness as a hidden method for completing the current task unless the user asks to operate it.",
+    "Run the mock tests before any live Codex execution.",
+    "The JSONL ledger is an audit record, not a complete process checkpoint",
+  ]],
 ]);
 
 interface ContextGovernanceManifest {

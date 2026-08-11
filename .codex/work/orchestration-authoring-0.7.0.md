@@ -6,8 +6,8 @@ Publish the existing bounded `orchestrate-codex-workflows` skill and its generic
 TypeScript runtime template as one explicitly selected Agent Context Framework
 component in registry revision `0.7.0`. Installation must remain inert: it copies
 reviewable authoring source but does not install SDK dependencies, create a
-workflow, start a loop, produce hook bindings, or change the consumer's host
-package graph.
+workflow, start a loop, produce hook bindings, or edit the consumer's manifests
+or lockfiles.
 
 ## Decisions
 
