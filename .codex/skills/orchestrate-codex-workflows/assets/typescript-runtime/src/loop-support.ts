@@ -5,6 +5,7 @@ import type {
   LoopResult,
   WorkflowEventType,
 } from "./contracts.js";
+import { assertPositiveSafeInteger } from "./contracts.js";
 
 export async function record(
   context: LoopContext,
@@ -49,9 +50,7 @@ export async function mapWithConcurrency<T, R>(
   concurrency: number,
   map: (value: T, index: number) => Promise<R>,
 ): Promise<readonly R[]> {
-  if (!Number.isInteger(concurrency) || concurrency < 1) {
-    throw new Error("Concurrency must be a positive integer");
-  }
+  assertPositiveSafeInteger(concurrency, "Concurrency");
 
   const results = new Array<R>(values.length);
   let nextIndex = 0;

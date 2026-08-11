@@ -1,9 +1,10 @@
 {
   "name": "codex-workflow-runtime",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -13,7 +14,7 @@
     "@openai/codex-sdk": "0.145.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "typescript": "^6.0.2"
+    "@types/node": "22.10.2",
+    "typescript": "6.0.2"
   }
 }

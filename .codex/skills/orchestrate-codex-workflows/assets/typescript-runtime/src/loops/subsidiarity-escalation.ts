@@ -4,6 +4,7 @@ import type {
   LoopContext,
   LoopResult,
 } from "../contracts.js";
+import { assertPositiveSafeInteger } from "../contracts.js";
 import {
   completed,
   escalated,
@@ -81,6 +82,7 @@ export async function runSubsidiarityEscalation<Problem, Result>(
   maxAscents: number,
   context: LoopContext,
 ): Promise<LoopResult<Result>> {
+  assertPositiveSafeInteger(maxAscents, "Subsidiarity maxAscents");
   const loop = "subsidiarity-escalation";
   const evidence: Evidence[] = [];
   const visited = new Set<string>();
@@ -107,18 +109,27 @@ export async function runSubsidiarityEscalation<Problem, Result>(
       assessment.withinAuthority
     ) {
       const solution = await current.solve(problem);
-      evidence.push(...solution.evidence);
       if (solution.kind === "sufficient") {
+        const completionEvidence = [...evidence, ...solution.evidence];
         await record(
           context,
           "loop.completed",
           loop,
           { ascent, node: current.id },
-          evidence,
+          completionEvidence,
           current.id,
         );
-        return completed(solution.result, evidence);
+        return completed(solution.result, completionEvidence);
       }
+      await record(
+        context,
+        "loop.transition",
+        loop,
+        { ascent, node: current.id, solution: solution.kind },
+        solution.evidence,
+        current.id,
+      );
+      evidence.push(...solution.evidence);
       problem = solution.unresolved;
     }
 
@@ -126,6 +137,23 @@ export async function runSubsidiarityEscalation<Problem, Result>(
       const issue = `No parent can resolve the problem above ${current.id}`;
       await record(context, "loop.escalated", loop, { issue, ascent }, evidence);
       return escalated(issue, evidence);
+    }
+
+    if (ascent >= maxAscents) {
+      const issue = "Subsidiarity ascent budget exhausted";
+      await record(
+        context,
+        "loop.budget_exhausted",
+        loop,
+        {
+          issue,
+          ascent,
+          from: current.id,
+          blockedTarget: current.parentId,
+        },
+        evidence,
+      );
+      return exhausted(issue, evidence);
     }
 
     const parent = registry.get(current.parentId);
@@ -136,30 +164,31 @@ export async function runSubsidiarityEscalation<Problem, Result>(
       requiredScope: assessment.requiredScope,
       requiredAuthority: assessment.requiredAuthority,
     });
-    evidence.push(...resolution.evidence);
 
     if (resolution.kind === "handle") {
+      const completionEvidence = [...evidence, ...resolution.evidence];
       await record(
         context,
         "loop.completed",
         loop,
         { ascent, node: parent.id },
-        evidence,
+        completionEvidence,
         parent.id,
       );
-      return completed(resolution.result, evidence);
+      return completed(resolution.result, completionEvidence);
     }
 
     if (resolution.kind === "escalate") {
+      const escalationEvidence = [...evidence, ...resolution.evidence];
       await record(
         context,
         "loop.escalated",
         loop,
         { issue: resolution.issue, ascent },
-        evidence,
+        escalationEvidence,
         parent.id,
       );
-      return escalated(resolution.issue, evidence);
+      return escalated(resolution.issue, escalationEvidence);
     }
 
     const nextId =
@@ -168,8 +197,15 @@ export async function runSubsidiarityEscalation<Problem, Result>(
       const sibling = registry.get(nextId);
       if (sibling.parentId !== parent.id) {
         const issue = `${nextId} is not a sibling under ${parent.id}`;
-        await record(context, "loop.escalated", loop, { issue, ascent }, evidence);
-        return escalated(issue, evidence);
+        const escalationEvidence = [...evidence, ...resolution.evidence];
+        await record(
+          context,
+          "loop.escalated",
+          loop,
+          { issue, ascent },
+          escalationEvidence,
+        );
+        return escalated(issue, escalationEvidence);
       }
     }
 
@@ -181,10 +217,9 @@ export async function runSubsidiarityEscalation<Problem, Result>(
       resolution.evidence,
       parent.id,
     );
+    evidence.push(...resolution.evidence);
     current = registry.get(nextId);
   }
 
-  const issue = "Subsidiarity ascent budget exhausted";
-  await record(context, "loop.budget_exhausted", loop, { issue }, evidence);
-  return exhausted(issue, evidence);
+  throw new Error("Subsidiarity loop terminated without a result");
 }

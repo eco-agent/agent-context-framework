@@ -3,6 +3,7 @@ import type {
   LoopContext,
   LoopResult,
 } from "../contracts.js";
+import { assertPositiveSafeInteger } from "../contracts.js";
 import {
   completed,
   escalated,
@@ -47,6 +48,7 @@ export async function runAuthorityLadder<Request, Workspace>(
   maxTransitions: number,
   context: LoopContext,
 ): Promise<LoopResult<Workspace>> {
+  assertPositiveSafeInteger(maxTransitions, "Authority ladder maxTransitions");
   const loop = "authority-ladder";
   const evidence: Evidence[] = [];
   const stageIndexes = new Map(stages.map((stage, index) => [stage.id, index]));

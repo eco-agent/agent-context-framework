@@ -3,6 +3,7 @@ import type {
   LoopContext,
   LoopResult,
 } from "../contracts.js";
+import { assertPositiveSafeInteger } from "../contracts.js";
 import {
   completed,
   exhausted,
@@ -63,6 +64,8 @@ export async function runSharedArtifactConvergence<Artifact>(
   budget: ConvergenceBudget,
   context: LoopContext,
 ): Promise<LoopResult<Artifact>> {
+  assertPositiveSafeInteger(budget.maxRounds, "Convergence maxRounds");
+  assertPositiveSafeInteger(budget.concurrency, "Convergence concurrency");
   const loop = "shared-artifact-convergence";
   const evidence: Evidence[] = [];
   let artifact = initialArtifact;
@@ -87,11 +90,13 @@ export async function runSharedArtifactConvergence<Artifact>(
 
     const claims = await assigner.assign(gaps);
     const gapIds = new Set(gaps.map((gap) => gap.id));
+    const claimedGapIds = claims.map((claim) => claim.gap.id);
     if (
       claims.length === 0 ||
-      claims.some((claim) => !gapIds.has(claim.gap.id))
+      claims.some((claim) => !gapIds.has(claim.gap.id)) ||
+      new Set(claimedGapIds).size !== claimedGapIds.length
     ) {
-      const issue = "Claim assignment was empty or referenced a closed gap";
+      const issue = "Claim assignment was empty, duplicated, or referenced a closed gap";
       await record(context, "loop.budget_exhausted", loop, { issue, round }, evidence);
       return exhausted(issue, evidence);
     }
@@ -106,9 +111,10 @@ export async function runSharedArtifactConvergence<Artifact>(
       },
     );
 
+    const roundEvidence = contributions.flatMap(({ result }) => result.evidence);
+    let nextArtifact = artifact;
     for (const { claim, result } of contributions) {
-      evidence.push(...result.evidence);
-      artifact = await board.append(artifact, {
+      nextArtifact = await board.append(nextArtifact, {
         author: claim.ownerId,
         gap: claim.gap,
         contribution: result.contribution,
@@ -116,9 +122,8 @@ export async function runSharedArtifactConvergence<Artifact>(
       });
     }
 
-    const integrated = await board.integrate(artifact);
-    artifact = integrated.artifact;
-    evidence.push(...integrated.evidence);
+    const integrated = await board.integrate(nextArtifact);
+    roundEvidence.push(...integrated.evidence);
 
     await record(
       context,
@@ -129,8 +134,10 @@ export async function runSharedArtifactConvergence<Artifact>(
         gaps: gaps.map((gap) => gap.id),
         contributors: claims.map((claim) => claim.ownerId),
       },
-      integrated.evidence,
+      roundEvidence,
     );
+    artifact = integrated.artifact;
+    evidence.push(...roundEvidence);
   }
 
   if (await board.acceptanceMet(artifact)) {

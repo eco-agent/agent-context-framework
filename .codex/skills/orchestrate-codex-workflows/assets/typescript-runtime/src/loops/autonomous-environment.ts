@@ -6,6 +6,10 @@ import type {
   LoopResult,
 } from "../contracts.js";
 import {
+  assertPositiveSafeInteger,
+  toJson,
+} from "../contracts.js";
+import {
   completed,
   escalated,
   exhausted,
@@ -32,7 +36,10 @@ export type EnvironmentDecision<Action, Result> =
 
 export interface Environment<State, Action, Effect> {
   observe(): Promise<State>;
-  execute(action: Action): Promise<Effect>;
+  execute(
+    action: Action,
+    context: { readonly idempotencyKey: string },
+  ): Promise<Effect>;
   measure(previous: State, next: State): Promise<JsonValue>;
   madeProgress(measuredChange: JsonValue): boolean;
 }
@@ -73,10 +80,19 @@ export async function runAutonomousEnvironment<
   budget: EnvironmentBudget,
   context: LoopContext,
 ): Promise<LoopResult<Result>> {
+  assertPositiveSafeInteger(budget.maxSteps, "Environment maxSteps");
+  assertPositiveSafeInteger(
+    budget.maxConsecutiveStagnantSteps,
+    "Environment maxConsecutiveStagnantSteps",
+  );
+  assertPositiveSafeInteger(
+    budget.retainedHistory,
+    "Environment retainedHistory",
+  );
   const loop = "autonomous-environment";
   const evidence: Evidence[] = [];
   const history: EnvironmentStep<Action>[] = [];
-  let state = await environment.observe();
+  let state = (await environment.observe()) as State;
   let stagnantSteps = 0;
 
   await record(context, "loop.started", loop, {
@@ -120,13 +136,48 @@ export async function runAutonomousEnvironment<
       return escalated(issue, evidence);
     }
 
-    await environment.execute(decision.action);
-    const nextState = await environment.observe();
-    const measuredChange = await environment.measure(state, nextState);
-    const progressed = environment.madeProgress(measuredChange);
-    history.push({ action: decision.action, measuredChange, progressed });
-    stagnantSteps = progressed ? 0 : stagnantSteps + 1;
+    const idempotencyKey = `${context.ledger.runId}:${loop}:${holon.id}:${step}`;
+    await record(
+      context,
+      "environment.intent",
+      loop,
+      { step, idempotencyKey, action: toJson(decision.action) },
+      decision.evidence,
+      holon.id,
+    );
 
+    let nextState: State;
+    let measuredChange: JsonValue;
+    let progressed: boolean;
+    try {
+      await environment.execute(decision.action, { idempotencyKey });
+      nextState = (await environment.observe()) as State;
+      measuredChange = await environment.measure(state, nextState);
+      progressed = environment.madeProgress(measuredChange);
+    } catch (error) {
+      await record(
+        context,
+        "environment.failed",
+        loop,
+        {
+          step,
+          idempotencyKey,
+          error: error instanceof Error ? error.message : String(error),
+        },
+        decision.evidence,
+        holon.id,
+      );
+      throw error;
+    }
+
+    await record(
+      context,
+      "environment.applied",
+      loop,
+      { step, idempotencyKey, progressed, measuredChange },
+      decision.evidence,
+      holon.id,
+    );
     await record(
       context,
       "loop.transition",
@@ -135,6 +186,9 @@ export async function runAutonomousEnvironment<
       decision.evidence,
       holon.id,
     );
+
+    history.push({ action: decision.action, measuredChange, progressed });
+    stagnantSteps = progressed ? 0 : stagnantSteps + 1;
 
     if (stagnantSteps >= budget.maxConsecutiveStagnantSteps) {
       const issue = `No measured progress for ${stagnantSteps} consecutive steps`;

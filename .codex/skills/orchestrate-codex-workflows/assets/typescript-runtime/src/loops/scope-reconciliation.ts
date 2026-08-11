@@ -3,6 +3,7 @@ import type {
   LoopContext,
   LoopResult,
 } from "../contracts.js";
+import { assertPositiveSafeInteger } from "../contracts.js";
 import {
   completed,
   escalated,
@@ -70,6 +71,7 @@ export async function runScopeReconciliation<Change, Result, Impact>(
   maxHops: number,
   context: LoopContext,
 ): Promise<LoopResult<Result>> {
+  assertPositiveSafeInteger(maxHops, "Scope reconciliation maxHops");
   const loop = "scope-reconciliation";
   const evidence: Evidence[] = [];
   const visitedEdges = new Set<string>();

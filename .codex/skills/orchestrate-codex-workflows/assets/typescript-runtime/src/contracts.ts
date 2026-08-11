@@ -31,7 +31,6 @@ export interface Holon {
 
 export interface CodexRole extends Holon {
   readonly thread: ThreadOptions;
-  readonly resumeThreadId?: string;
 }
 
 export interface Delegation {
@@ -39,6 +38,7 @@ export interface Delegation {
   readonly to: string;
   readonly purpose: string;
   readonly scope: readonly string[];
+  readonly requiredCapabilities: readonly string[];
   readonly context: JsonValue;
   readonly constraints: readonly string[];
   readonly grantedAuthority: readonly Authority[];
@@ -89,8 +89,13 @@ export type WorkflowEventType =
   | "loop.escalated"
   | "loop.budget_exhausted"
   | "codex.started"
+  | "codex.thread_bound"
   | "codex.completed"
-  | "codex.failed";
+  | "codex.failed"
+  | "task.accepted"
+  | "environment.intent"
+  | "environment.applied"
+  | "environment.failed";
 
 export interface WorkflowEvent {
   readonly sequence: number;
@@ -100,6 +105,8 @@ export interface WorkflowEvent {
   readonly loop: string;
   readonly actor?: string;
   readonly threadId?: string;
+  readonly taskId?: string;
+  readonly attempt?: number;
   readonly state: JsonValue;
   readonly evidence: readonly Evidence[];
   readonly usage?: Usage;
@@ -127,10 +134,40 @@ export function assertConfidence(value: number): number {
   return value;
 }
 
+export function assertPositiveSafeInteger(
+  value: number,
+  label: string,
+): number {
+  if (!Number.isSafeInteger(value) || value < 1) {
+    throw new Error(`${label} must be a positive safe integer; received ${value}`);
+  }
+  return value;
+}
+
 export function toJson(value: unknown): JsonValue {
   const serialized = JSON.stringify(value);
   if (serialized === undefined) {
     throw new Error("Value is not JSON serializable");
   }
-  return JSON.parse(serialized) as JsonValue;
+  return decodeJsonValue(JSON.parse(serialized) as unknown);
+}
+
+export function decodeJsonValue(value: unknown): JsonValue {
+  if (
+    value === null ||
+    typeof value === "boolean" ||
+    typeof value === "string" ||
+    (typeof value === "number" && Number.isFinite(value))
+  ) {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => decodeJsonValue(item));
+  }
+  if (typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, decodeJsonValue(item)]),
+    );
+  }
+  throw new Error("Value is not valid JSON");
 }

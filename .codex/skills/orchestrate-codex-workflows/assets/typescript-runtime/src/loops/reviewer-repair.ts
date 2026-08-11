@@ -3,6 +3,7 @@ import type {
   LoopContext,
   LoopResult,
 } from "../contracts.js";
+import { assertPositiveSafeInteger } from "../contracts.js";
 import {
   completed,
   escalated,
@@ -72,6 +73,7 @@ export async function runReviewerRepair<Request, Artifact>(
   maxReviewPasses: number,
   context: LoopContext,
 ): Promise<LoopResult<Artifact>> {
+  assertPositiveSafeInteger(maxReviewPasses, "Reviewer repair maxReviewPasses");
   const loop = "reviewer-repair";
   const evidence: Evidence[] = [];
   const priorFindings: ReviewFinding[] = [];
@@ -83,12 +85,19 @@ export async function runReviewerRepair<Request, Artifact>(
   });
 
   const initial = await implementer.implement(request);
+  await record(
+    context,
+    "loop.transition",
+    loop,
+    { phase: "initial-implementation" },
+    initial.evidence,
+    implementer.id,
+  );
   let artifact = initial.artifact;
   evidence.push(...initial.evidence);
 
   for (let pass = 1; pass <= maxReviewPasses; pass += 1) {
     const review = await reviewer.inspect(request, artifact, priorFindings);
-    evidence.push(...review.evidence);
 
     await record(
       context,
@@ -98,6 +107,7 @@ export async function runReviewerRepair<Request, Artifact>(
       review.evidence,
       reviewer.id,
     );
+    evidence.push(...review.evidence);
 
     if (review.kind === "accept") {
       await record(context, "loop.completed", loop, { pass }, evidence);
@@ -121,6 +131,16 @@ export async function runReviewerRepair<Request, Artifact>(
       review.repairOwner === "reviewer"
         ? await reviewer.repair(artifact, review.findings)
         : await implementer.revise(request, artifact, review.findings);
+    const revisionOwner =
+      review.repairOwner === "reviewer" ? reviewer.id : implementer.id;
+    await record(
+      context,
+      "loop.transition",
+      loop,
+      { pass, phase: "revision", repairOwner: review.repairOwner },
+      revision.evidence,
+      revisionOwner,
+    );
     artifact = revision.artifact;
     evidence.push(...revision.evidence);
   }

@@ -2,11 +2,14 @@ import type {
   Authority,
   Evidence,
   Holon,
-  JsonValue,
   LoopContext,
   LoopResult,
 } from "../contracts.js";
-import { assertConfidence } from "../contracts.js";
+import {
+  assertConfidence,
+  assertPositiveSafeInteger,
+  toJson,
+} from "../contracts.js";
 import {
   completed,
   escalated,
@@ -57,6 +60,7 @@ export async function runMembraneRouting<Request, T>(
   maxRoutes: number,
   context: LoopContext,
 ): Promise<LoopResult<T>> {
+  assertPositiveSafeInteger(maxRoutes, "Membrane routing maxRoutes");
   const loop = "membrane-routing";
   const attempts: RouteAttempt[] = [];
   const evidence: Evidence[] = [];
@@ -71,11 +75,15 @@ export async function runMembraneRouting<Request, T>(
 
     assertConfidence(route.acceptanceThreshold);
     const target = registry.resolve(route);
+    const heldScope = new Set(target.holon.scope);
+    const excessScope = route.scope.filter((scope) => !heldScope.has(scope));
     if (
+      target.holon.identity !== route.holonId ||
       !target.holon.capabilities.includes(route.capability) ||
-      !target.holon.authority.includes(route.authority)
+      !target.holon.authority.includes(route.authority) ||
+      excessScope.length > 0
     ) {
-      const issue = `Route ${routeNumber} exceeds ${target.holon.identity} capability or authority`;
+      const issue = `Route ${routeNumber} exceeds ${target.holon.identity} identity, scope, capability, or authority`;
       await record(context, "loop.escalated", loop, { issue }, evidence);
       return escalated(issue, evidence);
     }
@@ -115,7 +123,7 @@ export async function runMembraneRouting<Request, T>(
     context,
     "loop.budget_exhausted",
     loop,
-    { issue, attempts: attempts as unknown as JsonValue },
+    { issue, attempts: toJson(attempts) },
     evidence,
   );
   return exhausted(issue, evidence);

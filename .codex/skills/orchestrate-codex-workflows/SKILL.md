@@ -43,11 +43,12 @@ If uncertain, start with the primary agent. Add native subagents for independent
 1. Read [references/loop-catalog.md](references/loop-catalog.md) to select the smallest loop composition that fits the task.
 2. Choose an explicit project-owned package directory. Copy `assets/typescript-runtime/` into that directory without overlaying an existing package manifest, and preserve its tests until the project-specific workflow passes.
 3. Define the objective, acceptance criteria, static stages, role registry, budgets, and evidence contracts in project code.
-4. Implement role calls with `CodexWorkflowClient.invoke()`. Use structured output and a runtime decoder for every control decision.
-5. Compose loops around domain callbacks. Keep Codex prompts at the boundary; keep transition logic deterministic.
-6. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
-7. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
-8. Inspect the JSONL ledger. Verify role calls record their actor, thread, and evidence; delegations stay within the fixed envelope; and every loop has a terminal reason.
+4. Construct `CodexWorkflowClient` with the validated plan, then implement role calls with `invoke()` against named task IDs. Supply the required per-turn timeout, structured output decoder, and output-evidence extractor for every control decision.
+5. Have the project controller evaluate each task criterion with concrete checks, decode and freeze that declaration with `validateTaskAcceptanceEvaluation()`, then pass it to `acceptTask(taskId, evaluation)`. The client requires exact criterion coverage with every result true, consumes only the latest successful attempt's evidence, and unlocks dependencies only after persisting acceptance; it does not interpret prose criteria.
+6. Compose loops around domain callbacks. Keep Codex prompts at the boundary; keep transition logic deterministic.
+7. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
+8. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
+9. Inspect the JSONL ledger. Verify role calls record their actor, task, attempt, thread, and evidence; delegations stay within the fixed envelope; and completed, escalated, or budget-exhausted loops have a terminal reason. Wrap project callbacks at the outer runner when thrown callback failures must also produce a loop-terminal event.
 
 ## Choose thread authority
 
@@ -69,7 +70,7 @@ Use `read-only` for interpretation and review when possible. Do not use `danger-
 - Decode JSON before using it in a transition.
 - Never execute a command supplied only as structured control data without a separate authority check.
 - Record SDK errors, malformed output, timeouts, and aborted turns as failed attempts.
-- Use an `AbortSignal` and an outer process deadline for live runs.
+- Use the client's required per-turn timeout plus an outer process deadline for live runs. Pass an `AbortSignal` when the caller also needs cancellation.
 - Resume a thread only from a ledgered thread ID with the same role and scope.
 - Make artifact writes idempotent or content-addressed before adding retry behavior.
 
@@ -77,14 +78,18 @@ Use `read-only` for interpretation and review when possible. Do not use `danger-
 
 The template exports:
 
-- `CodexWorkflowClient` for structured, role-bound SDK calls.
+- `CodexWorkflowClient` for plan-bound structured SDK calls, finite task and turn budgets, explicit evidence-backed task acceptance, and role-bound thread continuity.
 - `JsonlLedger` and `MemoryLedger` for single-process file-backed audit or test evidence.
 - Eight bounded loops: relay chain, membrane routing, reviewer–repair, autonomous environment, static scope reconciliation, subsidiarity escalation, shared artifact convergence, and progressive authority ladder.
 - Mock tests for repair, stagnation, and return-path behavior.
 
-The JSONL ledger is an audit record, not a complete process checkpoint, queue, scheduler, multi-process database, or guarantee that an in-flight workflow can be restored after a crash.
+The JSONL ledger is an audit record, not a complete process checkpoint, queue, scheduler, multi-process database, or guarantee that an in-flight workflow can be restored after a crash. Task attempts and accepted-task state are current-process control state and are not reconstructed from the ledger.
 
-The template is verified against `@openai/codex-sdk` 0.145.0. Review the official SDK types before changing the pinned SDK version.
+The project controller also owns the workflow-level acceptance decision. The template validates task transitions but does not infer whether the plan's final prose acceptance criteria are satisfied.
+
+Loop counters bound transitions, attempts, rounds, hops, and concurrency. They cannot bound arbitrary project callbacks; wrap non-Codex callbacks in consumer-owned deadlines when wall-clock completion is required.
+
+The template is verified against `@openai/codex-sdk` 0.145.0 and Node.js 22+. Review the official SDK types before changing the pinned SDK version.
 
 ## Reject accidental expansion
 

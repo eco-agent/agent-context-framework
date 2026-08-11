@@ -5,6 +5,10 @@ import type {
   LoopResult,
 } from "../contracts.js";
 import {
+  assertConfidence,
+  assertPositiveSafeInteger,
+} from "../contracts.js";
+import {
   completed,
   escalated,
   exhausted,
@@ -33,6 +37,8 @@ export async function runRelayChain<T>(
   budget: RelayBudget,
   context: LoopContext,
 ): Promise<LoopResult<T>> {
+  assertPositiveSafeInteger(budget.maxTransitions, "Relay maxTransitions");
+  assertPositiveSafeInteger(budget.maxRepairs, "Relay maxRepairs");
   const loop = "relay-chain";
   let artifact = initialArtifact;
   let position = 0;
@@ -53,6 +59,9 @@ export async function runRelayChain<T>(
 
     transitions += 1;
     const decision = await stage.run(artifact, { feedback, transition: transitions });
+    if (decision.kind === "accept") {
+      assertConfidence(decision.confidence);
+    }
     evidence.push(...decision.evidence);
 
     await record(
