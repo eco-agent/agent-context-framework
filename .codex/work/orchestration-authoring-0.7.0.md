@@ -84,6 +84,9 @@ generic template ----------------------------------X objective infrastructure
   planner; code changes are required only if evidence shows they do not disclose
   the new component correctly.
 
+The runtime invariants and deliberately excluded durability semantics are owned
+by `.codex/work/types/orchestration-authoring-runtime.md`.
+
 ## Verification evidence
 
 Pending focused implementation checks. Broad acceptance and live Codex SDK
