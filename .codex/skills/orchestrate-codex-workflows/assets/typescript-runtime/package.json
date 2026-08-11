@@ -1,0 +1,19 @@
+{
+  "name": "codex-workflow-runtime",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/loops.test.js"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "0.145.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^6.0.2"
+  }
+}
