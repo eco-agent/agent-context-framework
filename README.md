@@ -30,9 +30,18 @@ content-addressed component revisions. Project-authored distributable source is
 MIT licensed; pinned third-party source retains its packaged attribution and
 notices.
 
-Objective kernels, schedulers, queues, databases, task envelopes, binding
-producers, Codex SDK workflows, and long-running agent loops are not reachable
-from any distributable component.
+Bounded Codex SDK workflow authoring is available only through the explicitly
+selected `skill-orchestrate-codex-workflows` component. It installs inert skill
+and template source; it does not install SDK dependencies, create or execute a
+workflow, produce hook bindings, or change the host package graph. No existing
+bundle selects it transitively. Its plan and setup disclosures report required
+Node.js, network, and Codex-authentication capabilities; those declarations do
+not activate or test a live Codex session. Its bundled JSONL ledger is a
+single-process audit record, not a crash-restorable workflow checkpoint.
+Objective kernels, objective runtimes,
+schedulers, queues, databases, task envelopes, binding producers, adaptive
+agent hierarchies, sibling quorums, and long-running unbounded loops remain
+outside every distributable closure.
 
 ## Protected instructions and project contracts
 

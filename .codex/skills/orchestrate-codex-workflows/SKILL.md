@@ -1,6 +1,6 @@
 ---
 name: orchestrate-codex-workflows
-description: Build or revise bounded, durable TypeScript orchestration around the OpenAI Codex SDK. Reach for this instead of native subagents when work needs persisted state, deterministic transitions, resumability, enforced budgets or authority, measured repair loops, or an auditable evidence ledger. Prefer native subagents for independent bounded work that the primary can integrate during one task, and use neither for short serial work. Use for long-horizon coding harnesses, explicit task decomposition, role-bound Codex threads, staged handoffs, environment feedback, scope escalation, shared artifacts, or progressive completion gates. Do not use for open-ended recursive agent spawning.
+description: Build or revise bounded, ledgered TypeScript orchestration around the OpenAI Codex SDK. Reach for this instead of native subagents when later actions need persisted evidence, deterministic transitions, enforced finite budgets or authority, measured repair loops, or role-bound thread continuity. Prefer native subagents for independent bounded work that the primary can integrate during one task, and use neither for short serial work. Use for long-horizon coding harnesses, explicit task decomposition, staged handoffs, environment feedback, scope escalation, shared artifacts, or progressive completion gates. Do not use for open-ended recursive agent spawning, adaptive hierarchies, quorum loops, or a complete durable scheduler.
 ---
 
 # Orchestrate Codex Workflows
@@ -15,7 +15,7 @@ Choose before planning:
 | --- | --- |
 | Work is short, serial, and reviewable in the current task | Primary agent only |
 | Two or more independent, bounded slices can return once to the primary | Native subagents |
-| Later actions depend on persisted evidence, enforced transitions, repair state, authority gates, resumability, or budgets | SDK workflow |
+| Later actions depend on persisted evidence, enforced transitions, repair state, authority gates, or finite budgets | SDK workflow |
 
 Use task structure, not task size, as the deciding signal.
 
@@ -25,7 +25,7 @@ Use task structure, not task size, as the deciding signal.
 - Keep native subagents outside workflow execution. SDK roles are the workflow workers; mixing unledgered subagents into the run bypasses its budgets and evidence contracts.
 - Build or revise the harness when this skill triggers during a coding task. Do not run the harness as a hidden method for completing the current task unless the user asks to operate it.
 
-If uncertain, start with the primary agent. Add native subagents for independent throughput. Move to a workflow only when deterministic state or resumability becomes a requirement.
+If uncertain, start with the primary agent. Add native subagents for independent throughput. Move to a workflow only when transition or evidence enforcement becomes a requirement.
 
 ## Non-negotiable boundaries
 
@@ -41,13 +41,13 @@ If uncertain, start with the primary agent. Add native subagents for independent
 ## Build the workflow
 
 1. Read [references/loop-catalog.md](references/loop-catalog.md) to select the smallest loop composition that fits the task.
-2. Copy `assets/typescript-runtime/` into the target project. Preserve its tests until the project-specific workflow passes.
+2. Choose an explicit project-owned package directory. Copy `assets/typescript-runtime/` into that directory without overlaying an existing package manifest, and preserve its tests until the project-specific workflow passes.
 3. Define the objective, acceptance criteria, static stages, role registry, budgets, and evidence contracts in project code.
 4. Implement role calls with `CodexWorkflowClient.invoke()`. Use structured output and a runtime decoder for every control decision.
 5. Compose loops around domain callbacks. Keep Codex prompts at the boundary; keep transition logic deterministic.
 6. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
-7. Run the mock tests before any live Codex execution. Then run one low-risk workflow with restricted authority.
-8. Inspect the JSONL ledger. Verify every transition has an actor, delegation, evidence, and terminal reason.
+7. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
+8. Inspect the JSONL ledger. Verify role calls record their actor, thread, and evidence; delegations stay within the fixed envelope; and every loop has a terminal reason.
 
 ## Choose thread authority
 
@@ -78,11 +78,13 @@ Use `read-only` for interpretation and review when possible. Do not use `danger-
 The template exports:
 
 - `CodexWorkflowClient` for structured, role-bound SDK calls.
-- `JsonlLedger` and `MemoryLedger` for durable or test evidence.
+- `JsonlLedger` and `MemoryLedger` for single-process file-backed audit or test evidence.
 - Eight bounded loops: relay chain, membrane routing, reviewer–repair, autonomous environment, static scope reconciliation, subsidiarity escalation, shared artifact convergence, and progressive authority ladder.
 - Mock tests for repair, stagnation, and return-path behavior.
 
-The template is verified against `@openai/codex-sdk` 0.145.0 and Node.js 18+. Review the official SDK types before changing the pinned SDK version.
+The JSONL ledger is an audit record, not a complete process checkpoint, queue, scheduler, multi-process database, or guarantee that an in-flight workflow can be restored after a crash.
+
+The template is verified against `@openai/codex-sdk` 0.145.0. Review the official SDK types before changing the pinned SDK version.
 
 ## Reject accidental expansion
 

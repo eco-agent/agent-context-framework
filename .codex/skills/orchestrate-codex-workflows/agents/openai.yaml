@@ -1,4 +1,4 @@
 interface:
   display_name: "Orchestrate Codex Workflows"
-  short_description: "Run bounded Codex SDK workflow loops"
+  short_description: "Build bounded Codex SDK workflows"
   default_prompt: "Use $orchestrate-codex-workflows to implement a bounded, evidence-driven Codex SDK workflow."

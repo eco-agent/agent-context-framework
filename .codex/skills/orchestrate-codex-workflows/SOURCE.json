@@ -1,0 +1,22 @@
+{
+  "projectAuthorship": {
+    "origin": "project-authored",
+    "repository": "https://github.com/bet01/control-tower",
+    "foundationCommit": "a6739f9eec888609e46200c26bc6f520059d3f82",
+    "license": "MIT",
+    "licensePath": "LICENSE"
+  },
+  "sources": [
+    {
+      "name": "@openai/codex-sdk",
+      "repository": "https://github.com/openai/codex",
+      "revision": "0.145.0",
+      "integrity": "sha512-lBviqBKnomEXNpdjfDzUoz/H+VZuK75m2oR8dQSmL2zUpnklfAsTneuaSg23NOoE+vw/Qhbxp8ePy9te973yfw==",
+      "license": "Apache-2.0",
+      "licensePath": "LICENSE.openai-codex-sdk",
+      "declarationPath": "assets/typescript-runtime/package.json",
+      "vendored": false,
+      "modifications": "None"
+    }
+  ]
+}

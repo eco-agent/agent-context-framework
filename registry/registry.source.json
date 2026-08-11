@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.6.0",
-  "decisionPath": "registry/decisions/0.6.0-framework-feedback-closure.md",
+  "revision": "0.7.0",
+  "decisionPath": "registry/decisions/0.7.0-optional-orchestration-authoring.md",
   "components": [
     {
       "name": "core",
@@ -379,6 +379,33 @@
           "sourceDirectory": ".codex/skills/optimize-codex-sessions",
           "targetDirectory": ".codex/skills/optimize-codex-sessions",
           "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-orchestrate-codex-workflows",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "runtime", "name": "codex-authentication", "requirement": "required" },
+        { "kind": "runtime", "name": "network", "requirement": "required" },
+        { "kind": "runtime", "name": "node", "requirement": "required" }
+      ],
+      "licenses": [
+        { "kind": "project", "spdx": "MIT", "sourcePath": ".codex/skills/orchestrate-codex-workflows/LICENSE", "noticePath": ".codex/skills/orchestrate-codex-workflows/LICENSE" },
+        {
+          "kind": "third-party",
+          "spdx": "Apache-2.0",
+          "source": "https://github.com/openai/codex",
+          "revision": "0.145.0",
+          "noticePath": ".codex/skills/orchestrate-codex-workflows/LICENSE.openai-codex-sdk"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/orchestrate-codex-workflows",
+          "targetDirectory": ".codex/skills/orchestrate-codex-workflows",
+          "excludedPrefixes": ["assets/typescript-runtime/dist/", "assets/typescript-runtime/node_modules/"]
         }
       ]
     },
