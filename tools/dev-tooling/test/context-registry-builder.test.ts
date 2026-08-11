@@ -1,15 +1,21 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import { resolveContextComponents } from "@agent-context/repo-policy";
 
-import { addComponent, diffProject, initProject } from "../src/context-installer.js";
+import {
+  addComponent,
+  diffProject,
+  initProject,
+  planProjectSelection,
+} from "../src/context-installer.js";
 import { buildContextRegistry, checkContextRegistry } from "../src/context-registry-builder.js";
 import { checkContextGovernance } from "../src/context-governance.js";
+import { planSetupSelection } from "../src/setup-server.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 const packagedSkills = [
@@ -29,6 +35,7 @@ const packagedSkills = [
   "write-technical-prose",
   "writing-great-skills",
   "optimize-codex-sessions",
+  "orchestrate-codex-workflows",
 ];
 
 test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes generated caches and fixtures", async () => {
@@ -59,7 +66,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
     "skill-optimize-codex-sessions",
   ];
   assert.equal(first.components.filter((component) =>
-    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 16);
+    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 17);
   for (const component of first.components) {
     assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
   }
@@ -281,6 +288,137 @@ test("Wave 2 bundles resolve independently and exclude frontend, runtime, and ob
   }
 });
 
+test("optional orchestration authoring is an explicit leaf with a governed safety contract", async () => {
+  const registry = await buildContextRegistry(frameworkRoot);
+  const componentName = "skill-orchestrate-codex-workflows";
+  const component = registry.components.find((candidate) => candidate.name === componentName);
+  assert.ok(component);
+  assert.deepEqual(component.dependencies, []);
+  assert.deepEqual(
+    resolveContextComponents(registry, [componentName]).map((candidate) => candidate.name),
+    [componentName],
+  );
+  assert.deepEqual(component.capabilities, [
+    { kind: "runtime", name: "codex-authentication", requirement: "required" },
+    { kind: "runtime", name: "network", requirement: "required" },
+    { kind: "runtime", name: "node", requirement: "required" },
+  ]);
+
+  for (const existing of registry.components.filter((candidate) => candidate.name !== componentName)) {
+    assert.equal(
+      resolveContextComponents(registry, [existing.name]).some((candidate) => candidate.name === componentName),
+      false,
+      `${existing.name} must not acquire optional orchestration authoring transitively`,
+    );
+  }
+
+  assert.equal(component.artifacts.length > 0, true);
+  assert.equal(component.artifacts.every((artifact) =>
+    artifact.sourcePath.startsWith(".codex/skills/orchestrate-codex-workflows/") &&
+    artifact.targetPath.startsWith(".codex/skills/orchestrate-codex-workflows/")), true);
+  for (const forbiddenOwner of [
+    "packages/objective-",
+    "tools/objective-runtime/",
+    "tools/codex-workflows/",
+    "objective-runner",
+    "task-envelope",
+    "binding-producer",
+    "scheduler",
+    "queue",
+    "database",
+  ]) {
+    assert.equal(
+      component.artifacts.some((artifact) =>
+        artifact.sourcePath.includes(forbiddenOwner) || artifact.targetPath.includes(forbiddenOwner)),
+      false,
+      `${forbiddenOwner} must remain outside the distributable closure`,
+    );
+  }
+
+  const instructions = await readFile(
+    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows", "SKILL.md"),
+    "utf8",
+  );
+  for (const protectedSemantic of [
+    "Exclude adaptive orchestrator holarchies and sibling quorum loops.",
+    "Fix the workflow topology, role registry, budgets, and authority before execution.",
+    "Do not let agents invent new agents or recursively decompose work.",
+    "Persist evidence before each state transition.",
+    "Give each role the least filesystem, network, and approval authority it needs.",
+  ]) {
+    assert.equal(instructions.includes(protectedSemantic), true, protectedSemantic);
+  }
+
+  const contracts = await readFile(
+    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "src", "contracts.ts"),
+    "utf8",
+  );
+  assert.match(contracts, /Number\.isSafeInteger\(value\)/u);
+  assert.match(contracts, /environment\.intent/u);
+  const environmentLoop = await readFile(
+    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "src", "loops", "autonomous-environment.ts"),
+    "utf8",
+  );
+  const intentRecord = environmentLoop.indexOf('"environment.intent"');
+  const externalEffect = environmentLoop.indexOf("await environment.execute");
+  assert.equal(intentRecord >= 0 && externalEffect > intentRecord, true, "evidence intent must precede the external effect");
+});
+
+test("orchestration authoring install and setup planning preserve the consumer package graph", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-authoring-"));
+  const componentName = "skill-orchestrate-codex-workflows";
+  const manifest = '{"name":"consumer","private":true,"dependencies":{"existing":"1.0.0"}}\n';
+  try {
+    await writeFile(path.join(root, "package.json"), manifest, "utf8");
+    await initProject(root, frameworkRoot);
+
+    const preview = await planProjectSelection(root, frameworkRoot, [componentName]);
+    assert.deepEqual(preview.requestedComponents, [componentName]);
+    assert.equal(preview.resolvedComponents.includes(componentName), true);
+    assert.deepEqual(preview.transitiveComponents, []);
+    assert.equal(preview.footprint.skillTargetCount > 0, true);
+    assert.equal(preview.footprint.runtimeTargetCount, 0);
+    for (const capability of ["codex-authentication", "network", "node"]) {
+      assert.equal(preview.capabilities.some((candidate) =>
+        candidate.kind === "runtime" && candidate.name === capability && candidate.requirement === "required"), true);
+    }
+    assert.equal(preview.licenses.some((license) => license.spdx === "MIT"), true);
+    assert.equal(preview.licenses.some((license) => license.spdx === "Apache-2.0"), true);
+
+    const setupPreview = await planSetupSelection(root, frameworkRoot, { components: [componentName] });
+    assert.deepEqual(setupPreview.requestedComponents, preview.requestedComponents);
+    assert.deepEqual(setupPreview.resolvedComponents, preview.resolvedComponents);
+    assert.deepEqual(setupPreview.footprint, preview.footprint);
+    assert.deepEqual(setupPreview.capabilities, preview.capabilities);
+    assert.equal(setupPreview.licenses.some((license) => license.spdx === "Apache-2.0"), true);
+
+    const installed = await addComponent(root, frameworkRoot, componentName);
+    assert.equal(installed.plan.status, "ready");
+    assert.equal(await readFile(path.join(root, "package.json"), "utf8"), manifest);
+    assert.equal(await exists(path.join(root, "node_modules")), false);
+    assert.equal(await exists(path.join(root, "pnpm-lock.yaml")), false);
+    assert.equal(
+      installed.writtenPaths.filter((targetPath) => targetPath.startsWith(".codex/skills/"))
+        .every((targetPath) => targetPath.startsWith(".codex/skills/orchestrate-codex-workflows/")),
+      true,
+    );
+    assert.equal(
+      await exists(path.join(root, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "package.json")),
+      true,
+    );
+    assert.equal(
+      await exists(path.join(root, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "node_modules")),
+      false,
+    );
+    assert.equal(
+      await exists(path.join(root, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "dist")),
+      false,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("Wave 2 bundles materialize independently and installed inventory validation remains operational", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-wave-two-"));
   try {
@@ -460,7 +598,7 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
 
 async function exists(candidate: string): Promise<boolean> {
   try {
-    await readFile(candidate);
+    await stat(candidate);
     return true;
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "ENOENT") return false;
