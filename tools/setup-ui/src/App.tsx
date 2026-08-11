@@ -308,7 +308,7 @@ export function App() {
                       ? `${license.spdx} project notice`
                       : `${license.spdx} ${license.source}@${license.revision}`).join(" · ")}</span>
                 </div>
-                {preview.trustRequired ? <p className="preview-disclosure">Trust this repository before Codex loads project configuration.</p> : null}
+                {preview.trustRequired ? <p className="preview-disclosure">Trust this repository before Codex loads project configuration or skills.</p> : null}
                 {preview.activations.map((activation) => (
                   <p key={activation.id} className="preview-disclosure" data-status={activation.status}>
                     {activation.status}: {activation.message}

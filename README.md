@@ -103,7 +103,8 @@ current hashes still match its journal boundary.
 
 ## Operational requirements
 
-- Codex loads project configuration only for a trusted repository.
+- Codex loads project-scoped configuration or skills only for a trusted
+  repository.
 - `codex-hooks` installs hook definitions and entrypoints, but enforcement is
   dormant without a valid session-scoped binding. A missing binding emits no
   decision; a present malformed, stale, or mismatched binding remains fail-closed.

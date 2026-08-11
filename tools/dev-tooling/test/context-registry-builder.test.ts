@@ -412,8 +412,10 @@ test("orchestration authoring install and setup planning preserve the consumer p
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-authoring-"));
   const componentName = "skill-orchestrate-codex-workflows";
   const manifest = '{"name":"consumer","private":true,"dependencies":{"existing":"1.0.0"}}\n';
+  const lockfile = "lockfileVersion: '9.0'\nconsumerSentinel: unchanged\n";
   try {
     await writeFile(path.join(root, "package.json"), manifest, "utf8");
+    await writeFile(path.join(root, "pnpm-lock.yaml"), lockfile, "utf8");
     await initProject(root, frameworkRoot);
 
     const preview = await planProjectSelection(root, frameworkRoot, [componentName]);
@@ -444,8 +446,9 @@ test("orchestration authoring install and setup planning preserve the consumer p
     const installed = await addComponent(root, frameworkRoot, componentName);
     assert.equal(installed.plan.status, "ready");
     assert.equal(await readFile(path.join(root, "package.json"), "utf8"), manifest);
+    assert.equal(await readFile(path.join(root, "pnpm-lock.yaml"), "utf8"), lockfile);
     assert.equal(await exists(path.join(root, "node_modules")), false);
-    assert.equal(await exists(path.join(root, "pnpm-lock.yaml")), false);
+    assert.equal(await exists(path.join(root, "package-lock.json")), false);
     assert.equal(
       installed.writtenPaths.filter((targetPath) => targetPath.startsWith(".codex/skills/"))
         .every((targetPath) => targetPath.startsWith(".codex/skills/orchestrate-codex-workflows/")),
