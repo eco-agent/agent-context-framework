@@ -1,0 +1,73 @@
+{
+  "path": "/docs/place-items",
+  "url": "https://tailwindcss.com/docs/place-items",
+  "slug": "place-items",
+  "source_cache_file": "place-items.md",
+  "title": "place-items - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "place-items",
+    "EXAMPLES",
+    "Start",
+    "End",
+    "Center",
+    "Stretch",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID place-items Utilities for controlling how items are justified and aligned at the same time. Class Styles place-items-start place-items: start; place-items-end place-items: end; place-items-end-safe place-items: safe end; place-items-center place-items: center; place-items-center-safe place-items: safe center; place-items-baseline place-items: baseline; place-items-stretch place-items: stretch; EXAMPLES Start Use place-items-start to place grid items on the start of their grid areas on both axes: 01 02 03 04 05 06 <div class=\"grid grid-cols-3 place-items-start gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> End Use place-items-end to place grid items on the end of their grid areas on both axes: 01 02 03 04 05 06 <div class=\"grid h-56 grid-cols-3 place-items-end gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Center Use place-items-center to place grid items on the center of their grid areas on both axes: 01 02 03 04 05 06 <div class=\"grid h-56 grid-cols-3 place-items-center gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Stretch Use place-items-stretch to stretch items along their grid areas on both axes: 01 02 03 04 05 06 <div class=\"grid h-56 grid-cols-3 place-items-stretch gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Responsive design Prefix a place-items utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"grid place-items-start md:place-items-center ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. place-content place-self",
+  "code_examples": [
+    "<div class=\"grid grid-cols-3 place-items-start gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 place-items-end gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 place-items-center gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 place-items-stretch gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid place-items-start md:place-items-center ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/place-items/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2631,
+          "pageY": 2688,
+          "scrollY": 2688,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:52.907025+00:00"
+}

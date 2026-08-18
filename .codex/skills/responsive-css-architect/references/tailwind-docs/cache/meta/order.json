@@ -1,0 +1,64 @@
+{
+  "path": "/docs/order",
+  "url": "https://tailwindcss.com/docs/order",
+  "slug": "order",
+  "source_cache_file": "order.md",
+  "title": "order - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "order",
+    "EXAMPLES",
+    "Explicitly setting a sort order",
+    "Ordering items first or last",
+    "Using negative values",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID order Utilities for controlling the order of flex and grid items. Class Styles order-<number> order: <number>; -order-<number> order: calc(<number> * -1); order-first order: -9999; order-last order: 9999; order-(<custom-property>) order: var(<custom-property>); order-[<value>] order: <value>; EXAMPLES Explicitly setting a sort order Use order-<number> utilities like order-1 and order-3 to render flex and grid items in a different order than they appear in the document: 01 02 03 <div class=\"flex justify-between ...\"> <div class=\"order-3 ...\">01</div> <div class=\"order-1 ...\">02</div> <div class=\"order-2 ...\">03</div> </div> Ordering items first or last Use the order-first and order-last utilities to render flex and grid items first or last: 01 02 03 <div class=\"flex justify-between ...\"> <div class=\"order-last ...\">01</div> <div class=\"...\">02</div> <div class=\"order-first ...\">03</div> </div> Using negative values To use a negative order value, prefix the class name with a dash to convert it to a negative value: <div class=\"-order-1\"> <!-- ... --> </div> Using a custom value Use the order-[<value>] syntax to set the order based on a completely custom value: <div class=\"order-[min(var(--total-items),10)] ...\"> <!-- ... --> </div> For CSS variables, you can also use the order-(<custom-property>) syntax: <div class=\"order-(--my-order) ...\"> <!-- ... --> </div> This is just a shorthand for order-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix an order utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"order-first md:order-last ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. flex-shrink grid-template-columns",
+  "code_examples": [
+    "<div class=\"flex justify-between ...\">\n  <div class=\"order-3 ...\">01</div>\n  <div class=\"order-1 ...\">02</div>\n  <div class=\"order-2 ...\">03</div>\n</div>",
+    "<div class=\"flex justify-between ...\">\n  <div class=\"order-last ...\">01</div>\n  <div class=\"...\">02</div>\n  <div class=\"order-first ...\">03</div>\n</div>",
+    "<div class=\"-order-1\">\n  <!-- ... -->\n</div>",
+    "<div class=\"order-[min(var(--total-items),10)] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"order-(--my-order) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"order-first md:order-last ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/order/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1615,
+          "pageY": 1672,
+          "scrollY": 1672,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:08.405410+00:00"
+}

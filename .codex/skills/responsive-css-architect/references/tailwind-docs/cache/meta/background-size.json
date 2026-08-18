@@ -1,0 +1,64 @@
+{
+  "path": "/docs/background-size",
+  "url": "https://tailwindcss.com/docs/background-size",
+  "slug": "background-size",
+  "source_cache_file": "background-size.md",
+  "title": "background-size - Backgrounds - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "background-size",
+    "EXAMPLES",
+    "Filling the container",
+    "Filling without cropping",
+    "Using the default size",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "BACKGROUNDS background-size Utilities for controlling the background size of an element's background image. Class Styles bg-auto background-size: auto; bg-cover background-size: cover; bg-contain background-size: contain; bg-size-(<custom-property>) background-size: var(<custom-property>); bg-size-[<value>] background-size: <value>; EXAMPLES Filling the container Use the bg-cover utility to scale the background image until it fills the background layer, cropping the image if needed: <div class=\"bg-[url(/img/mountains.jpg)] bg-cover bg-center\"></div> Filling without cropping Use the bg-contain utility to scale the background image to the outer edges without cropping or stretching: <div class=\"bg-[url(/img/mountains.jpg)] bg-contain bg-center\"></div> Using the default size Use the bg-auto utility to display the background image at its default size: <div class=\"bg-[url(/img/mountains.jpg)] bg-auto bg-center bg-no-repeat\"></div> Using a custom value Use the bg-size-[<value>] syntax to set the background size based on a completely custom value: <div class=\"bg-size-[auto_100px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the bg-size-(<custom-property>) syntax: <div class=\"bg-size-(--my-image-size) ...\"> <!-- ... --> </div> This is just a shorthand for bg-size-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a background-size utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"bg-auto md:bg-contain ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. background-repeat border-radius",
+  "code_examples": [
+    "<div class=\"bg-[url(/img/mountains.jpg)] bg-cover bg-center\"></div>",
+    "<div class=\"bg-[url(/img/mountains.jpg)] bg-contain bg-center\"></div>",
+    "<div class=\"bg-[url(/img/mountains.jpg)] bg-auto bg-center bg-no-repeat\"></div>",
+    "<div class=\"bg-size-[auto_100px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"bg-size-(--my-image-size) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"bg-auto md:bg-contain ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/background-size/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1966,
+          "pageY": 2023,
+          "scrollY": 2023,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:22.981740+00:00"
+}

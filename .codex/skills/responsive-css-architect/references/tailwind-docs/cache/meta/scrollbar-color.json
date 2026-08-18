@@ -1,0 +1,87 @@
+{
+  "path": "/docs/scrollbar-color",
+  "url": "https://tailwindcss.com/docs/scrollbar-color",
+  "slug": "scrollbar-color",
+  "source_cache_file": "scrollbar-color.md",
+  "title": "scrollbar-color - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "scrollbar-color",
+    "EXAMPLES",
+    "Setting the scrollbar color",
+    "Changing the opacity",
+    "Using a custom value",
+    "Applying on hover",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "INTERACTIVITY scrollbar-color Utilities for controlling the color of an element's scrollbar. Class Styles scrollbar-thumb-inherit --tw-scrollbar-thumb: inherit; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-current --tw-scrollbar-thumb: currentColor; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-transparent --tw-scrollbar-thumb: transparent; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-black --tw-scrollbar-thumb: var(--color-black); /* #000 */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-white --tw-scrollbar-thumb: var(--color-white); /* #fff */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-red-50 --tw-scrollbar-thumb: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-red-100 --tw-scrollbar-thumb: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-red-200 --tw-scrollbar-thumb: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-red-300 --tw-scrollbar-thumb: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); scrollbar-thumb-red-400 --tw-scrollbar-thumb: var(--color-red-400); /* oklch(70.4% 0.191 22.216) */ scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track); SHOW MORE EXAMPLES Setting the scrollbar color Use utilities like scrollbar-thumb-sky-700 and scrollbar-track-sky-100 to control the colors of a scrollbar: Scroll vertically The Cerulean Archives occupy three narrow floors above the old observatory, each lined with drawers of star maps, expedition notes, and brass instruments cataloged by hand. On winter mornings, the staff rolls ladders between the shelves while pale light cuts through the roof windows and settles on the reading tables. Visitors can request anything from the collection, but most come for the atlases that chart coastlines no longer found on modern maps. Every returned volume is inspected, dusted, and wrapped before being carried back into the stacks for the next researcher. <div class=\"scrollbar-thumb-sky-700 scrollbar-track-sky-100 overflow-auto ...\"> <!-- ... --> </div> You can set the thumb and track colors independently. If you set one without the other, the unset color defaults to transparent. Changing the opacity Use the color opacity modifier to control the opacity of an element's scrollbar colors: Scroll vertically The Cerulean Archives occupy three narrow floors above the old observatory, each lined with drawers of star maps, expedition notes, and brass instruments cataloged by hand. On winter mornings, the staff rolls ladders between the shelves while pale light cuts through the roof windows and settles on the reading tables. Visitors can request anything from the collection, but most come for the atlases that chart coastlines no longer found on modern maps. Every returned volume is inspected, dusted, and wrapped before being carried back into the stacks for the next researcher. <div class=\"scrollbar-thumb-slate-900/60 scrollbar-track-slate-900/10 ...\"> <!-- ... --> </div> Using a custom value Use utilities like scrollbar-thumb-[<value>] and scrollbar-track-[<value>] to set scrollbar colors based on completely custom values: <div class=\"scrollbar-thumb-[#0f766e] scrollbar-track-[#ccfbf1] ...\"> <!-- ... --> </div> For CSS variables, you can also use the scrollbar-thumb-(<custom-property>) and scrollbar-track-(<custom-property>) syntax: <div class=\"scrollbar-thumb-(--my-scrollbar-thumb) scrollbar-track-(--my-scrollbar-track) ...\"> <!-- ... --> </div> Applying on hover Prefix a scrollbar-color utility with a variant like hover:* to only apply the utility in that state: <div class=\"scrollbar-thumb-sky-700 hover:scrollbar-thumb-sky-500 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Responsive design Prefix a scrollbar-color utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"scrollbar-thumb-slate-900 scrollbar-track-slate-200 md:scrollbar-thumb-sky-700 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now utilities like scrollbar-thumb-regal-blue and scrollbar-track-regal-blue can be used in your markup: <div class=\"scrollbar-thumb-regal-blue\"> <!-- ... --> </div> Learn more about customizing your theme in the theme documentation. scroll-behavior scrollbar-width",
+  "code_examples": [
+    "<div class=\"scrollbar-thumb-sky-700 scrollbar-track-sky-100 overflow-auto ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scrollbar-thumb-slate-900/60 scrollbar-track-slate-900/10 ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scrollbar-thumb-[#0f766e] scrollbar-track-[#ccfbf1] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scrollbar-thumb-(--my-scrollbar-thumb) scrollbar-track-(--my-scrollbar-track) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scrollbar-thumb-sky-700 hover:scrollbar-thumb-sky-500 ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scrollbar-thumb-slate-900 scrollbar-track-slate-200 md:scrollbar-thumb-sky-700 ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<div class=\"scrollbar-thumb-regal-blue\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/scrollbar-color/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3167,
+          "pageY": 3224,
+          "scrollY": 3224,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:44.065027+00:00"
+}

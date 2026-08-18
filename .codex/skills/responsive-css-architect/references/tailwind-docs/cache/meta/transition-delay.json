@@ -1,0 +1,62 @@
+{
+  "path": "/docs/transition-delay",
+  "url": "https://tailwindcss.com/docs/transition-delay",
+  "slug": "transition-delay",
+  "source_cache_file": "transition-delay.md",
+  "title": "transition-delay - Transitions & Animation - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "transition-delay",
+    "EXAMPLES",
+    "Basic example",
+    "Supporting reduced motion",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TRANSITIONS & ANIMATION transition-delay Utilities for controlling the delay of CSS transitions. Class Styles delay-<number> transition-delay: <number>ms; delay-(<custom-property>) transition-delay: var(<custom-property>); delay-[<value>] transition-delay: <value>; EXAMPLES Basic example Use utilities like delay-150 and delay-700 to set the transition delay of an element in milliseconds: Hover each button to see the expected behavior delay-150 Button A delay-300 Button B delay-700 Button C <button class=\"transition delay-150 duration-300 ease-in-out ...\">Button A</button> <button class=\"transition delay-300 duration-300 ease-in-out ...\">Button B</button> <button class=\"transition delay-700 duration-300 ease-in-out ...\">Button C</button> Supporting reduced motion For situations where the user has specified that they prefer reduced motion, you can conditionally apply animations and transitions using the motion-safe and motion-reduce variants: <button type=\"button\" class=\"delay-300 motion-reduce:delay-0 ...\"> <!-- ... --> </button> Using a custom value Use the delay-[<value>] syntax to set the transition delay based on a completely custom value: <button class=\"delay-[1s,250ms] ...\"> <!-- ... --> </button> For CSS variables, you can also use the delay-(<custom-property>) syntax: <button class=\"delay-(--my-delay) ...\"> <!-- ... --> </button> This is just a shorthand for delay-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a transition-delay utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <button class=\"delay-150 md:delay-300 ...\"> <!-- ... --> </button> Learn more about using variants in the variants documentation. transition-timing-function animation",
+  "code_examples": [
+    "<button class=\"transition delay-150 duration-300 ease-in-out ...\">Button A</button>\n<button class=\"transition delay-300 duration-300 ease-in-out ...\">Button B</button>\n<button class=\"transition delay-700 duration-300 ease-in-out ...\">Button C</button>",
+    "<button type=\"button\" class=\"delay-300 motion-reduce:delay-0 ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"delay-[1s,250ms] ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"delay-(--my-delay) ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"delay-150 md:delay-300 ...\">\n  <!-- ... -->\n</button>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/transition-delay/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1083,
+          "pageY": 1140,
+          "scrollY": 1140,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:39.462181+00:00"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Design Discipline"
+  short_description: "Specify frontend slices and visual assets"
+  default_prompt: "Use $frontend-design-discipline to specify the frontend slice, visual assets, states, owners, and propagation before implementation."

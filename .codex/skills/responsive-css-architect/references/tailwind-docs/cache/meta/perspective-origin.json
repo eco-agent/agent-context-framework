@@ -1,0 +1,60 @@
+{
+  "path": "/docs/perspective-origin",
+  "url": "https://tailwindcss.com/docs/perspective-origin",
+  "slug": "perspective-origin",
+  "source_cache_file": "perspective-origin.md",
+  "title": "perspective-origin - Transforms - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "perspective-origin",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TRANSFORMS perspective-origin Utilities for controlling an element's perspective origin when placed in 3D space. Class Styles perspective-origin-center perspective-origin: center; perspective-origin-top perspective-origin: top; perspective-origin-top-right perspective-origin: top right; perspective-origin-right perspective-origin: right; perspective-origin-bottom-right perspective-origin: bottom right; perspective-origin-bottom perspective-origin: bottom; perspective-origin-bottom-left perspective-origin: bottom left; perspective-origin-left perspective-origin: left; perspective-origin-top-left perspective-origin: top left; perspective-origin-(<custom-property>) perspective-origin: var(<custom-property>); perspective-origin-[<value>] perspective-origin: <value>; EXAMPLES Basic example Use utilities like perspective-origin-top and perspective-origin-bottom-left to control where the vanishing point of a perspective is located: perspective-origin-top-left 1 2 3 4 5 6 perspective-origin-bottom-right 1 2 3 4 5 6 <div class=\"size-20 perspective-near perspective-origin-top-left ...\"> <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div> <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div> <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div> <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div> <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div> <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div> </div> <div class=\"size-20 perspective-near perspective-origin-bottom-right \u2026\"> <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div> <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div> <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div> <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div> <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div> <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div> </div> Using a custom value Use the perspective-origin-[<value>] syntax to set the perspective origin based on a completely custom value: <div class=\"perspective-origin-[200%_150%] ...\"> <!-- ... --> </div> For CSS variables, you can also use the perspective-origin-(<custom-property>) syntax: <div class=\"perspective-origin-(--my-perspective-origin) ...\"> <!-- ... --> </div> This is just a shorthand for perspective-origin-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a perspective-origin utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"perspective-origin-center md:perspective-origin-bottom-left ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. perspective rotate",
+  "code_examples": [
+    "<div class=\"size-20 perspective-near perspective-origin-top-left ...\">\n  <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div>\n  <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div>\n  <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div>\n  <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div>\n  <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div>\n  <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div>\n</div>\n<div class=\"size-20 perspective-near perspective-origin-bottom-right \u2026\">\n  <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div>\n  <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div>\n  <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div>\n  <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div>\n  <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div>\n  <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div>\n</div>",
+    "<div class=\"perspective-origin-[200%_150%] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"perspective-origin-(--my-perspective-origin) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"perspective-origin-center md:perspective-origin-bottom-left ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/perspective-origin/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1506,
+          "pageY": 1563,
+          "scrollY": 1563,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:50.059077+00:00"
+}

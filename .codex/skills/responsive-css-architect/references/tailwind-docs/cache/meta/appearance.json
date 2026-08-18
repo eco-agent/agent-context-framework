@@ -1,0 +1,59 @@
+{
+  "path": "/docs/appearance",
+  "url": "https://tailwindcss.com/docs/appearance",
+  "slug": "appearance",
+  "source_cache_file": "appearance.md",
+  "title": "appearance - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "appearance",
+    "EXAMPLES",
+    "Removing default appearance",
+    "Restoring default appearance",
+    "Responsive design"
+  ],
+  "content_text": "INTERACTIVITY appearance Utilities for suppressing native form control styling. Class Styles appearance-none appearance: none; appearance-auto appearance: auto; EXAMPLES Removing default appearance Use appearance-none to reset any browser specific styling on an element: Yes No Maybe Default browser styles applied Yes No Maybe Remove default browser styles <select> <option>Yes</option> <option>No</option> <option>Maybe</option> </select> <div class=\"grid\"> <select class=\"col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ...\"> <option>Yes</option> <option>No</option> <option>Maybe</option> </select> <svg class=\"pointer-events-none col-start-1 row-start-1 ...\"> <!-- ... --> </svg> </div> This utility is often used when creating custom form components. Restoring default appearance Use appearance-auto to restore the default browser specific styling on an element: Try emulating `forced-colors: active` in your developer tools to see the difference Falls back to default appearance Keeps custom appearance <label> <div> <input type=\"checkbox\" class=\"appearance-none forced-colors:appearance-auto ...\" /> <svg class=\"invisible peer-checked:visible forced-colors:hidden ...\"> <!-- ... --> </svg> </div> Falls back to default appearance </label> <label> <div> <input type=\"checkbox\" class=\"appearance-none ...\" /> <svg class=\"invisible peer-checked:visible ...\"> <!-- ... --> </svg> </div> Keeps custom appearance </label> This is useful for reverting to the standard browser controls in certain accessibility modes. Responsive design Prefix an appearance utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <select class=\"appearance-auto md:appearance-none ...\"> <!-- ... --> </select> Learn more about using variants in the variants documentation. accent-color caret-color",
+  "code_examples": [
+    "<select>\n  <option>Yes</option>\n  <option>No</option>\n  <option>Maybe</option>\n</select>\n<div class=\"grid\">\n  <select class=\"col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ...\">\n    <option>Yes</option>\n    <option>No</option>\n    <option>Maybe</option>\n  </select>\n  <svg class=\"pointer-events-none col-start-1 row-start-1 ...\">\n    <!-- ... -->\n  </svg>\n</div>",
+    "<label>\n  <div>\n    <input type=\"checkbox\" class=\"appearance-none forced-colors:appearance-auto ...\" />\n    <svg class=\"invisible peer-checked:visible forced-colors:hidden ...\">\n      <!-- ... -->\n    </svg>\n  </div>\n  Falls back to default appearance\n</label>\n<label>\n  <div>\n    <input type=\"checkbox\" class=\"appearance-none ...\" />\n    <svg class=\"invisible peer-checked:visible ...\">\n      <!-- ... -->\n    </svg>\n  </div>\n  Keeps custom appearance\n</label>",
+    "<select class=\"appearance-auto md:appearance-none ...\">\n  <!-- ... -->\n</select>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/appearance/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1383,
+          "pageY": 1440,
+          "scrollY": 1440,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:24.707552+00:00"
+}

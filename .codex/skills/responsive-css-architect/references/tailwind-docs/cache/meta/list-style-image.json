@@ -1,0 +1,51 @@
+{
+  "path": "/docs/list-style-image",
+  "url": "https://tailwindcss.com/docs/list-style-image",
+  "slug": "list-style-image",
+  "source_cache_file": "list-style-image.md",
+  "title": "list-style-image - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "list-style-image",
+    "EXAMPLES",
+    "Basic example",
+    "Using a CSS variable",
+    "Removing a marker image",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY list-style-image Utilities for controlling the marker images for list items. Class Styles list-image-[<value>] list-style-image: <value>; list-image-(<custom-property>) list-style-image: var(<custom-property>); list-image-none list-style-image: none; EXAMPLES Basic example Use the list-image-[<value>] syntax to control the marker image for list items: 5 cups chopped Porcini mushrooms 1/2 cup of olive oil 3lb of celery <ul class=\"list-image-[url(/img/checkmark.png)]\"> <li>5 cups chopped Porcini mushrooms</li> <!-- ... --> </ul> Using a CSS variable Use the list-image-(<custom-property>) syntax to control the marker image for list items using a CSS variable: <ul class=\"list-image-(--my-list-image)\"> <!-- ... --> </ul> This is just a shorthand for list-image-[var(<custom-property>)] that adds the var() function for you automatically. Removing a marker image Use the list-image-none utility to remove an existing marker image from list items: <ul class=\"list-image-none\"> <!-- ... --> </ul> Responsive design Prefix a list-style-image utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <ul class=\"list-image-none md:list-image-[url(/img/checkmark.png)] ...\"> <!-- ... --> </ul> Learn more about using variants in the variants documentation. line-height list-style-position",
+  "code_examples": [
+    "<ul class=\"list-image-[url(/img/checkmark.png)]\">\n  <li>5 cups chopped Porcini mushrooms</li>\n  <!-- ... -->\n</ul>",
+    "<ul class=\"list-image-(--my-list-image)\">\n  <!-- ... -->\n</ul>",
+    "<ul class=\"list-image-none\">\n  <!-- ... -->\n</ul>",
+    "<ul class=\"list-image-none md:list-image-[url(/img/checkmark.png)] ...\">\n  <!-- ... -->\n</ul>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/list-style-image/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 875,
+          "pageY": 932,
+          "scrollY": 932,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:10.442447+00:00"
+}

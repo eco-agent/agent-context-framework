@@ -1,0 +1,7 @@
+interface:
+  display_name: "Color Systems"
+  short_description: "Design precise web color systems"
+  default_prompt: "Use $design-color-systems to design or refine the requested web color system."
+
+policy:
+  allow_implicit_invocation: false

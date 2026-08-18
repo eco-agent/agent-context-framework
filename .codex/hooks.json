@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node tools/dev-tooling/dist/src/codex-hook-cli.js",
+            "commandWindows": "node tools/dev-tooling/dist/src/codex-hook-cli.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "^compact$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node tools/dev-tooling/dist/src/codex-hook-cli.js",
+            "commandWindows": "node tools/dev-tooling/dist/src/codex-hook-cli.js"
+          }
+        ]
+      }
+    ]
+  }
+}

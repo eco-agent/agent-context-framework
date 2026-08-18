@@ -1,0 +1,62 @@
+{
+  "path": "/docs/zoom",
+  "url": "https://tailwindcss.com/docs/zoom",
+  "slug": "zoom",
+  "source_cache_file": "zoom.md",
+  "title": "zoom - Transforms - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "zoom",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Applying on hover",
+    "Responsive design"
+  ],
+  "content_text": "TRANSFORMS zoom Utilities for scaling elements using zoom. Class Styles zoom-<number> zoom: <number>%; zoom-(<custom-property>) zoom: var(<custom-property>); zoom-[<value>] zoom: <value>; EXAMPLES Basic example Use zoom-<number> utilities like zoom-75 and zoom-125 to scale an element using the CSS zoom property: <div class=\"zoom-75 ...\"> <!-- ... --> </div> <div class=\"zoom-100 ...\"> <!-- ... --> </div> <div class=\"zoom-125 ...\"> <!-- ... --> </div> Using a custom value Use the zoom-[<value>] syntax to set the zoom based on a completely custom value: <div class=\"zoom-[1.1] ...\"> <!-- ... --> </div> For CSS variables, you can also use the zoom-(<custom-property>) syntax: <div class=\"zoom-(--my-zoom) ...\"> <!-- ... --> </div> This is just a shorthand for zoom-[var(<custom-property>)] that adds the var() function for you automatically. Applying on hover Prefix a zoom utility with a variant like hover:* to only apply the utility in that state: <div class=\"zoom-100 hover:zoom-125 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Responsive design Prefix a zoom utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"zoom-100 md:zoom-125 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. translate accent-color",
+  "code_examples": [
+    "<div class=\"zoom-75 ...\">\n  <!-- ... -->\n</div>\n<div class=\"zoom-100 ...\">\n  <!-- ... -->\n</div>\n<div class=\"zoom-125 ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"zoom-[1.1] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"zoom-(--my-zoom) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"zoom-100 hover:zoom-125 ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"zoom-100 md:zoom-125 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/zoom/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1055,
+          "pageY": 1112,
+          "scrollY": 1112,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:18.698062+00:00"
+}

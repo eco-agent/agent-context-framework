@@ -1,0 +1,50 @@
+{
+  "path": "/docs/grid-auto-columns",
+  "url": "https://tailwindcss.com/docs/grid-auto-columns",
+  "slug": "grid-auto-columns",
+  "source_cache_file": "grid-auto-columns.md",
+  "title": "grid-auto-columns - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "grid-auto-columns",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID grid-auto-columns Utilities for controlling the size of implicitly-created grid columns. Class Styles auto-cols-auto grid-auto-columns: auto; auto-cols-min grid-auto-columns: min-content; auto-cols-max grid-auto-columns: max-content; auto-cols-fr grid-auto-columns: minmax(0, 1fr); auto-cols-<number> grid-auto-columns: calc(var(--spacing) * <number>); auto-cols-(<custom-property>) grid-auto-columns: var(<custom-property>); auto-cols-[<value>] grid-auto-columns: <value>; EXAMPLES Basic example Use utilities like auto-cols-min and auto-cols-max to control the size of implicitly-created grid columns: <div class=\"grid auto-cols-max grid-flow-col\"> <div>01</div> <div>02</div> <div>03</div> </div> Using a custom value Use the auto-cols-[<value>] syntax to set the size of implicitly-created grid columns based on a completely custom value: <div class=\"auto-cols-[minmax(0,2fr)] ...\"> <!-- ... --> </div> For CSS variables, you can also use the auto-cols-(<custom-property>) syntax: <div class=\"auto-cols-(--my-auto-cols) ...\"> <!-- ... --> </div> This is just a shorthand for auto-cols-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a grid-auto-columns utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"grid grid-flow-col auto-cols-max md:auto-cols-min ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. grid-auto-flow grid-auto-rows",
+  "code_examples": [
+    "<div class=\"grid auto-cols-max grid-flow-col\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"auto-cols-[minmax(0,2fr)] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"auto-cols-(--my-auto-cols) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"grid grid-flow-col auto-cols-max md:auto-cols-min ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/grid-auto-columns/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 842,
+          "pageY": 899,
+          "scrollY": 899,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:21.957178+00:00"
+}

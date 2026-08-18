@@ -1,0 +1,62 @@
+{
+  "path": "/docs/line-clamp",
+  "url": "https://tailwindcss.com/docs/line-clamp",
+  "slug": "line-clamp",
+  "source_cache_file": "line-clamp.md",
+  "title": "line-clamp - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "line-clamp",
+    "EXAMPLES",
+    "Basic example",
+    "Undoing line clamping",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY line-clamp Utilities for clamping text to a specific number of lines. Class Styles line-clamp-<number> overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: <number>; line-clamp-none overflow: visible; display: block; -webkit-box-orient: horizontal; -webkit-line-clamp: unset; line-clamp-(<custom-property>) overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(<custom-property>); line-clamp-[<value>] overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: <value>; EXAMPLES Basic example Use line-clamp-<number> utilities like line-clamp-2 and line-clamp-3 to truncate multi-line text after a specific number of lines: Mar 10, 2020 Boost your conversion rate Nulla dolor velit adipisicing duis excepteur esse in duis nostrud occaecat mollit incididunt deserunt sunt. Ut ut sunt laborum ex occaecat eu tempor labore enim adipisicing minim ad. Est in quis eu dolore occaecat excepteur fugiat dolore nisi aliqua fugiat enim ut cillum. Labore enim duis nostrud eu. Est ut eiusmod consequat irure quis deserunt ex. Enim laboris dolor magna pariatur. Dolor et ad sint voluptate sunt elit mollit officia ad enim sit consectetur enim. Lindsay Walton <article> <time>Mar 10, 2020</time> <h2>Boost your conversion rate</h2> <p class=\"line-clamp-3\"> Nulla dolor velit adipisicing duis excepteur esse in duis nostrud occaecat mollit incididunt deserunt sunt. Ut ut sunt laborum ex occaecat eu tempor labore enim adipisicing minim ad. Est in quis eu dolore occaecat excepteur fugiat dolore nisi aliqua fugiat enim ut cillum. Labore enim duis nostrud eu. Est ut eiusmod consequat irure quis deserunt ex. Enim laboris dolor magna pariatur. Dolor et ad sint voluptate sunt elit mollit officia ad enim sit consectetur enim. </p> <div> <img src=\"/img/lindsay.jpg\" /> Lindsay Walton </div> </article> Undoing line clamping Use line-clamp-none to undo a previously applied line clamp utility: <p class=\"line-clamp-3 lg:line-clamp-none\"> <!-- ... --> </p> Using a custom value Use the line-clamp-[<value>] syntax to set the number of lines based on a completely custom value: <p class=\"line-clamp-[calc(var(--characters)/100)] ...\"> Lorem ipsum dolor sit amet... </p> For CSS variables, you can also use the line-clamp-(<custom-property>) syntax: <p class=\"line-clamp-(--my-line-count) ...\"> Lorem ipsum dolor sit amet... </p> This is just a shorthand for line-clamp-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a line-clamp utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"line-clamp-3 md:line-clamp-4 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. letter-spacing line-height",
+  "code_examples": [
+    "<article>\n  <time>Mar 10, 2020</time>\n  <h2>Boost your conversion rate</h2>\n  <p class=\"line-clamp-3\">\n    Nulla dolor velit adipisicing duis excepteur esse in duis nostrud occaecat mollit incididunt deserunt sunt. Ut ut\n    sunt laborum ex occaecat eu tempor labore enim adipisicing minim ad. Est in quis eu dolore occaecat excepteur fugiat\n    dolore nisi aliqua fugiat enim ut cillum. Labore enim duis nostrud eu. Est ut eiusmod consequat irure quis deserunt\n    ex. Enim laboris dolor magna pariatur. Dolor et ad sint voluptate sunt elit mollit officia ad enim sit consectetur\n    enim.\n  </p>\n  <div>\n    <img src=\"/img/lindsay.jpg\" />\n    Lindsay Walton\n  </div>\n</article>",
+    "<p class=\"line-clamp-3 lg:line-clamp-none\">\n  <!-- ... -->\n</p>",
+    "<p class=\"line-clamp-[calc(var(--characters)/100)] ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"line-clamp-(--my-line-count) ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<div class=\"line-clamp-3 md:line-clamp-4 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/line-clamp/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1740,
+          "pageY": 1797,
+          "scrollY": 1797,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:05.703715+00:00"
+}

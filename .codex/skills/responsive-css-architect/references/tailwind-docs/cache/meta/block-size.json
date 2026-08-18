@@ -1,0 +1,92 @@
+{
+  "path": "/docs/block-size",
+  "url": "https://tailwindcss.com/docs/block-size",
+  "slug": "block-size",
+  "source_cache_file": "block-size.md",
+  "title": "block-size - Sizing - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "block-size",
+    "EXAMPLES",
+    "Basic example",
+    "Using a percentage",
+    "Matching viewport",
+    "Matching dynamic viewport",
+    "Matching large viewport",
+    "Matching small viewport",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "SIZING block-size Utilities for setting the block size of an element. Class Styles block-<number> block-size: calc(var(--spacing) * <number>); block-<fraction> block-size: calc(<fraction> * 100%); block-auto block-size: auto; block-px block-size: 1px; block-full block-size: 100%; block-screen block-size: 100vh; block-dvh block-size: 100dvh; block-dvw block-size: 100dvw; block-lvh block-size: 100lvh; block-lvw block-size: 100lvw; SHOW MORE EXAMPLES Basic example Use block-<number> utilities like block-24 and block-64 to set an element to a fixed block size based on the spacing scale: block-96 block-80 block-64 block-48 block-40 block-32 block-24 <div class=\"block-96 ...\">block-96</div> <div class=\"block-80 ...\">block-80</div> <div class=\"block-64 ...\">block-64</div> <div class=\"block-48 ...\">block-48</div> <div class=\"block-40 ...\">block-40</div> <div class=\"block-32 ...\">block-32</div> <div class=\"block-24 ...\">block-24</div> Using a percentage Use block-full or block-<fraction> utilities like block-1/2 and block-2/5 to give an element a percentage-based block size: block-full block-9/10 block-3/4 block-1/2 block-1/3 <div class=\"block-full ...\">block-full</div> <div class=\"block-9/10 ...\">block-9/10</div> <div class=\"block-3/4 ...\">block-3/4</div> <div class=\"block-1/2 ...\">block-1/2</div> <div class=\"block-1/3 ...\">block-1/3</div> Matching viewport Use the block-screen utility to make an element span the entire block size of the viewport: <div class=\"block-screen\"> <!-- ... --> </div> Matching dynamic viewport Use the block-dvh utility to make an element span the entire block size of the viewport, which changes as the browser UI expands or contracts: <div class=\"block-dvh\"> <!-- ... --> </div> Matching large viewport Use the block-lvh utility to set an element's block size to the largest possible size of the viewport: <div class=\"block-lvh\"> <!-- ... --> </div> Matching small viewport Use the block-svh utility to set an element's block size to the smallest possible size of the viewport: <div class=\"block-svh\"> <!-- ... --> </div> Using a custom value Use the block-[<value>] syntax to set the block size based on a completely custom value: <div class=\"block-[32rem] ...\"> <!-- ... --> </div> For CSS variables, you can also use the block-(<custom-property>) syntax: <div class=\"block-(--my-block-size) ...\"> <!-- ... --> </div> This is just a shorthand for block-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a block-size utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"block-1/2 md:block-full ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme The block-<number> utilities are driven by the --spacing theme variable, which can be customized in your own theme: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme variable documentation. max-inline-size min-block-size",
+  "code_examples": [
+    "<div class=\"block-96 ...\">block-96</div>\n<div class=\"block-80 ...\">block-80</div>\n<div class=\"block-64 ...\">block-64</div>\n<div class=\"block-48 ...\">block-48</div>\n<div class=\"block-40 ...\">block-40</div>\n<div class=\"block-32 ...\">block-32</div>\n<div class=\"block-24 ...\">block-24</div>",
+    "<div class=\"block-full ...\">block-full</div>\n<div class=\"block-9/10 ...\">block-9/10</div>\n<div class=\"block-3/4 ...\">block-3/4</div>\n<div class=\"block-1/2 ...\">block-1/2</div>\n<div class=\"block-1/3 ...\">block-1/3</div>",
+    "<div class=\"block-screen\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-dvh\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-lvh\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-svh\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-[32rem] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-(--my-block-size) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-1/2 md:block-full ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/block-size/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3778,
+          "pageY": 3835,
+          "scrollY": 3835,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:02:35.253572+00:00"
+}

@@ -1,0 +1,49 @@
+{
+  "path": "/docs/font-style",
+  "url": "https://tailwindcss.com/docs/font-style",
+  "slug": "font-style",
+  "source_cache_file": "font-style.md",
+  "title": "font-style - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "font-style",
+    "EXAMPLES",
+    "Italicizing text",
+    "Displaying text normally",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY font-style Utilities for controlling the style of text. Class Styles italic font-style: italic; not-italic font-style: normal; EXAMPLES Italicizing text Use the italic utility to make text italic: The quick brown fox jumps over the lazy dog. <p class=\"italic ...\">The quick brown fox ...</p> Displaying text normally Use the not-italic utility to display text normally: The quick brown fox jumps over the lazy dog. <p class=\"not-italic ...\">The quick brown fox ...</p> Responsive design Prefix a font-style utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"italic md:not-italic ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. font-smoothing font-weight",
+  "code_examples": [
+    "<p class=\"italic ...\">The quick brown fox ...</p>",
+    "<p class=\"not-italic ...\">The quick brown fox ...</p>",
+    "<p class=\"italic md:not-italic ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/font-style/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 397,
+          "pageY": 454,
+          "scrollY": 454,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:02:50.112775+00:00"
+}

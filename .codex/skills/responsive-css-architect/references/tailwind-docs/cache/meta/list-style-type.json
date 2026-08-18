@@ -1,0 +1,60 @@
+{
+  "path": "/docs/list-style-type",
+  "url": "https://tailwindcss.com/docs/list-style-type",
+  "slug": "list-style-type",
+  "source_cache_file": "list-style-type.md",
+  "title": "list-style-type - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "list-style-type",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY list-style-type Utilities for controlling the marker style of a list. Class Styles list-disc list-style-type: disc; list-decimal list-style-type: decimal; list-none list-style-type: none; list-(<custom-property>) list-style-type: var(<custom-property>); list-[<value>] list-style-type: <value>; EXAMPLES Basic example Use utilities like list-disc and list-decimal to control the style of the markers in a list: list-disc Now this is a story all about how, my life got flipped-turned upside down And I'd like to take a minute just sit right there I'll tell you how I became the prince of a town called Bel-Air list-decimal Now this is a story all about how, my life got flipped-turned upside down And I'd like to take a minute just sit right there I'll tell you how I became the prince of a town called Bel-Air list-none Now this is a story all about how, my life got flipped-turned upside down And I'd like to take a minute just sit right there I'll tell you how I became the prince of a town called Bel-Air <ul class=\"list-disc\"> <li>Now this is a story all about how, my life got flipped-turned upside down</li> <!-- ... --> </ul> <ol class=\"list-decimal\"> <li>Now this is a story all about how, my life got flipped-turned upside down</li> <!-- ... --> </ol> <ul class=\"list-none\"> <li>Now this is a story all about how, my life got flipped-turned upside down</li> <!-- ... --> </ul> Using a custom value Use the list-[<value>] syntax to set the marker based on a completely custom value: <ol class=\"list-[upper-roman] ...\"> <!-- ... --> </ol> For CSS variables, you can also use the list-(<custom-property>) syntax: <ol class=\"list-(--my-marker) ...\"> <!-- ... --> </ol> This is just a shorthand for list-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a list-style-type utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <ul class=\"list-none md:list-disc ...\"> <!-- ... --> </ul> Learn more about using variants in the variants documentation. list-style-position text-align",
+  "code_examples": [
+    "<ul class=\"list-disc\">\n  <li>Now this is a story all about how, my life got flipped-turned upside down</li>\n  <!-- ... -->\n</ul>\n<ol class=\"list-decimal\">\n  <li>Now this is a story all about how, my life got flipped-turned upside down</li>\n  <!-- ... -->\n</ol>\n<ul class=\"list-none\">\n  <li>Now this is a story all about how, my life got flipped-turned upside down</li>\n  <!-- ... -->\n</ul>",
+    "<ol class=\"list-[upper-roman] ...\">\n  <!-- ... -->\n</ol>",
+    "<ol class=\"list-(--my-marker) ...\">\n  <!-- ... -->\n</ol>",
+    "<ul class=\"list-none md:list-disc ...\">\n  <!-- ... -->\n</ul>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/list-style-type/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1356,
+          "pageY": 1413,
+          "scrollY": 1413,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:15.044467+00:00"
+}

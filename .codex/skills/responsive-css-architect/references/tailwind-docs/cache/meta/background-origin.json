@@ -1,0 +1,47 @@
+{
+  "path": "/docs/background-origin",
+  "url": "https://tailwindcss.com/docs/background-origin",
+  "slug": "background-origin",
+  "source_cache_file": "background-origin.md",
+  "title": "background-origin - Backgrounds - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "background-origin",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "BACKGROUNDS background-origin Utilities for controlling how an element's background is positioned relative to borders, padding, and content. Class Styles bg-origin-border background-origin: border-box; bg-origin-padding background-origin: padding-box; bg-origin-content background-origin: content-box; EXAMPLES Basic example Use the bg-origin-border, bg-origin-padding, and bg-origin-content utilities to control where an element's background is rendered: bg-origin-border bg-origin-padding bg-origin-content <div class=\"border-4 bg-[url(/img/mountains.jpg)] bg-origin-border p-3 ...\"></div> <div class=\"border-4 bg-[url(/img/mountains.jpg)] bg-origin-padding p-3 ...\"></div> <div class=\"border-4 bg-[url(/img/mountains.jpg)] bg-origin-content p-3 ...\"></div> Responsive design Prefix a background-origin utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"bg-origin-border md:bg-origin-padding ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. background-image background-position",
+  "code_examples": [
+    "<div class=\"border-4 bg-[url(/img/mountains.jpg)] bg-origin-border p-3 ...\"></div>\n<div class=\"border-4 bg-[url(/img/mountains.jpg)] bg-origin-padding p-3 ...\"></div>\n<div class=\"border-4 bg-[url(/img/mountains.jpg)] bg-origin-content p-3 ...\"></div>",
+    "<div class=\"bg-origin-border md:bg-origin-padding ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/background-origin/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 297,
+          "pageY": 354,
+          "scrollY": 354,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:16.545216+00:00"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@agent-context/dev-tooling",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "dependency:facts": "node --import tsx src/dependency-facts-cli.ts",
+    "precedent:materialize": "node --import tsx src/product-precedent-materializer-cli.ts",
+    "task:handoff": "node --import tsx src/task-handoff-cli.ts",
+    "task:doctor": "node --import tsx src/task-preflight-cli.ts",
+    "test": "node --import tsx --test test/*.test.ts",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@agent-context/codex-workflows": "workspace:*",
+    "@agent-context/objective-kernel": "workspace:*",
+    "@agent-context/objective-runtime": "workspace:*",
+    "@agent-context/repo-policy": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "tsx": "4.22.4",
+    "typescript": "7.0.2"
+  },
+  "agentContext": {
+    "category": "tooling",
+    "owner": "platform"
+  }
+}

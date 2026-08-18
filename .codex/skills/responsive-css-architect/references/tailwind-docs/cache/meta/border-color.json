@@ -1,0 +1,106 @@
+{
+  "path": "/docs/border-color",
+  "url": "https://tailwindcss.com/docs/border-color",
+  "slug": "border-color",
+  "source_cache_file": "border-color.md",
+  "title": "border-color - Borders - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "border-color",
+    "EXAMPLES",
+    "Basic example",
+    "Changing the opacity",
+    "Individual sides",
+    "Horizontal and vertical sides",
+    "Using logical properties",
+    "Divider between children",
+    "Using a custom value",
+    "Applying on focus",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "BORDERS border-color Utilities for controlling the color of an element's borders. Class Styles border-inherit border-color: inherit; border-current border-color: currentColor; border-transparent border-color: transparent; border-black border-color: var(--color-black); /* #000 */ border-white border-color: var(--color-white); /* #fff */ border-red-50 border-color: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ border-red-100 border-color: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ border-red-200 border-color: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ border-red-300 border-color: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ border-red-400 border-color: var(--color-red-400); /* oklch(70.4% 0.191 22.216) */ SHOW MORE EXAMPLES Basic example Use utilities like border-rose-500 and border-lime-100 to control the border color of an element: border-indigo-500 border-purple-500 border-sky-500 <div class=\"border-4 border-indigo-500 ...\"></div> <div class=\"border-4 border-purple-500 ...\"></div> <div class=\"border-4 border-sky-500 ...\"></div> Changing the opacity Use the color opacity modifier to control the opacity of an element's border color: border-indigo-500/100 border-indigo-500/75 border-indigo-500/50 <div class=\"border-4 border-indigo-500/100 ...\"></div> <div class=\"border-4 border-indigo-500/75 ...\"></div> <div class=\"border-4 border-indigo-500/50 ...\"></div> Individual sides Use utilities like border-t-indigo-500 and border-r-lime-100 to set the border color for one side of an element: border-t-indigo-500 border-r-indigo-500 border-b-indigo-500 border-l-indigo-500 <div class=\"border-4 border-indigo-200 border-t-indigo-500 ...\"></div> <div class=\"border-4 border-indigo-200 border-r-indigo-500 ...\"></div> <div class=\"border-4 border-indigo-200 border-b-indigo-500 ...\"></div> <div class=\"border-4 border-indigo-200 border-l-indigo-500 ...\"></div> Horizontal and vertical sides Use utilities like border-x-indigo-500 and border-y-lime-100 to set the border color on two sides of an element at the same time: border-x-indigo-500 border-y-indigo-500 <div class=\"border-4 border-indigo-200 border-x-indigo-500 ...\"></div> <div class=\"border-4 border-indigo-200 border-y-indigo-500 ...\"></div> Using logical properties Use utilities like border-s-indigo-500 and border-e-lime-100 to set the border-inline-start-color and border-inline-end-color logical properties, which map to either the left or right border based on the text direction: Left-to-right Right-to-left <div dir=\"ltr\"> <div class=\"border-s-indigo-500 ...\"></div> </div> <div dir=\"rtl\"> <div class=\"border-s-indigo-500 ...\"></div> </div> Use the border-bs-* and border-be-* utilities to set the border-block-start-color and border-block-end-color logical properties, which map to either the top or bottom border based on the writing mode: <div class=\"border-bs-indigo-500 ...\"></div> Divider between children Use utilities like divide-indigo-500 and divide-lime-100 to control the border color between child elements: 01 02 03 <div class=\"grid grid-cols-3 divide-x-4 divide-indigo-500\"> <div>01</div> <div>02</div> <div>03</div> </div> Using a custom value Use the border-[<value>] syntax to set the border color based on a completely custom value: <div class=\"border-[#243c5a] ...\"> <!-- ... --> </div> For CSS variables, you can also use the border-(<custom-property>) syntax: <div class=\"border-(--my-border) ...\"> <!-- ... --> </div> This is just a shorthand for border-[var(<custom-property>)] that adds the var() function for you automatically. Applying on focus Prefix a border-color utility with a variant like focus:* to only apply the utility in that state: Email address <input class=\"border-2 border-gray-700 focus:border-pink-600 ...\" /> Learn more about using variants in the variants documentation. Responsive design Prefix a border-color utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"border-blue-500 md:border-green-500 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the border-regal-blue utility can be used in your markup: <div class=\"border-regal-blue\"> <!-- ... --> </div> Learn more about customizing your theme in the theme documentation. border-width border-style",
+  "code_examples": [
+    "<div class=\"border-4 border-indigo-500 ...\"></div>\n<div class=\"border-4 border-purple-500 ...\"></div>\n<div class=\"border-4 border-sky-500 ...\"></div>",
+    "<div class=\"border-4 border-indigo-500/100 ...\"></div>\n<div class=\"border-4 border-indigo-500/75 ...\"></div>\n<div class=\"border-4 border-indigo-500/50 ...\"></div>",
+    "<div class=\"border-4 border-indigo-200 border-t-indigo-500 ...\"></div>\n<div class=\"border-4 border-indigo-200 border-r-indigo-500 ...\"></div>\n<div class=\"border-4 border-indigo-200 border-b-indigo-500 ...\"></div>\n<div class=\"border-4 border-indigo-200 border-l-indigo-500 ...\"></div>",
+    "<div class=\"border-4 border-indigo-200 border-x-indigo-500 ...\"></div>\n<div class=\"border-4 border-indigo-200 border-y-indigo-500 ...\"></div>",
+    "<div dir=\"ltr\">\n  <div class=\"border-s-indigo-500 ...\"></div>\n</div>\n<div dir=\"rtl\">\n  <div class=\"border-s-indigo-500 ...\"></div>\n</div>",
+    "<div class=\"border-bs-indigo-500 ...\"></div>",
+    "<div class=\"grid grid-cols-3 divide-x-4 divide-indigo-500\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"border-[#243c5a] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"border-(--my-border) ...\">\n  <!-- ... -->\n</div>",
+    "<input class=\"border-2 border-gray-700 focus:border-pink-600 ...\" />",
+    "<div class=\"border-blue-500 md:border-green-500 ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<div class=\"border-regal-blue\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/border-color/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 4734,
+          "pageY": 4791,
+          "scrollY": 4791,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:31.451447+00:00"
+}

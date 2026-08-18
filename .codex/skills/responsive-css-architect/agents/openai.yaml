@@ -1,0 +1,4 @@
+interface:
+  display_name: "Responsive CSS Architect"
+  short_description: "Implement bounded responsive CSS concerns"
+  default_prompt: "Use $responsive-css-architect to implement the recorded CSS concern without changing product topology or scope."

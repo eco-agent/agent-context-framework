@@ -1,0 +1,62 @@
+{
+  "path": "/docs/transition-duration",
+  "url": "https://tailwindcss.com/docs/transition-duration",
+  "slug": "transition-duration",
+  "source_cache_file": "transition-duration.md",
+  "title": "transition-duration - Transitions & Animation - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "transition-duration",
+    "EXAMPLES",
+    "Basic example",
+    "Supporting reduced motion",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TRANSITIONS & ANIMATION transition-duration Utilities for controlling the duration of CSS transitions. Class Styles duration-<number> transition-duration: <number>ms; duration-initial transition-duration: initial; duration-(<custom-property>) transition-duration: var(<custom-property>); duration-[<value>] transition-duration: <value>; EXAMPLES Basic example Use utilities like duration-150 and duration-700 to set the transition duration of an element in milliseconds: Hover each button to see the expected behavior duration-150 Button A duration-300 Button B duration-700 Button C <button class=\"transition duration-150 ease-in-out ...\">Button A</button> <button class=\"transition duration-300 ease-in-out ...\">Button B</button> <button class=\"transition duration-700 ease-in-out ...\">Button C</button> Supporting reduced motion For situations where the user has specified that they prefer reduced motion, you can conditionally apply animations and transitions using the motion-safe and motion-reduce variants: <button type=\"button\" class=\"duration-300 motion-reduce:duration-0 ...\"> <!-- ... --> </button> Using a custom value Use the duration-[<value>] syntax to set the transition duration based on a completely custom value: <button class=\"duration-[1s,15s] ...\"> <!-- ... --> </button> For CSS variables, you can also use the duration-(<custom-property>) syntax: <button class=\"duration-(--my-duration) ...\"> <!-- ... --> </button> This is just a shorthand for duration-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a transition-duration utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <button class=\"duration-0 md:duration-150 ...\"> <!-- ... --> </button> Learn more about using variants in the variants documentation. transition-behavior transition-timing-function",
+  "code_examples": [
+    "<button class=\"transition duration-150 ease-in-out ...\">Button A</button>\n<button class=\"transition duration-300 ease-in-out ...\">Button B</button>\n<button class=\"transition duration-700 ease-in-out ...\">Button C</button>",
+    "<button type=\"button\" class=\"duration-300 motion-reduce:duration-0 ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"duration-[1s,15s] ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"duration-(--my-duration) ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"duration-0 md:duration-150 ...\">\n  <!-- ... -->\n</button>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/transition-duration/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1152,
+          "pageY": 1209,
+          "scrollY": 1209,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:33.998653+00:00"
+}

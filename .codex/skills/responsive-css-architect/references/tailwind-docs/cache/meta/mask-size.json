@@ -1,0 +1,64 @@
+{
+  "path": "/docs/mask-size",
+  "url": "https://tailwindcss.com/docs/mask-size",
+  "slug": "mask-size",
+  "source_cache_file": "mask-size.md",
+  "title": "mask-size - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "mask-size",
+    "EXAMPLES",
+    "Filling the container",
+    "Filling without cropping",
+    "Using the default size",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS mask-size Utilities for controlling the size of an element's mask image. Class Styles mask-auto mask-size: auto; mask-cover mask-size: cover; mask-contain mask-size: contain; mask-size-(<custom-property>) mask-size: var(<custom-property>); mask-size-[<value>] mask-size: <value>; EXAMPLES Filling the container Use the mask-cover utility to scale the mask image until it fills the mask layer, cropping the image if needed: <div class=\"mask-cover mask-[url(/img/scribble.png)] bg-[url(/img/mountains.jpg)] ...\"></div> Filling without cropping Use the mask-contain utility to scale the mask image to the outer edges without cropping or stretching: <div class=\"mask-contain mask-[url(/img/scribble.png)] bg-[url(/img/mountains.jpg)] ...\"></div> Using the default size Use the mask-auto utility to display the mask image at its default size: <div class=\"mask-auto mask-[url(/img/scribble.png)] bg-[url(/img/mountains.jpg)] ...\"></div> Using a custom value Use the mask-size-[<value>] syntax to set the mask image size based on a completely custom value: <div class=\"mask-size-[auto_100px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the mask-size-(<custom-property>) syntax: <div class=\"mask-size-(--my-mask-size) ...\"> <!-- ... --> </div> This is just a shorthand for mask-size-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a mask-size utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"mask-auto md:mask-contain ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. mask-repeat mask-type",
+  "code_examples": [
+    "<div class=\"mask-cover mask-[url(/img/scribble.png)] bg-[url(/img/mountains.jpg)] ...\"></div>",
+    "<div class=\"mask-contain mask-[url(/img/scribble.png)] bg-[url(/img/mountains.jpg)] ...\"></div>",
+    "<div class=\"mask-auto mask-[url(/img/scribble.png)] bg-[url(/img/mountains.jpg)] ...\"></div>",
+    "<div class=\"mask-size-[auto_100px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"mask-size-(--my-mask-size) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"mask-auto md:mask-contain ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/mask-size/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1966,
+          "pageY": 2023,
+          "scrollY": 2023,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:22.789177+00:00"
+}

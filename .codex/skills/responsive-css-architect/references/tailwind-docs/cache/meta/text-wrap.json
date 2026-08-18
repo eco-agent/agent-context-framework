@@ -1,0 +1,63 @@
+{
+  "path": "/docs/text-wrap",
+  "url": "https://tailwindcss.com/docs/text-wrap",
+  "slug": "text-wrap",
+  "source_cache_file": "text-wrap.md",
+  "title": "text-wrap - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-wrap",
+    "EXAMPLES",
+    "Allowing text to wrap",
+    "Preventing text from wrapping",
+    "Balanced text wrapping",
+    "Pretty text wrapping",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-wrap Utilities for controlling how text wraps within an element. Class Styles text-wrap text-wrap: wrap; text-nowrap text-wrap: nowrap; text-balance text-wrap: balance; text-pretty text-wrap: pretty; EXAMPLES Allowing text to wrap Use the text-wrap utility to wrap overflowing text onto multiple lines at logical points in the text: Beloved Manhattan soup stand closes New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand unexpectedly shutters, following a series of events that have left the community puzzled. <article class=\"text-wrap\"> <h3>Beloved Manhattan soup stand closes</h3> <p>New Yorkers are facing the winter chill...</p> </article> Preventing text from wrapping Use the text-nowrap utility to prevent text from wrapping, allowing it to overflow if necessary: Beloved Manhattan soup stand closes New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand unexpectedly shutters, following a series of events that have left the community puzzled. <article class=\"text-nowrap\"> <h3>Beloved Manhattan soup stand closes</h3> <p>New Yorkers are facing the winter chill...</p> </article> Balanced text wrapping Use the text-balance utility to distribute the text evenly across each line: Beloved Manhattan soup stand closes New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand unexpectedly shutters, following a series of events that have left the community puzzled. <article> <h3 class=\"text-balance\">Beloved Manhattan soup stand closes</h3> <p>New Yorkers are facing the winter chill...</p> </article> For performance reasons browsers limit text balancing to blocks that are ~6 lines or less, making it best suited for headings. Pretty text wrapping Use the text-pretty utility to prefer better text wrapping and layout at the expense of speed. Behavior varies across browsers but often involves approaches like preventing orphans (a single word on its own line) at the end of a text block: Beloved Manhattan soup stand closes New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand unexpectedly shutters, following a series of events that have left the community puzzled. <article> <h3 class=\"text-pretty\">Beloved Manhattan soup stand closes</h3> <p>New Yorkers are facing the winter chill...</p> </article> Responsive design Prefix a text-wrap utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <h1 class=\"text-pretty md:text-balance ...\"> <!-- ... --> </h1> Learn more about using variants in the variants documentation. text-overflow text-indent",
+  "code_examples": [
+    "<article class=\"text-wrap\">\n  <h3>Beloved Manhattan soup stand closes</h3>\n  <p>New Yorkers are facing the winter chill...</p>\n</article>",
+    "<article class=\"text-nowrap\">\n  <h3>Beloved Manhattan soup stand closes</h3>\n  <p>New Yorkers are facing the winter chill...</p>\n</article>",
+    "<article>\n  <h3 class=\"text-balance\">Beloved Manhattan soup stand closes</h3>\n  <p>New Yorkers are facing the winter chill...</p>\n</article>",
+    "<article>\n  <h3 class=\"text-pretty\">Beloved Manhattan soup stand closes</h3>\n  <p>New Yorkers are facing the winter chill...</p>\n</article>",
+    "<h1 class=\"text-pretty md:text-balance ...\">\n  <!-- ... -->\n</h1>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-wrap/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2053,
+          "pageY": 2110,
+          "scrollY": 2110,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:40.952246+00:00"
+}

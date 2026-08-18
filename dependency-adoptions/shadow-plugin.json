@@ -1,0 +1,17 @@
+{
+  "name": "shadow-plugin",
+  "version": "2.0.0",
+  "source": "https://github.com/flornkm/shadow-plugin/tree/84718fff7465a973e365c0ed2d0b32a4844b615c",
+  "license": "MIT",
+  "integrity": "sha512-cZCOcRlPOBe8YUrC/RtzH2PyNsyAamJmx/Oko1HLVDeQ2MVpGM4rhKTTcrn05HSLgTp0zrGSyaDkycH+k3IiUw==",
+  "purpose": "Provide the required smooth shadow and integrated hairline-ring utilities for elevated frontend surfaces without border-plus-shadow double edges.",
+  "alternativesConsidered": [
+    "Project-owned multi-layer box-shadow utilities",
+    "Tailwind default borders paired with box shadows"
+  ],
+  "maintenanceStatus": "Pinned to upstream v2.0.0; transfer ownership to the product frontend package when it is created.",
+  "securityEvidence": "The exact package, tagged source commit, MIT license, zero-dependency metadata, two CSS-only exports, five-file package, and frozen registry integrity were reviewed.",
+  "modifications": "None.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "frontend"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Choose React Animation"
+  short_description: "Animate React UI and SVG assets"
+  default_prompt: "Use $choose-react-animation to implement this React or SVG animation with the simplest appropriate approach."

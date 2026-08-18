@@ -1,0 +1,63 @@
+{
+  "path": "/docs/text-transform",
+  "url": "https://tailwindcss.com/docs/text-transform",
+  "slug": "text-transform",
+  "source_cache_file": "text-transform.md",
+  "title": "text-transform - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-transform",
+    "EXAMPLES",
+    "Uppercasing text",
+    "Lowercasing text",
+    "Capitalizing text",
+    "Resetting text casing",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-transform Utilities for controlling the capitalization of text. Class Styles uppercase text-transform: uppercase; lowercase text-transform: lowercase; capitalize text-transform: capitalize; normal-case text-transform: none; EXAMPLES Uppercasing text Use the uppercase utility to uppercase the text of an element: THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. <p class=\"uppercase\">The quick brown fox ...</p> Lowercasing text Use the lowercase utility to lowercase the text of an element: the quick brown fox jumps over the lazy dog. <p class=\"lowercase\">The quick brown fox ...</p> Capitalizing text Use the capitalize utility to capitalize text of an element: The Quick Brown Fox Jumps Over The Lazy Dog. <p class=\"capitalize\">The quick brown fox ...</p> Resetting text casing Use the normal-case utility to preserve the original text casing of an element\u2014typically used to reset capitalization at different breakpoints: The quick brown fox jumps over the lazy dog. <p class=\"normal-case\">The quick brown fox ...</p> Responsive design Prefix a text-transform utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"capitalize md:uppercase ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. text-underline-offset text-overflow",
+  "code_examples": [
+    "<p class=\"uppercase\">The quick brown fox ...</p>",
+    "<p class=\"lowercase\">The quick brown fox ...</p>",
+    "<p class=\"capitalize\">The quick brown fox ...</p>",
+    "<p class=\"normal-case\">The quick brown fox ...</p>",
+    "<p class=\"capitalize md:uppercase ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-transform/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1173,
+          "pageY": 1230,
+          "scrollY": 1230,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:36.199279+00:00"
+}

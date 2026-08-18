@@ -1,0 +1,47 @@
+{
+  "path": "/docs/pointer-events",
+  "url": "https://tailwindcss.com/docs/pointer-events",
+  "slug": "pointer-events",
+  "source_cache_file": "pointer-events.md",
+  "title": "pointer-events - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "pointer-events",
+    "EXAMPLES",
+    "Ignoring pointer events",
+    "Restoring pointer events"
+  ],
+  "content_text": "INTERACTIVITY pointer-events Utilities for controlling whether an element responds to pointer events. Class Styles pointer-events-auto pointer-events: auto; pointer-events-none pointer-events: none; EXAMPLES Ignoring pointer events Use the pointer-events-none utility to make an element ignore pointer events, like :hover and click events: Click the search icons to see the expected behavior pointer-events-auto pointer-events-none <div class=\"relative ...\"> <div class=\"pointer-events-auto absolute ...\"> <svg class=\"absolute h-5 w-5 text-gray-400\"> <!-- ... --> </svg> </div> <input type=\"text\" placeholder=\"Search\" class=\"...\" /> </div> <div class=\"relative ...\"> <div class=\"pointer-events-none absolute ...\"> <svg class=\"absolute h-5 w-5 text-gray-400\"> <!-- ... --> </svg> </div> <input type=\"text\" placeholder=\"Search\" class=\"...\" /> </div> The pointer events will still trigger on child elements and pass-through to elements that are \"beneath\" the target. Restoring pointer events Use the pointer-events-auto utility to revert to the default browser behavior for pointer events: <div class=\"pointer-events-none md:pointer-events-auto ...\"> <!-- ... --> </div> field-sizing resize",
+  "code_examples": [
+    "<div class=\"relative ...\">\n  <div class=\"pointer-events-auto absolute ...\">\n    <svg class=\"absolute h-5 w-5 text-gray-400\">\n      <!-- ... -->\n    </svg>\n  </div>\n  <input type=\"text\" placeholder=\"Search\" class=\"...\" />\n</div>\n<div class=\"relative ...\">\n  <div class=\"pointer-events-none absolute ...\">\n    <svg class=\"absolute h-5 w-5 text-gray-400\">\n      <!-- ... -->\n    </svg>\n  </div>\n  <input type=\"text\" placeholder=\"Search\" class=\"...\" />\n</div>",
+    "<div class=\"pointer-events-none md:pointer-events-auto ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/pointer-events/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 484,
+          "pageY": 541,
+          "scrollY": 541,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:37.722160+00:00"
+}

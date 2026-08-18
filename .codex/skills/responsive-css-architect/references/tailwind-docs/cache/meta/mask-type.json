@@ -1,0 +1,47 @@
+{
+  "path": "/docs/mask-type",
+  "url": "https://tailwindcss.com/docs/mask-type",
+  "slug": "mask-type",
+  "source_cache_file": "mask-type.md",
+  "title": "mask-type - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "mask-type",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS mask-type Utilities for controlling how an SVG mask is interpreted. Class Styles mask-type-alpha mask-type: alpha; mask-type-luminance mask-type: luminance; EXAMPLES Basic example Use the mask-type-alpha and mask-type-luminance utilities to control the type of an SVG mask: mask-type-alpha mask-type-luminance <svg> <mask id=\"blob1\" class=\"mask-type-alpha fill-gray-700/70\"> <path d=\"...\"></path> </mask> <image href=\"/img/mountains.jpg\" height=\"100%\" width=\"100%\" mask=\"url(#blob1)\" /> </svg> <svg> <mask id=\"blob2\" class=\"mask-type-luminance fill-gray-700/70\"> <path d=\"...\"></path> </mask> <image href=\"/img/mountains.jpg\" height=\"100%\" width=\"100%\" mask=\"url(#blob2)\" /> </svg> When using mask-type-luminance the luminance value of the SVG mask determines visibility, so sticking with grayscale colors will produce the most predictable results. With mask-alpha, the opacity of the SVG mask determines the visibility of the masked element. Responsive design Prefix a mask-type utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <mask class=\"mask-type-alpha md:mask-type-luminance ...\"> <!-- ... --> </mask> Learn more about using variants in the variants documentation. mask-size filter",
+  "code_examples": [
+    "<svg>\n  <mask id=\"blob1\" class=\"mask-type-alpha fill-gray-700/70\">\n    <path d=\"...\"></path>\n  </mask>\n  <image href=\"/img/mountains.jpg\" height=\"100%\" width=\"100%\" mask=\"url(#blob1)\" />\n</svg>\n<svg>\n  <mask id=\"blob2\" class=\"mask-type-luminance fill-gray-700/70\">\n    <path d=\"...\"></path>\n  </mask>\n  <image href=\"/img/mountains.jpg\" height=\"100%\" width=\"100%\" mask=\"url(#blob2)\" />\n</svg>",
+    "<mask class=\"mask-type-alpha md:mask-type-luminance ...\">\n  <!-- ... -->\n</mask>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/mask-type/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 884,
+          "pageY": 941,
+          "scrollY": 941,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:24.827604+00:00"
+}

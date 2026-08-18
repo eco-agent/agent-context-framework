@@ -1,0 +1,62 @@
+{
+  "path": "/docs/z-index",
+  "url": "https://tailwindcss.com/docs/z-index",
+  "slug": "z-index",
+  "source_cache_file": "z-index.md",
+  "title": "z-index - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "z-index",
+    "EXAMPLES",
+    "Basic example",
+    "Using negative values",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT z-index Utilities for controlling the stack order of an element. Class Styles z-<number> z-index: <number>; z-auto z-index: auto; z-[<value>] z-index: <value>; z-(<custom-property>) z-index: var(<custom-property>); EXAMPLES Basic example Use the z-<number> utilities like z-10 and z-50 to control the stack order (or three-dimensional positioning) of an element, regardless of the order it has been displayed: 05 04 03 02 01 <div class=\"z-40 ...\">05</div> <div class=\"z-30 ...\">04</div> <div class=\"z-20 ...\">03</div> <div class=\"z-10 ...\">02</div> <div class=\"z-0 ...\">01</div> Using negative values To use a negative z-index value, prefix the class name with a dash to convert it to a negative value: 01 02 03 04 05 <div class=\"...\">05</div> <div class=\"...\">04</div> <div class=\"-z-10 ...\">03</div> <div class=\"...\">02</div> <div class=\"...\">01</div> Using a custom value Use the z-[<value>] syntax to set the stack order based on a completely custom value: <div class=\"z-[calc(var(--index)+1)] ...\"> <!-- ... --> </div> For CSS variables, you can also use the z-(<custom-property>) syntax: <div class=\"z-(--my-z) ...\"> <!-- ... --> </div> This is just a shorthand for z-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a z-index utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"z-0 md:z-50 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. visibility flex-basis",
+  "code_examples": [
+    "<div class=\"z-40 ...\">05</div>\n<div class=\"z-30 ...\">04</div>\n<div class=\"z-20 ...\">03</div>\n<div class=\"z-10 ...\">02</div>\n<div class=\"z-0 ...\">01</div>",
+    "<div class=\"...\">05</div>\n<div class=\"...\">04</div>\n<div class=\"-z-10 ...\">03</div>\n<div class=\"...\">02</div>\n<div class=\"...\">01</div>",
+    "<div class=\"z-[calc(var(--index)+1)] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"z-(--my-z) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"z-0 md:z-50 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/z-index/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1276,
+          "pageY": 1333,
+          "scrollY": 1333,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:50.161775+00:00"
+}

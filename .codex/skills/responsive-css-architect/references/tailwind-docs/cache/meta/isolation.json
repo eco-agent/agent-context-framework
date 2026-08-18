@@ -1,0 +1,47 @@
+{
+  "path": "/docs/isolation",
+  "url": "https://tailwindcss.com/docs/isolation",
+  "slug": "isolation",
+  "source_cache_file": "isolation.md",
+  "title": "isolation - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "isolation",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT isolation Utilities for controlling whether an element should explicitly create a new stacking context. Class Styles isolate isolation: isolate; isolation-auto isolation: auto; EXAMPLES Basic example Use the isolate and isolation-auto utilities to control whether an element should explicitly create a new stacking context: <div class=\"isolate ...\"> <!-- ... --> </div> Responsive design Prefix an isolation utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"isolate md:isolation-auto ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. clear object-fit",
+  "code_examples": [
+    "<div class=\"isolate ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"isolate md:isolation-auto ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/isolation/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 60,
+          "pageY": 117,
+          "scrollY": 117,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:27.181946+00:00"
+}

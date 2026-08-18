@@ -1,0 +1,1170 @@
+{
+  "source": "https://tailwindcss.com",
+  "generated_for": "frontend-design-discipline",
+  "docs": [
+    {
+      "path": "/docs/styling-with-utility-classes",
+      "url": "https://tailwindcss.com/docs/styling-with-utility-classes",
+      "slug": "styling-with-utility-classes",
+      "cache_file": "styling-with-utility-classes.md"
+    },
+    {
+      "path": "/docs/hover-focus-and-other-states",
+      "url": "https://tailwindcss.com/docs/hover-focus-and-other-states",
+      "slug": "hover-focus-and-other-states",
+      "cache_file": "hover-focus-and-other-states.md"
+    },
+    {
+      "path": "/docs/responsive-design",
+      "url": "https://tailwindcss.com/docs/responsive-design",
+      "slug": "responsive-design",
+      "cache_file": "responsive-design.md"
+    },
+    {
+      "path": "/docs/dark-mode",
+      "url": "https://tailwindcss.com/docs/dark-mode",
+      "slug": "dark-mode",
+      "cache_file": "dark-mode.md"
+    },
+    {
+      "path": "/docs/theme",
+      "url": "https://tailwindcss.com/docs/theme",
+      "slug": "theme",
+      "cache_file": "theme.md"
+    },
+    {
+      "path": "/docs/colors",
+      "url": "https://tailwindcss.com/docs/colors",
+      "slug": "colors",
+      "cache_file": "colors.md"
+    },
+    {
+      "path": "/docs/adding-custom-styles",
+      "url": "https://tailwindcss.com/docs/adding-custom-styles",
+      "slug": "adding-custom-styles",
+      "cache_file": "adding-custom-styles.md"
+    },
+    {
+      "path": "/docs/detecting-classes-in-source-files",
+      "url": "https://tailwindcss.com/docs/detecting-classes-in-source-files",
+      "slug": "detecting-classes-in-source-files",
+      "cache_file": "detecting-classes-in-source-files.md"
+    },
+    {
+      "path": "/docs/functions-and-directives",
+      "url": "https://tailwindcss.com/docs/functions-and-directives",
+      "slug": "functions-and-directives",
+      "cache_file": "functions-and-directives.md"
+    },
+    {
+      "path": "/docs/preflight",
+      "url": "https://tailwindcss.com/docs/preflight",
+      "slug": "preflight",
+      "cache_file": "preflight.md"
+    },
+    {
+      "path": "/docs/aspect-ratio",
+      "url": "https://tailwindcss.com/docs/aspect-ratio",
+      "slug": "aspect-ratio",
+      "cache_file": "aspect-ratio.md"
+    },
+    {
+      "path": "/docs/columns",
+      "url": "https://tailwindcss.com/docs/columns",
+      "slug": "columns",
+      "cache_file": "columns.md"
+    },
+    {
+      "path": "/docs/break-after",
+      "url": "https://tailwindcss.com/docs/break-after",
+      "slug": "break-after",
+      "cache_file": "break-after.md"
+    },
+    {
+      "path": "/docs/break-before",
+      "url": "https://tailwindcss.com/docs/break-before",
+      "slug": "break-before",
+      "cache_file": "break-before.md"
+    },
+    {
+      "path": "/docs/break-inside",
+      "url": "https://tailwindcss.com/docs/break-inside",
+      "slug": "break-inside",
+      "cache_file": "break-inside.md"
+    },
+    {
+      "path": "/docs/box-decoration-break",
+      "url": "https://tailwindcss.com/docs/box-decoration-break",
+      "slug": "box-decoration-break",
+      "cache_file": "box-decoration-break.md"
+    },
+    {
+      "path": "/docs/box-sizing",
+      "url": "https://tailwindcss.com/docs/box-sizing",
+      "slug": "box-sizing",
+      "cache_file": "box-sizing.md"
+    },
+    {
+      "path": "/docs/display",
+      "url": "https://tailwindcss.com/docs/display",
+      "slug": "display",
+      "cache_file": "display.md"
+    },
+    {
+      "path": "/docs/float",
+      "url": "https://tailwindcss.com/docs/float",
+      "slug": "float",
+      "cache_file": "float.md"
+    },
+    {
+      "path": "/docs/clear",
+      "url": "https://tailwindcss.com/docs/clear",
+      "slug": "clear",
+      "cache_file": "clear.md"
+    },
+    {
+      "path": "/docs/isolation",
+      "url": "https://tailwindcss.com/docs/isolation",
+      "slug": "isolation",
+      "cache_file": "isolation.md"
+    },
+    {
+      "path": "/docs/object-fit",
+      "url": "https://tailwindcss.com/docs/object-fit",
+      "slug": "object-fit",
+      "cache_file": "object-fit.md"
+    },
+    {
+      "path": "/docs/object-position",
+      "url": "https://tailwindcss.com/docs/object-position",
+      "slug": "object-position",
+      "cache_file": "object-position.md"
+    },
+    {
+      "path": "/docs/overflow",
+      "url": "https://tailwindcss.com/docs/overflow",
+      "slug": "overflow",
+      "cache_file": "overflow.md"
+    },
+    {
+      "path": "/docs/overscroll-behavior",
+      "url": "https://tailwindcss.com/docs/overscroll-behavior",
+      "slug": "overscroll-behavior",
+      "cache_file": "overscroll-behavior.md"
+    },
+    {
+      "path": "/docs/position",
+      "url": "https://tailwindcss.com/docs/position",
+      "slug": "position",
+      "cache_file": "position.md"
+    },
+    {
+      "path": "/docs/top-right-bottom-left",
+      "url": "https://tailwindcss.com/docs/top-right-bottom-left",
+      "slug": "top-right-bottom-left",
+      "cache_file": "top-right-bottom-left.md"
+    },
+    {
+      "path": "/docs/visibility",
+      "url": "https://tailwindcss.com/docs/visibility",
+      "slug": "visibility",
+      "cache_file": "visibility.md"
+    },
+    {
+      "path": "/docs/z-index",
+      "url": "https://tailwindcss.com/docs/z-index",
+      "slug": "z-index",
+      "cache_file": "z-index.md"
+    },
+    {
+      "path": "/docs/flex-basis",
+      "url": "https://tailwindcss.com/docs/flex-basis",
+      "slug": "flex-basis",
+      "cache_file": "flex-basis.md"
+    },
+    {
+      "path": "/docs/flex-direction",
+      "url": "https://tailwindcss.com/docs/flex-direction",
+      "slug": "flex-direction",
+      "cache_file": "flex-direction.md"
+    },
+    {
+      "path": "/docs/flex-wrap",
+      "url": "https://tailwindcss.com/docs/flex-wrap",
+      "slug": "flex-wrap",
+      "cache_file": "flex-wrap.md"
+    },
+    {
+      "path": "/docs/flex",
+      "url": "https://tailwindcss.com/docs/flex",
+      "slug": "flex",
+      "cache_file": "flex.md"
+    },
+    {
+      "path": "/docs/flex-grow",
+      "url": "https://tailwindcss.com/docs/flex-grow",
+      "slug": "flex-grow",
+      "cache_file": "flex-grow.md"
+    },
+    {
+      "path": "/docs/flex-shrink",
+      "url": "https://tailwindcss.com/docs/flex-shrink",
+      "slug": "flex-shrink",
+      "cache_file": "flex-shrink.md"
+    },
+    {
+      "path": "/docs/order",
+      "url": "https://tailwindcss.com/docs/order",
+      "slug": "order",
+      "cache_file": "order.md"
+    },
+    {
+      "path": "/docs/grid-template-columns",
+      "url": "https://tailwindcss.com/docs/grid-template-columns",
+      "slug": "grid-template-columns",
+      "cache_file": "grid-template-columns.md"
+    },
+    {
+      "path": "/docs/grid-column",
+      "url": "https://tailwindcss.com/docs/grid-column",
+      "slug": "grid-column",
+      "cache_file": "grid-column.md"
+    },
+    {
+      "path": "/docs/grid-template-rows",
+      "url": "https://tailwindcss.com/docs/grid-template-rows",
+      "slug": "grid-template-rows",
+      "cache_file": "grid-template-rows.md"
+    },
+    {
+      "path": "/docs/grid-row",
+      "url": "https://tailwindcss.com/docs/grid-row",
+      "slug": "grid-row",
+      "cache_file": "grid-row.md"
+    },
+    {
+      "path": "/docs/grid-auto-flow",
+      "url": "https://tailwindcss.com/docs/grid-auto-flow",
+      "slug": "grid-auto-flow",
+      "cache_file": "grid-auto-flow.md"
+    },
+    {
+      "path": "/docs/grid-auto-columns",
+      "url": "https://tailwindcss.com/docs/grid-auto-columns",
+      "slug": "grid-auto-columns",
+      "cache_file": "grid-auto-columns.md"
+    },
+    {
+      "path": "/docs/grid-auto-rows",
+      "url": "https://tailwindcss.com/docs/grid-auto-rows",
+      "slug": "grid-auto-rows",
+      "cache_file": "grid-auto-rows.md"
+    },
+    {
+      "path": "/docs/gap",
+      "url": "https://tailwindcss.com/docs/gap",
+      "slug": "gap",
+      "cache_file": "gap.md"
+    },
+    {
+      "path": "/docs/justify-content",
+      "url": "https://tailwindcss.com/docs/justify-content",
+      "slug": "justify-content",
+      "cache_file": "justify-content.md"
+    },
+    {
+      "path": "/docs/justify-items",
+      "url": "https://tailwindcss.com/docs/justify-items",
+      "slug": "justify-items",
+      "cache_file": "justify-items.md"
+    },
+    {
+      "path": "/docs/justify-self",
+      "url": "https://tailwindcss.com/docs/justify-self",
+      "slug": "justify-self",
+      "cache_file": "justify-self.md"
+    },
+    {
+      "path": "/docs/align-content",
+      "url": "https://tailwindcss.com/docs/align-content",
+      "slug": "align-content",
+      "cache_file": "align-content.md"
+    },
+    {
+      "path": "/docs/align-items",
+      "url": "https://tailwindcss.com/docs/align-items",
+      "slug": "align-items",
+      "cache_file": "align-items.md"
+    },
+    {
+      "path": "/docs/align-self",
+      "url": "https://tailwindcss.com/docs/align-self",
+      "slug": "align-self",
+      "cache_file": "align-self.md"
+    },
+    {
+      "path": "/docs/place-content",
+      "url": "https://tailwindcss.com/docs/place-content",
+      "slug": "place-content",
+      "cache_file": "place-content.md"
+    },
+    {
+      "path": "/docs/place-items",
+      "url": "https://tailwindcss.com/docs/place-items",
+      "slug": "place-items",
+      "cache_file": "place-items.md"
+    },
+    {
+      "path": "/docs/place-self",
+      "url": "https://tailwindcss.com/docs/place-self",
+      "slug": "place-self",
+      "cache_file": "place-self.md"
+    },
+    {
+      "path": "/docs/padding",
+      "url": "https://tailwindcss.com/docs/padding",
+      "slug": "padding",
+      "cache_file": "padding.md"
+    },
+    {
+      "path": "/docs/margin",
+      "url": "https://tailwindcss.com/docs/margin",
+      "slug": "margin",
+      "cache_file": "margin.md"
+    },
+    {
+      "path": "/docs/width",
+      "url": "https://tailwindcss.com/docs/width",
+      "slug": "width",
+      "cache_file": "width.md"
+    },
+    {
+      "path": "/docs/min-width",
+      "url": "https://tailwindcss.com/docs/min-width",
+      "slug": "min-width",
+      "cache_file": "min-width.md"
+    },
+    {
+      "path": "/docs/max-width",
+      "url": "https://tailwindcss.com/docs/max-width",
+      "slug": "max-width",
+      "cache_file": "max-width.md"
+    },
+    {
+      "path": "/docs/height",
+      "url": "https://tailwindcss.com/docs/height",
+      "slug": "height",
+      "cache_file": "height.md"
+    },
+    {
+      "path": "/docs/min-height",
+      "url": "https://tailwindcss.com/docs/min-height",
+      "slug": "min-height",
+      "cache_file": "min-height.md"
+    },
+    {
+      "path": "/docs/max-height",
+      "url": "https://tailwindcss.com/docs/max-height",
+      "slug": "max-height",
+      "cache_file": "max-height.md"
+    },
+    {
+      "path": "/docs/inline-size",
+      "url": "https://tailwindcss.com/docs/inline-size",
+      "slug": "inline-size",
+      "cache_file": "inline-size.md"
+    },
+    {
+      "path": "/docs/min-inline-size",
+      "url": "https://tailwindcss.com/docs/min-inline-size",
+      "slug": "min-inline-size",
+      "cache_file": "min-inline-size.md"
+    },
+    {
+      "path": "/docs/max-inline-size",
+      "url": "https://tailwindcss.com/docs/max-inline-size",
+      "slug": "max-inline-size",
+      "cache_file": "max-inline-size.md"
+    },
+    {
+      "path": "/docs/block-size",
+      "url": "https://tailwindcss.com/docs/block-size",
+      "slug": "block-size",
+      "cache_file": "block-size.md"
+    },
+    {
+      "path": "/docs/min-block-size",
+      "url": "https://tailwindcss.com/docs/min-block-size",
+      "slug": "min-block-size",
+      "cache_file": "min-block-size.md"
+    },
+    {
+      "path": "/docs/max-block-size",
+      "url": "https://tailwindcss.com/docs/max-block-size",
+      "slug": "max-block-size",
+      "cache_file": "max-block-size.md"
+    },
+    {
+      "path": "/docs/font-family",
+      "url": "https://tailwindcss.com/docs/font-family",
+      "slug": "font-family",
+      "cache_file": "font-family.md"
+    },
+    {
+      "path": "/docs/font-size",
+      "url": "https://tailwindcss.com/docs/font-size",
+      "slug": "font-size",
+      "cache_file": "font-size.md"
+    },
+    {
+      "path": "/docs/font-smoothing",
+      "url": "https://tailwindcss.com/docs/font-smoothing",
+      "slug": "font-smoothing",
+      "cache_file": "font-smoothing.md"
+    },
+    {
+      "path": "/docs/font-style",
+      "url": "https://tailwindcss.com/docs/font-style",
+      "slug": "font-style",
+      "cache_file": "font-style.md"
+    },
+    {
+      "path": "/docs/font-weight",
+      "url": "https://tailwindcss.com/docs/font-weight",
+      "slug": "font-weight",
+      "cache_file": "font-weight.md"
+    },
+    {
+      "path": "/docs/font-stretch",
+      "url": "https://tailwindcss.com/docs/font-stretch",
+      "slug": "font-stretch",
+      "cache_file": "font-stretch.md"
+    },
+    {
+      "path": "/docs/font-variant-numeric",
+      "url": "https://tailwindcss.com/docs/font-variant-numeric",
+      "slug": "font-variant-numeric",
+      "cache_file": "font-variant-numeric.md"
+    },
+    {
+      "path": "/docs/font-feature-settings",
+      "url": "https://tailwindcss.com/docs/font-feature-settings",
+      "slug": "font-feature-settings",
+      "cache_file": "font-feature-settings.md"
+    },
+    {
+      "path": "/docs/letter-spacing",
+      "url": "https://tailwindcss.com/docs/letter-spacing",
+      "slug": "letter-spacing",
+      "cache_file": "letter-spacing.md"
+    },
+    {
+      "path": "/docs/line-clamp",
+      "url": "https://tailwindcss.com/docs/line-clamp",
+      "slug": "line-clamp",
+      "cache_file": "line-clamp.md"
+    },
+    {
+      "path": "/docs/line-height",
+      "url": "https://tailwindcss.com/docs/line-height",
+      "slug": "line-height",
+      "cache_file": "line-height.md"
+    },
+    {
+      "path": "/docs/list-style-image",
+      "url": "https://tailwindcss.com/docs/list-style-image",
+      "slug": "list-style-image",
+      "cache_file": "list-style-image.md"
+    },
+    {
+      "path": "/docs/list-style-position",
+      "url": "https://tailwindcss.com/docs/list-style-position",
+      "slug": "list-style-position",
+      "cache_file": "list-style-position.md"
+    },
+    {
+      "path": "/docs/list-style-type",
+      "url": "https://tailwindcss.com/docs/list-style-type",
+      "slug": "list-style-type",
+      "cache_file": "list-style-type.md"
+    },
+    {
+      "path": "/docs/text-align",
+      "url": "https://tailwindcss.com/docs/text-align",
+      "slug": "text-align",
+      "cache_file": "text-align.md"
+    },
+    {
+      "path": "/docs/color",
+      "url": "https://tailwindcss.com/docs/color",
+      "slug": "color",
+      "cache_file": "color.md"
+    },
+    {
+      "path": "/docs/text-decoration-line",
+      "url": "https://tailwindcss.com/docs/text-decoration-line",
+      "slug": "text-decoration-line",
+      "cache_file": "text-decoration-line.md"
+    },
+    {
+      "path": "/docs/text-decoration-color",
+      "url": "https://tailwindcss.com/docs/text-decoration-color",
+      "slug": "text-decoration-color",
+      "cache_file": "text-decoration-color.md"
+    },
+    {
+      "path": "/docs/text-decoration-style",
+      "url": "https://tailwindcss.com/docs/text-decoration-style",
+      "slug": "text-decoration-style",
+      "cache_file": "text-decoration-style.md"
+    },
+    {
+      "path": "/docs/text-decoration-thickness",
+      "url": "https://tailwindcss.com/docs/text-decoration-thickness",
+      "slug": "text-decoration-thickness",
+      "cache_file": "text-decoration-thickness.md"
+    },
+    {
+      "path": "/docs/text-underline-offset",
+      "url": "https://tailwindcss.com/docs/text-underline-offset",
+      "slug": "text-underline-offset",
+      "cache_file": "text-underline-offset.md"
+    },
+    {
+      "path": "/docs/text-transform",
+      "url": "https://tailwindcss.com/docs/text-transform",
+      "slug": "text-transform",
+      "cache_file": "text-transform.md"
+    },
+    {
+      "path": "/docs/text-overflow",
+      "url": "https://tailwindcss.com/docs/text-overflow",
+      "slug": "text-overflow",
+      "cache_file": "text-overflow.md"
+    },
+    {
+      "path": "/docs/text-wrap",
+      "url": "https://tailwindcss.com/docs/text-wrap",
+      "slug": "text-wrap",
+      "cache_file": "text-wrap.md"
+    },
+    {
+      "path": "/docs/text-indent",
+      "url": "https://tailwindcss.com/docs/text-indent",
+      "slug": "text-indent",
+      "cache_file": "text-indent.md"
+    },
+    {
+      "path": "/docs/tab-size",
+      "url": "https://tailwindcss.com/docs/tab-size",
+      "slug": "tab-size",
+      "cache_file": "tab-size.md"
+    },
+    {
+      "path": "/docs/vertical-align",
+      "url": "https://tailwindcss.com/docs/vertical-align",
+      "slug": "vertical-align",
+      "cache_file": "vertical-align.md"
+    },
+    {
+      "path": "/docs/white-space",
+      "url": "https://tailwindcss.com/docs/white-space",
+      "slug": "white-space",
+      "cache_file": "white-space.md"
+    },
+    {
+      "path": "/docs/word-break",
+      "url": "https://tailwindcss.com/docs/word-break",
+      "slug": "word-break",
+      "cache_file": "word-break.md"
+    },
+    {
+      "path": "/docs/overflow-wrap",
+      "url": "https://tailwindcss.com/docs/overflow-wrap",
+      "slug": "overflow-wrap",
+      "cache_file": "overflow-wrap.md"
+    },
+    {
+      "path": "/docs/hyphens",
+      "url": "https://tailwindcss.com/docs/hyphens",
+      "slug": "hyphens",
+      "cache_file": "hyphens.md"
+    },
+    {
+      "path": "/docs/content",
+      "url": "https://tailwindcss.com/docs/content",
+      "slug": "content",
+      "cache_file": "content.md"
+    },
+    {
+      "path": "/docs/background-attachment",
+      "url": "https://tailwindcss.com/docs/background-attachment",
+      "slug": "background-attachment",
+      "cache_file": "background-attachment.md"
+    },
+    {
+      "path": "/docs/background-clip",
+      "url": "https://tailwindcss.com/docs/background-clip",
+      "slug": "background-clip",
+      "cache_file": "background-clip.md"
+    },
+    {
+      "path": "/docs/background-color",
+      "url": "https://tailwindcss.com/docs/background-color",
+      "slug": "background-color",
+      "cache_file": "background-color.md"
+    },
+    {
+      "path": "/docs/background-image",
+      "url": "https://tailwindcss.com/docs/background-image",
+      "slug": "background-image",
+      "cache_file": "background-image.md"
+    },
+    {
+      "path": "/docs/background-origin",
+      "url": "https://tailwindcss.com/docs/background-origin",
+      "slug": "background-origin",
+      "cache_file": "background-origin.md"
+    },
+    {
+      "path": "/docs/background-position",
+      "url": "https://tailwindcss.com/docs/background-position",
+      "slug": "background-position",
+      "cache_file": "background-position.md"
+    },
+    {
+      "path": "/docs/background-repeat",
+      "url": "https://tailwindcss.com/docs/background-repeat",
+      "slug": "background-repeat",
+      "cache_file": "background-repeat.md"
+    },
+    {
+      "path": "/docs/background-size",
+      "url": "https://tailwindcss.com/docs/background-size",
+      "slug": "background-size",
+      "cache_file": "background-size.md"
+    },
+    {
+      "path": "/docs/border-radius",
+      "url": "https://tailwindcss.com/docs/border-radius",
+      "slug": "border-radius",
+      "cache_file": "border-radius.md"
+    },
+    {
+      "path": "/docs/border-width",
+      "url": "https://tailwindcss.com/docs/border-width",
+      "slug": "border-width",
+      "cache_file": "border-width.md"
+    },
+    {
+      "path": "/docs/border-color",
+      "url": "https://tailwindcss.com/docs/border-color",
+      "slug": "border-color",
+      "cache_file": "border-color.md"
+    },
+    {
+      "path": "/docs/border-style",
+      "url": "https://tailwindcss.com/docs/border-style",
+      "slug": "border-style",
+      "cache_file": "border-style.md"
+    },
+    {
+      "path": "/docs/outline-width",
+      "url": "https://tailwindcss.com/docs/outline-width",
+      "slug": "outline-width",
+      "cache_file": "outline-width.md"
+    },
+    {
+      "path": "/docs/outline-color",
+      "url": "https://tailwindcss.com/docs/outline-color",
+      "slug": "outline-color",
+      "cache_file": "outline-color.md"
+    },
+    {
+      "path": "/docs/outline-style",
+      "url": "https://tailwindcss.com/docs/outline-style",
+      "slug": "outline-style",
+      "cache_file": "outline-style.md"
+    },
+    {
+      "path": "/docs/outline-offset",
+      "url": "https://tailwindcss.com/docs/outline-offset",
+      "slug": "outline-offset",
+      "cache_file": "outline-offset.md"
+    },
+    {
+      "path": "/docs/box-shadow",
+      "url": "https://tailwindcss.com/docs/box-shadow",
+      "slug": "box-shadow",
+      "cache_file": "box-shadow.md"
+    },
+    {
+      "path": "/docs/text-shadow",
+      "url": "https://tailwindcss.com/docs/text-shadow",
+      "slug": "text-shadow",
+      "cache_file": "text-shadow.md"
+    },
+    {
+      "path": "/docs/opacity",
+      "url": "https://tailwindcss.com/docs/opacity",
+      "slug": "opacity",
+      "cache_file": "opacity.md"
+    },
+    {
+      "path": "/docs/mix-blend-mode",
+      "url": "https://tailwindcss.com/docs/mix-blend-mode",
+      "slug": "mix-blend-mode",
+      "cache_file": "mix-blend-mode.md"
+    },
+    {
+      "path": "/docs/background-blend-mode",
+      "url": "https://tailwindcss.com/docs/background-blend-mode",
+      "slug": "background-blend-mode",
+      "cache_file": "background-blend-mode.md"
+    },
+    {
+      "path": "/docs/mask-clip",
+      "url": "https://tailwindcss.com/docs/mask-clip",
+      "slug": "mask-clip",
+      "cache_file": "mask-clip.md"
+    },
+    {
+      "path": "/docs/mask-composite",
+      "url": "https://tailwindcss.com/docs/mask-composite",
+      "slug": "mask-composite",
+      "cache_file": "mask-composite.md"
+    },
+    {
+      "path": "/docs/mask-image",
+      "url": "https://tailwindcss.com/docs/mask-image",
+      "slug": "mask-image",
+      "cache_file": "mask-image.md"
+    },
+    {
+      "path": "/docs/mask-mode",
+      "url": "https://tailwindcss.com/docs/mask-mode",
+      "slug": "mask-mode",
+      "cache_file": "mask-mode.md"
+    },
+    {
+      "path": "/docs/mask-origin",
+      "url": "https://tailwindcss.com/docs/mask-origin",
+      "slug": "mask-origin",
+      "cache_file": "mask-origin.md"
+    },
+    {
+      "path": "/docs/mask-position",
+      "url": "https://tailwindcss.com/docs/mask-position",
+      "slug": "mask-position",
+      "cache_file": "mask-position.md"
+    },
+    {
+      "path": "/docs/mask-repeat",
+      "url": "https://tailwindcss.com/docs/mask-repeat",
+      "slug": "mask-repeat",
+      "cache_file": "mask-repeat.md"
+    },
+    {
+      "path": "/docs/mask-size",
+      "url": "https://tailwindcss.com/docs/mask-size",
+      "slug": "mask-size",
+      "cache_file": "mask-size.md"
+    },
+    {
+      "path": "/docs/mask-type",
+      "url": "https://tailwindcss.com/docs/mask-type",
+      "slug": "mask-type",
+      "cache_file": "mask-type.md"
+    },
+    {
+      "path": "/docs/filter",
+      "url": "https://tailwindcss.com/docs/filter",
+      "slug": "filter",
+      "cache_file": "filter.md"
+    },
+    {
+      "path": "/docs/filter-blur",
+      "url": "https://tailwindcss.com/docs/filter-blur",
+      "slug": "filter-blur",
+      "cache_file": "filter-blur.md"
+    },
+    {
+      "path": "/docs/filter-brightness",
+      "url": "https://tailwindcss.com/docs/filter-brightness",
+      "slug": "filter-brightness",
+      "cache_file": "filter-brightness.md"
+    },
+    {
+      "path": "/docs/filter-contrast",
+      "url": "https://tailwindcss.com/docs/filter-contrast",
+      "slug": "filter-contrast",
+      "cache_file": "filter-contrast.md"
+    },
+    {
+      "path": "/docs/filter-drop-shadow",
+      "url": "https://tailwindcss.com/docs/filter-drop-shadow",
+      "slug": "filter-drop-shadow",
+      "cache_file": "filter-drop-shadow.md"
+    },
+    {
+      "path": "/docs/filter-grayscale",
+      "url": "https://tailwindcss.com/docs/filter-grayscale",
+      "slug": "filter-grayscale",
+      "cache_file": "filter-grayscale.md"
+    },
+    {
+      "path": "/docs/filter-hue-rotate",
+      "url": "https://tailwindcss.com/docs/filter-hue-rotate",
+      "slug": "filter-hue-rotate",
+      "cache_file": "filter-hue-rotate.md"
+    },
+    {
+      "path": "/docs/filter-invert",
+      "url": "https://tailwindcss.com/docs/filter-invert",
+      "slug": "filter-invert",
+      "cache_file": "filter-invert.md"
+    },
+    {
+      "path": "/docs/filter-saturate",
+      "url": "https://tailwindcss.com/docs/filter-saturate",
+      "slug": "filter-saturate",
+      "cache_file": "filter-saturate.md"
+    },
+    {
+      "path": "/docs/filter-sepia",
+      "url": "https://tailwindcss.com/docs/filter-sepia",
+      "slug": "filter-sepia",
+      "cache_file": "filter-sepia.md"
+    },
+    {
+      "path": "/docs/backdrop-filter",
+      "url": "https://tailwindcss.com/docs/backdrop-filter",
+      "slug": "backdrop-filter",
+      "cache_file": "backdrop-filter.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-blur",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-blur",
+      "slug": "backdrop-filter-blur",
+      "cache_file": "backdrop-filter-blur.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-brightness",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-brightness",
+      "slug": "backdrop-filter-brightness",
+      "cache_file": "backdrop-filter-brightness.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-contrast",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-contrast",
+      "slug": "backdrop-filter-contrast",
+      "cache_file": "backdrop-filter-contrast.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-grayscale",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-grayscale",
+      "slug": "backdrop-filter-grayscale",
+      "cache_file": "backdrop-filter-grayscale.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-hue-rotate",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-hue-rotate",
+      "slug": "backdrop-filter-hue-rotate",
+      "cache_file": "backdrop-filter-hue-rotate.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-invert",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-invert",
+      "slug": "backdrop-filter-invert",
+      "cache_file": "backdrop-filter-invert.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-opacity",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-opacity",
+      "slug": "backdrop-filter-opacity",
+      "cache_file": "backdrop-filter-opacity.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-saturate",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-saturate",
+      "slug": "backdrop-filter-saturate",
+      "cache_file": "backdrop-filter-saturate.md"
+    },
+    {
+      "path": "/docs/backdrop-filter-sepia",
+      "url": "https://tailwindcss.com/docs/backdrop-filter-sepia",
+      "slug": "backdrop-filter-sepia",
+      "cache_file": "backdrop-filter-sepia.md"
+    },
+    {
+      "path": "/docs/border-collapse",
+      "url": "https://tailwindcss.com/docs/border-collapse",
+      "slug": "border-collapse",
+      "cache_file": "border-collapse.md"
+    },
+    {
+      "path": "/docs/border-spacing",
+      "url": "https://tailwindcss.com/docs/border-spacing",
+      "slug": "border-spacing",
+      "cache_file": "border-spacing.md"
+    },
+    {
+      "path": "/docs/table-layout",
+      "url": "https://tailwindcss.com/docs/table-layout",
+      "slug": "table-layout",
+      "cache_file": "table-layout.md"
+    },
+    {
+      "path": "/docs/caption-side",
+      "url": "https://tailwindcss.com/docs/caption-side",
+      "slug": "caption-side",
+      "cache_file": "caption-side.md"
+    },
+    {
+      "path": "/docs/transition-property",
+      "url": "https://tailwindcss.com/docs/transition-property",
+      "slug": "transition-property",
+      "cache_file": "transition-property.md"
+    },
+    {
+      "path": "/docs/transition-behavior",
+      "url": "https://tailwindcss.com/docs/transition-behavior",
+      "slug": "transition-behavior",
+      "cache_file": "transition-behavior.md"
+    },
+    {
+      "path": "/docs/transition-duration",
+      "url": "https://tailwindcss.com/docs/transition-duration",
+      "slug": "transition-duration",
+      "cache_file": "transition-duration.md"
+    },
+    {
+      "path": "/docs/transition-timing-function",
+      "url": "https://tailwindcss.com/docs/transition-timing-function",
+      "slug": "transition-timing-function",
+      "cache_file": "transition-timing-function.md"
+    },
+    {
+      "path": "/docs/transition-delay",
+      "url": "https://tailwindcss.com/docs/transition-delay",
+      "slug": "transition-delay",
+      "cache_file": "transition-delay.md"
+    },
+    {
+      "path": "/docs/animation",
+      "url": "https://tailwindcss.com/docs/animation",
+      "slug": "animation",
+      "cache_file": "animation.md"
+    },
+    {
+      "path": "/docs/backface-visibility",
+      "url": "https://tailwindcss.com/docs/backface-visibility",
+      "slug": "backface-visibility",
+      "cache_file": "backface-visibility.md"
+    },
+    {
+      "path": "/docs/perspective",
+      "url": "https://tailwindcss.com/docs/perspective",
+      "slug": "perspective",
+      "cache_file": "perspective.md"
+    },
+    {
+      "path": "/docs/perspective-origin",
+      "url": "https://tailwindcss.com/docs/perspective-origin",
+      "slug": "perspective-origin",
+      "cache_file": "perspective-origin.md"
+    },
+    {
+      "path": "/docs/rotate",
+      "url": "https://tailwindcss.com/docs/rotate",
+      "slug": "rotate",
+      "cache_file": "rotate.md"
+    },
+    {
+      "path": "/docs/scale",
+      "url": "https://tailwindcss.com/docs/scale",
+      "slug": "scale",
+      "cache_file": "scale.md"
+    },
+    {
+      "path": "/docs/skew",
+      "url": "https://tailwindcss.com/docs/skew",
+      "slug": "skew",
+      "cache_file": "skew.md"
+    },
+    {
+      "path": "/docs/transform",
+      "url": "https://tailwindcss.com/docs/transform",
+      "slug": "transform",
+      "cache_file": "transform.md"
+    },
+    {
+      "path": "/docs/transform-origin",
+      "url": "https://tailwindcss.com/docs/transform-origin",
+      "slug": "transform-origin",
+      "cache_file": "transform-origin.md"
+    },
+    {
+      "path": "/docs/transform-style",
+      "url": "https://tailwindcss.com/docs/transform-style",
+      "slug": "transform-style",
+      "cache_file": "transform-style.md"
+    },
+    {
+      "path": "/docs/translate",
+      "url": "https://tailwindcss.com/docs/translate",
+      "slug": "translate",
+      "cache_file": "translate.md"
+    },
+    {
+      "path": "/docs/zoom",
+      "url": "https://tailwindcss.com/docs/zoom",
+      "slug": "zoom",
+      "cache_file": "zoom.md"
+    },
+    {
+      "path": "/docs/accent-color",
+      "url": "https://tailwindcss.com/docs/accent-color",
+      "slug": "accent-color",
+      "cache_file": "accent-color.md"
+    },
+    {
+      "path": "/docs/appearance",
+      "url": "https://tailwindcss.com/docs/appearance",
+      "slug": "appearance",
+      "cache_file": "appearance.md"
+    },
+    {
+      "path": "/docs/caret-color",
+      "url": "https://tailwindcss.com/docs/caret-color",
+      "slug": "caret-color",
+      "cache_file": "caret-color.md"
+    },
+    {
+      "path": "/docs/color-scheme",
+      "url": "https://tailwindcss.com/docs/color-scheme",
+      "slug": "color-scheme",
+      "cache_file": "color-scheme.md"
+    },
+    {
+      "path": "/docs/cursor",
+      "url": "https://tailwindcss.com/docs/cursor",
+      "slug": "cursor",
+      "cache_file": "cursor.md"
+    },
+    {
+      "path": "/docs/field-sizing",
+      "url": "https://tailwindcss.com/docs/field-sizing",
+      "slug": "field-sizing",
+      "cache_file": "field-sizing.md"
+    },
+    {
+      "path": "/docs/pointer-events",
+      "url": "https://tailwindcss.com/docs/pointer-events",
+      "slug": "pointer-events",
+      "cache_file": "pointer-events.md"
+    },
+    {
+      "path": "/docs/resize",
+      "url": "https://tailwindcss.com/docs/resize",
+      "slug": "resize",
+      "cache_file": "resize.md"
+    },
+    {
+      "path": "/docs/scroll-behavior",
+      "url": "https://tailwindcss.com/docs/scroll-behavior",
+      "slug": "scroll-behavior",
+      "cache_file": "scroll-behavior.md"
+    },
+    {
+      "path": "/docs/scrollbar-color",
+      "url": "https://tailwindcss.com/docs/scrollbar-color",
+      "slug": "scrollbar-color",
+      "cache_file": "scrollbar-color.md"
+    },
+    {
+      "path": "/docs/scrollbar-width",
+      "url": "https://tailwindcss.com/docs/scrollbar-width",
+      "slug": "scrollbar-width",
+      "cache_file": "scrollbar-width.md"
+    },
+    {
+      "path": "/docs/scrollbar-gutter",
+      "url": "https://tailwindcss.com/docs/scrollbar-gutter",
+      "slug": "scrollbar-gutter",
+      "cache_file": "scrollbar-gutter.md"
+    },
+    {
+      "path": "/docs/scroll-margin",
+      "url": "https://tailwindcss.com/docs/scroll-margin",
+      "slug": "scroll-margin",
+      "cache_file": "scroll-margin.md"
+    },
+    {
+      "path": "/docs/scroll-padding",
+      "url": "https://tailwindcss.com/docs/scroll-padding",
+      "slug": "scroll-padding",
+      "cache_file": "scroll-padding.md"
+    },
+    {
+      "path": "/docs/scroll-snap-align",
+      "url": "https://tailwindcss.com/docs/scroll-snap-align",
+      "slug": "scroll-snap-align",
+      "cache_file": "scroll-snap-align.md"
+    },
+    {
+      "path": "/docs/scroll-snap-stop",
+      "url": "https://tailwindcss.com/docs/scroll-snap-stop",
+      "slug": "scroll-snap-stop",
+      "cache_file": "scroll-snap-stop.md"
+    },
+    {
+      "path": "/docs/scroll-snap-type",
+      "url": "https://tailwindcss.com/docs/scroll-snap-type",
+      "slug": "scroll-snap-type",
+      "cache_file": "scroll-snap-type.md"
+    },
+    {
+      "path": "/docs/touch-action",
+      "url": "https://tailwindcss.com/docs/touch-action",
+      "slug": "touch-action",
+      "cache_file": "touch-action.md"
+    },
+    {
+      "path": "/docs/user-select",
+      "url": "https://tailwindcss.com/docs/user-select",
+      "slug": "user-select",
+      "cache_file": "user-select.md"
+    },
+    {
+      "path": "/docs/will-change",
+      "url": "https://tailwindcss.com/docs/will-change",
+      "slug": "will-change",
+      "cache_file": "will-change.md"
+    },
+    {
+      "path": "/docs/fill",
+      "url": "https://tailwindcss.com/docs/fill",
+      "slug": "fill",
+      "cache_file": "fill.md"
+    },
+    {
+      "path": "/docs/stroke",
+      "url": "https://tailwindcss.com/docs/stroke",
+      "slug": "stroke",
+      "cache_file": "stroke.md"
+    },
+    {
+      "path": "/docs/stroke-width",
+      "url": "https://tailwindcss.com/docs/stroke-width",
+      "slug": "stroke-width",
+      "cache_file": "stroke-width.md"
+    },
+    {
+      "path": "/docs/forced-color-adjust",
+      "url": "https://tailwindcss.com/docs/forced-color-adjust",
+      "slug": "forced-color-adjust",
+      "cache_file": "forced-color-adjust.md"
+    }
+  ]
+}

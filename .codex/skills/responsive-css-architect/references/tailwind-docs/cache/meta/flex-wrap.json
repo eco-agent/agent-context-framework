@@ -1,0 +1,61 @@
+{
+  "path": "/docs/flex-wrap",
+  "url": "https://tailwindcss.com/docs/flex-wrap",
+  "slug": "flex-wrap",
+  "source_cache_file": "flex-wrap.md",
+  "title": "flex-wrap - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "flex-wrap",
+    "EXAMPLES",
+    "Don't wrap",
+    "Wrap normally",
+    "Wrap reversed",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID flex-wrap Utilities for controlling how flex items wrap. Class Styles flex-nowrap flex-wrap: nowrap; flex-wrap flex-wrap: wrap; flex-wrap-reverse flex-wrap: wrap-reverse; EXAMPLES Don't wrap Use flex-nowrap to prevent flex items from wrapping, causing inflexible items to overflow the container if necessary: 01 02 03 <div class=\"flex flex-nowrap\"> <div>01</div> <div>02</div> <div>03</div> </div> Wrap normally Use flex-wrap to allow flex items to wrap: 01 02 03 <div class=\"flex flex-wrap\"> <div>01</div> <div>02</div> <div>03</div> </div> Wrap reversed Use flex-wrap-reverse to wrap flex items in the reverse direction: 01 02 03 <div class=\"flex flex-wrap-reverse\"> <div>01</div> <div>02</div> <div>03</div> </div> Responsive design Prefix a flex-wrap utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"flex flex-wrap md:flex-wrap-reverse ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. flex-direction flex",
+  "code_examples": [
+    "<div class=\"flex flex-nowrap\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-wrap\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-wrap-reverse\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-wrap md:flex-wrap-reverse ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/flex-wrap/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1267,
+          "pageY": 1324,
+          "scrollY": 1324,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:57.707643+00:00"
+}

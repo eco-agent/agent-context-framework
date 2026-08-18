@@ -1,0 +1,52 @@
+{
+  "path": "/docs/tab-size",
+  "url": "https://tailwindcss.com/docs/tab-size",
+  "slug": "tab-size",
+  "source_cache_file": "tab-size.md",
+  "title": "tab-size - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "tab-size",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY tab-size Utilities for controlling the size of tab characters. Class Styles tab-<number> tab-size: <number>; tab-(<custom-property>) tab-size: var(<custom-property>); tab-[<value>] tab-size: <value>; EXAMPLES Basic example Use tab-<number> utilities like tab-2 and tab-8 to control the size of tab characters: tab-2 function indent() { return 'tabbed'; } tab-8 function indent() { return 'tabbed'; } <pre class=\"tab-2 ...\">function indent() {&#10;&#9;return 'tabbed'&#10;}</pre> <pre class=\"tab-8 ...\">function indent() {&#10;&#9;return 'tabbed'&#10;}</pre> Using a custom value Use the tab-[<value>] syntax to set the tab size based on a completely custom value: <pre class=\"tab-[12px] ...\"> <!-- ... --> </pre> For CSS variables, you can also use the tab-(<custom-property>) syntax: <pre class=\"tab-(--my-tab-size) ...\"> <!-- ... --> </pre> This is just a shorthand for tab-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a tab-size utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <pre class=\"tab-4 md:tab-8 ...\"> <!-- ... --> </pre> Learn more about using variants in the variants documentation. text-indent vertical-align",
+  "code_examples": [
+    "function indent() {\n\treturn 'tabbed';\n}",
+    "function indent() {\n\treturn 'tabbed';\n}",
+    "<pre class=\"tab-2 ...\">function indent() {&#10;&#9;return 'tabbed'&#10;}</pre>\n<pre class=\"tab-8 ...\">function indent() {&#10;&#9;return 'tabbed'&#10;}</pre>",
+    "<pre class=\"tab-[12px] ...\">\n  <!-- ... -->\n</pre>",
+    "<pre class=\"tab-(--my-tab-size) ...\">\n  <!-- ... -->\n</pre>",
+    "<pre class=\"tab-4 md:tab-8 ...\">\n  <!-- ... -->\n</pre>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/tab-size/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 766,
+          "pageY": 823,
+          "scrollY": 823,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:45.553272+00:00"
+}

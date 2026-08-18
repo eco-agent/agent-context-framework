@@ -1,0 +1,62 @@
+{
+  "path": "/docs/flex-shrink",
+  "url": "https://tailwindcss.com/docs/flex-shrink",
+  "slug": "flex-shrink",
+  "source_cache_file": "flex-shrink.md",
+  "title": "flex-shrink - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "flex-shrink",
+    "EXAMPLES",
+    "Allowing flex items to shrink",
+    "Preventing items from shrinking",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID flex-shrink Utilities for controlling how flex items shrink. Class Styles shrink flex-shrink: 1; shrink-<number> flex-shrink: <number>; shrink-[<value>] flex-shrink: <value>; shrink-(<custom-property>) flex-shrink: var(<custom-property>); EXAMPLES Allowing flex items to shrink Use shrink to allow a flex item to shrink if needed: 01 02 03 <div class=\"flex ...\"> <div class=\"h-14 w-14 flex-none ...\">01</div> <div class=\"h-14 w-64 shrink ...\">02</div> <div class=\"h-14 w-14 flex-none ...\">03</div> </div> Preventing items from shrinking Use shrink-0 to prevent a flex item from shrinking: 01 02 03 <div class=\"flex ...\"> <div class=\"h-16 flex-1 ...\">01</div> <div class=\"h-16 w-32 shrink-0 ...\">02</div> <div class=\"h-16 flex-1 ...\">03</div> </div> Using a custom value Use the shrink-[<value>] syntax to set the flex shrink factor based on a completely custom value: <div class=\"shrink-[calc(100vw-var(--sidebar))] ...\"> <!-- ... --> </div> For CSS variables, you can also use the shrink-(<custom-property>) syntax: <div class=\"shrink-(--my-shrink) ...\"> <!-- ... --> </div> This is just a shorthand for shrink-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a flex-shrink utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"shrink md:shrink-0 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. flex-grow order",
+  "code_examples": [
+    "<div class=\"flex ...\">\n  <div class=\"h-14 w-14 flex-none ...\">01</div>\n  <div class=\"h-14 w-64 shrink ...\">02</div>\n  <div class=\"h-14 w-14 flex-none ...\">03</div>\n</div>",
+    "<div class=\"flex ...\">\n  <div class=\"h-16 flex-1 ...\">01</div>\n  <div class=\"h-16 w-32 shrink-0 ...\">02</div>\n  <div class=\"h-16 flex-1 ...\">03</div>\n</div>",
+    "<div class=\"shrink-[calc(100vw-var(--sidebar))] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"shrink-(--my-shrink) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"shrink md:shrink-0 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/flex-shrink/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1260,
+          "pageY": 1317,
+          "scrollY": 1317,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:04.506668+00:00"
+}

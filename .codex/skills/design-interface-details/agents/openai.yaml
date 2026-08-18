@@ -1,0 +1,7 @@
+interface:
+  display_name: "Interface Details"
+  short_description: "Create precise SVG and interface details"
+  default_prompt: "Use $design-interface-details to implement the settled SVG assets, icons, and interface details without changing product structure."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/jakubkrehel/skills",
+  "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+  "license": "MIT",
+  "sourceSkill": "better-accessibility",
+  "verbatimPrinciples": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+  "verbatimReferences": ["focus-and-keyboard.md", "semantics-and-aria.md", "forms.md", "screen-readers.md", "hit-areas.md", "motion-and-zoom.md"],
+  "excluded": ["review output", "verification", "common mistakes", "cross-skill orchestration"],
+  "localChanges": "New frontmatter, ownership mappings, reference routing, and explicit-only invocation."
+}

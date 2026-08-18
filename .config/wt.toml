@@ -1,0 +1,1 @@
+pre-start = "pnpm install --frozen-lockfile && pnpm policy:build && pnpm --filter @agent-context/dev-tooling build"

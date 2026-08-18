@@ -1,0 +1,50 @@
+{
+  "path": "/docs/filter-grayscale",
+  "url": "https://tailwindcss.com/docs/filter-grayscale",
+  "slug": "filter-grayscale",
+  "source_cache_file": "filter-grayscale.md",
+  "title": "filter: grayscale() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter: grayscale()",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS filter: grayscale() Utilities for applying grayscale filters to an element. Class Styles grayscale filter: grayscale(100%); grayscale-<number> filter: grayscale(<number>%); grayscale-(<custom-property>) filter: grayscale(var(<custom-property>)); grayscale-[<value>] filter: grayscale(<value>); EXAMPLES Basic example Use utilities like grayscale and grayscale-75 to control the amount of grayscale effect applied to an element: grayscale-0 grayscale-25 grayscale-50 grayscale <img class=\"grayscale-0 ...\" src=\"/img/mountains.jpg\" /> <img class=\"grayscale-25 ...\" src=\"/img/mountains.jpg\" /> <img class=\"grayscale-50 ...\" src=\"/img/mountains.jpg\" /> <img class=\"grayscale ...\" src=\"/img/mountains.jpg\" /> Using a custom value Use the grayscale-[<value>] syntax to set the grayscale based on a completely custom value: <img class=\"grayscale-[0.5] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the grayscale-(<custom-property>) syntax: <img class=\"grayscale-(--my-grayscale) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for grayscale-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a filter: grayscale() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"grayscale md:grayscale-0 ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. drop-shadow hue-rotate",
+  "code_examples": [
+    "<img class=\"grayscale-0 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"grayscale-25 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"grayscale-50 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"grayscale ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"grayscale-[0.5] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"grayscale-(--my-grayscale) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"grayscale md:grayscale-0 ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter-grayscale/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 747,
+          "pageY": 804,
+          "scrollY": 804,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:39.523590+00:00"
+}

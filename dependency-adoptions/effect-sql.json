@@ -1,0 +1,17 @@
+{
+  "name": "@effect/sql",
+  "version": "0.52.0",
+  "source": "https://github.com/Effect-TS/effect/tree/e670e0f6befb959b84208d5f77631276521020ae/packages/sql",
+  "license": "MIT",
+  "integrity": "sha512-S7z9grD8QmuQDjM7VZLA3RsyQt9TKL/uSyjsz9Oz+gqBA4Espu+8dLDCc1OCWxVWUbUnfGH4L6rv4pSsX598iA==",
+  "purpose": "Expose the maintained portable SQL client and error contracts used by the PostgreSQL adapter.",
+  "alternativesConsidered": [
+    "Leak transitive SQL types from @effect/sql-pg",
+    "Project-owned SQL client contracts"
+  ],
+  "maintenanceStatus": "Pinned with Effect 3.22.0 and @effect/sql-pg 0.53.0 at the same upstream release commit.",
+  "securityEvidence": "Registry metadata, package integrity, upstream release source, frozen lockfile, and production dependency audit were reviewed.",
+  "modifications": "None; SQL ownership and transaction policy remain application-owned.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "data-platform"
+}

@@ -1,0 +1,62 @@
+{
+  "path": "/docs/text-indent",
+  "url": "https://tailwindcss.com/docs/text-indent",
+  "slug": "text-indent",
+  "source_cache_file": "text-indent.md",
+  "title": "text-indent - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-indent",
+    "EXAMPLES",
+    "Basic example",
+    "Using negative values",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-indent Utilities for controlling the amount of empty space shown before text in a block. Class Styles indent-<number> text-indent: calc(var(--spacing) * <number>); -indent-<number> text-indent: calc(var(--spacing) * -<number>); indent-px text-indent: 1px; -indent-px text-indent: -1px; indent-(<custom-property>) text-indent: var(<custom-property>); indent-[<value>] text-indent: <value>; EXAMPLES Basic example Use indent-<number> utilities like indent-2 and indent-8 to set the amount of empty space (indentation) that's shown before text in a block: So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"indent-8\">So I started to walk into the water...</p> Using negative values To use a negative text indent value, prefix the class name with a dash to convert it to a negative value: So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"-indent-8\">So I started to walk into the water...</p> Using a custom value Use the indent-[<value>] syntax to set the text indentation based on a completely custom value: <p class=\"indent-[50%] ...\"> Lorem ipsum dolor sit amet... </p> For CSS variables, you can also use the indent-(<custom-property>) syntax: <p class=\"indent-(--my-indentation) ...\"> Lorem ipsum dolor sit amet... </p> This is just a shorthand for indent-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a text-indent utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"indent-4 md:indent-8 ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. text-wrap tab-size",
+  "code_examples": [
+    "<p class=\"indent-8\">So I started to walk into the water...</p>",
+    "<p class=\"-indent-8\">So I started to walk into the water...</p>",
+    "<p class=\"indent-[50%] ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"indent-(--my-indentation) ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"indent-4 md:indent-8 ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-indent/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1462,
+          "pageY": 1519,
+          "scrollY": 1519,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:43.351322+00:00"
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pi.local/skills/codebase-inventory/result-envelope.schema.json",
+  "title": "Codebase Inventory Result Envelope",
+  "type": "object",
+  "required": ["schemaVersion", "mode", "warnings", "scan"],
+  "properties": {
+    "schemaVersion": {
+      "const": "0.1.0"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "inventory",
+        "file-type-distribution",
+        "directory-sparsity-scan",
+        "loc-hotspots",
+        "directory-complexity-summary",
+        "codebase-shape-summary",
+        "test-surface-summary",
+        "naming-pattern-summary"
+      ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "path", "message"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "gitignore_parse_failed",
+              "permission_denied",
+              "binary_file_skipped",
+              "max_file_size_exceeded",
+              "path_outside_root",
+              "unsupported_extension",
+              "symlink_skipped"
+            ]
+          },
+          "path": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "scan": {
+      "type": "object",
+      "required": [
+        "root",
+        "generatedAt",
+        "filtersUsed",
+        "defaultExcludesApplied",
+        "gitignoreApplied",
+        "truncated",
+        "symlinksFollowed"
+      ],
+      "properties": {
+        "root": { "type": "string" },
+        "generatedAt": { "type": "string" },
+        "filtersUsed": { "type": "object" },
+        "defaultExcludesApplied": { "type": "boolean" },
+        "gitignoreApplied": { "type": "boolean" },
+        "truncated": { "type": "boolean" },
+        "symlinksFollowed": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

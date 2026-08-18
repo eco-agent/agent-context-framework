@@ -1,0 +1,50 @@
+{
+  "path": "/docs/filter-sepia",
+  "url": "https://tailwindcss.com/docs/filter-sepia",
+  "slug": "filter-sepia",
+  "source_cache_file": "filter-sepia.md",
+  "title": "filter: sepia() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter: sepia()",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS filter: sepia() Utilities for applying sepia filters to an element. Class Styles sepia filter: sepia(100%); sepia-<number> filter: sepia(<number>%); sepia-(<custom-property>) filter: sepia(var(<custom-property>)); sepia-[<value>] filter: sepia(<value>); EXAMPLES Basic example Use utilities like sepia and sepia-50 to control the sepia effect applied to an element: sepia-0 sepia-50 sepia <img class=\"sepia-0\" src=\"/img/mountains.jpg\" /> <img class=\"sepia-50\" src=\"/img/mountains.jpg\" /> <img class=\"sepia\" src=\"/img/mountains.jpg\" /> Using a custom value Use the sepia-[<value>] syntax to set the sepia amount based on a completely custom value: <img class=\"sepia-[.25] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the sepia-(<custom-property>) syntax: <img class=\"sepia-(--my-sepia) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for sepia-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a filter: sepia() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"sepia md:sepia-0 ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. saturate backdrop-filter",
+  "code_examples": [
+    "<img class=\"sepia-0\" src=\"/img/mountains.jpg\" />\n<img class=\"sepia-50\" src=\"/img/mountains.jpg\" />\n<img class=\"sepia\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"sepia-[.25] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"sepia-(--my-sepia) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"sepia md:sepia-0 ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter-sepia/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 699,
+          "pageY": 756,
+          "scrollY": 756,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:49.447535+00:00"
+}

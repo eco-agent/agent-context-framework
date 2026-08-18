@@ -1,0 +1,53 @@
+{
+  "name": "@agent-context/root",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.22.0",
+  "engines": {
+    "node": "24.14.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.14.0",
+      "onFail": "download"
+    }
+  },
+  "scripts": {
+    "agent:inspect": "node .codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs",
+    "build": "tsc -b",
+    "check": "vp check",
+    "clean": "tsc -b --clean",
+    "context": "tsx tools/codex-workflows/src/context-cli.ts",
+    "dependency:facts": "pnpm --filter @agent-context/dev-tooling dependency:facts",
+    "task:doctor": "pnpm policy:build && pnpm --filter @agent-context/dev-tooling task:doctor",
+    "task:handoff": "node tools/dev-tooling/dist/src/task-handoff-cli.js",
+    "typecheck": "tsc -b --pretty false",
+    "typecheck:clean": "tsc -b --clean",
+    "typecheck:watch": "tsc -b --watch --pretty",
+    "test": "pnpm -r --if-present test",
+    "policy:build": "tsc -b tools/repo-policy --pretty false",
+    "policy": "node tools/repo-policy/dist/src/cli.js",
+    "verify": "pnpm policy:build && pnpm policy verify",
+    "verify:task": "pnpm policy:build && pnpm policy verify-task",
+    "verify:branch": "pnpm policy:build && pnpm policy verify-branch",
+    "verify:changed": "pnpm verify:task",
+    "verify:profile": "pnpm policy:build && pnpm policy verify-profile",
+    "check:scope": "pnpm policy:build && pnpm policy check-scope",
+    "check:technical-prose": "pnpm policy:build && pnpm policy check-technical-prose",
+    "check:typescript-projects": "pnpm policy:build && pnpm policy check-typescript-projects",
+    "check:boundaries": "pnpm policy:build && pnpm policy check-boundaries",
+    "check:dependency-adoptions": "pnpm policy:build && pnpm policy check-dependency-adoptions",
+    "check:agents": "pnpm policy:build && pnpm policy check-agents",
+    "workflow:test": "pnpm --filter @agent-context/codex-workflows test"
+  },
+  "devDependencies": {
+    "@agent-context/objective-test-fixtures": "workspace:*",
+    "@types/node": "24.13.3",
+    "shadow-plugin": "2.0.0",
+    "tsx": "4.22.4",
+    "tw-fade": "0.7.1",
+    "typescript": "7.0.2",
+    "vite-plus": "0.2.6"
+  }
+}

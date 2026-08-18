@@ -1,0 +1,74 @@
+{
+  "path": "/docs/max-height",
+  "url": "https://tailwindcss.com/docs/max-height",
+  "slug": "max-height",
+  "source_cache_file": "max-height.md",
+  "title": "max-height - Sizing - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "max-height",
+    "EXAMPLES",
+    "Basic example",
+    "Using a percentage",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "SIZING max-height Utilities for setting the maximum height of an element. Class Styles max-h-<number> max-height: calc(var(--spacing) * <number>); max-h-<fraction> max-height: calc(<fraction> * 100%); max-h-none max-height: none; max-h-px max-height: 1px; max-h-full max-height: 100%; max-h-screen max-height: 100vh; max-h-dvh max-height: 100dvh; max-h-dvw max-height: 100dvw; max-h-lvh max-height: 100lvh; max-h-lvw max-height: 100lvw; SHOW MORE EXAMPLES Basic example Use max-h-<number> utilities like max-h-24 and max-h-64 to set an element to a fixed maximum height based on the spacing scale: max-h-80 max-h-64 max-h-48 max-h-40 max-h-32 max-h-24 <div class=\"h-96 ...\"> <div class=\"h-full max-h-80 ...\">max-h-80</div> <div class=\"h-full max-h-64 ...\">max-h-64</div> <div class=\"h-full max-h-48 ...\">max-h-48</div> <div class=\"h-full max-h-40 ...\">max-h-40</div> <div class=\"h-full max-h-32 ...\">max-h-32</div> <div class=\"h-full max-h-24 ...\">max-h-24</div> </div> Using a percentage Use max-h-full or max-h-<fraction> utilities like max-h-1/2 and max-h-2/5 to give an element a percentage-based maximum height: max-h-9/10 max-h-3/4 max-h-1/2 max-h-1/4 max-h-full <div class=\"h-96 ...\"> <div class=\"h-full max-h-9/10 ...\">max-h-9/10</div> <div class=\"h-full max-h-3/4 ...\">max-h-3/4</div> <div class=\"h-full max-h-1/2 ...\">max-h-1/2</div> <div class=\"h-full max-h-1/4 ...\">max-h-1/4</div> <div class=\"h-full max-h-full ...\">max-h-full</div> </div> Using a custom value Use the max-h-[<value>] syntax to set the maximum height based on a completely custom value: <div class=\"max-h-[220px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the max-h-(<custom-property>) syntax: <div class=\"max-h-(--my-max-height) ...\"> <!-- ... --> </div> This is just a shorthand for max-h-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a max-height utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"h-48 max-h-full md:max-h-screen ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme The max-h-<number> utilities are driven by the --spacing theme variable, which can be customized in your own theme: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme variable documentation. min-height inline-size",
+  "code_examples": [
+    "<div class=\"h-96 ...\">\n  <div class=\"h-full max-h-80 ...\">max-h-80</div>\n  <div class=\"h-full max-h-64 ...\">max-h-64</div>\n  <div class=\"h-full max-h-48 ...\">max-h-48</div>\n  <div class=\"h-full max-h-40 ...\">max-h-40</div>\n  <div class=\"h-full max-h-32 ...\">max-h-32</div>\n  <div class=\"h-full max-h-24 ...\">max-h-24</div>\n</div>",
+    "<div class=\"h-96 ...\">\n  <div class=\"h-full max-h-9/10 ...\">max-h-9/10</div>\n  <div class=\"h-full max-h-3/4 ...\">max-h-3/4</div>\n  <div class=\"h-full max-h-1/2 ...\">max-h-1/2</div>\n  <div class=\"h-full max-h-1/4 ...\">max-h-1/4</div>\n  <div class=\"h-full max-h-full ...\">max-h-full</div>\n</div>",
+    "<div class=\"max-h-[220px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"max-h-(--my-max-height) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"h-48 max-h-full md:max-h-screen ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/max-height/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2690,
+          "pageY": 2747,
+          "scrollY": 2747,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:02:20.541963+00:00"
+}

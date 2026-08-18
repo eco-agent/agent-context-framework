@@ -1,0 +1,59 @@
+{
+  "path": "/docs/caption-side",
+  "url": "https://tailwindcss.com/docs/caption-side",
+  "slug": "caption-side",
+  "source_cache_file": "caption-side.md",
+  "title": "caption-side - Tables - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "caption-side",
+    "EXAMPLES",
+    "Placing at top of table",
+    "Placing at bottom of table",
+    "Responsive design"
+  ],
+  "content_text": "TABLES caption-side Utilities for controlling the alignment of a caption element inside of a table. Class Styles caption-top caption-side: top; caption-bottom caption-side: bottom; EXAMPLES Placing at top of table Use the caption-top utility to position a caption element at the top of a table: Table 3.1: Professional wrestlers and their signature moves. Wrestler Signature Move(s) \"Stone Cold\" Steve Austin Stone Cold Stunner, Lou Thesz Press Bret \"The Hitman\" Hart The Sharpshooter Razor Ramon Razor's Edge, Fallaway Slam <table> <caption class=\"caption-top\"> Table 3.1: Professional wrestlers and their signature moves. </caption> <thead> <tr> <th>Wrestler</th> <th>Signature Move(s)</th> </tr> </thead> <tbody> <tr> <td>\"Stone Cold\" Steve Austin</td> <td>Stone Cold Stunner, Lou Thesz Press</td> </tr> <tr> <td>Bret \"The Hitman\" Hart</td> <td>The Sharpshooter</td> </tr> <tr> <td>Razor Ramon</td> <td>Razor's Edge, Fallaway Slam</td> </tr> </tbody> </table> Placing at bottom of table Use the caption-bottom utility to position a caption element at the bottom of a table: Table 3.1: Professional wrestlers and their signature moves. Wrestler Signature Move(s) \"Stone Cold\" Steve Austin Stone Cold Stunner, Lou Thesz Press Bret \"The Hitman\" Hart The Sharpshooter Razor Ramon Razor's Edge, Fallaway Slam <table> <caption class=\"caption-bottom\"> Table 3.1: Professional wrestlers and their signature moves. </caption> <thead> <tr> <th>Wrestler</th> <th>Signature Move(s)</th> </tr> </thead> <tbody> <tr> <td>\"Stone Cold\" Steve Austin</td> <td>Stone Cold Stunner, Lou Thesz Press</td> </tr> <tr> <td>Bret \"The Hitman\" Hart</td> <td>The Sharpshooter</td> </tr> <tr> <td>Razor Ramon</td> <td>Razor's Edge, Fallaway Slam</td> </tr> </tbody> </table> Responsive design Prefix a caption-side utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <caption class=\"caption-top md:caption-bottom ...\"> <!-- ... --> </caption> Learn more about using variants in the variants documentation. table-layout transition-property",
+  "code_examples": [
+    "<table>\n  <caption class=\"caption-top\">\n    Table 3.1: Professional wrestlers and their signature moves.\n  </caption>\n  <thead>\n    <tr>\n      <th>Wrestler</th>\n      <th>Signature Move(s)</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>\"Stone Cold\" Steve Austin</td>\n      <td>Stone Cold Stunner, Lou Thesz Press</td>\n    </tr>\n    <tr>\n      <td>Bret \"The Hitman\" Hart</td>\n      <td>The Sharpshooter</td>\n    </tr>\n    <tr>\n      <td>Razor Ramon</td>\n      <td>Razor's Edge, Fallaway Slam</td>\n    </tr>\n  </tbody>\n</table>",
+    "<table>\n  <caption class=\"caption-bottom\">\n    Table 3.1: Professional wrestlers and their signature moves.\n  </caption>\n  <thead>\n    <tr>\n      <th>Wrestler</th>\n      <th>Signature Move(s)</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>\"Stone Cold\" Steve Austin</td>\n      <td>Stone Cold Stunner, Lou Thesz Press</td>\n    </tr>\n    <tr>\n      <td>Bret \"The Hitman\" Hart</td>\n      <td>The Sharpshooter</td>\n    </tr>\n    <tr>\n      <td>Razor Ramon</td>\n      <td>Razor's Edge, Fallaway Slam</td>\n    </tr>\n  </tbody>\n</table>",
+    "<caption class=\"caption-top md:caption-bottom ...\">\n  <!-- ... -->\n</caption>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/caption-side/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1775,
+          "pageY": 1832,
+          "scrollY": 1832,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:27.380994+00:00"
+}

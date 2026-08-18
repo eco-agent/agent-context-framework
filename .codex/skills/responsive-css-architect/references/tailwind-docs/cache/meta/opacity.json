@@ -1,0 +1,62 @@
+{
+  "path": "/docs/opacity",
+  "url": "https://tailwindcss.com/docs/opacity",
+  "slug": "opacity",
+  "source_cache_file": "opacity.md",
+  "title": "opacity - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "opacity",
+    "EXAMPLES",
+    "Basic example",
+    "Applying conditionally",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS opacity Utilities for controlling the opacity of an element. Class Styles opacity-<number> opacity: <number>%; opacity-(<custom-property>) opacity: var(<custom-property>); opacity-[<value>] opacity: <value>; EXAMPLES Basic example Use opacity-<number> utilities like opacity-25 and opacity-100 to set the opacity of an element: opacity-100 Button A opacity-75 Button B opacity-50 Button C opacity-25 Button D <button class=\"bg-indigo-500 opacity-100 ...\"></button> <button class=\"bg-indigo-500 opacity-75 ...\"></button> <button class=\"bg-indigo-500 opacity-50 ...\"></button> <button class=\"bg-indigo-500 opacity-25 ...\"></button> Applying conditionally Prefix an opacity utility with a variant like disabled:* to only apply the utility in that state: <input class=\"opacity-100 disabled:opacity-75 ...\" type=\"text\" /> Learn more about using variants in the variants documentation. Using a custom value Use the opacity-[<value>] syntax to set the opacity based on a completely custom value: <button class=\"opacity-[.67] ...\"> <!-- ... --> </button> For CSS variables, you can also use the opacity-(<custom-property>) syntax: <button class=\"opacity-(--my-opacity) ...\"> <!-- ... --> </button> This is just a shorthand for opacity-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix an opacity utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <button class=\"opacity-50 md:opacity-100 ...\"> <!-- ... --> </button> Learn more about using variants in the variants documentation. text-shadow mix-blend-mode",
+  "code_examples": [
+    "<button class=\"bg-indigo-500 opacity-100 ...\"></button>\n<button class=\"bg-indigo-500 opacity-75 ...\"></button>\n<button class=\"bg-indigo-500 opacity-50 ...\"></button>\n<button class=\"bg-indigo-500 opacity-25 ...\"></button>",
+    "<input class=\"opacity-100 disabled:opacity-75 ...\" type=\"text\" />",
+    "<button class=\"opacity-[.67] ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"opacity-(--my-opacity) ...\">\n  <!-- ... -->\n</button>",
+    "<button class=\"opacity-50 md:opacity-100 ...\">\n  <!-- ... -->\n</button>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/opacity/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1051,
+          "pageY": 1108,
+          "scrollY": 1108,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:55.151503+00:00"
+}

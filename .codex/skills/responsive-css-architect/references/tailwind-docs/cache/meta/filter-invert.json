@@ -1,0 +1,50 @@
+{
+  "path": "/docs/filter-invert",
+  "url": "https://tailwindcss.com/docs/filter-invert",
+  "slug": "filter-invert",
+  "source_cache_file": "filter-invert.md",
+  "title": "filter: invert() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter: invert()",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS filter: invert() Utilities for applying invert filters to an element. Class Styles invert filter: invert(100%); invert-<number> filter: invert(<number>%); invert-(<custom-property>) filter: invert(var(<custom-property>)); invert-[<value>] filter: invert(<value>); EXAMPLES Basic example Use utilities like invert and invert-20 to control the color inversion of an element: invert-0 invert-20 invert <img class=\"invert-0\" src=\"/img/mountains.jpg\" /> <img class=\"invert-20\" src=\"/img/mountains.jpg\" /> <img class=\"invert\" src=\"/img/mountains.jpg\" /> Using a custom value Use the invert-[<value>] syntax to set the color inversion based on a completely custom value: <img class=\"invert-[.25] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the invert-(<custom-property>) syntax: <img class=\"invert-(--my-inversion) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for invert-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a filter: invert() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"invert md:invert-0 ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. hue-rotate saturate",
+  "code_examples": [
+    "<img class=\"invert-0\" src=\"/img/mountains.jpg\" />\n<img class=\"invert-20\" src=\"/img/mountains.jpg\" />\n<img class=\"invert\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"invert-[.25] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"invert-(--my-inversion) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"invert md:invert-0 ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter-invert/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 727,
+          "pageY": 784,
+          "scrollY": 784,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:45.045217+00:00"
+}

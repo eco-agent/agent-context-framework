@@ -1,0 +1,49 @@
+{
+  "path": "/docs/box-sizing",
+  "url": "https://tailwindcss.com/docs/box-sizing",
+  "slug": "box-sizing",
+  "source_cache_file": "box-sizing.md",
+  "title": "box-sizing - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "box-sizing",
+    "EXAMPLES",
+    "Including borders and padding",
+    "Excluding borders and padding",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT box-sizing Utilities for controlling how the browser should calculate an element's total size. Class Styles box-border box-sizing: border-box; box-content box-sizing: content-box; EXAMPLES Including borders and padding Use the box-border utility to set an element's box-sizing to border-box, telling the browser to include the element's borders and padding when you give it a height or width. This means a 100px \u00d7 100px element with a 2px border and 4px of padding on all sides will be rendered as 100px \u00d7 100px, with an internal content area of 88px \u00d7 88px: 128px 128px <div class=\"box-border size-32 border-4 p-4 ...\"> <!-- ... --> </div> Tailwind makes this the default for all elements in our preflight base styles. Excluding borders and padding Use the box-content utility to set an element's box-sizing to content-box, telling the browser to add borders and padding on top of the element's specified width or height. This means a 100px \u00d7 100px element with a 2px border and 4px of padding on all sides will actually be rendered as 112px \u00d7 112px, with an internal content area of 100px \u00d7 100px: 128px 128px <div class=\"box-content size-32 border-4 p-4 ...\"> <!-- ... --> </div> Responsive design Prefix a box-sizing utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"box-content md:box-border ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. box-decoration-break display",
+  "code_examples": [
+    "<div class=\"box-border size-32 border-4 p-4 ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"box-content size-32 border-4 p-4 ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"box-content md:box-border ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/box-sizing/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1034,
+          "pageY": 1091,
+          "scrollY": 1091,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:13.772202+00:00"
+}

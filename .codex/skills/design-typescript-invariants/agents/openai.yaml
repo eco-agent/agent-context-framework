@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design TypeScript Invariants"
+  short_description: "Model TypeScript invariants and cohesive boundaries"
+  default_prompt: "Use $design-typescript-invariants to model valid states, preserve behavior, and choose cohesive module boundaries."

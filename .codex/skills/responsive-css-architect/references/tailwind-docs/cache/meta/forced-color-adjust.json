@@ -1,0 +1,59 @@
+{
+  "path": "/docs/forced-color-adjust",
+  "url": "https://tailwindcss.com/docs/forced-color-adjust",
+  "slug": "forced-color-adjust",
+  "source_cache_file": "forced-color-adjust.md",
+  "title": "forced-color-adjust - Accessibility - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "forced-color-adjust",
+    "EXAMPLES",
+    "Opting out of forced colors",
+    "Restoring forced colors",
+    "Responsive design"
+  ],
+  "content_text": "ACCESSIBILITY forced-color-adjust Utilities for opting in and out of forced colors. Class Styles forced-color-adjust-auto forced-color-adjust: auto; forced-color-adjust-none forced-color-adjust: none; EXAMPLES Opting out of forced colors Use the forced-color-adjust-none utility to opt an element out of the colors enforced by forced colors mode. This is useful in situations where enforcing a limited color palette will degrade usability. Try emulating `forced-colors: active` in your developer tools to see the changes Basic Tee $35 Choose a color White Gray Black <form> <img src=\"/img/shirt.jpg\" /> <div> <h3>Basic Tee</h3> <h3>$35</h3> <fieldset> <legend class=\"sr-only\">Choose a color</legend> <div class=\"forced-color-adjust-none ...\"> <label> <input class=\"sr-only\" type=\"radio\" name=\"color-choice\" value=\"White\" /> <span class=\"sr-only\">White</span> <span class=\"size-6 rounded-full border border-black/10 bg-white\"></span> </label> <!-- ... --> </div> </fieldset> </div> </form> You can also use the forced colors variant to conditionally add styles when the user has enabled a forced color mode. Restoring forced colors Use the forced-color-adjust-auto utility to make an element adhere to colors enforced by forced colors mode: <form> <fieldset class=\"forced-color-adjust-none lg:forced-color-adjust-auto ...\"> <legend>Choose a color:</legend> <select class=\"hidden lg:block\"> <option value=\"White\">White</option> <option value=\"Gray\">Gray</option> <option value=\"Black\">Black</option> </select> <div class=\"lg:hidden\"> <label> <input class=\"sr-only\" type=\"radio\" name=\"color-choice\" value=\"White\" /> <!-- ... --> </label> <!-- ... --> </div> </fieldset> </form> This can be useful if you want to undo the forced-color-adjust-none utility, for example on a larger screen size. Responsive design Prefix a forced-color-adjust utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"forced-color-adjust-none md:forced-color-adjust-auto ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. stroke-width",
+  "code_examples": [
+    "<form>\n  <img src=\"/img/shirt.jpg\" />\n  <div>\n    <h3>Basic Tee</h3>\n    <h3>$35</h3>\n    <fieldset>\n      <legend class=\"sr-only\">Choose a color</legend>\n      <div class=\"forced-color-adjust-none ...\">\n        <label>\n          <input class=\"sr-only\" type=\"radio\" name=\"color-choice\" value=\"White\" />\n          <span class=\"sr-only\">White</span>\n          <span class=\"size-6 rounded-full border border-black/10 bg-white\"></span>\n        </label>\n        <!-- ... -->\n      </div>\n    </fieldset>\n  </div>\n</form>",
+    "<form>\n  <fieldset class=\"forced-color-adjust-none lg:forced-color-adjust-auto ...\">\n    <legend>Choose a color:</legend>\n    <select class=\"hidden lg:block\">\n      <option value=\"White\">White</option>\n      <option value=\"Gray\">Gray</option>\n      <option value=\"Black\">Black</option>\n    </select>\n    <div class=\"lg:hidden\">\n      <label>\n        <input class=\"sr-only\" type=\"radio\" name=\"color-choice\" value=\"White\" />\n        <!-- ... -->\n      </label>\n      <!-- ... -->\n    </div>\n  </fieldset>\n</form>",
+    "<div class=\"forced-color-adjust-none md:forced-color-adjust-auto ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/forced-color-adjust/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1673,
+          "pageY": 1730,
+          "scrollY": 1730,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:08:24.303162+00:00"
+}

@@ -1,0 +1,65 @@
+{
+  "path": "/docs/text-align",
+  "url": "https://tailwindcss.com/docs/text-align",
+  "slug": "text-align",
+  "source_cache_file": "text-align.md",
+  "title": "text-align - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-align",
+    "EXAMPLES",
+    "Left aligning text",
+    "Right aligning text",
+    "Centering text",
+    "Justifying text",
+    "Using logical properties",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-align Utilities for controlling the alignment of text. Class Styles text-left text-align: left; text-center text-align: center; text-right text-align: right; text-justify text-align: justify; text-start text-align: start; text-end text-align: end; EXAMPLES Left aligning text Use the text-left utility to left align the text of an element: So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"text-left\">So I started to walk into the water...</p> Right aligning text Use the text-right utility to right align the text of an element: So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"text-right\">So I started to walk into the water...</p> Centering text Use the text-center utility to center the text of an element: So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"text-center\">So I started to walk into the water...</p> Justifying text Use the text-justify utility to justify the text of an element: So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"text-justify\">So I started to walk into the water...</p> Using logical properties Use the text-start and text-end utilities, which use logical properties to map to either the left or right side based on the text direction: \u0628\u062f\u0623\u062a\u064f \u0623\u0633\u064a\u0631 \u0646\u062d\u0648 \u0627\u0644\u0645\u0627\u0621. \u0644\u0646 \u0623\u0643\u0630\u0628 \u0639\u0644\u064a\u0643\u0645 \u064a\u0627 \u0631\u0641\u0627\u0642\u060c \u0643\u0646\u062a\u064f \u0645\u0631\u0639\u0648\u0628\u064b\u0627. \u0644\u0643\u0646\u0646\u064a \u0648\u0627\u0635\u0644\u062a\u064f \u0627\u0644\u0645\u0633\u064a\u0631\u060c \u0648\u0628\u064a\u0646\u0645\u0627 \u0643\u0646\u062a\u064f \u0623\u0634\u0642 \u0637\u0631\u064a\u0642\u064a \u0639\u0628\u0631 \u0627\u0644\u0623\u0645\u0648\u0627\u062c\u060c \u063a\u0645\u0631\u0646\u064a \u0647\u062f\u0648\u0621\u064c \u063a\u0631\u064a\u0628. \u0644\u0627 \u0623\u0639\u0644\u0645 \u0625\u0646 \u0643\u0627\u0646 \u0630\u0644\u0643 \u062a\u062f\u062e\u0651\u0644\u064b\u0627 \u0625\u0644\u0647\u064a\u064b\u0627 \u0623\u0645 \u0635\u0644\u0629 \u0642\u0631\u0627\u0628\u0629 \u0628\u064a\u0646 \u062c\u0645\u064a\u0639 \u0627\u0644\u0643\u0627\u0626\u0646\u0627\u062a \u0627\u0644\u062d\u064a\u0629\u060c \u0644\u0643\u0646\u0646\u064a \u0623\u0642\u0648\u0644 \u0644\u0643 \u064a\u0627 \u062c\u064a\u0631\u064a\u060c \u0641\u064a \u062a\u0644\u0643 \u0627\u0644\u0644\u062d\u0638\u0629\u060c \u0643\u0646\u062a\u064f \u0639\u0627\u0644\u0645 \u0623\u062d\u064a\u0627\u0621 \u0628\u062d\u0631\u064a\u0629. <div dir=\"rtl\" lang=\"ar\"> <p class=\"text-end\">\u0641\u0628\u062f\u0623\u062a \u0628\u0627\u0644\u0633\u064a\u0631 \u0646\u062d\u0648 \u0627\u0644\u0645\u0627\u0621...</p> </div> Responsive design Prefix a text-align utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"text-left md:text-center ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. list-style-type color",
+  "code_examples": [
+    "<p class=\"text-left\">So I started to walk into the water...</p>",
+    "<p class=\"text-right\">So I started to walk into the water...</p>",
+    "<p class=\"text-center\">So I started to walk into the water...</p>",
+    "<p class=\"text-justify\">So I started to walk into the water...</p>",
+    "<div dir=\"rtl\" lang=\"ar\">\n  <p class=\"text-end\">\u0641\u0628\u062f\u0623\u062a \u0628\u0627\u0644\u0633\u064a\u0631 \u0646\u062d\u0648 \u0627\u0644\u0645\u0627\u0621...</p>\n</div>",
+    "<p class=\"text-left md:text-center ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-align/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2064,
+          "pageY": 2121,
+          "scrollY": 2121,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:17.123201+00:00"
+}

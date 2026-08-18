@@ -1,0 +1,17 @@
+{
+  "name": "@effect/platform-node",
+  "version": "0.108.0",
+  "source": "https://github.com/Effect-TS/effect/tree/e670e0f6befb959b84208d5f77631276521020ae/packages/platform-node",
+  "license": "MIT",
+  "integrity": "sha512-AA8j4e7TOOzBOFAhYcwrtO0pGytiWxEpD7/xWs1nER+JyZI9la+Y506A72uWzc0GiOMBSPcsRmqc5zBjgImCZQ==",
+  "purpose": "Provide the Node.js HTTP server and scoped runtime adapter for the data-ingress composition root.",
+  "alternativesConsidered": [
+    "Direct node:http lifecycle wiring",
+    "An additional web framework"
+  ],
+  "maintenanceStatus": "Pinned with Effect 3.22.0 and platform 0.97.0 at the same upstream release commit.",
+  "securityEvidence": "Registry metadata, package integrity, upstream release source, frozen lockfile, and production dependency audit were reviewed.",
+  "modifications": "None; live layers and resource budgets remain application-owned.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "data-platform"
+}

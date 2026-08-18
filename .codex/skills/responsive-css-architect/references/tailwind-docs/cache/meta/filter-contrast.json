@@ -1,0 +1,50 @@
+{
+  "path": "/docs/filter-contrast",
+  "url": "https://tailwindcss.com/docs/filter-contrast",
+  "slug": "filter-contrast",
+  "source_cache_file": "filter-contrast.md",
+  "title": "filter: contrast() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter: contrast()",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS filter: contrast() Utilities for applying contrast filters to an element. Class Styles contrast-<number> filter: contrast(<number>%); contrast-(<custom-property>) filter: contrast(var(<custom-property>)); contrast-[<value>] filter: contrast(<value>); EXAMPLES Basic example Use utilities like contrast-50 and contrast-100 to control an element's contrast: contrast-50 contrast-100 contrast-125 contrast-200 <img class=\"contrast-50 ...\" src=\"/img/mountains.jpg\" /> <img class=\"contrast-100 ...\" src=\"/img/mountains.jpg\" /> <img class=\"contrast-125 ...\" src=\"/img/mountains.jpg\" /> <img class=\"contrast-200 ...\" src=\"/img/mountains.jpg\" /> Using a custom value Use the contrast-[<value>] syntax to set the contrast based on a completely custom value: <img class=\"contrast-[.25] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the contrast-(<custom-property>) syntax: <img class=\"contrast-(--my-contrast) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for contrast-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a filter: contrast() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"contrast-125 md:contrast-150 ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. brightness drop-shadow",
+  "code_examples": [
+    "<img class=\"contrast-50 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"contrast-100 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"contrast-125 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"contrast-200 ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"contrast-[.25] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"contrast-(--my-contrast) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"contrast-125 md:contrast-150 ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter-contrast/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 678,
+          "pageY": 735,
+          "scrollY": 735,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:33.851387+00:00"
+}

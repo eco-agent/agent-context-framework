@@ -1,0 +1,64 @@
+{
+  "path": "/docs/filter",
+  "url": "https://tailwindcss.com/docs/filter",
+  "slug": "filter",
+  "source_cache_file": "filter.md",
+  "title": "filter - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter",
+    "EXAMPLES",
+    "Basic example",
+    "Removing filters",
+    "Using a custom value",
+    "Applying on hover",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS filter Utilities for applying filters to an element. Class Styles filter-none filter: none; filter-(<custom-property>) filter: var(<custom-property>); filter-[<value>] filter: <value>; EXAMPLES Basic example Use utilities like blur-xs and grayscale to apply filters to an element: blur-xs grayscale combined <img class=\"blur-xs\" src=\"/img/mountains.jpg\" /> <img class=\"grayscale\" src=\"/img/mountains.jpg\" /> <img class=\"blur-xs grayscale\" src=\"/img/mountains.jpg\" /> You can combine the following filter utilities: blur, brightness, contrast, drop-shadow, grayscale, hue-rotate, invert, saturate, and sepia. Removing filters Use the filter-none utility to remove all of the filters applied to an element: <img class=\"blur-md brightness-150 invert md:filter-none\" src=\"/img/mountains.jpg\" /> Using a custom value Use the filter-[<value>] syntax to set the filter based on a completely custom value: <img class=\"filter-[url('filters.svg#filter-id')] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the filter-(<custom-property>) syntax: <img class=\"filter-(--my-filter) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for filter-[var(<custom-property>)] that adds the var() function for you automatically. Applying on hover Prefix a filter utility with a variant like hover:* to only apply the utility in that state: <img class=\"blur-sm hover:filter-none ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. Responsive design Prefix a filter utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"blur-sm md:filter-none ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. mask-type blur",
+  "code_examples": [
+    "<img class=\"blur-xs\" src=\"/img/mountains.jpg\" />\n<img class=\"grayscale\" src=\"/img/mountains.jpg\" />\n<img class=\"blur-xs grayscale\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"blur-md brightness-150 invert md:filter-none\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"filter-[url('filters.svg#filter-id')] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"filter-(--my-filter) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"blur-sm hover:filter-none ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"blur-sm md:filter-none ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1256,
+          "pageY": 1313,
+          "scrollY": 1313,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:27.011809+00:00"
+}

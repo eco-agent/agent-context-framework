@@ -1,0 +1,47 @@
+{
+  "path": "/docs/text-decoration-style",
+  "url": "https://tailwindcss.com/docs/text-decoration-style",
+  "slug": "text-decoration-style",
+  "source_cache_file": "text-decoration-style.md",
+  "title": "text-decoration-style - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-decoration-style",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-decoration-style Utilities for controlling the style of text decorations. Class Styles decoration-solid text-decoration-style: solid; decoration-double text-decoration-style: double; decoration-dotted text-decoration-style: dotted; decoration-dashed text-decoration-style: dashed; decoration-wavy text-decoration-style: wavy; EXAMPLES Basic example Use utilities like decoration-dotted and decoration-dashed to change the text decoration style of an element: decoration-solid The quick brown fox jumps over the lazy dog. decoration-double The quick brown fox jumps over the lazy dog. decoration-dotted The quick brown fox jumps over the lazy dog. decoration-dashed The quick brown fox jumps over the lazy dog. decoration-wavy The quick brown fox jumps over the lazy dog. <p class=\"underline decoration-solid\">The quick brown fox...</p> <p class=\"underline decoration-double\">The quick brown fox...</p> <p class=\"underline decoration-dotted\">The quick brown fox...</p> <p class=\"underline decoration-dashed\">The quick brown fox...</p> <p class=\"underline decoration-wavy\">The quick brown fox...</p> Responsive design Prefix a text-decoration-style utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"underline md:decoration-dashed ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. text-decoration-color text-decoration-thickness",
+  "code_examples": [
+    "<p class=\"underline decoration-solid\">The quick brown fox...</p>\n<p class=\"underline decoration-double\">The quick brown fox...</p>\n<p class=\"underline decoration-dotted\">The quick brown fox...</p>\n<p class=\"underline decoration-dashed\">The quick brown fox...</p>\n<p class=\"underline decoration-wavy\">The quick brown fox...</p>",
+    "<p class=\"underline md:decoration-dashed ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-decoration-style/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 675,
+          "pageY": 732,
+          "scrollY": 732,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:27.320719+00:00"
+}

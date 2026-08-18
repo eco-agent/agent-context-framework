@@ -1,0 +1,61 @@
+{
+  "path": "/docs/hyphens",
+  "url": "https://tailwindcss.com/docs/hyphens",
+  "slug": "hyphens",
+  "source_cache_file": "hyphens.md",
+  "title": "hyphens - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "hyphens",
+    "EXAMPLES",
+    "Preventing hyphenation",
+    "Manual hyphenation",
+    "Automatic hyphenation",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY hyphens Utilities for controlling how words should be hyphenated. Class Styles hyphens-none hyphens: none; hyphens-manual hyphens: manual; hyphens-auto hyphens: auto; EXAMPLES Preventing hyphenation Use the hyphens-none utility to prevent words from being hyphenated even if the line break suggestion &shy; is used: Officially recognized by the Duden dictionary as the longest word in German, Kraftfahrzeug\u00adhaftpflichtversicherung is a 36 letter word for motor vehicle liability insurance. <p class=\"hyphens-none\"> ... Kraftfahrzeug&shy;haftpflichtversicherung is a ... </p> Manual hyphenation Use the hyphens-manual utility to only set hyphenation points where the line break suggestion &shy; is used: Officially recognized by the Duden dictionary as the longest word in German, Kraftfahrzeug\u00adhaftpflichtversicherung is a 36 letter word for motor vehicle liability insurance. <p class=\"hyphens-manual\"> ... Kraftfahrzeug&shy;haftpflichtversicherung is a ... </p> This is the default browser behavior. Automatic hyphenation Use the hyphens-auto utility to allow the browser to automatically choose hyphenation points based on the language: Officially recognized by the Duden dictionary as the longest word in German, Kraftfahrzeughaftpflichtversicherung is a 36 letter word for motor vehicle liability insurance. <p class=\"hyphens-auto\" lang=\"de\"> ... Kraftfahrzeughaftpflichtversicherung is a ... </p> The line break suggestion &shy; will be preferred over automatic hyphenation points. Responsive design Prefix a hyphens utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"hyphens-none md:hyphens-auto ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. overflow-wrap content",
+  "code_examples": [
+    "<p class=\"hyphens-none\">\n  ... Kraftfahrzeug&shy;haftpflichtversicherung is a ...\n</p>",
+    "<p class=\"hyphens-manual\">\n  ... Kraftfahrzeug&shy;haftpflichtversicherung is a ...\n</p>",
+    "<p class=\"hyphens-auto\" lang=\"de\">\n  ... Kraftfahrzeughaftpflichtversicherung is a ...\n</p>",
+    "<p class=\"hyphens-none md:hyphens-auto ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/hyphens/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1331,
+          "pageY": 1388,
+          "scrollY": 1388,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:01.411380+00:00"
+}

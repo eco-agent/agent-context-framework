@@ -1,0 +1,61 @@
+{
+  "path": "/docs/overflow-wrap",
+  "url": "https://tailwindcss.com/docs/overflow-wrap",
+  "slug": "overflow-wrap",
+  "source_cache_file": "overflow-wrap.md",
+  "title": "overflow-wrap - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "overflow-wrap",
+    "EXAMPLES",
+    "Wrapping mid-word",
+    "Wrapping anywhere",
+    "Wrapping normally",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY overflow-wrap Utilities for controlling line breaks within words in an overflowing element. Class Styles wrap-break-word overflow-wrap: break-word; wrap-anywhere overflow-wrap: anywhere; wrap-normal overflow-wrap: normal; EXAMPLES Wrapping mid-word Use the wrap-break-word utility to allow line breaks between letters in a word if needed: The longest word in any of the major English language dictionaries is pneumonoultramicroscopicsilicovolcanoconiosis, a word that refers to a lung disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it is the same as silicosis. <p class=\"wrap-break-word\">The longest word in any of the major...</p> Wrapping anywhere The wrap-anywhere utility behaves similarly to wrap-break-word, except that the browser factors in mid-word line breaks when calculating the intrinsic size of the element: wrap-break-word Jay Riemenschneider jason.riemenschneider@vandelayindustries.com wrap-anywhere Jay Riemenschneider jason.riemenschneider@vandelayindustries.com <div class=\"flex max-w-sm\"> <img class=\"size-16 rounded-full\" src=\"/img/profile.jpg\" /> <div class=\"wrap-break-word\"> <p class=\"font-medium\">Jay Riemenschneider</p> <p>jason.riemenschneider@vandelayindustries.com</p> </div> </div> <div class=\"flex max-w-sm\"> <img class=\"size-16 rounded-full\" src=\"/img/profile.jpg\" /> <div class=\"wrap-anywhere\"> <p class=\"font-medium\">Jay Riemenschneider</p> <p>jason.riemenschneider@vandelayindustries.com</p> </div> </div> This is useful for wrapping text inside of flex containers, where you would usually need to set min-width: 0 on the child element to allow it to shrink below its content size. Wrapping normally Use the wrap-normal utility to only allow line breaks at natural wrapping points, like spaces, hyphens, and punctuation: The longest word in any of the major English language dictionaries is pneumonoultramicroscopicsilicovolcanoconiosis, a word that refers to a lung disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it is the same as silicosis. <p class=\"wrap-normal\">The longest word in any of the major...</p> Responsive design Prefix an overflow-wrap utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"wrap-normal md:wrap-break-word ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. word-break hyphens",
+  "code_examples": [
+    "<p class=\"wrap-break-word\">The longest word in any of the major...</p>",
+    "<div class=\"flex max-w-sm\">\n  <img class=\"size-16 rounded-full\" src=\"/img/profile.jpg\" />\n  <div class=\"wrap-break-word\">\n    <p class=\"font-medium\">Jay Riemenschneider</p>\n    <p>jason.riemenschneider@vandelayindustries.com</p>\n  </div>\n</div>\n<div class=\"flex max-w-sm\">\n  <img class=\"size-16 rounded-full\" src=\"/img/profile.jpg\" />\n  <div class=\"wrap-anywhere\">\n    <p class=\"font-medium\">Jay Riemenschneider</p>\n    <p>jason.riemenschneider@vandelayindustries.com</p>\n  </div>\n</div>",
+    "<p class=\"wrap-normal\">The longest word in any of the major...</p>",
+    "<p class=\"wrap-normal md:wrap-break-word ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/overflow-wrap/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1739,
+          "pageY": 1796,
+          "scrollY": 1796,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:58.285171+00:00"
+}

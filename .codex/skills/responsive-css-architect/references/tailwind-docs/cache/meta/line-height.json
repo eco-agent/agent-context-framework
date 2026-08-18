@@ -1,0 +1,76 @@
+{
+  "path": "/docs/line-height",
+  "url": "https://tailwindcss.com/docs/line-height",
+  "slug": "line-height",
+  "source_cache_file": "line-height.md",
+  "title": "line-height - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "line-height",
+    "EXAMPLES",
+    "Basic example",
+    "Setting independently",
+    "Removing the leading",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "TYPOGRAPHY line-height Utilities for controlling the leading, or line height, of an element. Class Styles text-<size>/<number> font-size: <size>; line-height: calc(var(--spacing) * <number>); text-<size>/(<custom-property>) font-size: <size>; line-height: var(<custom-property>); text-<size>/[<value>] font-size: <size>; line-height: <value>; leading-none line-height: 1; leading-<number> line-height: calc(var(--spacing) * <number>); leading-(<custom-property>) line-height: var(<custom-property>); leading-[<value>] line-height: <value>; EXAMPLES Basic example Use font size utilities like text-sm/6 and text-lg/7 to set the font size and line-height of an element at the same time: text-sm/6 So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. text-sm/7 So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. text-sm/8 So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"text-base/6 ...\">So I started to walk into the water...</p> <p class=\"text-base/7 ...\">So I started to walk into the water...</p> <p class=\"text-base/8 ...\">So I started to walk into the water...</p> Each font size utility also sets a default line height when one isn't provided. You can learn more about these values and how to customize them in the font-size documentation. Setting independently Use leading-<number> utilities like leading-6 and leading-7 to set the line height of an element independent of the font-size: leading-6 So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. leading-7 So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. leading-8 So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I was a marine biologist. <p class=\"text-sm leading-6\">So I started to walk into the water...</p> <p class=\"text-sm leading-7\">So I started to walk into the water...</p> <p class=\"text-sm leading-8\">So I started to walk into the water...</p> Removing the leading Use the leading-none utility to set the line height of an element equal to its font size: The quick brown fox jumps over the lazy dog. <p class=\"text-2xl leading-none ...\">The quick brown fox...</p> Using a custom value Use the leading-[<value>] syntax to set the line height based on a completely custom value: <p class=\"leading-[1.5] ...\"> Lorem ipsum dolor sit amet... </p> For CSS variables, you can also use the leading-(<custom-property>) syntax: <p class=\"leading-(--my-line-height) ...\"> Lorem ipsum dolor sit amet... </p> This is just a shorthand for leading-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a line-height utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"leading-5 md:leading-6 ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. Customizing your theme The leading-<number> utilities are driven by the --spacing theme variable, which can be customized in your own theme: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme variable documentation. line-clamp list-style-image",
+  "code_examples": [
+    "<p class=\"text-base/6 ...\">So I started to walk into the water...</p>\n<p class=\"text-base/7 ...\">So I started to walk into the water...</p>\n<p class=\"text-base/8 ...\">So I started to walk into the water...</p>",
+    "<p class=\"text-sm leading-6\">So I started to walk into the water...</p>\n<p class=\"text-sm leading-7\">So I started to walk into the water...</p>\n<p class=\"text-sm leading-8\">So I started to walk into the water...</p>",
+    "<p class=\"text-2xl leading-none ...\">The quick brown fox...</p>",
+    "<p class=\"leading-[1.5] ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"leading-(--my-line-height) ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"leading-5 md:leading-6 ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/line-height/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3064,
+          "pageY": 3121,
+          "scrollY": 3121,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:08.293602+00:00"
+}

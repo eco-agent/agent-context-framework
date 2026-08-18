@@ -1,0 +1,60 @@
+{
+  "path": "/docs/transform-origin",
+  "url": "https://tailwindcss.com/docs/transform-origin",
+  "slug": "transform-origin",
+  "source_cache_file": "transform-origin.md",
+  "title": "transform-origin - Transforms - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "transform-origin",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TRANSFORMS transform-origin Utilities for specifying the origin for an element's transformations. Class Styles origin-center transform-origin: center; origin-top transform-origin: top; origin-top-right transform-origin: top right; origin-right transform-origin: right; origin-bottom-right transform-origin: bottom right; origin-bottom transform-origin: bottom; origin-bottom-left transform-origin: bottom left; origin-left transform-origin: left; origin-top-left transform-origin: top left; origin-(<custom-property>) transform-origin: var(<custom-property>); origin-[<value>] transform-origin: <value>; EXAMPLES Basic example Use utilities like origin-top and origin-bottom-left to set an element's transform origin: origin-center origin-top-left origin-bottom <img class=\"origin-center rotate-45 ...\" src=\"/img/mountains.jpg\" /> <img class=\"origin-top-left rotate-12 ...\" src=\"/img/mountains.jpg\" /> <img class=\"origin-bottom -rotate-12 ...\" src=\"/img/mountains.jpg\" /> Using a custom value Use the origin-[<value>] syntax to set the transform origin based on a completely custom value: <img class=\"origin-[33%_75%] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the origin-(<custom-property>) syntax: <img class=\"origin-(--my-transform-origin) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for origin-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a transform-origin utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"origin-center md:origin-top ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. transform transform-style",
+  "code_examples": [
+    "<img class=\"origin-center rotate-45 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"origin-top-left rotate-12 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"origin-bottom -rotate-12 ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"origin-[33%_75%] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"origin-(--my-transform-origin) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"origin-center md:origin-top ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/transform-origin/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1110,
+          "pageY": 1167,
+          "scrollY": 1167,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:10.724864+00:00"
+}

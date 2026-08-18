@@ -1,0 +1,75 @@
+{
+  "path": "/docs/justify-items",
+  "url": "https://tailwindcss.com/docs/justify-items",
+  "slug": "justify-items",
+  "source_cache_file": "justify-items.md",
+  "title": "justify-items - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "justify-items",
+    "EXAMPLES",
+    "Start",
+    "End",
+    "Center",
+    "Stretch",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID justify-items Utilities for controlling how grid items are aligned along their inline axis. Class Styles justify-items-start justify-items: start; justify-items-end justify-items: end; justify-items-end-safe justify-items: safe end; justify-items-center justify-items: center; justify-items-center-safe justify-items: safe center; justify-items-stretch justify-items: stretch; justify-items-normal justify-items: normal; EXAMPLES Start Use the justify-items-start utility to justify grid items against the start of their inline axis: 01 02 03 04 05 06 <div class=\"grid justify-items-start ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> End Use the justify-items-end or justify-items-end-safe utilities to justify grid items against the end of their inline axis: Resize the container to see the alignment behavior justify-items-end 01 02 03 justify-items-end-safe 01 02 03 justify-items-end <div class=\"grid grid-flow-col justify-items-end ...\"> <div>01</div> <div>02</div> <div>03</div> </div> justify-items-end-safe <div class=\"grid grid-flow-col justify-items-end-safe ...\"> <div>01</div> <div>02</div> <div>03</div> </div> When there is not enough space available, the justify-items-end-safe utility will align items to the start of the container instead of the end. Center Use the justify-items-center or justify-items-center-safe utilities to justify grid items against the end of their inline axis: Resize the container to see the alignment behavior justify-items-center 01 02 03 justify-items-center-safe 01 02 03 justify-items-center <div class=\"grid grid-flow-col justify-items-center ...\"> <div>01</div> <div>02</div> <div>03</div> </div> justify-items-center-safe <div class=\"grid grid-flow-col justify-items-center-safe ...\"> <div>01</div> <div>02</div> <div>03</div> </div> When there is not enough space available, the justify-items-center-safe utility will align items to the start of the container instead of the center. Stretch Use the justify-items-stretch utility to stretch items along their inline axis: 01 02 03 04 05 06 <div class=\"grid justify-items-stretch ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Responsive design Prefix a justify-items utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"grid justify-items-start md:justify-items-center ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. justify-content justify-self",
+  "code_examples": [
+    "<div class=\"grid justify-items-start ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid grid-flow-col justify-items-end ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"grid grid-flow-col justify-items-end-safe ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"grid grid-flow-col justify-items-center ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"grid grid-flow-col justify-items-center-safe ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"grid justify-items-stretch ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid justify-items-start md:justify-items-center ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/justify-items/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2968,
+          "pageY": 3025,
+          "scrollY": 3025,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:33.140254+00:00"
+}

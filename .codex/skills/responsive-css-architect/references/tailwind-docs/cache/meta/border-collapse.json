@@ -1,0 +1,59 @@
+{
+  "path": "/docs/border-collapse",
+  "url": "https://tailwindcss.com/docs/border-collapse",
+  "slug": "border-collapse",
+  "source_cache_file": "border-collapse.md",
+  "title": "border-collapse - Tables - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "border-collapse",
+    "EXAMPLES",
+    "Collapsing table borders",
+    "Separating table borders",
+    "Responsive design"
+  ],
+  "content_text": "TABLES border-collapse Utilities for controlling whether table borders should collapse or be separated. Class Styles border-collapse border-collapse: collapse; border-separate border-collapse: separate; EXAMPLES Collapsing table borders Use the border-collapse utility to combine adjacent cell borders into a single border when possible: State City Indiana Indianapolis Ohio Columbus Michigan Detroit <table class=\"border-collapse border border-gray-400 ...\"> <thead> <tr> <th class=\"border border-gray-300 ...\">State</th> <th class=\"border border-gray-300 ...\">City</th> </tr> </thead> <tbody> <tr> <td class=\"border border-gray-300 ...\">Indiana</td> <td class=\"border border-gray-300 ...\">Indianapolis</td> </tr> <tr> <td class=\"border border-gray-300 ...\">Ohio</td> <td class=\"border border-gray-300 ...\">Columbus</td> </tr> <tr> <td class=\"border border-gray-300 ...\">Michigan</td> <td class=\"border border-gray-300 ...\">Detroit</td> </tr> </tbody> </table> Note that this includes collapsing borders on the top-level <table> tag. Separating table borders Use the border-separate utility to force each cell to display its own separate borders: State City Indiana Indianapolis Ohio Columbus Michigan Detroit <table class=\"border-separate border border-gray-400 ...\"> <thead> <tr> <th class=\"border border-gray-300 ...\">State</th> <th class=\"border border-gray-300 ...\">City</th> </tr> </thead> <tbody> <tr> <td class=\"border border-gray-300 ...\">Indiana</td> <td class=\"border border-gray-300 ...\">Indianapolis</td> </tr> <tr> <td class=\"border border-gray-300 ...\">Ohio</td> <td class=\"border border-gray-300 ...\">Columbus</td> </tr> <tr> <td class=\"border border-gray-300 ...\">Michigan</td> <td class=\"border border-gray-300 ...\">Detroit</td> </tr> </tbody> </table> Responsive design Prefix a border-collapse utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <table class=\"border-collapse md:border-separate ...\"> <!-- ... --> </table> Learn more about using variants in the variants documentation. sepia border-spacing",
+  "code_examples": [
+    "<table class=\"border-collapse border border-gray-400 ...\">\n  <thead>\n    <tr>\n      <th class=\"border border-gray-300 ...\">State</th>\n      <th class=\"border border-gray-300 ...\">City</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td class=\"border border-gray-300 ...\">Indiana</td>\n      <td class=\"border border-gray-300 ...\">Indianapolis</td>\n    </tr>\n    <tr>\n      <td class=\"border border-gray-300 ...\">Ohio</td>\n      <td class=\"border border-gray-300 ...\">Columbus</td>\n    </tr>\n    <tr>\n      <td class=\"border border-gray-300 ...\">Michigan</td>\n      <td class=\"border border-gray-300 ...\">Detroit</td>\n    </tr>\n  </tbody>\n</table>",
+    "<table class=\"border-separate border border-gray-400 ...\">\n  <thead>\n    <tr>\n      <th class=\"border border-gray-300 ...\">State</th>\n      <th class=\"border border-gray-300 ...\">City</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td class=\"border border-gray-300 ...\">Indiana</td>\n      <td class=\"border border-gray-300 ...\">Indianapolis</td>\n    </tr>\n    <tr>\n      <td class=\"border border-gray-300 ...\">Ohio</td>\n      <td class=\"border border-gray-300 ...\">Columbus</td>\n    </tr>\n    <tr>\n      <td class=\"border border-gray-300 ...\">Michigan</td>\n      <td class=\"border border-gray-300 ...\">Detroit</td>\n    </tr>\n  </tbody>\n</table>",
+    "<table class=\"border-collapse md:border-separate ...\">\n  <!-- ... -->\n</table>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/border-collapse/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1702,
+          "pageY": 1759,
+          "scrollY": 1759,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:19.947152+00:00"
+}

@@ -1,0 +1,41 @@
+{
+  "name": "@agent-context/codex-workflows",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./task-envelope": {
+      "types": "./dist/src/task-envelope.d.ts",
+      "import": "./dist/src/task-envelope.js"
+    }
+  },
+  "engines": {
+    "node": "24.14.0"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "test": "pnpm build && node --test \"dist/test/*.test.js\""
+  },
+  "dependencies": {
+    "@agent-context/objective-kernel": "workspace:*",
+    "@agent-context/objective-runtime": "workspace:*",
+    "@agent-context/repo-policy": "workspace:*",
+    "@modelcontextprotocol/server": "2.0.0",
+    "@openai/codex-sdk": "0.145.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "tsx": "4.22.4",
+    "typescript": "7.0.2"
+  },
+  "agentContext": {
+    "category": "tooling",
+    "owner": "platform"
+  }
+}

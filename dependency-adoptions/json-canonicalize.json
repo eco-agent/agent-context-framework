@@ -1,0 +1,17 @@
+{
+  "name": "json-canonicalize",
+  "version": "2.0.0",
+  "source": "https://github.com/snowyu/json-canonicalize.ts/tree/6d921f5d00461825fb7151a835879494cc71b6db",
+  "license": "MIT",
+  "integrity": "sha512-yyrnK/mEm6Na3ChbJUWueXdapueW0p380RUyTW87XGb1ww8l8hU0pRrGC3vSWHe9CxrbPHX2fGUOZpNiHR0IIg==",
+  "purpose": "Provide deterministic RFC 8785 JSON canonicalization for versioned event content identity.",
+  "alternativesConsidered": [
+    "Reuse the command-specific serializer outside its semantic owner",
+    "A project-owned canonical JSON implementation"
+  ],
+  "maintenanceStatus": "Pinned to upstream v2.0.0 source and used only by the runtime-neutral event contract.",
+  "securityEvidence": "Registry metadata, package integrity, upstream source tag, frozen lockfile, and production dependency audit were reviewed.",
+  "modifications": "None; the platform owns the hash protocol version and content selection.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "platform"
+}

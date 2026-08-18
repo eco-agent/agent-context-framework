@@ -1,0 +1,17 @@
+{
+  "name": "tw-fade",
+  "version": "0.7.1",
+  "source": "https://github.com/petekp/tw-fade/tree/c31f9899da074d38c9d26e8a6f2fd9bdb79d0218",
+  "license": "MIT",
+  "integrity": "sha512-eV4kb+ff/GPbGkM5UM5TBrVUXKtkq8BH/vHIUvz4YX59GJepfunv/d6q7nhNd4c4VoyZMHRER0zVlRBV3SUZJg==",
+  "purpose": "Provide the default scroll-aware edge fade for every scrollable frontend overflow.",
+  "alternativesConsidered": [
+    "Project-owned CSS masks",
+    "Static gradient scrims"
+  ],
+  "maintenanceStatus": "Pinned to upstream v0.7.1; transfer ownership to the product frontend package when it is created.",
+  "securityEvidence": "The exact package, source tag, MIT license, zero-runtime-dependency metadata, and frozen lockfile entry were reviewed.",
+  "modifications": "None.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "frontend"
+}

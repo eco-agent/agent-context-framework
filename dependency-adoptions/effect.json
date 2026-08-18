@@ -1,0 +1,17 @@
+{
+  "name": "effect",
+  "version": "3.22.0",
+  "source": "https://github.com/Effect-TS/effect/tree/e670e0f6befb959b84208d5f77631276521020ae/packages/effect",
+  "license": "MIT",
+  "integrity": "sha512-jhYFe0zTlIRqYFrKTS+6luhmS/Tm0f+JLo0K9KUxvtFab1SUGEszQi2ehOP6QzAZvy831lDmTwwzvVDZSPNz3g==",
+  "purpose": "Provide the ADR-0011 typed application runtime, resource lifetime, interruption, and boundary-failure model for data ingress.",
+  "alternativesConsidered": [
+    "Promise-only application orchestration",
+    "Project-owned service and retry abstractions"
+  ],
+  "maintenanceStatus": "Pinned with the mutually compatible Effect platform and SQL packages at the upstream release commit.",
+  "securityEvidence": "Registry metadata, package integrity, upstream release source, frozen lockfile, and production dependency audit were reviewed.",
+  "modifications": "None; application composition and policy remain local.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "platform"
+}

@@ -1,0 +1,77 @@
+{
+  "path": "/docs/background-color",
+  "url": "https://tailwindcss.com/docs/background-color",
+  "slug": "background-color",
+  "source_cache_file": "background-color.md",
+  "title": "background-color - Backgrounds - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "background-color",
+    "EXAMPLES",
+    "Basic example",
+    "Changing the opacity",
+    "Using a custom value",
+    "Applying on hover",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "BACKGROUNDS background-color Utilities for controlling an element's background color. Class Styles bg-inherit background-color: inherit; bg-current background-color: currentColor; bg-transparent background-color: transparent; bg-black background-color: var(--color-black); /* #000 */ bg-white background-color: var(--color-white); /* #fff */ bg-red-50 background-color: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ bg-red-100 background-color: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ bg-red-200 background-color: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ bg-red-300 background-color: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ bg-red-400 background-color: var(--color-red-400); /* oklch(70.4% 0.191 22.216) */ SHOW MORE EXAMPLES Basic example Use utilities like bg-white, bg-indigo-500 and bg-transparent to control the background color of an element: bg-blue-500 Button A bg-cyan-500 Button B bg-pink-500 Button C <button class=\"bg-blue-500 ...\">Button A</button> <button class=\"bg-cyan-500 ...\">Button B</button> <button class=\"bg-pink-500 ...\">Button C</button> Changing the opacity Use the color opacity modifier to control the opacity of an element's background color: bg-sky-500/100 Button A bg-sky-500/75 Button B bg-sky-500/50 Button C <button class=\"bg-sky-500/100 ...\"></button> <button class=\"bg-sky-500/75 ...\"></button> <button class=\"bg-sky-500/50 ...\"></button> Using a custom value Use the bg-[<value>] syntax to set the background color based on a completely custom value: <div class=\"bg-[#50d71e] ...\"> <!-- ... --> </div> For CSS variables, you can also use the bg-(<custom-property>) syntax: <div class=\"bg-(--my-color) ...\"> <!-- ... --> </div> This is just a shorthand for bg-[var(<custom-property>)] that adds the var() function for you automatically. Applying on hover Prefix a background-color utility with a variant like hover:* to only apply the utility in that state: Save changes <button class=\"bg-indigo-500 hover:bg-fuchsia-500 ...\">Save changes</button> Learn more about using variants in the variants documentation. Responsive design Prefix a background-color utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"bg-blue-500 md:bg-green-500 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the bg-regal-blue utility can be used in your markup: <div class=\"bg-regal-blue\"> <!-- ... --> </div> Learn more about customizing your theme in the theme documentation. background-clip background-image",
+  "code_examples": [
+    "<button class=\"bg-blue-500 ...\">Button A</button>\n<button class=\"bg-cyan-500 ...\">Button B</button>\n<button class=\"bg-pink-500 ...\">Button C</button>",
+    "<button class=\"bg-sky-500/100 ...\"></button>\n<button class=\"bg-sky-500/75 ...\"></button>\n<button class=\"bg-sky-500/50 ...\"></button>",
+    "<div class=\"bg-[#50d71e] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"bg-(--my-color) ...\">\n  <!-- ... -->\n</div>",
+    "<button class=\"bg-indigo-500 hover:bg-fuchsia-500 ...\">Save changes</button>",
+    "<div class=\"bg-blue-500 md:bg-green-500 ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<div class=\"bg-regal-blue\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/background-color/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2391,
+          "pageY": 2448,
+          "scrollY": 2448,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:10.427183+00:00"
+}

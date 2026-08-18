@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/jakubkrehel/skills",
+  "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+  "license": "MIT",
+  "sourceSkill": "better-ui",
+  "verbatimPrinciples": [1, 2, 8, 11, 12, 13, 14],
+  "verbatimReferences": ["icons.md", "performance.md"],
+  "excluded": ["review output", "verification", "common mistakes", "animation rules", "shadow and elevation rules", "press-scale rules"],
+  "localChanges": "New frontmatter, ownership boundaries, reference routing, and explicit-only invocation."
+}

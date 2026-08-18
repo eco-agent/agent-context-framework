@@ -1,0 +1,17 @@
+{
+  "name": "@openai/codex-sdk",
+  "version": "0.145.0",
+  "source": "https://github.com/openai/codex",
+  "license": "Apache-2.0",
+  "integrity": "sha512-lBviqBKnomEXNpdjfDzUoz/H+VZuK75m2oR8dQSmL2zUpnklfAsTneuaSg23NOoE+vw/Qhbxp8ePy9te973yfw==",
+  "purpose": "Role-bound Codex threads for bounded, durable implementation and review workflows.",
+  "alternativesConsidered": [
+    "Direct Codex CLI process control",
+    "Native one-turn subagents"
+  ],
+  "maintenanceStatus": "Pinned version verified by the orchestrate-codex-workflows runtime template.",
+  "securityEvidence": "Registry metadata and package integrity recorded; live use remains disabled in default tests.",
+  "modifications": "None; package dependency.",
+  "requiredNotices": "Preserve the Apache-2.0 license terms in distributions that require notices.",
+  "owner": "platform"
+}

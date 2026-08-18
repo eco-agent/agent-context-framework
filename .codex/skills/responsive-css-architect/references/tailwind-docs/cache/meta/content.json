@@ -1,0 +1,64 @@
+{
+  "path": "/docs/content",
+  "url": "https://tailwindcss.com/docs/content",
+  "slug": "content",
+  "source_cache_file": "content.md",
+  "title": "content - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "content",
+    "EXAMPLES",
+    "Basic example",
+    "Referencing an attribute value",
+    "Using spaces and underscores",
+    "Using a CSS variable",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY content Utilities for controlling the content of the before and after pseudo-elements. Class Styles content-[<value>] content: <value>; content-(<custom-property>) content: var(<custom-property>); content-none content: none; EXAMPLES Basic example Use the content-[<value>] syntax, along with the before and after variants, to set the contents of the ::before and ::after pseudo-elements: Higher resolution means more than just a better-quality image. With a Retina 6K display, Pro Display XDR gives you nearly 40 percent more screen real estate than a 5K display. <p>Higher resolution means more than just a better-quality image. With a Retina 6K display, <a class=\"text-blue-600 after:content-['_\u2197']\" href=\"...\"> Pro Display XDR</a> gives you nearly 40 percent more screen real estate than a 5K display.</p> Referencing an attribute value Use the content-[attr(<name>)] syntax to reference a value stored in an attribute using the attr() CSS function: <p before=\"Hello World\" class=\"before:content-[attr(before)] ...\"> <!-- ... --> </p> Using spaces and underscores Since whitespace denotes the end of a class in HTML, replace any spaces in an arbitrary value with an underscore: <p class=\"before:content-['Hello_World'] ...\"></p> If you need to include an actual underscore, you can do this by escaping it with a backslash: <p class=\"before:content-['Hello\\_World']\"></p> Using a CSS variable Use the content-(<custom-property>) syntax to control the contents of the ::before and ::after pseudo-elements using a CSS variable: <p class=\"content-(--my-content)\"></p> This is just a shorthand for content-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a content utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"before:content-['Mobile'] md:before:content-['Desktop'] ...\"></p> Learn more about using variants in the variants documentation. hyphens background-attachment",
+  "code_examples": [
+    "<p>Higher resolution means more than just a better-quality image. With a\nRetina 6K display, <a class=\"text-blue-600 after:content-['_\u2197']\" href=\"...\">\nPro Display XDR</a> gives you nearly 40 percent more screen real estate than\na 5K display.</p>",
+    "<p before=\"Hello World\" class=\"before:content-[attr(before)] ...\">\n  <!-- ... -->\n</p>",
+    "<p class=\"before:content-['Hello_World'] ...\"></p>",
+    "<p class=\"before:content-['Hello\\_World']\"></p>",
+    "<p class=\"content-(--my-content)\"></p>",
+    "<p class=\"before:content-['Mobile'] md:before:content-['Desktop'] ...\"></p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/content/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1556,
+          "pageY": 1613,
+          "scrollY": 1613,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:04.654171+00:00"
+}

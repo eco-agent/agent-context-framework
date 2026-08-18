@@ -1,0 +1,50 @@
+{
+  "path": "/docs/stroke-width",
+  "url": "https://tailwindcss.com/docs/stroke-width",
+  "slug": "stroke-width",
+  "source_cache_file": "stroke-width.md",
+  "title": "stroke-width - SVG - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "stroke-width",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "SVG stroke-width Utilities for styling the stroke width of SVG elements. Class Styles stroke-<number> stroke-width: <number>; stroke-(length:<custom-property>) stroke-width: var(<custom-property>); stroke-[<value>] stroke-width: <value>; EXAMPLES Basic example Use stroke-<number> utilities like stroke-1 and stroke-2 to set the stroke width of an SVG: <svg class=\"stroke-1 ...\"></svg> <svg class=\"stroke-2 ...\"></svg> This can be useful for styling icon sets like Heroicons. Using a custom value Use the stroke-[<value>] syntax to set the stroke width based on a completely custom value: <div class=\"stroke-[1.5] ...\"> <!-- ... --> </div> For CSS variables, you can also use the stroke-(length:<custom-property>) syntax: <div class=\"stroke-(length:--my-stroke-width) ...\"> <!-- ... --> </div> This is just a shorthand for stroke-[length:var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a stroke-width utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"stroke-1 md:stroke-2 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. stroke forced-color-adjust",
+  "code_examples": [
+    "<svg class=\"stroke-1 ...\"></svg>\n<svg class=\"stroke-2 ...\"></svg>",
+    "<div class=\"stroke-[1.5] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"stroke-(length:--my-stroke-width) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"stroke-1 md:stroke-2 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/stroke-width/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 762,
+          "pageY": 819,
+          "scrollY": 819,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:08:21.807632+00:00"
+}

@@ -1,0 +1,78 @@
+{
+  "path": "/docs/flex-basis",
+  "url": "https://tailwindcss.com/docs/flex-basis",
+  "slug": "flex-basis",
+  "source_cache_file": "flex-basis.md",
+  "title": "flex-basis - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "flex-basis",
+    "EXAMPLES",
+    "Using the spacing scale",
+    "Using the container scale",
+    "Using percentages",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "FLEXBOX & GRID flex-basis Utilities for controlling the initial size of flex items. Class Styles basis-<number> flex-basis: calc(var(--spacing) * <number>); basis-<fraction> flex-basis: calc(<fraction> * 100%); basis-full flex-basis: 100%; basis-auto flex-basis: auto; basis-3xs flex-basis: var(--container-3xs); /* 16rem (256px) */ basis-2xs flex-basis: var(--container-2xs); /* 18rem (288px) */ basis-xs flex-basis: var(--container-xs); /* 20rem (320px) */ basis-sm flex-basis: var(--container-sm); /* 24rem (384px) */ basis-md flex-basis: var(--container-md); /* 28rem (448px) */ basis-lg flex-basis: var(--container-lg); /* 32rem (512px) */ SHOW MORE EXAMPLES Using the spacing scale Use basis-<number> utilities like basis-64 and basis-128 to set the initial size of flex items based on the spacing scale: 01 02 03 <div class=\"flex flex-row\"> <div class=\"basis-64\">01</div> <div class=\"basis-64\">02</div> <div class=\"basis-128\">03</div> </div> Using the container scale Use utilities like basis-xs and basis-sm to set the initial size of flex items based on the container scale: 01 02 03 04 <div class=\"flex flex-row\"> <div class=\"basis-3xs\">01</div> <div class=\"basis-2xs\">02</div> <div class=\"basis-xs\">03</div> <div class=\"basis-sm\">04</div> </div> Using percentages Use basis-<fraction> utilities like basis-1/2 and basis-2/3 to set the initial size of flex items: 01 02 <div class=\"flex flex-row\"> <div class=\"basis-1/3\">01</div> <div class=\"basis-2/3\">02</div> </div> Using a custom value Use the basis-[<value>] syntax to set the basis based on a completely custom value: <div class=\"basis-[30vw] ...\"> <!-- ... --> </div> For CSS variables, you can also use the basis-(<custom-property>) syntax: <div class=\"basis-(--my-basis) ...\"> <!-- ... --> </div> This is just a shorthand for basis-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a flex-basis utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"flex flex-row\"> <div class=\"basis-1/4 md:basis-1/3\">01</div> <div class=\"basis-1/4 md:basis-1/3\">02</div> <div class=\"basis-1/2 md:basis-1/3\">03</div> </div> Learn more about using variants in the variants documentation. Customizing your theme Use the --container-* theme variables to customize the fixed-width basis utilities in your project: @theme { --container-4xs: 14rem; } Now the basis-4xs utility can be used in your markup: <div class=\"basis-4xs\"> <!-- ... --> </div> The basis-<number> utilities are driven by the --spacing theme variable, which you can also customize: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme documentation. z-index flex-direction",
+  "code_examples": [
+    "<div class=\"flex flex-row\">\n  <div class=\"basis-64\">01</div>\n  <div class=\"basis-64\">02</div>\n  <div class=\"basis-128\">03</div>\n</div>",
+    "<div class=\"flex flex-row\">\n  <div class=\"basis-3xs\">01</div>\n  <div class=\"basis-2xs\">02</div>\n  <div class=\"basis-xs\">03</div>\n  <div class=\"basis-sm\">04</div>\n</div>",
+    "<div class=\"flex flex-row\">\n  <div class=\"basis-1/3\">01</div>\n  <div class=\"basis-2/3\">02</div>\n</div>",
+    "<div class=\"basis-[30vw] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"basis-(--my-basis) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"flex flex-row\">\n  <div class=\"basis-1/4 md:basis-1/3\">01</div>\n  <div class=\"basis-1/4 md:basis-1/3\">02</div>\n  <div class=\"basis-1/2 md:basis-1/3\">03</div>\n</div>",
+    "@theme {\n  --container-4xs: 14rem; \n}",
+    "<div class=\"basis-4xs\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/flex-basis/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2811,
+          "pageY": 2868,
+          "scrollY": 2868,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:52.733103+00:00"
+}

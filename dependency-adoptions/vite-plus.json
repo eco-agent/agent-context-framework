@@ -1,0 +1,18 @@
+{
+  "name": "vite-plus",
+  "version": "0.2.6",
+  "source": "https://github.com/voidzero-dev/vite-plus/tree/v0.2.6",
+  "license": "MIT",
+  "integrity": "sha512-fFX8GLENhtzvnE4NmTPC8INRxjD2kZKcqUW0p7jOdawmHTNZqM5FiieyWOG6WH1a/axu9FCsbUNb918grfzDTw==",
+  "purpose": "Provide one repository-level development command surface for workspace tasks, checks, future Vite builds, editor integration, and CI setup.",
+  "alternativesConsidered": [
+    "Keep independent pnpm, Vite, formatter, linter, and test command surfaces",
+    "Adopt Turborepo plus standalone Vite tooling",
+    "Use Vite without the Vite Plus workspace toolchain"
+  ],
+  "maintenanceStatus": "Pinned initial adoption; keep pnpm and repository verification scripts authoritative until Vite Plus proves parity.",
+  "securityEvidence": "Official MIT registry metadata, Node.js 24 engine support, package integrity, monorepo, editor, migration, and CI documentation were reviewed.",
+  "modifications": "None; used as root development tooling.",
+  "requiredNotices": "Retain the MIT license when redistributing the package.",
+  "owner": "platform"
+}

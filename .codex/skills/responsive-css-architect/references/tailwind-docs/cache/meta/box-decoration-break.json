@@ -1,0 +1,47 @@
+{
+  "path": "/docs/box-decoration-break",
+  "url": "https://tailwindcss.com/docs/box-decoration-break",
+  "slug": "box-decoration-break",
+  "source_cache_file": "box-decoration-break.md",
+  "title": "box-decoration-break - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "box-decoration-break",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT box-decoration-break Utilities for controlling how element fragments should be rendered across multiple lines, columns, or pages. Class Styles box-decoration-clone box-decoration-break: clone; box-decoration-slice box-decoration-break: slice; EXAMPLES Basic example Use the box-decoration-slice and box-decoration-clone utilities to control whether properties like background, border, border-image, box-shadow, clip-path, margin, and padding should be rendered as if the element were one continuous fragment, or distinct blocks: box-decoration-slice Hello World box-decoration-clone Hello World <span class=\"box-decoration-slice bg-linear-to-r from-indigo-600 to-pink-500 px-2 text-white ...\"> Hello<br />World </span> <span class=\"box-decoration-clone bg-linear-to-r from-indigo-600 to-pink-500 px-2 text-white ...\"> Hello<br />World </span> Responsive design Prefix a box-decoration-break utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"box-decoration-clone md:box-decoration-slice ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. break-inside box-sizing",
+  "code_examples": [
+    "<span class=\"box-decoration-slice bg-linear-to-r from-indigo-600 to-pink-500 px-2 text-white ...\">\n  Hello<br />World\n</span>\n<span class=\"box-decoration-clone bg-linear-to-r from-indigo-600 to-pink-500 px-2 text-white ...\">\n  Hello<br />World\n</span>",
+    "<div class=\"box-decoration-clone md:box-decoration-slice ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/box-decoration-break/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 360,
+          "pageY": 417,
+          "scrollY": 417,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:11.463592+00:00"
+}

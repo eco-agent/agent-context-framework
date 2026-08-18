@@ -1,0 +1,95 @@
+{
+  "path": "/docs/position",
+  "url": "https://tailwindcss.com/docs/position",
+  "slug": "position",
+  "source_cache_file": "position.md",
+  "title": "position - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "position",
+    "EXAMPLES",
+    "Statically positioning elements",
+    "Relatively positioning elements",
+    "Absolutely positioning elements",
+    "Fixed positioning elements",
+    "Sticky positioning elements",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT position Utilities for controlling how an element is positioned in the document. Class Styles static position: static; fixed position: fixed; absolute position: absolute; relative position: relative; sticky position: sticky; EXAMPLES Statically positioning elements Use the static utility to position an element according to the normal flow of the document: Static parent Absolute child <div class=\"static ...\"> <p>Static parent</p> <div class=\"absolute bottom-0 left-0 ...\"> <p>Absolute child</p> </div> </div> With statically positioned elements, any offsets will be ignored and the element will not act as a position reference for absolutely positioned children. Relatively positioning elements Use the relative utility to position an element according to the normal flow of the document: Relative parent Absolute child <div class=\"relative ...\"> <p>Relative parent</p> <div class=\"absolute bottom-0 left-0 ...\"> <p>Absolute child</p> </div> </div> With relatively position elements, any offsets are calculated relative to the element's normal position and the element will act as a position reference for absolutely positioned children. Absolutely positioning elements Use the absolute utility to position an element outside of the normal flow of the document, causing neighboring elements to act as if the element doesn't exist: With static positioning Relative parent Static parent Static child? Static sibling With absolute positioning Relative parent Static parent Absolute child Static sibling <div class=\"static ...\"> <!-- Static parent --> <div class=\"static ...\"><p>Static child</p></div> <div class=\"inline-block ...\"><p>Static sibling</p></div> <!-- Static parent --> <div class=\"absolute ...\"><p>Absolute child</p></div> <div class=\"inline-block ...\"><p>Static sibling</p></div> </div> With absolutely positioned elements, any offsets are calculated relative to the nearest parent that has a position other than static, and the element will act as a position reference for other absolutely positioned children. Fixed positioning elements Use the fixed utility to position an element relative to the browser window: Scroll this element to see the fixed positioning in action Contacts Andrew Alfred Debra Houston Jane White Ray Flint Mindy Albrect David Arnold <div class=\"relative\"> <div class=\"fixed top-0 right-0 left-0\">Contacts</div> <div> <div> <img src=\"/img/andrew.jpg\" /> <strong>Andrew Alfred</strong> </div> <div> <img src=\"/img/debra.jpg\" /> <strong>Debra Houston</strong> </div> <!-- ... --> </div> </div> With fixed positioned elements, any offsets are calculated relative to the viewport and the element will act as a position reference for absolutely positioned children: Sticky positioning elements Use the sticky utility to position an element as relative until it crosses a specified threshold, then treat it as fixed until its parent is off screen: Scroll this element to see the sticky positioning in action A Andrew Alfred Aisha Houston Anna White Andy Flint B Bob Alfred Bianca Houston Brianna White Bert Flint C Colton Alfred Cynthia Houston Cheyenne White Charlie Flint <div> <div> <div class=\"sticky top-0 ...\">A</div> <div> <div> <img src=\"/img/andrew.jpg\" /> <strong>Andrew Alfred</strong> </div> <div> <img src=\"/img/aisha.jpg\" /> <strong>Aisha Houston</strong> </div> <!-- ... --> </div> </div> <div> <div class=\"sticky top-0\">B</div> <div> <div> <img src=\"/img/bob.jpg\" /> <strong>Bob Alfred</strong> </div> <!-- ... --> </div> </div> <!-- ... --> </div> With sticky positioned elements, any offsets are calculated relative to the element's normal position and the element will act as a position reference for absolutely positioned children. Responsive design Prefix a position utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"relative md:absolute ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. overscroll-behavior top / right / bottom / left",
+  "code_examples": [
+    "<div class=\"static ...\">\n  <p>Static parent</p>\n  <div class=\"absolute bottom-0 left-0 ...\">\n    <p>Absolute child</p>\n  </div>\n</div>",
+    "<div class=\"relative ...\">\n  <p>Relative parent</p>\n  <div class=\"absolute bottom-0 left-0 ...\">\n    <p>Absolute child</p>\n  </div>\n</div>",
+    "<div class=\"static ...\">\n  <!-- Static parent -->\n  <div class=\"static ...\"><p>Static child</p></div>\n  <div class=\"inline-block ...\"><p>Static sibling</p></div>\n  <!-- Static parent -->\n  <div class=\"absolute ...\"><p>Absolute child</p></div>\n  <div class=\"inline-block ...\"><p>Static sibling</p></div>\n</div>",
+    "<div class=\"relative\">\n  <div class=\"fixed top-0 right-0 left-0\">Contacts</div>\n  <div>\n    <div>\n      <img src=\"/img/andrew.jpg\" />\n      <strong>Andrew Alfred</strong>\n    </div>\n    <div>\n      <img src=\"/img/debra.jpg\" />\n      <strong>Debra Houston</strong>\n    </div>\n    <!-- ... -->\n  </div>\n</div>",
+    "<div>\n  <div>\n    <div class=\"sticky top-0 ...\">A</div>\n    <div>\n      <div>\n        <img src=\"/img/andrew.jpg\" />\n        <strong>Andrew Alfred</strong>\n      </div>\n      <div>\n        <img src=\"/img/aisha.jpg\" />\n        <strong>Aisha Houston</strong>\n      </div>\n      <!-- ... -->\n    </div>\n  </div>\n  <div>\n    <div class=\"sticky top-0\">B</div>\n    <div>\n      <div>\n        <img src=\"/img/bob.jpg\" />\n        <strong>Bob Alfred</strong>\n      </div>\n      <!-- ... -->\n    </div>\n  </div>\n  <!-- ... -->\n</div>",
+    "<div class=\"relative md:absolute ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/position/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 4365,
+          "pageY": 4422,
+          "scrollY": 4422,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:42.324716+00:00"
+}

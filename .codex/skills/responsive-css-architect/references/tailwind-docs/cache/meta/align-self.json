@@ -1,0 +1,89 @@
+{
+  "path": "/docs/align-self",
+  "url": "https://tailwindcss.com/docs/align-self",
+  "slug": "align-self",
+  "source_cache_file": "align-self.md",
+  "title": "align-self - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "align-self",
+    "EXAMPLES",
+    "Auto",
+    "Start",
+    "Center",
+    "End",
+    "Stretch",
+    "Baseline",
+    "Last baseline",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID align-self Utilities for controlling how an individual flex or grid item is positioned along its container's cross axis. Class Styles self-auto align-self: auto; self-start align-self: flex-start; self-end align-self: flex-end; self-end-safe align-self: safe flex-end; self-center align-self: center; self-center-safe align-self: safe center; self-stretch align-self: stretch; self-baseline align-self: baseline; self-baseline-last align-self: last baseline; EXAMPLES Auto Use the self-auto utility to align an item based on the value of the container's align-items property: 01 02 03 <div class=\"flex items-stretch ...\"> <div>01</div> <div class=\"self-auto ...\">02</div> <div>03</div> </div> Start Use the self-start utility to align an item to the start of the container's cross axis, despite the container's align-items value: 01 02 03 <div class=\"flex items-stretch ...\"> <div>01</div> <div class=\"self-start ...\">02</div> <div>03</div> </div> Center Use the self-center utility to align an item along the center of the container's cross axis, despite the container's align-items value: 01 02 03 <div class=\"flex items-stretch ...\"> <div>01</div> <div class=\"self-center ...\">02</div> <div>03</div> </div> End Use the self-end utility to align an item to the end of the container's cross axis, despite the container's align-items value: 01 02 03 <div class=\"flex items-stretch ...\"> <div>01</div> <div class=\"self-end ...\">02</div> <div>03</div> </div> Stretch Use the self-stretch utility to stretch an item to fill the container's cross axis, despite the container's align-items value: 01 02 03 <div class=\"flex items-stretch ...\"> <div>01</div> <div class=\"self-stretch ...\">02</div> <div>03</div> </div> Baseline Use the self-baseline utility to align an item such that its baseline aligns with the baseline of the flex container's cross axis: 01 02 03 <div class=\"flex ...\"> <div class=\"self-baseline pt-2 pb-6\">01</div> <div class=\"self-baseline pt-8 pb-12\">02</div> <div class=\"self-baseline pt-12 pb-4\">03</div> </div> Last baseline Use the self-baseline-last utility to align an item along the container's cross axis such that its baseline aligns with the last baseline in the container: Spencer Sharp Working on the future of astronaut recruitment at Space Recruit. spacerecruit.com Alex Reed A multidisciplinary designer. alex-reed.com <div class=\"grid grid-cols-[1fr_auto]\"> <div> <img src=\"img/spencer-sharp.jpg\" /> <h4>Spencer Sharp</h4> <p class=\"self-baseline-last\">Working on the future of astronaut recruitment at Space Recruit.</p> </div> <p class=\"self-baseline-last\">spacerecruit.com</p> </div> This is useful for ensuring that text items align with each other, even if they have different heights. Responsive design Prefix an align-self utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"self-auto md:self-end ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. align-items place-content",
+  "code_examples": [
+    "<div class=\"flex items-stretch ...\">\n  <div>01</div>\n  <div class=\"self-auto ...\">02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex items-stretch ...\">\n  <div>01</div>\n  <div class=\"self-start ...\">02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex items-stretch ...\">\n  <div>01</div>\n  <div class=\"self-center ...\">02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex items-stretch ...\">\n  <div>01</div>\n  <div class=\"self-end ...\">02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex items-stretch ...\">\n  <div>01</div>\n  <div class=\"self-stretch ...\">02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex ...\">\n  <div class=\"self-baseline pt-2 pb-6\">01</div>\n  <div class=\"self-baseline pt-8 pb-12\">02</div>\n  <div class=\"self-baseline pt-12 pb-4\">03</div>\n</div>",
+    "<div class=\"grid grid-cols-[1fr_auto]\">\n  <div>\n    <img src=\"img/spencer-sharp.jpg\" />\n    <h4>Spencer Sharp</h4>\n    <p class=\"self-baseline-last\">Working on the future of astronaut recruitment at Space Recruit.</p>\n  </div>\n  <p class=\"self-baseline-last\">spacerecruit.com</p>\n</div>",
+    "<div class=\"self-auto md:self-end ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/align-self/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3806,
+          "pageY": 3863,
+          "scrollY": 3863,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:46.157299+00:00"
+}

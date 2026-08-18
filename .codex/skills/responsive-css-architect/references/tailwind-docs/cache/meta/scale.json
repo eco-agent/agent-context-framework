@@ -1,0 +1,76 @@
+{
+  "path": "/docs/scale",
+  "url": "https://tailwindcss.com/docs/scale",
+  "slug": "scale",
+  "source_cache_file": "scale.md",
+  "title": "scale - Transforms - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "scale",
+    "EXAMPLES",
+    "Basic example",
+    "Scaling on the x-axis",
+    "Scaling on the y-axis",
+    "Using negative values",
+    "Using a custom value",
+    "Applying on hover"
+  ],
+  "content_text": "TRANSFORMS scale Utilities for scaling elements. Class Styles scale-none scale: none; scale-<number> scale: <number>% <number>%; -scale-<number> scale: calc(<number>% * -1) calc(<number>% * -1); scale-(<custom-property>) scale: var(<custom-property>) var(<custom-property>); scale-[<value>] scale: <value>; scale-x-<number> scale: <number>% var(--tw-scale-y); -scale-x-<number> scale: calc(<number>% * -1) var(--tw-scale-y); scale-x-(<custom-property>) scale: var(<custom-property>) var(--tw-scale-y); scale-x-[<value>] scale: <value> var(--tw-scale-y); scale-y-<number> scale: var(--tw-scale-x) <number>%; SHOW MORE EXAMPLES Basic example Use scale-<number> utilities like scale-75 and scale-150 to scale an element by a percentage of its original size: scale-75 scale-100 scale-125 <img class=\"scale-75 ...\" src=\"/img/mountains.jpg\" /> <img class=\"scale-100 ...\" src=\"/img/mountains.jpg\" /> <img class=\"scale-125 ...\" src=\"/img/mountains.jpg\" /> Scaling on the x-axis Use the scale-x-<number> utilities like scale-x-75 and -scale-x-150 to scale an element on the x-axis by a percentage of its original width: scale-x-75 scale-x-100 scale-x-125 <img class=\"scale-x-75 ...\" src=\"/img/mountains.jpg\" /> <img class=\"scale-x-100 ...\" src=\"/img/mountains.jpg\" /> <img class=\"scale-x-125 ...\" src=\"/img/mountains.jpg\" /> Scaling on the y-axis Use the scale-y-<number> utilities like scale-y-75 and scale-y-150 to scale an element on the y-axis by a percentage of its original height: scale-y-75 scale-y-100 scale-y-125 <img class=\"scale-y-75 ...\" src=\"/img/mountains.jpg\" /> <img class=\"scale-y-100 ...\" src=\"/img/mountains.jpg\" /> <img class=\"scale-y-125 ...\" src=\"/img/mountains.jpg\" /> Using negative values Use -scale-<number>, -scale-x-<number> or -scale-y-<number> utilities like -scale-x-75 and -scale-125 to mirror and scale down an element by a percentage of its original size: -scale-x-75 -scale-100 -scale-y-125 <img class=\"-scale-x-75 ...\" src=\"/img/mountains.jpg\" /> <img class=\"-scale-100 ...\" src=\"/img/mountains.jpg\" /> <img class=\"-scale-y-125 ...\" src=\"/img/mountains.jpg\" /> Using a custom value Use the scale-[<value>] syntax to set the scale based on a completely custom value: <img class=\"scale-[1.7] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the scale-(<custom-property>) syntax: <img class=\"scale-(--my-scale) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for scale-[var(<custom-property>)] that adds the var() function for you automatically. Applying on hover Prefix a scale utility with a variant like hover:* to only apply the utility in that state: <img class=\"scale-95 hover:scale-120 ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. rotate skew",
+  "code_examples": [
+    "<img class=\"scale-75 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"scale-100 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"scale-125 ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"scale-x-75 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"scale-x-100 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"scale-x-125 ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"scale-y-75 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"scale-y-100 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"scale-y-125 ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"-scale-x-75 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"-scale-100 ...\" src=\"/img/mountains.jpg\" />\n<img class=\"-scale-y-125 ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"scale-[1.7] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"scale-(--my-scale) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"scale-95 hover:scale-120 ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/scale/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2564,
+          "pageY": 2621,
+          "scrollY": 2621,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:56.741280+00:00"
+}

@@ -1,0 +1,63 @@
+{
+  "path": "/docs/user-select",
+  "url": "https://tailwindcss.com/docs/user-select",
+  "slug": "user-select",
+  "source_cache_file": "user-select.md",
+  "title": "user-select - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "user-select",
+    "EXAMPLES",
+    "Disabling text selection",
+    "Allowing text selection",
+    "Selecting all text in one click",
+    "Using auto select behavior",
+    "Responsive design"
+  ],
+  "content_text": "INTERACTIVITY user-select Utilities for controlling whether the user can select text in an element. Class Styles select-none user-select: none; select-text user-select: text; select-all user-select: all; select-auto user-select: auto; EXAMPLES Disabling text selection Use the select-none utility to prevent selecting text in an element and its children: Try selecting the text to see the expected behavior The quick brown fox jumps over the lazy dog. <div class=\"select-none ...\">The quick brown fox jumps over the lazy dog.</div> Allowing text selection Use the select-text utility to allow selecting text in an element and its children: Try selecting the text to see the expected behavior The quick brown fox jumps over the lazy dog. <div class=\"select-text ...\">The quick brown fox jumps over the lazy dog.</div> Selecting all text in one click Use the select-all utility to automatically select all the text in an element when a user clicks: Try clicking the text to see the expected behavior The quick brown fox jumps over the lazy dog. <div class=\"select-all ...\">The quick brown fox jumps over the lazy dog.</div> Using auto select behavior Use the select-auto utility to use the default browser behavior for selecting text: Try selecting the text to see the expected behavior The quick brown fox jumps over the lazy dog. <div class=\"select-auto ...\">The quick brown fox jumps over the lazy dog.</div> Responsive design Prefix an user-select utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"select-none md:select-all ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. touch-action will-change",
+  "code_examples": [
+    "<div class=\"select-none ...\">The quick brown fox jumps over the lazy dog.</div>",
+    "<div class=\"select-text ...\">The quick brown fox jumps over the lazy dog.</div>",
+    "<div class=\"select-all ...\">The quick brown fox jumps over the lazy dog.</div>",
+    "<div class=\"select-auto ...\">The quick brown fox jumps over the lazy dog.</div>",
+    "<div class=\"select-none md:select-all ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/user-select/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1353,
+          "pageY": 1410,
+          "scrollY": 1410,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:08:11.408586+00:00"
+}

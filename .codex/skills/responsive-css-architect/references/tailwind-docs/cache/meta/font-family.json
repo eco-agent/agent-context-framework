@@ -1,0 +1,76 @@
+{
+  "path": "/docs/font-family",
+  "url": "https://tailwindcss.com/docs/font-family",
+  "slug": "font-family",
+  "source_cache_file": "font-family.md",
+  "title": "font-family - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "font-family",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "TYPOGRAPHY font-family Utilities for controlling the font family of an element. Class Styles font-sans font-family: var(--font-sans); /* -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji' */ font-serif font-family: var(--font-serif); /* ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif */ font-mono font-family: var(--font-mono); /* ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace */ font-(family-name:<custom-property>) font-family: var(<custom-property>); font-[<value>] font-family: <value>; EXAMPLES Basic example Use utilities like font-sans and font-mono to set the font family of an element: font-sans The quick brown fox jumps over the lazy dog. font-serif The quick brown fox jumps over the lazy dog. font-mono The quick brown fox jumps over the lazy dog. <p class=\"font-sans ...\">The quick brown fox ...</p> <p class=\"font-serif ...\">The quick brown fox ...</p> <p class=\"font-mono ...\">The quick brown fox ...</p> Using a custom value Use the font-[<value>] syntax to set the font family based on a completely custom value: <p class=\"font-[Open_Sans] ...\"> Lorem ipsum dolor sit amet... </p> For CSS variables, you can also use the font-(family-name:<custom-property>) syntax: <p class=\"font-(family-name:--my-font) ...\"> Lorem ipsum dolor sit amet... </p> This is just a shorthand for font-[family-name:var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a font-family utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"font-sans md:font-serif ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. Customizing your theme Use the --font-* theme variables to customize the font family utilities in your project: @theme { --font-display: \"Oswald\", sans-serif; } Now the font-display utility can be used in your markup: <div class=\"font-display\"> <!-- ... --> </div> You can also provide default font-feature-settings and font-variation-settings values for a font family: @theme { --font-display: \"Oswald\", sans-serif; --font-display--font-feature-settings: \"cv02\", \"cv03\", \"cv04\", \"cv11\"; --font-display--font-variation-settings: \"opsz\" 32; } If needed, use the @font-face at-rule to load custom fonts: @font-face { font-family: Oswald; font-style: normal; font-weight: 200 700; font-display: swap; src: url(\"/fonts/Oswald.woff2\") format(\"woff2\"); } If you're loading a font from a service like Google Fonts, make sure to put the @import at the very top of your CSS file: @import url(\"https://fonts.googleapis.com/css2?family=Roboto&display=swap\"); @import \"tailwindcss\"; @theme { --font-roboto: \"Roboto\", sans-serif; } Browsers require that @import statements come before any other rules, so URL imports need to be above imports like @import \"tailwindcss\" which are inlined in the compiled CSS. Learn more about customizing your theme in the theme documentation. max-block-size font-size",
+  "code_examples": [
+    "<p class=\"font-sans ...\">The quick brown fox ...</p>\n<p class=\"font-serif ...\">The quick brown fox ...</p>\n<p class=\"font-mono ...\">The quick brown fox ...</p>",
+    "<p class=\"font-[Open_Sans] ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"font-(family-name:--my-font) ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"font-sans md:font-serif ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "@theme {\n  --font-display: \"Oswald\", sans-serif; \n}",
+    "<div class=\"font-display\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --font-display: \"Oswald\", sans-serif;\n  --font-display--font-feature-settings: \"cv02\", \"cv03\", \"cv04\", \"cv11\"; \n  --font-display--font-variation-settings: \"opsz\" 32; \n}",
+    "@font-face {\n  font-family: Oswald;\n  font-style: normal;\n  font-weight: 200 700;\n  font-display: swap;\n  src: url(\"/fonts/Oswald.woff2\") format(\"woff2\");\n}",
+    "@import url(\"https://fonts.googleapis.com/css2?family=Roboto&display=swap\");\n@import \"tailwindcss\";\n@theme {\n  --font-roboto: \"Roboto\", sans-serif; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/font-family/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2364,
+          "pageY": 2421,
+          "scrollY": 2421,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:02:44.240507+00:00"
+}

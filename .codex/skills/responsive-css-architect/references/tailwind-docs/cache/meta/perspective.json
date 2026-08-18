@@ -1,0 +1,75 @@
+{
+  "path": "/docs/perspective",
+  "url": "https://tailwindcss.com/docs/perspective",
+  "slug": "perspective",
+  "source_cache_file": "perspective.md",
+  "title": "perspective - Transforms - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "perspective",
+    "EXAMPLES",
+    "Basic example",
+    "Removing a perspective",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "TRANSFORMS perspective Utilities for controlling an element's perspective when placed in 3D space. Class Styles perspective-dramatic perspective: var(--perspective-dramatic); /* 100px */ perspective-near perspective: var(--perspective-near); /* 300px */ perspective-normal perspective: var(--perspective-normal); /* 500px */ perspective-midrange perspective: var(--perspective-midrange); /* 800px */ perspective-distant perspective: var(--perspective-distant); /* 1200px */ perspective-none perspective: none; perspective-(<custom-property>) perspective: var(<custom-property>); perspective-[<value>] perspective: <value>; EXAMPLES Basic example Use utilities like perspective-normal and perspective-distant to control how close or how far away the z-plane is from the screen: perspective-dramatic 1 2 3 4 5 6 perspective-normal 1 2 3 4 5 6 <div class=\"size-20 perspective-dramatic ...\"> <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div> <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div> <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div> <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div> <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div> <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div> </div> <div class=\"size-20 perspective-normal ...\"> <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div> <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div> <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div> <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div> <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div> <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div> </div> This is like moving a camera closer to or further away from an object. Removing a perspective Use the perspective-none utility to remove a perspective transform from an element: <div class=\"perspective-none ...\"> <!-- ... --> </div> Using a custom value Use the perspective-[<value>] syntax to set the perspective based on a completely custom value: <div class=\"perspective-[750px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the perspective-(<custom-property>) syntax: <div class=\"perspective-(--my-perspective) ...\"> <!-- ... --> </div> This is just a shorthand for perspective-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a perspective utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"perspective-midrange md:perspective-dramatic ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme Use the --perspective-* theme variables to customize the perspective utilities in your project: @theme { --perspective-remote: 1800px; } Now the perspective-remote utility can be used in your markup: <div class=\"perspective-remote\"> <!-- ... --> </div> Learn more about customizing your theme in the theme documentation. backface-visibility perspective-origin",
+  "code_examples": [
+    "<div class=\"size-20 perspective-dramatic ...\">\n  <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div>\n  <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div>\n  <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div>\n  <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div>\n  <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div>\n  <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div>\n</div>\n<div class=\"size-20 perspective-normal ...\">\n  <div class=\"translate-z-12 rotate-x-0 bg-sky-300/75 ...\">1</div>\n  <div class=\"-translate-z-12 rotate-y-18 bg-sky-300/75 ...\">2</div>\n  <div class=\"translate-x-12 rotate-y-90 bg-sky-300/75 ...\">3</div>\n  <div class=\"-translate-x-12 -rotate-y-90 bg-sky-300/75 ...\">4</div>\n  <div class=\"-translate-y-12 rotate-x-90 bg-sky-300/75 ...\">5</div>\n  <div class=\"translate-y-12 -rotate-x-90 bg-sky-300/75 ...\">6</div>\n</div>",
+    "<div class=\"perspective-none ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"perspective-[750px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"perspective-(--my-perspective) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"perspective-midrange md:perspective-dramatic ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --perspective-remote: 1800px; \n}",
+    "<div class=\"perspective-remote\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/perspective/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2300,
+          "pageY": 2357,
+          "scrollY": 2357,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:47.514512+00:00"
+}

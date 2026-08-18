@@ -1,0 +1,60 @@
+{
+  "path": "/docs/mask-position",
+  "url": "https://tailwindcss.com/docs/mask-position",
+  "slug": "mask-position",
+  "source_cache_file": "mask-position.md",
+  "title": "mask-position - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "mask-position",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS mask-position Utilities for controlling the position of an element's mask image. Class Styles mask-top-left mask-position: top left; mask-top mask-position: top; mask-top-right mask-position: top right; mask-left mask-position: left; mask-center mask-position: center; mask-right mask-position: right; mask-bottom-left mask-position: bottom left; mask-bottom mask-position: bottom; mask-bottom-right mask-position: bottom right; mask-position-(<custom-property>) mask-position: var(<custom-property>); mask-position-[<value>] mask-position: <value>; EXAMPLES Basic example Use utilities like mask-center, mask-right, and mask-left-top to control the position of an element's mask image: mask-top-left mask-top mask-top-right mask-left mask-center mask-right mask-bottom-left mask-bottom mask-bottom-right <div class=\"mask-top-left mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-top mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-top-right mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-left mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-center mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-right mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-bottom-left mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-bottom mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-bottom-right mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div> Using a custom value Use the mask-position-[<value>] syntax to set the mask position based on a completely custom value: <div class=\"mask-position-[center_top_1rem] ...\"> <!-- ... --> </div> For CSS variables, you can also use the mask-position-(<custom-property>) syntax: <div class=\"mask-position-(--my-mask-position) ...\"> <!-- ... --> </div> This is just a shorthand for mask-position-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a mask-position utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"mask-center md:mask-top ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. mask-origin mask-repeat",
+  "code_examples": [
+    "<div class=\"mask-top-left mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-top mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-top-right mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-left mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-center mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-right mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-bottom-left mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-bottom mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-bottom-right mask-[url(/img/circle.png)] mask-size-[50%] bg-[url(/img/mountains.jpg)] ...\"></div>",
+    "<div class=\"mask-position-[center_top_1rem] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"mask-position-(--my-mask-position) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"mask-center md:mask-top ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/mask-position/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1594,
+          "pageY": 1651,
+          "scrollY": 1651,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:17.429609+00:00"
+}

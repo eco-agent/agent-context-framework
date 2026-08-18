@@ -1,0 +1,65 @@
+{
+  "path": "/docs/fill",
+  "url": "https://tailwindcss.com/docs/fill",
+  "slug": "fill",
+  "source_cache_file": "fill.md",
+  "title": "fill - SVG - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "fill",
+    "EXAMPLES",
+    "Basic example",
+    "Using the current color",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "SVG fill Utilities for styling the fill of SVG elements. Class Styles fill-none fill: none; fill-inherit fill: inherit; fill-current fill: currentColor; fill-transparent fill: transparent; fill-black fill: var(--color-black); /* #000 */ fill-white fill: var(--color-white); /* #fff */ fill-red-50 fill: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ fill-red-100 fill: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ fill-red-200 fill: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ fill-red-300 fill: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ SHOW MORE EXAMPLES Basic example Use utilities like fill-indigo-500 and fill-lime-600 to change the fill color of an SVG: <svg class=\"fill-blue-500 ...\"> <!-- ... --> </svg> This can be useful for styling icon sets like Heroicons. Using the current color Use the fill-current utility to set the fill color to the current text color: Hover over the button to see the fill color change Check for updates <button class=\"bg-white text-indigo-600 hover:bg-indigo-600 hover:text-white ...\"> <svg class=\"size-5 fill-current ...\"> <!-- ... --> </svg> Check for updates </button> Using a custom value Use the fill-[<value>] syntax to set the fill color based on a completely custom value: <svg class=\"fill-[#243c5a] ...\"> <!-- ... --> </svg> For CSS variables, you can also use the fill-(<custom-property>) syntax: <svg class=\"fill-(--my-fill-color) ...\"> <!-- ... --> </svg> This is just a shorthand for fill-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a fill utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <svg class=\"fill-cyan-500 md:fill-cyan-700 ...\"> <!-- ... --> </svg> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the fill-regal-blue utility can be used in your markup: <svg class=\"fill-regal-blue\"> <!-- ... --> </svg> Learn more about customizing your theme in the theme documentation. will-change stroke",
+  "code_examples": [
+    "<svg class=\"fill-blue-500 ...\">\n  <!-- ... -->\n</svg>",
+    "<button class=\"bg-white text-indigo-600 hover:bg-indigo-600 hover:text-white ...\">\n  <svg class=\"size-5 fill-current ...\">\n    <!-- ... -->\n  </svg>\n  Check for updates\n</button>",
+    "<svg class=\"fill-[#243c5a] ...\">\n  <!-- ... -->\n</svg>",
+    "<svg class=\"fill-(--my-fill-color) ...\">\n  <!-- ... -->\n</svg>",
+    "<svg class=\"fill-cyan-500 md:fill-cyan-700 ...\">\n  <!-- ... -->\n</svg>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<svg class=\"fill-regal-blue\">\n  <!-- ... -->\n</svg>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/fill/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2048,
+          "pageY": 2105,
+          "scrollY": 2105,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:08:16.617788+00:00"
+}

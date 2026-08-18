@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/jakubkrehel/skills",
+  "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+  "license": "MIT",
+  "sourceSkill": "better-colors",
+  "verbatimPrinciples": [1, 2],
+  "verbatimReferences": ["color-conversion.md", "palette-generation.md", "gamut-and-tailwind.md", "color-usage.md"],
+  "excluded": ["review output", "verification", "common mistakes", "fixed contrast-threshold policy", "accessibility-contrast.md"],
+  "localChanges": "New frontmatter, ownership boundaries, reference routing, numerical-integrity guard, and explicit-only invocation."
+}

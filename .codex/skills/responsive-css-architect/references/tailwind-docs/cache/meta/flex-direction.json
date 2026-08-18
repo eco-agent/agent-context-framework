@@ -1,0 +1,63 @@
+{
+  "path": "/docs/flex-direction",
+  "url": "https://tailwindcss.com/docs/flex-direction",
+  "slug": "flex-direction",
+  "source_cache_file": "flex-direction.md",
+  "title": "flex-direction - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "flex-direction",
+    "EXAMPLES",
+    "Row",
+    "Row reversed",
+    "Column",
+    "Column reversed",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID flex-direction Utilities for controlling the direction of flex items. Class Styles flex-row flex-direction: row; flex-row-reverse flex-direction: row-reverse; flex-col flex-direction: column; flex-col-reverse flex-direction: column-reverse; EXAMPLES Row Use flex-row to position flex items horizontally in the same direction as text: 01 02 03 <div class=\"flex flex-row ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Row reversed Use flex-row-reverse to position flex items horizontally in the opposite direction: 01 02 03 <div class=\"flex flex-row-reverse ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Column Use flex-col to position flex items vertically: 01 02 03 <div class=\"flex flex-col ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Column reversed Use flex-col-reverse to position flex items vertically in the opposite direction: 01 02 03 <div class=\"flex flex-col-reverse ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Responsive design Prefix a flex-direction utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"flex flex-col md:flex-row ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. flex-basis flex-wrap",
+  "code_examples": [
+    "<div class=\"flex flex-row ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-row-reverse ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-col ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-col-reverse ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-col md:flex-row ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/flex-direction/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1865,
+          "pageY": 1922,
+          "scrollY": 1922,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:55.388773+00:00"
+}

@@ -1,0 +1,61 @@
+{
+  "path": "/docs/text-overflow",
+  "url": "https://tailwindcss.com/docs/text-overflow",
+  "slug": "text-overflow",
+  "source_cache_file": "text-overflow.md",
+  "title": "text-overflow - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-overflow",
+    "EXAMPLES",
+    "Truncating text",
+    "Adding an ellipsis",
+    "Clipping text",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-overflow Utilities for controlling how the text of an element overflows. Class Styles truncate overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-ellipsis text-overflow: ellipsis; text-clip text-overflow: clip; EXAMPLES Truncating text Use the truncate utility to prevent text from wrapping and truncate overflowing text with an ellipsis (\u2026) if needed: The longest word in any of the major English language dictionaries is pneumonoultramicroscopicsilicovolcanoconiosis, a word that refers to a lung disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it is the same as silicosis. <p class=\"truncate\">The longest word in any of the major...</p> Adding an ellipsis Use the text-ellipsis utility to truncate overflowing text with an ellipsis (\u2026) if needed: The longest word in any of the major English language dictionaries is pneumonoultramicroscopicsilicovolcanoconiosis, a word that refers to a lung disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it is the same as silicosis. <p class=\"overflow-hidden text-ellipsis\">The longest word in any of the major...</p> Clipping text Use the text-clip utility to truncate the text at the limit of the content area: The longest word in any of the major English language dictionaries is pneumonoultramicroscopicsilicovolcanoconiosis, a word that refers to a lung disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it is the same as silicosis. <p class=\"overflow-hidden text-clip\">The longest word in any of the major...</p> This is the default browser behavior. Responsive design Prefix a text-overflow utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"text-ellipsis md:text-clip ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. text-transform text-wrap",
+  "code_examples": [
+    "<p class=\"truncate\">The longest word in any of the major...</p>",
+    "<p class=\"overflow-hidden text-ellipsis\">The longest word in any of the major...</p>",
+    "<p class=\"overflow-hidden text-clip\">The longest word in any of the major...</p>",
+    "<p class=\"text-ellipsis md:text-clip ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-overflow/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1235,
+          "pageY": 1292,
+          "scrollY": 1292,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:39.004893+00:00"
+}

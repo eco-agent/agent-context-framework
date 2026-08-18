@@ -1,0 +1,111 @@
+{
+  "path": "/docs/align-content",
+  "url": "https://tailwindcss.com/docs/align-content",
+  "slug": "align-content",
+  "source_cache_file": "align-content.md",
+  "title": "align-content - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "align-content",
+    "EXAMPLES",
+    "Start",
+    "Center",
+    "End",
+    "Space between",
+    "Space around",
+    "Space evenly",
+    "Stretch",
+    "Normal",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID align-content Utilities for controlling how rows are positioned in multi-row flex and grid containers. Class Styles content-normal align-content: normal; content-center align-content: center; content-start align-content: flex-start; content-end align-content: flex-end; content-between align-content: space-between; content-around align-content: space-around; content-evenly align-content: space-evenly; content-baseline align-content: baseline; content-stretch align-content: stretch; EXAMPLES Start Use content-start to pack rows in a container against the start of the cross axis: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-start gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Center Use content-center to pack rows in a container in the center of the cross axis: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-center gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> End Use content-end to pack rows in a container against the end of the cross axis: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-end gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Space between Use content-between to distribute rows in a container such that there is an equal amount of space between each line: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-between gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Space around Use content-around to distribute rows in a container such that there is an equal amount of space around each line: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-around gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Space evenly Use content-evenly to distribute rows in a container such that there is an equal amount of space around each item, but also accounting for the doubling of space you would normally see between each item when using content-around: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-evenly gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Stretch Use content-stretch to allow content items to fill the available space along the container\u2019s cross axis: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-stretch gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Normal Use content-normal to pack content items in their default position as if no align-content value was set: 01 02 03 04 05 <div class=\"grid h-56 grid-cols-3 content-normal gap-4 ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> <div>05</div> </div> Responsive design Prefix an align-content utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"grid content-start md:content-around ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. justify-self align-items",
+  "code_examples": [
+    "<div class=\"grid h-56 grid-cols-3 content-start gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-center gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-end gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-between gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-around gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-evenly gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-stretch gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid h-56 grid-cols-3 content-normal gap-4 ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n</div>",
+    "<div class=\"grid content-start md:content-around ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/align-content/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 5200,
+          "pageY": 5257,
+          "scrollY": 5257,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 6,
+          "file": "006.png",
+          "contentOffsetY": 5377,
+          "pageY": 5434,
+          "scrollY": 5434,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:39.949556+00:00"
+}

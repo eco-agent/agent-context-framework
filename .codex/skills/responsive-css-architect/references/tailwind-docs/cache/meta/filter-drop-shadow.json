@@ -1,0 +1,93 @@
+{
+  "path": "/docs/filter-drop-shadow",
+  "url": "https://tailwindcss.com/docs/filter-drop-shadow",
+  "slug": "filter-drop-shadow",
+  "source_cache_file": "filter-drop-shadow.md",
+  "title": "filter: drop-shadow() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter: drop-shadow()",
+    "EXAMPLES",
+    "Basic example",
+    "Changing the opacity",
+    "Setting the shadow color",
+    "Removing a drop shadow",
+    "Using a custom value",
+    "Responsive design",
+    "CUSTOMIZING YOUR THEME",
+    "Customizing drop shadows",
+    "Customizing shadow colors"
+  ],
+  "content_text": "FILTERS filter: drop-shadow() Utilities for applying drop-shadow filters to an element. Class Styles drop-shadow-xs filter: drop-shadow(var(--drop-shadow-xs)); /* 0 1px 1px rgb(0 0 0 / 0.05) */ drop-shadow-sm filter: drop-shadow(var(--drop-shadow-sm)); /* 0 1px 2px rgb(0 0 0 / 0.15) */ drop-shadow-md filter: drop-shadow(var(--drop-shadow-md)); /* 0 3px 3px rgb(0 0 0 / 0.12) */ drop-shadow-lg filter: drop-shadow(var(--drop-shadow-lg)); /* 0 4px 4px rgb(0 0 0 / 0.15) */ drop-shadow-xl filter: drop-shadow(var(--drop-shadow-xl); /* 0 9px 7px rgb(0 0 0 / 0.1) */ drop-shadow-2xl filter: drop-shadow(var(--drop-shadow-2xl)); /* 0 25px 25px rgb(0 0 0 / 0.15) */ drop-shadow-none filter: drop-shadow(0 0 #0000); drop-shadow-(<custom-property>) filter: drop-shadow(var(<custom-property>)); drop-shadow-(color:<custom-property>) --tw-drop-shadow-color: var(<custom-property>); drop-shadow-[<value>] filter: drop-shadow(<value>); SHOW MORE EXAMPLES Basic example Use utilities like drop-shadow-sm and drop-shadow-xl to add a drop shadow to an element: drop-shadow-md drop-shadow-lg drop-shadow-xl <svg class=\"drop-shadow-md ...\"> <!-- ... --> </svg> <svg class=\"drop-shadow-lg ...\"> <!-- ... --> </svg> <svg class=\"drop-shadow-xl ...\"> <!-- ... --> </svg> This is useful for applying shadows to irregular shapes, like text and SVG elements. For applying shadows to regular elements, you probably want to use box shadow instead. Changing the opacity Use the opacity modifier to adjust the opacity of the drop shadow: drop-shadow-xl drop-shadow-xl/25 drop-shadow-xl/50 <svg class=\"fill-white drop-shadow-xl ...\">...</svg> <svg class=\"fill-white drop-shadow-xl/25 ...\">...</svg> <svg class=\"fill-white drop-shadow-xl/50 ...\">...</svg> The default drop shadow opacities are quite low (15% or less), so increasing the opacity (to like 50%) will make the drop shadows more pronounced. Setting the shadow color Use utilities like drop-shadow-indigo-500 and drop-shadow-cyan-500/50 to change the color of a drop shadow: drop-shadow-cyan-500/50 drop-shadow-indigo-500/50 <svg class=\"fill-cyan-500 drop-shadow-lg drop-shadow-cyan-500/50 ...\">...</svg> <svg class=\"fill-indigo-500 drop-shadow-lg drop-shadow-indigo-500/50 ...\">...</svg> By default colored shadows have an opacity of 100% but you can adjust this using the opacity modifier. Removing a drop shadow Use the drop-shadow-none utility to remove an existing drop shadow from an element: <svg class=\"drop-shadow-lg dark:drop-shadow-none\"> <!-- ... --> </svg> Using a custom value Use the drop-shadow-[<value>] syntax to set the drop shadow based on a completely custom value: <svg class=\"drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] ...\"> <!-- ... --> </svg> For CSS variables, you can also use the drop-shadow-(<custom-property>) syntax: <svg class=\"drop-shadow-(--my-drop-shadow) ...\"> <!-- ... --> </svg> This is just a shorthand for drop-shadow-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a filter: drop-shadow() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <svg class=\"drop-shadow-md md:drop-shadow-xl ...\"> <!-- ... --> </svg> Learn more about using variants in the variants documentation. CUSTOMIZING YOUR THEME Customizing drop shadows Use the --drop-shadow-* theme variables to customize the drop shadow utilities in your project: @theme { --drop-shadow-3xl: 0 35px 35px rgba(0, 0, 0, 0.25); } Now the drop-shadow-3xl utility can be used in your markup: <svg class=\"drop-shadow-3xl\"> <!-- ... --> </svg> Learn more about customizing your theme in the theme documentation. Customizing shadow colors Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the drop-shadow-regal-blue utility can be used in your markup: <svg class=\"drop-shadow-regal-blue\"> <!-- ... --> </svg> Learn more about customizing your theme in the theme documentation. contrast grayscale",
+  "code_examples": [
+    "<svg class=\"drop-shadow-md ...\">\n  <!-- ... -->\n</svg>\n<svg class=\"drop-shadow-lg ...\">\n  <!-- ... -->\n</svg>\n<svg class=\"drop-shadow-xl ...\">\n  <!-- ... -->\n</svg>",
+    "<svg class=\"fill-white drop-shadow-xl ...\">...</svg>\n<svg class=\"fill-white drop-shadow-xl/25 ...\">...</svg>\n<svg class=\"fill-white drop-shadow-xl/50 ...\">...</svg>",
+    "<svg class=\"fill-cyan-500 drop-shadow-lg drop-shadow-cyan-500/50 ...\">...</svg>\n<svg class=\"fill-indigo-500 drop-shadow-lg drop-shadow-indigo-500/50 ...\">...</svg>",
+    "<svg class=\"drop-shadow-lg dark:drop-shadow-none\">\n  <!-- ... -->\n</svg>",
+    "<svg class=\"drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] ...\">\n  <!-- ... -->\n</svg>",
+    "<svg class=\"drop-shadow-(--my-drop-shadow) ...\">\n  <!-- ... -->\n</svg>",
+    "<svg class=\"drop-shadow-md md:drop-shadow-xl ...\">\n  <!-- ... -->\n</svg>",
+    "@theme {\n  --drop-shadow-3xl: 0 35px 35px rgba(0, 0, 0, 0.25); \n}",
+    "<svg class=\"drop-shadow-3xl\">\n  <!-- ... -->\n</svg>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<svg class=\"drop-shadow-regal-blue\">\n  <!-- ... -->\n</svg>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter-drop-shadow/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3870,
+          "pageY": 3927,
+          "scrollY": 3927,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:37.917909+00:00"
+}

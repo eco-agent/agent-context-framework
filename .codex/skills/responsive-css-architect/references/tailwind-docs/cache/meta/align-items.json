@@ -1,0 +1,87 @@
+{
+  "path": "/docs/align-items",
+  "url": "https://tailwindcss.com/docs/align-items",
+  "slug": "align-items",
+  "source_cache_file": "align-items.md",
+  "title": "align-items - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "align-items",
+    "EXAMPLES",
+    "Stretch",
+    "Start",
+    "Center",
+    "End",
+    "Baseline",
+    "Last baseline",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID align-items Utilities for controlling how flex and grid items are positioned along a container's cross axis. Class Styles items-start align-items: flex-start; items-end align-items: flex-end; items-end-safe align-items: safe flex-end; items-center align-items: center; items-center-safe align-items: safe center; items-baseline align-items: baseline; items-baseline-last align-items: last baseline; items-stretch align-items: stretch; EXAMPLES Stretch Use the items-stretch utility to stretch items to fill the container's cross axis: 01 02 03 <div class=\"flex items-stretch ...\"> <div class=\"py-4\">01</div> <div class=\"py-12\">02</div> <div class=\"py-8\">03</div> </div> Start Use the items-start utility to align items to the start of the container's cross axis: 01 02 03 <div class=\"flex items-start ...\"> <div class=\"py-4\">01</div> <div class=\"py-12\">02</div> <div class=\"py-8\">03</div> </div> Center Use the items-center utility to align items along the center of the container's cross axis: 01 02 03 <div class=\"flex items-center ...\"> <div class=\"py-4\">01</div> <div class=\"py-12\">02</div> <div class=\"py-8\">03</div> </div> End Use the items-end utility to align items to the end of the container's cross axis: 01 02 03 <div class=\"flex items-end ...\"> <div class=\"py-4\">01</div> <div class=\"py-12\">02</div> <div class=\"py-8\">03</div> </div> Baseline Use the items-baseline utility to align items along the container's cross axis such that all of their baselines align: 01 02 03 <div class=\"flex items-baseline ...\"> <div class=\"pt-2 pb-6\">01</div> <div class=\"pt-8 pb-12\">02</div> <div class=\"pt-12 pb-4\">03</div> </div> Last baseline Use the items-baseline-last utility to align items along the container's cross axis such that all of their baselines align with the last baseline in the container: Spencer Sharp Working on the future of astronaut recruitment at Space Recruit. spacerecruit.com Alex Reed A multidisciplinary designer. alex-reed.com <div class=\"grid grid-cols-[1fr_auto] items-baseline-last\"> <div> <img src=\"img/spencer-sharp.jpg\" /> <h4>Spencer Sharp</h4> <p>Working on the future of astronaut recruitment at Space Recruit.</p> </div> <p>spacerecruit.com</p> </div> This is useful for ensuring that text items align with each other, even if they have different heights. Responsive design Prefix an align-items utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"flex items-stretch md:items-center ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. align-content align-self",
+  "code_examples": [
+    "<div class=\"flex items-stretch ...\">\n  <div class=\"py-4\">01</div>\n  <div class=\"py-12\">02</div>\n  <div class=\"py-8\">03</div>\n</div>",
+    "<div class=\"flex items-start ...\">\n  <div class=\"py-4\">01</div>\n  <div class=\"py-12\">02</div>\n  <div class=\"py-8\">03</div>\n</div>",
+    "<div class=\"flex items-center ...\">\n  <div class=\"py-4\">01</div>\n  <div class=\"py-12\">02</div>\n  <div class=\"py-8\">03</div>\n</div>",
+    "<div class=\"flex items-end ...\">\n  <div class=\"py-4\">01</div>\n  <div class=\"py-12\">02</div>\n  <div class=\"py-8\">03</div>\n</div>",
+    "<div class=\"flex items-baseline ...\">\n  <div class=\"pt-2 pb-6\">01</div>\n  <div class=\"pt-8 pb-12\">02</div>\n  <div class=\"pt-12 pb-4\">03</div>\n</div>",
+    "<div class=\"grid grid-cols-[1fr_auto] items-baseline-last\">\n  <div>\n    <img src=\"img/spencer-sharp.jpg\" />\n    <h4>Spencer Sharp</h4>\n    <p>Working on the future of astronaut recruitment at Space Recruit.</p>\n  </div>\n  <p>spacerecruit.com</p>\n</div>",
+    "<div class=\"flex items-stretch md:items-center ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/align-items/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3240,
+          "pageY": 3297,
+          "scrollY": 3297,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:43.054444+00:00"
+}

@@ -1,0 +1,131 @@
+{
+  "path": "/docs/preflight",
+  "url": "https://tailwindcss.com/docs/preflight",
+  "slug": "preflight",
+  "source_cache_file": "preflight.md",
+  "title": "Preflight - Base styles - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "Preflight",
+    "Overview",
+    "Margins are removed",
+    "Border styles are reset",
+    "Headings are unstyled",
+    "Lists are unstyled",
+    "Images are block-level",
+    "Images are constrained",
+    "Extending Preflight",
+    "Disabling Preflight"
+  ],
+  "content_text": "BASE STYLES Preflight An opinionated set of base styles for Tailwind projects. Overview Built on top of modern-normalize, Preflight is a set of base styles for Tailwind projects that are designed to smooth over cross-browser inconsistencies and make it easier for you to work within the constraints of your design system. When you import tailwindcss into your project, Preflight is automatically injected into the base layer: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/preflight.css\" layer(base); @import \"tailwindcss/utilities.css\" layer(utilities); While most of the styles in Preflight are meant to go unnoticed\u2014they simply make things behave more like you'd expect them to\u2014some are more opinionated and can be surprising when you first encounter them. For a complete reference of all the styles applied by Preflight, see the stylesheet. Margins are removed Preflight removes all of the default margins from all elements including headings, blockquotes, paragraphs, etc: CSS *, ::after, ::before, ::backdrop, ::file-selector-button { margin: 0; padding: 0; } This makes it harder to accidentally rely on margin values applied by the user-agent stylesheet that are not part of your spacing scale. Border styles are reset In order to make it easy to add a border by simply adding the border class, Tailwind overrides the default border styles for all elements with the following rules: CSS *, ::after, ::before, ::backdrop, ::file-selector-button { box-sizing: border-box; border: 0 solid; } Since the border class only sets the border-width property, this reset ensures that adding that class always adds a solid 1px border that uses currentColor. This can cause some unexpected results when integrating certain third-party libraries, like Google maps for example. When you run into situations like this, you can work around them by overriding the Preflight styles with your own custom CSS: CSS @layer base { .google-map * { border-style: none; } } Headings are unstyled All heading elements are completely unstyled by default, and have the same font size and weight as normal text: CSS h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; } The reason for this is two-fold: It helps you avoid accidentally deviating from your type scale. By default, browsers assign sizes to headings that don't exist in Tailwind's default type scale, and aren't guaranteed to exist in your own type scale. In UI development, headings should often be visually de-emphasized. Making headings unstyled by default means any styling you apply to headings happens consciously and deliberately. You can always add default header styles to your project by adding your own base styles. Lists are unstyled Ordered and unordered lists are unstyled by default, with no bullets or numbers: CSS ol, ul, menu { list-style: none; } If you'd like to style a list, you can do so using the list-style-type and list-style-position utilities: HTML <ul class=\"list-inside list-disc\"> <li>One</li> <li>Two</li> <li>Three</li> </ul> You can always add default list styles to your project by adding your own base styles. Accessibility considerations Unstyled lists are not announced as lists by VoiceOver. If your content is truly a list but you would like to keep it unstyled, add a \"list\" role to the element: HTML <ul role=\"list\"> <li>One</li> <li>Two</li> <li>Three</li> </ul> Images are block-level Images and other replaced elements (like svg, video, canvas, and others) are display: block by default: CSS img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; } This helps to avoid unexpected alignment issues that you often run into using the browser default of display: inline. If you ever need to make one of these elements inline instead of block, simply use the inline utility: HTML <img class=\"inline\" src=\"...\" alt=\"...\" /> Images are constrained Images and videos are constrained to the parent width in a way that preserves their intrinsic aspect ratio: CSS img, video { max-width: 100%; height: auto; } This prevents them from overflowing their containers and makes them responsive by default. If you ever need to override this behavior, use the max-w-none utility: HTML <img class=\"max-w-none\" src=\"...\" alt=\"...\" /> Elements with a hidden attribute stay hidden CSS [hidden]:where(:not([hidden=\"until-found\"])) { display: none !important; } This enforces that elements with a hidden attribute stay invisible unless using hidden=\"until-found\". Remove the hidden attribute if you want an element to be visible to the user. Extending Preflight If you'd like to add your own base styles on top of Preflight, add them to the base CSS layer in your CSS using @layer base: CSS @layer base { h1 { font-size: var(--text-2xl); } h2 { font-size: var(--text-xl); } h3 { font-size: var(--text-lg); } a { color: var(--color-blue-600); text-decoration-line: underline; } } Learn more in the adding base styles documentation. Disabling Preflight If you'd like to completely disable Preflight\u2014perhaps because you're integrating Tailwind into an existing project or you'd prefer to define your own base styles\u2014you can do so by importing only the parts of Tailwind that you need. By default, this is what @import \"tailwindcss\"; injects: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/preflight.css\" layer(base); @import \"tailwindcss/utilities.css\" layer(utilities); To disable Preflight, simply omit its import while keeping everything else: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/preflight.css\" layer(base); @import \"tailwindcss/utilities.css\" layer(utilities); When importing Tailwind CSS' files individually, features like source(), theme(), and prefix() should go on their respective imports. For example, source detection affects generated utilities, so source(\u2026) should be added to the utilities.css import: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/utilities.css\" layer(utilities); @import \"tailwindcss/utilities.css\" layer(utilities) source(none); The same goes for important, which also affects utilities: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/utilities.css\" layer(utilities); @import \"tailwindcss/utilities.css\" layer(utilities) important; Similarly, theme(static) and theme(inline) affect the generated theme variables and should be placed on the theme.css import: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/theme.css\" layer(theme) theme(static); @import \"tailwindcss/utilities.css\" layer(utilities); Finally, using a prefix with prefix(tw) affects the utilities and variables, so it should go on both imports: CSS @layer theme, base, components, utilities; @import \"tailwindcss/theme.css\" layer(theme); @import \"tailwindcss/utilities.css\" layer(utilities); @import \"tailwindcss/theme.css\" layer(theme) prefix(tw); @import \"tailwindcss/utilities.css\" layer(utilities) prefix(tw); Functions and directives aspect-ratio",
+  "code_examples": [
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/preflight.css\" layer(base);\n@import \"tailwindcss/utilities.css\" layer(utilities);",
+    "*,\n::after,\n::before,\n::backdrop,\n::file-selector-button {\n  margin: 0;\n  padding: 0;\n}",
+    "*,\n::after,\n::before,\n::backdrop,\n::file-selector-button {\n  box-sizing: border-box;\n  border: 0 solid;\n}",
+    "@layer base {\n  .google-map * {\n    border-style: none;\n  }\n}",
+    "h1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}",
+    "ol,\nul,\nmenu {\n  list-style: none;\n}",
+    "<ul class=\"list-inside list-disc\">\n  <li>One</li>\n  <li>Two</li>\n  <li>Three</li>\n</ul>",
+    "<ul role=\"list\">\n  <li>One</li>\n  <li>Two</li>\n  <li>Three</li>\n</ul>",
+    "img,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block;\n  vertical-align: middle;\n}",
+    "<img class=\"inline\" src=\"...\" alt=\"...\" />",
+    "img,\nvideo {\n  max-width: 100%;\n  height: auto;\n}",
+    "<img class=\"max-w-none\" src=\"...\" alt=\"...\" />",
+    "[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none !important;\n}",
+    "@layer base {\n  h1 {\n    font-size: var(--text-2xl);\n  }\n  h2 {\n    font-size: var(--text-xl);\n  }\n  h3 {\n    font-size: var(--text-lg);\n  }\n  a {\n    color: var(--color-blue-600);\n    text-decoration-line: underline;\n  }\n}",
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/preflight.css\" layer(base);\n@import \"tailwindcss/utilities.css\" layer(utilities);",
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/preflight.css\" layer(base);\n@import \"tailwindcss/utilities.css\" layer(utilities);",
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/utilities.css\" layer(utilities);\n@import \"tailwindcss/utilities.css\" layer(utilities) source(none);",
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/utilities.css\" layer(utilities);\n@import \"tailwindcss/utilities.css\" layer(utilities) important;",
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/theme.css\" layer(theme) theme(static);\n@import \"tailwindcss/utilities.css\" layer(utilities);",
+    "@layer theme, base, components, utilities;\n@import \"tailwindcss/theme.css\" layer(theme);\n@import \"tailwindcss/utilities.css\" layer(utilities);\n@import \"tailwindcss/theme.css\" layer(theme) prefix(tw);\n@import \"tailwindcss/utilities.css\" layer(utilities) prefix(tw);"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/preflight/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 5200,
+          "pageY": 5257,
+          "scrollY": 5257,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 6,
+          "file": "006.png",
+          "contentOffsetY": 6240,
+          "pageY": 6297,
+          "scrollY": 6297,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 7,
+          "file": "007.png",
+          "contentOffsetY": 7105,
+          "pageY": 7162,
+          "scrollY": 7162,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T06:59:52.179169+00:00"
+}

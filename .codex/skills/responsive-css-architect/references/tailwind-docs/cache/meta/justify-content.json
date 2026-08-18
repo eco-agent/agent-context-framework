@@ -1,0 +1,103 @@
+{
+  "path": "/docs/justify-content",
+  "url": "https://tailwindcss.com/docs/justify-content",
+  "slug": "justify-content",
+  "source_cache_file": "justify-content.md",
+  "title": "justify-content - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "justify-content",
+    "EXAMPLES",
+    "Start",
+    "Center",
+    "End",
+    "Space between",
+    "Space around",
+    "Space evenly",
+    "Stretch",
+    "Normal",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID justify-content Utilities for controlling how flex and grid items are positioned along a container's main axis. Class Styles justify-start justify-content: flex-start; justify-end justify-content: flex-end; justify-end-safe justify-content: safe flex-end; justify-center justify-content: center; justify-center-safe justify-content: safe center; justify-between justify-content: space-between; justify-around justify-content: space-around; justify-evenly justify-content: space-evenly; justify-stretch justify-content: stretch; justify-baseline justify-content: baseline; justify-normal justify-content: normal; EXAMPLES Start Use the justify-start utility to justify items against the start of the container's main axis: 01 02 03 <div class=\"flex justify-start ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Center Use the justify-center or justify-center-safe utilities to justify items along the center of the container's main axis: Resize the container to see the alignment behavior justify-center 01 02 03 04 justify-center-safe 01 02 03 04 justify-center <div class=\"flex justify-center ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> </div> justify-center-safe <div class=\"flex justify-center-safe ...\"> <div>01</div> <div>02</div> <div>03</div> <div>04</div> </div> When there is not enough space available, the justify-center-safe utility will align items to the start of the container instead of the center. End Use the justify-end or justify-end-safe utilities to justify items against the end of the container's main axis: Resize the container to see the alignment behavior justify-end 01 02 03 04 justify-end-safe 01 02 03 04 justify-end <div class=\"flex justify-end ...\"> <div>01</div> <div>02</div> <div>03</div> <div>03</div> </div> justify-end-safe <div class=\"flex justify-end-safe ...\"> <div>01</div> <div>02</div> <div>03</div> <div>03</div> </div> When there is not enough space available, the justify-end-safe utility will align items to the start of the container instead of the end. Space between Use the justify-between utility to justify items along the container's main axis such that there is an equal amount of space between each item: 01 02 03 <div class=\"flex justify-between ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Space around Use the justify-around utility to justify items along the container's main axis such that there is an equal amount of space on each side of each item: 01 02 03 <div class=\"flex justify-around ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Space evenly Use the justify-evenly utility to justify items along the container's main axis such that there is an equal amount of space around each item, but also accounting for the doubling of space you would normally see between each item when using justify-around: 01 02 03 <div class=\"flex justify-evenly ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Stretch Use the justify-stretch utility to allow auto-sized content items to fill the available space along the container's main axis: 01 02 03 <div class=\"grid grid-cols-[4rem_auto_4rem] justify-stretch ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Normal Use the justify-normal utility to pack content items in their default position as if no justify-content value was set: 01 02 03 <div class=\"flex justify-normal ...\"> <div>01</div> <div>02</div> <div>03</div> </div> Responsive design Prefix a justify-content utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"flex justify-start md:justify-between ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. gap justify-items",
+  "code_examples": [
+    "<div class=\"flex justify-start ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-center ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n</div>",
+    "<div class=\"flex justify-center-safe ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>04</div>\n</div>",
+    "<div class=\"flex justify-end ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-end-safe ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-between ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-around ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-evenly ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"grid grid-cols-[4rem_auto_4rem] justify-stretch ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-normal ...\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex justify-start md:justify-between ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/justify-content/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 4907,
+          "pageY": 4964,
+          "scrollY": 4964,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:30.260301+00:00"
+}

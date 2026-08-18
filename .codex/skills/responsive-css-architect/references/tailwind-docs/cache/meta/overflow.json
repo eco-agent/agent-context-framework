@@ -1,0 +1,101 @@
+{
+  "path": "/docs/overflow",
+  "url": "https://tailwindcss.com/docs/overflow",
+  "slug": "overflow",
+  "source_cache_file": "overflow.md",
+  "title": "overflow - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "overflow",
+    "EXAMPLES",
+    "Showing content that overflows",
+    "Hiding content that overflows",
+    "Scrolling if needed",
+    "Scrolling horizontally if needed",
+    "Scrolling vertically if needed",
+    "Scrolling horizontally always",
+    "Scrolling vertically always",
+    "Scrolling in all directions",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT overflow Utilities for controlling how an element handles content that is too large for the container. Class Styles overflow-auto overflow: auto; overflow-hidden overflow: hidden; overflow-clip overflow: clip; overflow-visible overflow: visible; overflow-scroll overflow: scroll; overflow-x-auto overflow-x: auto; overflow-y-auto overflow-y: auto; overflow-x-hidden overflow-x: hidden; overflow-y-hidden overflow-y: hidden; overflow-x-clip overflow-x: clip; overflow-y-clip overflow-y: clip; overflow-x-visible overflow-x: visible; overflow-y-visible overflow-y: visible; overflow-x-scroll overflow-x: scroll; overflow-y-scroll overflow-y: scroll; EXAMPLES Showing content that overflows Use the overflow-visible utility to prevent content within an element from being clipped: Andrew Alfred Technical advisor <div class=\"overflow-visible ...\"> <!-- ... --> </div> Note that any content that overflows the bounds of the element will then be visible. Hiding content that overflows Use the overflow-hidden utility to clip any content within an element that overflows the bounds of that element: Andrew Alfred Technical advisor <div class=\"overflow-hidden ...\"> <!-- ... --> </div> Scrolling if needed Use the overflow-auto utility to add scrollbars to an element in the event that its content overflows the bounds of that element: Scroll vertically Andrew Alfred Technical advisor Debra Houston Analyst Jane White Director, Marketing Ray Flint Technical Advisor <div class=\"overflow-auto ...\"> <!-- ... --> </div> Unlike overflow-scroll, which always shows scrollbars, this utility will only show them if scrolling is necessary. Scrolling horizontally if needed Use the overflow-x-auto utility to allow horizontal scrolling if needed: Scroll horizontally Andrew Emily Whitney David Kristin Sarah <div class=\"overflow-x-auto ...\"> <!-- ... --> </div> Scrolling vertically if needed Use the overflow-y-auto utility to allow vertical scrolling if needed: Scroll vertically Andrew Alfred Technical advisor Debra Houston Analyst Jane White Director, Marketing Ray Flint Technical Advisor <div class=\"h-32 overflow-y-auto ...\"> <!-- ... --> </div> Scrolling horizontally always Use the overflow-x-scroll utility to allow horizontal scrolling and always show scrollbars unless always-visible scrollbars are disabled by the operating system: Scroll horizontally Andrew Emily Whitney David Kristin Sarah <div class=\"overflow-x-scroll ...\"> <!-- ... --> </div> Scrolling vertically always Use the overflow-y-scroll utility to allow vertical scrolling and always show scrollbars unless always-visible scrollbars are disabled by the operating system: Scroll vertically Andrew Alfred Technical advisor Debra Houston Analyst Jane White Director, Marketing Ray Flint Technical Advisor <div class=\"overflow-y-scroll ...\"> <!-- ... --> </div> Scrolling in all directions Use the overflow-scroll utility to add scrollbars to an element: Scroll vertically and horizontally Sun Mon Tue Wed Thu Fri Sat 5 AM 6 AM 7 AM 8 AM 9 AM 10 AM 11 AM 12 PM 1 PM 2 PM 3 PM 4 PM 5 PM 6 PM 7 PM 8 PM 5 AM Flight to Vancouver Toronto YYZ 6 AM Breakfast Mel's Diner 5 PM \ud83c\udf89 Party party \ud83c\udf89 We like to party! <div class=\"overflow-scroll ...\"> <!-- ... --> </div> Unlike overflow-auto, which only shows scrollbars if they are necessary, this utility always shows them. Note that some operating systems (like macOS) hide unnecessary scrollbars regardless of this setting. Responsive design Prefix an overflow utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"overflow-auto md:overflow-scroll ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. object-position overscroll-behavior",
+  "code_examples": [
+    "<div class=\"overflow-visible ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-hidden ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-auto ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-x-auto ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"h-32 overflow-y-auto ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-x-scroll ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-y-scroll ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-scroll ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"overflow-auto md:overflow-scroll ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/overflow/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 5079,
+          "pageY": 5136,
+          "scrollY": 5136,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:36.438859+00:00"
+}

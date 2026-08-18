@@ -1,0 +1,27 @@
+{
+  "name": "@agent-context/objective-test-fixtures",
+  "version": "0.1.0",
+  "type": "module",
+  "sideEffects": false,
+  "dependencies": {
+    "@agent-context/objective-kernel": "workspace:*"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./objective-store-conformance": "./src/objective-store-conformance.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "tsx": "4.22.4"
+  },
+  "agentContext": {
+    "category": "test-support",
+    "owner": "framework"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "path": "/docs/break-after",
+  "url": "https://tailwindcss.com/docs/break-after",
+  "slug": "break-after",
+  "source_cache_file": "break-after.md",
+  "title": "break-after - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "break-after",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT break-after Utilities for controlling how a column or page should break after an element. Class Styles break-after-auto break-after: auto; break-after-avoid break-after: avoid; break-after-all break-after: all; break-after-avoid-page break-after: avoid-page; break-after-page break-after: page; break-after-left break-after: left; break-after-right break-after: right; break-after-column break-after: column; EXAMPLES Basic example Use utilities like break-after-column and break-after-page to control how a column or page break should behave after an element: <div class=\"columns-2\"> <p>Well, let me tell you something, ...</p> <p class=\"break-after-column\">Sure, go ahead, laugh...</p> <p>Maybe we can live without...</p> <p>Look. If you think this is...</p> </div> Responsive design Prefix a break-after utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"break-after-column md:break-after-auto ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. columns break-before",
+  "code_examples": [
+    "<div class=\"columns-2\">\n  <p>Well, let me tell you something, ...</p>\n  <p class=\"break-after-column\">Sure, go ahead, laugh...</p>\n  <p>Maybe we can live without...</p>\n  <p>Look. If you think this is...</p>\n</div>",
+    "<div class=\"break-after-column md:break-after-auto ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/break-after/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 338,
+          "pageY": 395,
+          "scrollY": 395,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:01.090563+00:00"
+}

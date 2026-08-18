@@ -1,0 +1,17 @@
+{
+  "name": "tsx",
+  "version": "4.22.4",
+  "source": "https://github.com/privatenumber/tsx/tree/v4.22.4",
+  "license": "MIT",
+  "integrity": "sha512-X8EX+XV4QR5xCsrgxaED954zTDfY8KqlDtskKEL0cHhyS/P8b4IFOvGDQpsC9Q1XnLq915wEfwwY/zzskCtmhg==",
+  "purpose": "Run the imported raw-TypeScript package conformance suite on the pinned Node.js 24 runtime.",
+  "alternativesConsidered": [
+    "Change the imported source to Node.js-native extension-qualified imports",
+    "Compile a separate conformance artifact before execution"
+  ],
+  "maintenanceStatus": "Pinned to the existing upstream conformance runner version for the bounded migration.",
+  "securityEvidence": "The MIT manifest, Node.js engine requirement, esbuild dependency, and frozen lockfile integrity were inspected after installation.",
+  "modifications": "None; use only as a development dependency for conformance execution.",
+  "requiredNotices": "Retain the MIT license when redistributing the package.",
+  "owner": "platform"
+}

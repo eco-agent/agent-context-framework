@@ -1,0 +1,90 @@
+{
+  "path": "/docs/border-width",
+  "url": "https://tailwindcss.com/docs/border-width",
+  "slug": "border-width",
+  "source_cache_file": "border-width.md",
+  "title": "border-width - Borders - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "border-width",
+    "EXAMPLES",
+    "Basic example",
+    "Individual sides",
+    "Horizontal and vertical sides",
+    "Using logical properties",
+    "Between children",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "BORDERS border-width Utilities for controlling the width of an element's borders. Class Styles border border-width: 1px; border-<number> border-width: <number>px; border-(length:<custom-property>) border-width: var(<custom-property>); border-[<value>] border-width: <value>; border-x border-inline-width: 1px; border-x-<number> border-inline-width: <number>px; border-x-(length:<custom-property>) border-inline-width: var(<custom-property>); border-x-[<value>] border-inline-width: <value>; border-y border-block-width: 1px; border-y-<number> border-block-width: <number>px; SHOW MORE EXAMPLES Basic example Use border or border-<number> utilities like border-2 and border-4 to set the border width for all sides of an element: border border-2 border-4 border-8 <div class=\"border border-indigo-600 ...\"></div> <div class=\"border-2 border-indigo-600 ...\"></div> <div class=\"border-4 border-indigo-600 ...\"></div> <div class=\"border-8 border-indigo-600 ...\"></div> Individual sides Use utilities like border-r and border-t-4 to set the border width for one side of an element: border-t-4 border-r-4 border-b-4 border-l-4 <div class=\"border-t-4 border-indigo-500 ...\"></div> <div class=\"border-r-4 border-indigo-500 ...\"></div> <div class=\"border-b-4 border-indigo-500 ...\"></div> <div class=\"border-l-4 border-indigo-500 ...\"></div> Horizontal and vertical sides Use utilities like border-x and border-y-4 to set the border width on two sides of an element at the same time: border-x-4 border-y-4 <div class=\"border-x-4 border-indigo-500 ...\"></div> <div class=\"border-y-4 border-indigo-500 ...\"></div> Using logical properties Use utilities like border-s and border-e-4 to set the border-inline-start-width and border-inline-end-width logical properties, which map to either the left or right border based on the text direction: Left-to-right Right-to-left <div dir=\"ltr\"> <div class=\"border-s-4 ...\"></div> </div> <div dir=\"rtl\"> <div class=\"border-s-4 ...\"></div> </div> Use the border-bs-<number> and border-be-<number> utilities to set the border-block-start-width and border-block-end-width logical properties, which map to either the top or bottom border based on the writing mode: <div class=\"border-bs-4 ...\"></div> Between children Use utilities like divide-x and divide-y-4 to add borders between child elements: 01 02 03 <div class=\"grid grid-cols-3 divide-x-4\"> <div>01</div> <div>02</div> <div>03</div> </div> Reversing children order If your elements are in reverse order (using say flex-row-reverse or flex-col-reverse), use the divide-x-reverse or divide-y-reverse utilities to ensure the border is added to the correct side of each element: 01 02 03 <div class=\"flex flex-col-reverse divide-y-4 divide-y-reverse divide-gray-200\"> <div>01</div> <div>02</div> <div>03</div> </div> Using a custom value Use the border-[<value>] syntax to set the border width based on a completely custom value: <div class=\"border-[2vw] ...\"> <!-- ... --> </div> For CSS variables, you can also use the border-(length:<custom-property>) syntax: <div class=\"border-(length:--my-border-width) ...\"> <!-- ... --> </div> This is just a shorthand for border-[length:var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a border-width utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"border-2 md:border-t-4 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. border-radius border-color",
+  "code_examples": [
+    "<div class=\"border border-indigo-600 ...\"></div>\n<div class=\"border-2 border-indigo-600 ...\"></div>\n<div class=\"border-4 border-indigo-600 ...\"></div>\n<div class=\"border-8 border-indigo-600 ...\"></div>",
+    "<div class=\"border-t-4 border-indigo-500 ...\"></div>\n<div class=\"border-r-4 border-indigo-500 ...\"></div>\n<div class=\"border-b-4 border-indigo-500 ...\"></div>\n<div class=\"border-l-4 border-indigo-500 ...\"></div>",
+    "<div class=\"border-x-4 border-indigo-500 ...\"></div>\n<div class=\"border-y-4 border-indigo-500 ...\"></div>",
+    "<div dir=\"ltr\">\n  <div class=\"border-s-4 ...\"></div>\n</div>\n<div dir=\"rtl\">\n  <div class=\"border-s-4 ...\"></div>\n</div>",
+    "<div class=\"border-bs-4 ...\"></div>",
+    "<div class=\"grid grid-cols-3 divide-x-4\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"flex flex-col-reverse divide-y-4 divide-y-reverse divide-gray-200\">\n  <div>01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<div class=\"border-[2vw] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"border-(length:--my-border-width) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"border-2 md:border-t-4 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/border-width/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3789,
+          "pageY": 3846,
+          "scrollY": 3846,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:28.214773+00:00"
+}

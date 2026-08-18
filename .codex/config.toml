@@ -1,0 +1,29 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+
+[mcp_servers.repo_context]
+command = "pnpm"
+args = ["--filter", "@agent-context/codex-workflows", "exec", "tsx", "src/repo-context-bootstrap.ts"]
+required = true
+startup_timeout_sec = 20
+tool_timeout_sec = 15
+enabled_tools = ["repo_context"]
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 2
+default_subagent_model = "gpt-5.6-sol"
+default_subagent_reasoning_effort = "high"
+interrupt_message = true
+
+[agents.default]
+description = "General-purpose Sol agent for tasks without a more precise role."
+config_file = "./agents/default.toml"
+
+[agents.scout]
+description = "Read-only Luna Max agent for bounded investigation and research."
+config_file = "./agents/scout.toml"
+
+[agents.worker]
+description = "Luna Max worker for bounded, well-specified implementation and cleanup."
+config_file = "./agents/worker.toml"

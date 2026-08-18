@@ -1,0 +1,85 @@
+{
+  "path": "/docs/place-self",
+  "url": "https://tailwindcss.com/docs/place-self",
+  "slug": "place-self",
+  "source_cache_file": "place-self.md",
+  "title": "place-self - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "place-self",
+    "EXAMPLES",
+    "Auto",
+    "Start",
+    "Center",
+    "End",
+    "Stretch",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID place-self Utilities for controlling how an individual item is justified and aligned at the same time. Class Styles place-self-auto place-self: auto; place-self-start place-self: start; place-self-end place-self: end; place-self-end-safe place-self: safe end; place-self-center place-self: center; place-self-center-safe place-self: safe center; place-self-stretch place-self: stretch; EXAMPLES Auto Use place-self-auto to align an item based on the value of the container's place-items property: 01 02 03 04 05 06 <div class=\"grid grid-cols-3 gap-4 ...\"> <div>01</div> <div class=\"place-self-auto ...\">02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Start Use place-self-start to align an item to the start on both axes: 01 02 03 04 05 06 <div class=\"grid grid-cols-3 gap-4 ...\"> <div>01</div> <div class=\"place-self-start ...\">02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Center Use place-self-center to align an item at the center on both axes: 01 02 03 04 05 06 <div class=\"grid grid-cols-3 gap-4 ...\"> <div>01</div> <div class=\"place-self-center ...\">02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> End Use place-self-end to align an item to the end on both axes: 01 02 03 04 05 06 <div class=\"grid grid-cols-3 gap-4 ...\"> <div>01</div> <div class=\"place-self-end ...\">02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Stretch Use place-self-stretch to stretch an item on both axes: 01 02 03 04 05 06 <div class=\"grid grid-cols-3 gap-4 ...\"> <div>01</div> <div class=\"place-self-stretch ...\">02</div> <div>03</div> <div>04</div> <div>05</div> <div>06</div> </div> Responsive design Prefix a place-self utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"place-self-start md:place-self-end ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. place-items padding",
+  "code_examples": [
+    "<div class=\"grid grid-cols-3 gap-4 ...\">\n  <div>01</div>\n  <div class=\"place-self-auto ...\">02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid grid-cols-3 gap-4 ...\">\n  <div>01</div>\n  <div class=\"place-self-start ...\">02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid grid-cols-3 gap-4 ...\">\n  <div>01</div>\n  <div class=\"place-self-center ...\">02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid grid-cols-3 gap-4 ...\">\n  <div>01</div>\n  <div class=\"place-self-end ...\">02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"grid grid-cols-3 gap-4 ...\">\n  <div>01</div>\n  <div class=\"place-self-stretch ...\">02</div>\n  <div>03</div>\n  <div>04</div>\n  <div>05</div>\n  <div>06</div>\n</div>",
+    "<div class=\"place-self-start md:place-self-end ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/place-self/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3149,
+          "pageY": 3206,
+          "scrollY": 3206,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:56.074271+00:00"
+}

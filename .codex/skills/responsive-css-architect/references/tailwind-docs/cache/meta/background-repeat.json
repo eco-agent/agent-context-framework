@@ -1,0 +1,77 @@
+{
+  "path": "/docs/background-repeat",
+  "url": "https://tailwindcss.com/docs/background-repeat",
+  "slug": "background-repeat",
+  "source_cache_file": "background-repeat.md",
+  "title": "background-repeat - Backgrounds - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "background-repeat",
+    "EXAMPLES",
+    "Basic example",
+    "Repeating horizontally",
+    "Repeating vertically",
+    "Preventing clipping",
+    "Preventing clipping and gaps",
+    "Disabling repeating",
+    "Responsive design"
+  ],
+  "content_text": "BACKGROUNDS background-repeat Utilities for controlling the repetition of an element's background image. Class Styles bg-repeat background-repeat: repeat; bg-repeat-x background-repeat: repeat-x; bg-repeat-y background-repeat: repeat-y; bg-repeat-space background-repeat: space; bg-repeat-round background-repeat: round; bg-no-repeat background-repeat: no-repeat; EXAMPLES Basic example Use the bg-repeat utility to repeat the background image both vertically and horizontally: <div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat ...\"></div> Repeating horizontally Use the bg-repeat-x utility to only repeat the background image horizontally: <div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-x ...\"></div> Repeating vertically Use the bg-repeat-y utility to only repeat the background image vertically: <div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-y ...\"></div> Preventing clipping Use the bg-repeat-space utility to repeat the background image without clipping: <div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-space ...\"></div> Preventing clipping and gaps Use the bg-repeat-round utility to repeat the background image without clipping, stretching if needed to avoid gaps: <div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-round ...\"></div> Disabling repeating Use the bg-no-repeat utility to prevent a background image from repeating: <div class=\"bg-[url(/img/clouds.svg)] bg-center bg-no-repeat ...\"></div> Responsive design Prefix a background-repeat utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"bg-repeat md:bg-repeat-x ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. background-position background-size",
+  "code_examples": [
+    "<div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat ...\"></div>",
+    "<div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-x ...\"></div>",
+    "<div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-y ...\"></div>",
+    "<div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-space ...\"></div>",
+    "<div class=\"bg-[url(/img/clouds.svg)] bg-center bg-repeat-round ...\"></div>",
+    "<div class=\"bg-[url(/img/clouds.svg)] bg-center bg-no-repeat ...\"></div>",
+    "<div class=\"bg-repeat md:bg-repeat-x ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/background-repeat/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2905,
+          "pageY": 2962,
+          "scrollY": 2962,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:20.876845+00:00"
+}

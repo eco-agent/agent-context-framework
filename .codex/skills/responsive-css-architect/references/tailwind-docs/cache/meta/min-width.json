@@ -1,0 +1,76 @@
+{
+  "path": "/docs/min-width",
+  "url": "https://tailwindcss.com/docs/min-width",
+  "slug": "min-width",
+  "source_cache_file": "min-width.md",
+  "title": "min-width - Sizing - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "min-width",
+    "EXAMPLES",
+    "Basic example",
+    "Using a percentage",
+    "Using the container scale",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "SIZING min-width Utilities for setting the minimum width of an element. Class Styles min-w-<number> min-width: calc(var(--spacing) * <number>); min-w-<fraction> min-width: calc(<fraction> * 100%); min-w-3xs min-width: var(--container-3xs); /* 16rem (256px) */ min-w-2xs min-width: var(--container-2xs); /* 18rem (288px) */ min-w-xs min-width: var(--container-xs); /* 20rem (320px) */ min-w-sm min-width: var(--container-sm); /* 24rem (384px) */ min-w-md min-width: var(--container-md); /* 28rem (448px) */ min-w-lg min-width: var(--container-lg); /* 32rem (512px) */ min-w-xl min-width: var(--container-xl); /* 36rem (576px) */ min-w-2xl min-width: var(--container-2xl); /* 42rem (672px) */ SHOW MORE EXAMPLES Basic example Use min-w-<number> utilities like min-w-24 and min-w-64 to set an element to a fixed minimum width based on the spacing scale: min-w-80 min-w-64 min-w-48 min-w-40 min-w-32 min-w-24 <div class=\"w-20 ...\"> <div class=\"min-w-80 ...\">min-w-80</div> <div class=\"min-w-64 ...\">min-w-64</div> <div class=\"min-w-48 ...\">min-w-48</div> <div class=\"min-w-40 ...\">min-w-40</div> <div class=\"min-w-32 ...\">min-w-32</div> <div class=\"min-w-24 ...\">min-w-24</div> </div> Using a percentage Use min-w-full or min-w-<fraction> utilities like min-w-1/2 and min-w-2/5 to give an element a percentage-based minimum width: min-w-3/4 w-full <div class=\"flex ...\"> <div class=\"min-w-3/4 ...\">min-w-3/4</div> <div class=\"w-full ...\">w-full</div> </div> Using the container scale Use utilities like min-w-sm and min-w-xl to set an element to a fixed minimum width based on the container scale: min-w-lg min-w-md min-w-sm min-w-xs min-w-2xs min-w-3xs <div class=\"w-40 ...\"> <div class=\"min-w-lg ...\">min-w-lg</div> <div class=\"min-w-md ...\">min-w-md</div> <div class=\"min-w-sm ...\">min-w-sm</div> <div class=\"min-w-xs ...\">min-w-xs</div> <div class=\"min-w-2xs ...\">min-w-2xs</div> <div class=\"min-w-3xs ...\">min-w-3xs</div> </div> Using a custom value Use the min-w-[<value>] syntax to set the minimum width based on a completely custom value: <div class=\"min-w-[220px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the min-w-(<custom-property>) syntax: <div class=\"min-w-(--my-min-width) ...\"> <!-- ... --> </div> This is just a shorthand for min-w-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a min-width utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"w-24 min-w-full md:min-w-0 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme The min-w-<number> utilities are driven by the --spacing theme variable, which can be customized in your own theme: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme variable documentation. width max-width",
+  "code_examples": [
+    "<div class=\"w-20 ...\">\n  <div class=\"min-w-80 ...\">min-w-80</div>\n  <div class=\"min-w-64 ...\">min-w-64</div>\n  <div class=\"min-w-48 ...\">min-w-48</div>\n  <div class=\"min-w-40 ...\">min-w-40</div>\n  <div class=\"min-w-32 ...\">min-w-32</div>\n  <div class=\"min-w-24 ...\">min-w-24</div>\n</div>",
+    "<div class=\"flex ...\">\n  <div class=\"min-w-3/4 ...\">min-w-3/4</div>\n  <div class=\"w-full ...\">w-full</div>\n</div>",
+    "<div class=\"w-40 ...\">\n  <div class=\"min-w-lg ...\">min-w-lg</div>\n  <div class=\"min-w-md ...\">min-w-md</div>\n  <div class=\"min-w-sm ...\">min-w-sm</div>\n  <div class=\"min-w-xs ...\">min-w-xs</div>\n  <div class=\"min-w-2xs ...\">min-w-2xs</div>\n  <div class=\"min-w-3xs ...\">min-w-3xs</div>\n</div>",
+    "<div class=\"min-w-[220px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"min-w-(--my-min-width) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"w-24 min-w-full md:min-w-0 ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/min-width/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2931,
+          "pageY": 2988,
+          "scrollY": 2988,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:02:09.152302+00:00"
+}

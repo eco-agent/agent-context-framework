@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reuse Before Implementation"
+  short_description: "Evaluate maintained reuse before writing code"
+  default_prompt: "Use $reuse-before-implementation to find and assess reusable code before implementing this feature."

@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/jakubkrehel/skills",
+  "revision": "a67333399dabbc71d7778962cb9c4fb9b86a00d0",
+  "license": "MIT",
+  "sourceSkill": "better-typography",
+  "verbatimPrinciples": [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19],
+  "verbatimReferences": ["variable-fonts-and-opentype.md", "spacing-and-sizing.md", "wrapping-and-punctuation.md", "details-and-accessibility.md"],
+  "excluded": ["review output", "verification", "common mistakes", "font-selection guidance", "copy guidance", "root font-smoothing policy", "CSS cheat sheet"],
+  "localChanges": "New frontmatter, ownership mappings, reference routing, and explicit-only invocation."
+}

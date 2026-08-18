@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/mattpocock/skills",
+  "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
+  "license": "MIT",
+  "sourceSkill": "productivity/writing-great-skills",
+  "adaptedFiles": ["SKILL.md", "GLOSSARY.md"],
+  "localChanges": "Adapted invocation mechanics to Codex agents/openai.yaml, compressed wording, retained the upstream vocabulary and information hierarchy, and added the conditional repository technical-prose check."
+}

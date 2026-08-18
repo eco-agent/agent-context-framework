@@ -1,0 +1,60 @@
+{
+  "path": "/docs/text-underline-offset",
+  "url": "https://tailwindcss.com/docs/text-underline-offset",
+  "slug": "text-underline-offset",
+  "source_cache_file": "text-underline-offset.md",
+  "title": "text-underline-offset - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-underline-offset",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY text-underline-offset Utilities for controlling the offset of a text underline. Class Styles underline-offset-<number> text-underline-offset: <number>px; -underline-offset-<number> text-underline-offset: calc(<number>px * -1); underline-offset-auto text-underline-offset: auto; underline-offset-(<custom-property>) text-underline-offset: var(<custom-property>); underline-offset-[<value>] text-underline-offset: <value>; EXAMPLES Basic example Use underline-offset-<number> utilities like underline-offset-2 and underline-offset-4 to change the offset of a text underline: underline-offset-1 The quick brown fox jumps over the lazy dog. underline-offset-2 The quick brown fox jumps over the lazy dog. underline-offset-4 The quick brown fox jumps over the lazy dog. underline-offset-8 The quick brown fox jumps over the lazy dog. <p class=\"underline underline-offset-1\">The quick brown fox...</p> <p class=\"underline underline-offset-2\">The quick brown fox...</p> <p class=\"underline underline-offset-4\">The quick brown fox...</p> <p class=\"underline underline-offset-8\">The quick brown fox...</p> Using a custom value Use the underline-offset-[<value>] syntax to set the text underline offset based on a completely custom value: <p class=\"underline-offset-[3px] ...\"> Lorem ipsum dolor sit amet... </p> For CSS variables, you can also use the underline-offset-(<custom-property>) syntax: <p class=\"underline-offset-(--my-underline-offset) ...\"> Lorem ipsum dolor sit amet... </p> This is just a shorthand for underline-offset-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a text-underline-offset utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"underline md:underline-offset-4 ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. text-decoration-thickness text-transform",
+  "code_examples": [
+    "<p class=\"underline underline-offset-1\">The quick brown fox...</p>\n<p class=\"underline underline-offset-2\">The quick brown fox...</p>\n<p class=\"underline underline-offset-4\">The quick brown fox...</p>\n<p class=\"underline underline-offset-8\">The quick brown fox...</p>",
+    "<p class=\"underline-offset-[3px] ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"underline-offset-(--my-underline-offset) ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"underline md:underline-offset-4 ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-underline-offset/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1132,
+          "pageY": 1189,
+          "scrollY": 1189,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:33.788535+00:00"
+}

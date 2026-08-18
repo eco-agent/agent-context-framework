@@ -1,0 +1,49 @@
+{
+  "path": "/docs/background-clip",
+  "url": "https://tailwindcss.com/docs/background-clip",
+  "slug": "background-clip",
+  "source_cache_file": "background-clip.md",
+  "title": "background-clip - Backgrounds - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "background-clip",
+    "EXAMPLES",
+    "Basic example",
+    "Cropping to text",
+    "Responsive design"
+  ],
+  "content_text": "BACKGROUNDS background-clip Utilities for controlling the bounding box of an element's background. Class Styles bg-clip-border background-clip: border-box; bg-clip-padding background-clip: padding-box; bg-clip-content background-clip: content-box; bg-clip-text background-clip: text; EXAMPLES Basic example Use the bg-clip-border, bg-clip-padding, and bg-clip-content utilities to control the bounding box of an element's background: bg-clip-border bg-clip-padding bg-clip-content <div class=\"border-4 bg-indigo-500 bg-clip-border p-3\"></div> <div class=\"border-4 bg-indigo-500 bg-clip-padding p-3\"></div> <div class=\"border-4 bg-indigo-500 bg-clip-content p-3\"></div> Cropping to text Use the bg-clip-text utility to crop an element's background to match the shape of the text: Hello world <p class=\"bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-5xl font-extrabold text-transparent ...\"> Hello world </p> Responsive design Prefix a background-clip utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"bg-clip-border md:bg-clip-padding ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. background-attachment background-color",
+  "code_examples": [
+    "<div class=\"border-4 bg-indigo-500 bg-clip-border p-3\"></div>\n<div class=\"border-4 bg-indigo-500 bg-clip-padding p-3\"></div>\n<div class=\"border-4 bg-indigo-500 bg-clip-content p-3\"></div>",
+    "<p class=\"bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-5xl font-extrabold text-transparent ...\">\n  Hello world\n</p>",
+    "<div class=\"bg-clip-border md:bg-clip-padding ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/background-clip/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 703,
+          "pageY": 760,
+          "scrollY": 760,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:08.296592+00:00"
+}

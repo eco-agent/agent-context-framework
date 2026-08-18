@@ -1,0 +1,17 @@
+{
+  "name": "zod",
+  "version": "4.4.3",
+  "source": "https://github.com/colinhacks/zod/tree/v4.4.3",
+  "license": "MIT",
+  "integrity": "sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==",
+  "purpose": "Define the single repo_context MCP tool input schema through the server SDK's Standard Schema boundary.",
+  "alternativesConsidered": [
+    "A second Standard Schema dependency",
+    "Unchecked MCP tool arguments"
+  ],
+  "maintenanceStatus": "Pinned to the current Zod v4 release required by the MCP v2 server API.",
+  "securityEvidence": "Registry metadata, package integrity, upstream release source, and the schema-only use were reviewed.",
+  "modifications": "None; schemas remain repository-owned.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "platform"
+}

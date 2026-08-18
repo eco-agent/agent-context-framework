@@ -1,0 +1,36 @@
+{
+  "name": "@agent-context/objective-kernel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "test": "pnpm build && tsc -p tsconfig.test.json --noEmit && node --import tsx --test test/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "json-canonicalize": "2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "tsx": "4.22.4",
+    "typescript": "7.0.2"
+  },
+  "agentContext": {
+    "category": "contract-policy",
+    "owner": "platform"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "path": "/docs/mask-origin",
+  "url": "https://tailwindcss.com/docs/mask-origin",
+  "slug": "mask-origin",
+  "source_cache_file": "mask-origin.md",
+  "title": "mask-origin - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "mask-origin",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS mask-origin Utilities for controlling how an element's mask image is positioned relative to borders, padding, and content. Class Styles mask-origin-border mask-origin: border-box; mask-origin-padding mask-origin: padding-box; mask-origin-content mask-origin: content-box; mask-origin-fill mask-origin: fill-box; mask-origin-stroke mask-origin: stroke-box; mask-origin-view mask-origin: view-box; EXAMPLES Basic example Use utilities like mask-origin-border, mask-origin-padding, and mask-origin-content to control where an element's mask is rendered: mask-origin-border mask-origin-padding mask-origin-content <div class=\"mask-origin-border border-3 p-1.5 mask-[url(/img/circle.png)] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-origin-padding border-3 p-1.5 mask-[url(/img/circle.png)] bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-origin-content border-3 p-1.5 mask-[url(/img/circle.png)] bg-[url(/img/mountains.jpg)] ...\"></div> Responsive design Prefix a mask-origin utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"mask-origin-border md:mask-origin-padding ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. mask-mode mask-position",
+  "code_examples": [
+    "<div class=\"mask-origin-border border-3 p-1.5 mask-[url(/img/circle.png)] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-origin-padding border-3 p-1.5 mask-[url(/img/circle.png)] bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-origin-content border-3 p-1.5 mask-[url(/img/circle.png)] bg-[url(/img/mountains.jpg)] ...\"></div>",
+    "<div class=\"mask-origin-border md:mask-origin-padding ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/mask-origin/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 420,
+          "pageY": 477,
+          "scrollY": 477,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:14.909758+00:00"
+}

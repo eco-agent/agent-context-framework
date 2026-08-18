@@ -1,0 +1,51 @@
+{
+  "path": "/docs/font-feature-settings",
+  "url": "https://tailwindcss.com/docs/font-feature-settings",
+  "slug": "font-feature-settings",
+  "source_cache_file": "font-feature-settings.md",
+  "title": "font-feature-settings - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "font-feature-settings",
+    "EXAMPLES",
+    "Basic example",
+    "Enabling multiple features",
+    "Using CSS variables",
+    "Responsive design"
+  ],
+  "content_text": "TYPOGRAPHY font-feature-settings Utilities for controlling advanced typographic features. Class Styles font-features-[<value>] font-feature-settings: <value>; font-features-(<custom-property>) font-feature-settings: var(<custom-property>); EXAMPLES Basic example Use the font-features-[<value>] utility to enable OpenType features in fonts that support them: <p class=\"font-features-['smcp'] ...\">This text uses small caps.</p> Enabling multiple features You can enable multiple OpenType features by separating them with commas: <p class=\"font-features-['smcp','onum'] ...\">This text uses small caps and oldstyle numbers.</p> Using CSS variables Use the font-features-(<custom-property>) syntax to apply font feature settings from a CSS variable: <p class=\"font-features-(--my-features) ...\"> <!-- ... --> </p> Responsive design Prefix a font-feature-settings utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"font-features-['tnum'] md:font-features-['smcp'] ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. font-variant-numeric letter-spacing",
+  "code_examples": [
+    "<p class=\"font-features-['smcp'] ...\">This text uses small caps.</p>",
+    "<p class=\"font-features-['smcp','onum'] ...\">This text uses small caps and oldstyle numbers.</p>",
+    "<p class=\"font-features-(--my-features) ...\">\n  <!-- ... -->\n</p>",
+    "<p class=\"font-features-['tnum'] md:font-features-['smcp'] ...\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/font-feature-settings/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 526,
+          "pageY": 583,
+          "scrollY": 583,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:00.826816+00:00"
+}

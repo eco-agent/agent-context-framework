@@ -1,0 +1,23 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/objective-test-fixtures"
+    },
+    {
+      "path": "./packages/objective-kernel"
+    },
+    {
+      "path": "./tools/repo-policy"
+    },
+    {
+      "path": "./tools/codex-workflows"
+    },
+    {
+      "path": "./tools/objective-runtime"
+    },
+    {
+      "path": "./tools/dev-tooling"
+    }
+  ]
+}

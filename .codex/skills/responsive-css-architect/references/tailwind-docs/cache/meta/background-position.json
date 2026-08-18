@@ -1,0 +1,60 @@
+{
+  "path": "/docs/background-position",
+  "url": "https://tailwindcss.com/docs/background-position",
+  "slug": "background-position",
+  "source_cache_file": "background-position.md",
+  "title": "background-position - Backgrounds - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "background-position",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "BACKGROUNDS background-position Utilities for controlling the position of an element's background image. Class Styles bg-top-left background-position: top left; bg-top background-position: top; bg-top-right background-position: top right; bg-left background-position: left; bg-center background-position: center; bg-right background-position: right; bg-bottom-left background-position: bottom left; bg-bottom background-position: bottom; bg-bottom-right background-position: bottom right; bg-position-(<custom-property>) background-position: var(<custom-property>); bg-position-[<value>] background-position: <value>; EXAMPLES Basic example Use utilities like bg-center, bg-right, and bg-top-left to control the position of an element's background image: Hover over these examples to see the full image bg-top-left bg-top bg-top-right bg-left bg-center bg-right bg-bottom-left bg-bottom bg-bottom-right <div class=\"bg-[url(/img/mountains.jpg)] bg-top-left\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-top\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-top-right\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-left\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-center\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-right\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-bottom-left\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-bottom\"></div> <div class=\"bg-[url(/img/mountains.jpg)] bg-bottom-right\"></div> Using a custom value Use the bg-position-[<value>] syntax to set the background position based on a completely custom value: <div class=\"bg-position-[center_top_1rem] ...\"> <!-- ... --> </div> For CSS variables, you can also use the bg-position-(<custom-property>) syntax: <div class=\"bg-position-(--my-bg-position) ...\"> <!-- ... --> </div> This is just a shorthand for bg-position-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a background-position utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"bg-center md:bg-top ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. background-origin background-repeat",
+  "code_examples": [
+    "<div class=\"bg-[url(/img/mountains.jpg)] bg-top-left\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-top\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-top-right\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-left\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-center\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-right\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-bottom-left\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-bottom\"></div>\n<div class=\"bg-[url(/img/mountains.jpg)] bg-bottom-right\"></div>",
+    "<div class=\"bg-position-[center_top_1rem] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"bg-position-(--my-bg-position) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"bg-center md:bg-top ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/background-position/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1594,
+          "pageY": 1651,
+          "scrollY": 1651,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:18.553979+00:00"
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Web Typography"
+  short_description: "Implement resilient web typography systems"
+  default_prompt: "Use $design-web-typography to implement or refine the requested typography system."
+
+policy:
+  allow_implicit_invocation: false

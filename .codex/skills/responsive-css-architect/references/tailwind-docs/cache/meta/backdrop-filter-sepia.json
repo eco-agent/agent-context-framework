@@ -1,0 +1,50 @@
+{
+  "path": "/docs/backdrop-filter-sepia",
+  "url": "https://tailwindcss.com/docs/backdrop-filter-sepia",
+  "slug": "backdrop-filter-sepia",
+  "source_cache_file": "backdrop-filter-sepia.md",
+  "title": "backdrop-filter: sepia() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "backdrop-filter: sepia()",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS backdrop-filter: sepia() Utilities for applying backdrop sepia filters to an element. Class Styles backdrop-sepia backdrop-filter: sepia(100%); backdrop-sepia-<number> backdrop-filter: sepia(<number>%); backdrop-sepia-(<custom-property>) backdrop-filter: sepia(var(<custom-property>)); backdrop-sepia-[<value>] backdrop-filter: sepia(<value>); EXAMPLES Basic example Use utilities like backdrop-sepia and backdrop-sepia-50 to control the sepia effect applied to an element's backdrop: backdrop-sepia-0 backdrop-sepia-50 backdrop-sepia <div class=\"bg-[url(/img/mountains.jpg)]\"> <div class=\"bg-white/30 backdrop-sepia-0 ...\"></div> </div> <div class=\"bg-[url(/img/mountains.jpg)]\"> <div class=\"bg-white/30 backdrop-sepia-50 ...\"></div> </div> <div class=\"bg-[url(/img/mountains.jpg)]\"> <div class=\"bg-white/30 backdrop-sepia ...\"></div> </div> Using a custom value Use the backdrop-sepia-[<value>] syntax to set the backdrop sepia based on a completely custom value: <div class=\"backdrop-sepia-[.25] ...\"> <!-- ... --> </div> For CSS variables, you can also use the backdrop-sepia-(<custom-property>) syntax: <div class=\"backdrop-sepia-(--my-backdrop-sepia) ...\"> <!-- ... --> </div> This is just a shorthand for backdrop-sepia-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a backdrop-filter: sepia() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"backdrop-sepia md:backdrop-sepia-0 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. saturate border-collapse",
+  "code_examples": [
+    "<div class=\"bg-[url(/img/mountains.jpg)]\">\n  <div class=\"bg-white/30 backdrop-sepia-0 ...\"></div>\n</div>\n<div class=\"bg-[url(/img/mountains.jpg)]\">\n  <div class=\"bg-white/30 backdrop-sepia-50 ...\"></div>\n</div>\n<div class=\"bg-[url(/img/mountains.jpg)]\">\n  <div class=\"bg-white/30 backdrop-sepia ...\"></div>\n</div>",
+    "<div class=\"backdrop-sepia-[.25] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"backdrop-sepia-(--my-backdrop-sepia) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"backdrop-sepia md:backdrop-sepia-0 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/backdrop-filter-sepia/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1027,
+          "pageY": 1084,
+          "scrollY": 1084,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:17.312008+00:00"
+}

@@ -1,0 +1,37 @@
+{
+  "path": "/docs/scroll-behavior",
+  "url": "https://tailwindcss.com/docs/scroll-behavior",
+  "slug": "scroll-behavior",
+  "source_cache_file": "scroll-behavior.md",
+  "title": "scroll-behavior - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "scroll-behavior",
+    "EXAMPLES",
+    "Using smooth scrolling",
+    "Using normal scrolling"
+  ],
+  "content_text": "INTERACTIVITY scroll-behavior Utilities for controlling the scroll behavior of an element. Class Styles scroll-auto scroll-behavior: auto; scroll-smooth scroll-behavior: smooth; EXAMPLES Using smooth scrolling Use the scroll-smooth utility to enable smooth scrolling within an element: <html class=\"scroll-smooth\"> <!-- ... --> </html> Setting the scroll-behavior only affects scroll events that are triggered by the browser. Using normal scrolling Use the scroll-auto utility to revert to the default browser behavior for scrolling: <html class=\"scroll-smooth md:scroll-auto\"> <!-- ... --> </html> resize scrollbar-color",
+  "code_examples": [
+    "<html class=\"scroll-smooth\">\n  <!-- ... -->\n</html>",
+    "<html class=\"scroll-smooth md:scroll-auto\">\n  <!-- ... -->\n</html>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/scroll-behavior/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1176,
+          "overlap": 0
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:41.191320+00:00"
+}

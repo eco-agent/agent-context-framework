@@ -1,0 +1,77 @@
+{
+  "path": "/docs/text-decoration-color",
+  "url": "https://tailwindcss.com/docs/text-decoration-color",
+  "slug": "text-decoration-color",
+  "source_cache_file": "text-decoration-color.md",
+  "title": "text-decoration-color - Typography - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "text-decoration-color",
+    "EXAMPLES",
+    "Basic example",
+    "Changing the opacity",
+    "Using a custom value",
+    "Applying on hover",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "TYPOGRAPHY text-decoration-color Utilities for controlling the color of text decorations. Class Styles decoration-inherit text-decoration-color: inherit; decoration-current text-decoration-color: currentColor; decoration-transparent text-decoration-color: transparent; decoration-black text-decoration-color: var(--color-black); /* #000 */ decoration-white text-decoration-color: var(--color-white); /* #fff */ decoration-red-50 text-decoration-color: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ decoration-red-100 text-decoration-color: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ decoration-red-200 text-decoration-color: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ decoration-red-300 text-decoration-color: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ decoration-red-400 text-decoration-color: var(--color-red-400); /* oklch(70.4% 0.191 22.216) */ SHOW MORE EXAMPLES Basic example Use utilities like decoration-sky-500 and decoration-pink-500 to change the text decoration color of an element: I\u2019m Derek, an astro-engineer based in Tattooine. I like to build X-Wings at My Company, Inc. Outside of work, I like to watch pod-racing and have light-saber fights. <p> I\u2019m Derek, an astro-engineer based in Tattooine. I like to build X-Wings at <a class=\"underline decoration-sky-500\">My Company, Inc</a>. Outside of work, I like to <a class=\"underline decoration-pink-500\">watch pod-racing</a> and have <a class=\"underline decoration-indigo-500\">light-saber</a> fights. </p> Changing the opacity Use the color opacity modifier to control the text decoration color opacity of an element: I\u2019m Derek, an astro-engineer based in Tattooine. I like to build X-Wings at My Company, Inc. Outside of work, I like to watch pod-racing and have light-saber fights. <p> I\u2019m Derek, an astro-engineer based in Tattooine. I like to build X-Wings at <a class=\"underline decoration-sky-500/30\">My Company, Inc</a>. Outside of work, I like to <a class=\"underline decoration-pink-500/30\">watch pod-racing</a> and have <a class=\"underline decoration-indigo-500/30\">light-saber</a> fights. </p> Using a custom value Use the decoration-[<value>] syntax to set the text decoration color based on a completely custom value: <p class=\"decoration-[#50d71e] ...\"> Lorem ipsum dolor sit amet... </p> For CSS variables, you can also use the decoration-(<custom-property>) syntax: <p class=\"decoration-(--my-color) ...\"> Lorem ipsum dolor sit amet... </p> This is just a shorthand for decoration-[var(<custom-property>)] that adds the var() function for you automatically. Applying on hover Prefix a text-decoration-color utility with a variant like hover:* to only apply the utility in that state: Hover over the text to see the expected behavior The quick brown fox jumps over the lazy dog. <p>The <a href=\"...\" class=\"underline hover:decoration-pink-500 ...\">quick brown fox</a> jumps over the lazy dog.</p> Learn more about using variants in the variants documentation. Responsive design Prefix a text-decoration-color utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <p class=\"underline decoration-sky-600 md:decoration-blue-400 ...\"> Lorem ipsum dolor sit amet... </p> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the decoration-regal-blue utility can be used in your markup: <p class=\"decoration-regal-blue\"> Lorem ipsum dolor sit amet... </p> Learn more about customizing your theme in the theme documentation. text-decoration-line text-decoration-style",
+  "code_examples": [
+    "<p>\n  I\u2019m Derek, an astro-engineer based in Tattooine. I like to build X-Wings\n  at <a class=\"underline decoration-sky-500\">My Company, Inc</a>. Outside\n  of work, I like to <a class=\"underline decoration-pink-500\">watch pod-racing</a>\n  and have <a class=\"underline decoration-indigo-500\">light-saber</a> fights.\n</p>",
+    "<p>\n  I\u2019m Derek, an astro-engineer based in Tattooine. I like to build X-Wings\n  at <a class=\"underline decoration-sky-500/30\">My Company, Inc</a>. Outside\n  of work, I like to <a class=\"underline decoration-pink-500/30\">watch pod-racing</a>\n  and have <a class=\"underline decoration-indigo-500/30\">light-saber</a> fights.\n</p>",
+    "<p class=\"decoration-[#50d71e] ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p class=\"decoration-(--my-color) ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "<p>The <a href=\"...\" class=\"underline hover:decoration-pink-500 ...\">quick brown fox</a> jumps over the lazy dog.</p>",
+    "<p class=\"underline decoration-sky-600 md:decoration-blue-400 ...\">\n  Lorem ipsum dolor sit amet...\n</p>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<p class=\"decoration-regal-blue\">\n  Lorem ipsum dolor sit amet...\n</p>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/text-decoration-color/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2631,
+          "pageY": 2688,
+          "scrollY": 2688,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:03:25.786477+00:00"
+}

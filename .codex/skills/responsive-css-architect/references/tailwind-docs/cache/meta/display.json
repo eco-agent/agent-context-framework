@@ -1,0 +1,126 @@
+{
+  "path": "/docs/display",
+  "url": "https://tailwindcss.com/docs/display",
+  "slug": "display",
+  "source_cache_file": "display.md",
+  "title": "display - Layout - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "display",
+    "EXAMPLES",
+    "Block and Inline",
+    "Flow Root",
+    "Flex",
+    "Inline Flex",
+    "Grid",
+    "Inline Grid",
+    "Contents",
+    "Table",
+    "Hidden",
+    "Screen-reader only",
+    "Responsive design"
+  ],
+  "content_text": "LAYOUT display Utilities for controlling the display box type of an element. Class Styles inline display: inline; block display: block; inline-block display: inline-block; flow-root display: flow-root; flex display: flex; inline-flex display: inline-flex; grid display: grid; inline-grid display: inline-grid; contents display: contents; table display: table; SHOW MORE EXAMPLES Block and Inline Use the inline, inline-block, and block utilities to control the flow of text and elements: When controlling the flow of text, using the CSS property display: inline will cause the text inside the element to wrap normally. While using the property display: inline-block will wrap the element to prevent the text inside from extending beyond its parent. Lastly, using the property display: block will put the element on its own line and fill its parent. <p> When controlling the flow of text, using the CSS property <span class=\"inline\">display: inline</span> will cause the text inside the element to wrap normally. </p> <p> While using the property <span class=\"inline-block\">display: inline-block</span> will wrap the element to prevent the text inside from extending beyond its parent. </p> <p> Lastly, using the property <span class=\"block\">display: block</span> will put the element on its own line and fill its parent. </p> Flow Root Use the flow-root utility to create a block-level element with its own block formatting context: Well, let me tell you something, funny boy. Y'know that little stamp, the one that says \"New York Public Library\"? Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot. Sure, go ahead, laugh if you want to. I've seen your type before: Flashy, making the scene, flaunting convention. Yeah, I know what you're thinking. What's this guy making such a big stink about old library books? Well, let me give you a hint, junior. <div class=\"p-4\"> <div class=\"flow-root ...\"> <div class=\"my-4 ...\">Well, let me tell you something, ...</div> </div> <div class=\"flow-root ...\"> <div class=\"my-4 ...\">Sure, go ahead, laugh if you want...</div> </div> </div> Flex Use the flex utility to create a block-level flex container: Andrew Alfred Technical advisor <div class=\"flex items-center\"> <img src=\"path/to/image.jpg\" /> <div> <strong>Andrew Alfred</strong> <span>Technical advisor</span> </div> </div> Inline Flex Use the inline-flex utility to create an inline flex container that flows with text: Today I spent most of the day researching ways to take advantage of the fact that bottles can be returned for 10 cents in Michigan, but only 5 cents here. Kramer keeps telling me there is no way to make it work, that he has run the numbers on every possible approach, but I just have to believe there's a way to make it work, there's simply too much opportunity here. <p> Today I spent most of the day researching ways to ... <span class=\"inline-flex items-baseline\"> <img src=\"/img/kramer.jpg\" class=\"mx-1 size-5 self-center rounded-full\" /> <span>Kramer</span> </span> keeps telling me there is no way to make it work, that ... </p> Grid Use the grid utility to create a grid container: 01 02 03 04 05 06 07 08 09 <div class=\"grid grid-cols-3 grid-rows-3 gap-4\"> <!-- ... --> </div> Inline Grid Use the inline-grid utility to create an inline grid container: 01 02 03 04 05 06 01 02 03 04 05 06 <span class=\"inline-grid grid-cols-3 gap-4\"> <span>01</span> <span>02</span> <span>03</span> <span>04</span> <span>05</span> <span>06</span> </span> <span class=\"inline-grid grid-cols-3 gap-4\"> <span>01</span> <span>02</span> <span>03</span> <span>04</span> <span>05</span> <span>06</span> </span> Contents Use the contents utility to create a \"phantom\" container whose children act like direct children of the parent: 01 02 03 04 <div class=\"flex ...\"> <div class=\"flex-1 ...\">01</div> <div class=\"contents\"> <div class=\"flex-1 ...\">02</div> <div class=\"flex-1 ...\">03</div> </div> <div class=\"flex-1 ...\">04</div> </div> Table Use the table, table-row, table-cell, table-caption, table-column, table-column-group, table-header-group, table-row-group, and table-footer-group utilities to create elements that behave like their respective table elements: Song Artist Year The Sliding Mr. Bones (Next Stop, Pottersville) Malcolm Lockyer 1961 Witchy Woman The Eagles 1972 Shining Star Earth, Wind, and Fire 1975 <div class=\"table w-full ...\"> <div class=\"table-header-group ...\"> <div class=\"table-row\"> <div class=\"table-cell text-left ...\">Song</div> <div class=\"table-cell text-left ...\">Artist</div> <div class=\"table-cell text-left ...\">Year</div> </div> </div> <div class=\"table-row-group\"> <div class=\"table-row\"> <div class=\"table-cell ...\">The Sliding Mr. Bones (Next Stop, Pottersville)</div> <div class=\"table-cell ...\">Malcolm Lockyer</div> <div class=\"table-cell ...\">1961</div> </div> <div class=\"table-row\"> <div class=\"table-cell ...\">Witchy Woman</div> <div class=\"table-cell ...\">The Eagles</div> <div class=\"table-cell ...\">1972</div> </div> <div class=\"table-row\"> <div class=\"table-cell ...\">Shining Star</div> <div class=\"table-cell ...\">Earth, Wind, and Fire</div> <div class=\"table-cell ...\">1975</div> </div> </div> </div> Hidden Use the hidden utility to remove an element from the document: 02 03 <div class=\"flex ...\"> <div class=\"hidden ...\">01</div> <div>02</div> <div>03</div> </div> To visually hide an element but keep it in the document, use the visibility property instead. Screen-reader only Use sr-only to hide an element visually without hiding it from screen readers: <a href=\"#\"> <svg><!-- ... --></svg> <span class=\"sr-only\">Settings</span> </a> Use not-sr-only to undo sr-only, making an element visible to sighted users as well as screen readers: <a href=\"#\"> <svg><!-- ... --></svg> <span class=\"sr-only sm:not-sr-only\">Settings</span> </a> This can be useful when you want to visually hide something on small screens but show it on larger screens for example. Responsive design Prefix a display utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"flex md:inline-flex ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. box-sizing float",
+  "code_examples": [
+    "<p>\n  When controlling the flow of text, using the CSS property <span class=\"inline\">display: inline</span> will cause the\n  text inside the element to wrap normally.\n</p>\n<p>\n  While using the property <span class=\"inline-block\">display: inline-block</span> will wrap the element to prevent the\n  text inside from extending beyond its parent.\n</p>\n<p>\n  Lastly, using the property <span class=\"block\">display: block</span> will put the element on its own line and fill its\n  parent.\n</p>",
+    "<div class=\"p-4\">\n  <div class=\"flow-root ...\">\n    <div class=\"my-4 ...\">Well, let me tell you something, ...</div>\n  </div>\n  <div class=\"flow-root ...\">\n    <div class=\"my-4 ...\">Sure, go ahead, laugh if you want...</div>\n  </div>\n</div>",
+    "<div class=\"flex items-center\">\n  <img src=\"path/to/image.jpg\" />\n  <div>\n    <strong>Andrew Alfred</strong>\n    <span>Technical advisor</span>\n  </div>\n</div>",
+    "<p>\n  Today I spent most of the day researching ways to ...\n  <span class=\"inline-flex items-baseline\">\n    <img src=\"/img/kramer.jpg\" class=\"mx-1 size-5 self-center rounded-full\" />\n    <span>Kramer</span>\n  </span>\n  keeps telling me there is no way to make it work, that ...\n</p>",
+    "<div class=\"grid grid-cols-3 grid-rows-3 gap-4\">\n  <!-- ... -->\n</div>",
+    "<span class=\"inline-grid grid-cols-3 gap-4\">\n  <span>01</span>\n  <span>02</span>\n  <span>03</span>\n  <span>04</span>\n  <span>05</span>\n  <span>06</span>\n</span>\n<span class=\"inline-grid grid-cols-3 gap-4\">\n  <span>01</span>\n  <span>02</span>\n  <span>03</span>\n  <span>04</span>\n  <span>05</span>\n  <span>06</span>\n</span>",
+    "<div class=\"flex ...\">\n  <div class=\"flex-1 ...\">01</div>\n  <div class=\"contents\">\n    <div class=\"flex-1 ...\">02</div>\n    <div class=\"flex-1 ...\">03</div>\n  </div>\n  <div class=\"flex-1 ...\">04</div>\n</div>",
+    "<div class=\"table w-full ...\">\n  <div class=\"table-header-group ...\">\n    <div class=\"table-row\">\n      <div class=\"table-cell text-left ...\">Song</div>\n      <div class=\"table-cell text-left ...\">Artist</div>\n      <div class=\"table-cell text-left ...\">Year</div>\n    </div>\n  </div>\n  <div class=\"table-row-group\">\n    <div class=\"table-row\">\n      <div class=\"table-cell ...\">The Sliding Mr. Bones (Next Stop, Pottersville)</div>\n      <div class=\"table-cell ...\">Malcolm Lockyer</div>\n      <div class=\"table-cell ...\">1961</div>\n    </div>\n    <div class=\"table-row\">\n      <div class=\"table-cell ...\">Witchy Woman</div>\n      <div class=\"table-cell ...\">The Eagles</div>\n      <div class=\"table-cell ...\">1972</div>\n    </div>\n    <div class=\"table-row\">\n      <div class=\"table-cell ...\">Shining Star</div>\n      <div class=\"table-cell ...\">Earth, Wind, and Fire</div>\n      <div class=\"table-cell ...\">1975</div>\n    </div>\n  </div>\n</div>",
+    "<div class=\"flex ...\">\n  <div class=\"hidden ...\">01</div>\n  <div>02</div>\n  <div>03</div>\n</div>",
+    "<a href=\"#\">\n  <svg><!-- ... --></svg>\n  <span class=\"sr-only\">Settings</span>\n</a>",
+    "<a href=\"#\">\n  <svg><!-- ... --></svg>\n  <span class=\"sr-only sm:not-sr-only\">Settings</span>\n</a>",
+    "<div class=\"flex md:inline-flex ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/display/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 4160,
+          "pageY": 4217,
+          "scrollY": 4217,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 5,
+          "file": "005.png",
+          "contentOffsetY": 5200,
+          "pageY": 5257,
+          "scrollY": 5257,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 6,
+          "file": "006.png",
+          "contentOffsetY": 6240,
+          "pageY": 6297,
+          "scrollY": 6297,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 7,
+          "file": "007.png",
+          "contentOffsetY": 6886,
+          "pageY": 6943,
+          "scrollY": 6943,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:00:17.806406+00:00"
+}

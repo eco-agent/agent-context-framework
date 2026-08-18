@@ -1,0 +1,43 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Workspace: bootstrap",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["install", "--frozen-lockfile"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Workspace: typecheck",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["typecheck"],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$tsc"
+    },
+    {
+      "label": "Workspace: verify task",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["verify:task"],
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Task: preflight capability request",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["task:doctor", "--", "--request", "${input:capabilityRequest}"],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "capabilityRequest",
+      "type": "promptString",
+      "description": "Capability request path",
+      "default": ".codex/work/task.json"
+    }
+  ]
+}

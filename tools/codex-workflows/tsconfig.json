@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "types": ["node"]
+  },
+  "include": ["examples/**/*.ts", "src/**/*.ts", "test/**/*.ts"],
+  "references": [
+    {
+      "path": "../../packages/objective-kernel"
+    },
+    {
+      "path": "../objective-runtime"
+    },
+    {
+      "path": "../repo-policy"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "path": "AGENTS.md",
+    "start": "> Commit often; do not push. Use worktrees for large diffs.",
+    "end": "# Agent Context Framework",
+    "sha256": "4900d7a991d588c06b8e563a2f2f82efa6c062f1754e0b40cfcda26b0106ba3b"
+  },
+  {
+    "path": "docs/AGENTS.md",
+    "start": "## Prose and Reporting Style",
+    "end": "## Commands",
+    "sha256": "9e290a4546f8e11920710fd07e32fc02e4259db21bebd55f9d4dca7c1a12811b"
+  },
+  {
+    "path": ".codex/skills/reuse-before-implementation/SKILL.md",
+    "start": "## Prefer reuse over implementation",
+    "sha256": "1991ac636474154de2fec41b4034503cce08839bebe2886f985dd41d9e2f1d37"
+  }
+]

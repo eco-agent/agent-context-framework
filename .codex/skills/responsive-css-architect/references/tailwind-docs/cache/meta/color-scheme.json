@@ -1,0 +1,47 @@
+{
+  "path": "/docs/color-scheme",
+  "url": "https://tailwindcss.com/docs/color-scheme",
+  "slug": "color-scheme",
+  "source_cache_file": "color-scheme.md",
+  "title": "color-scheme - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "color-scheme",
+    "EXAMPLES",
+    "Basic example",
+    "Applying in dark mode"
+  ],
+  "content_text": "INTERACTIVITY color-scheme Utilities for controlling the color scheme of an element. Class Styles scheme-normal color-scheme: normal; scheme-dark color-scheme: dark; scheme-light color-scheme: light; scheme-light-dark color-scheme: light dark; scheme-only-dark color-scheme: only dark; scheme-only-light color-scheme: only light; EXAMPLES Basic example Use utilities like scheme-light and scheme-light-dark to control how element should be rendered: Try switching your system color scheme to see the difference scheme-light scheme-dark scheme-light-dark <div class=\"scheme-light ...\"> <input type=\"date\" /> </div> <div class=\"scheme-dark ...\"> <input type=\"date\" /> </div> <div class=\"scheme-light-dark ...\"> <input type=\"date\" /> </div> Applying in dark mode Prefix a color-scheme utility with a variant like dark:* to only apply the utility in that state: <html class=\"scheme-light dark:scheme-dark ...\"> <!-- ... --> </html> Learn more about using variants in the variants documentation. caret-color cursor",
+  "code_examples": [
+    "<div class=\"scheme-light ...\">\n  <input type=\"date\" />\n</div>\n<div class=\"scheme-dark ...\">\n  <input type=\"date\" />\n</div>\n<div class=\"scheme-light-dark ...\">\n  <input type=\"date\" />\n</div>",
+    "<html class=\"scheme-light dark:scheme-dark ...\">\n  <!-- ... -->\n</html>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/color-scheme/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 506,
+          "pageY": 563,
+          "scrollY": 563,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:30.219137+00:00"
+}

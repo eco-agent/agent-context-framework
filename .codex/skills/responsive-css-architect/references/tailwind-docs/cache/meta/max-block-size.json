@@ -1,0 +1,74 @@
+{
+  "path": "/docs/max-block-size",
+  "url": "https://tailwindcss.com/docs/max-block-size",
+  "slug": "max-block-size",
+  "source_cache_file": "max-block-size.md",
+  "title": "max-block-size - Sizing - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "max-block-size",
+    "EXAMPLES",
+    "Basic example",
+    "Using a percentage",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "SIZING max-block-size Utilities for setting the maximum block size of an element. Class Styles max-block-<number> max-block-size: calc(var(--spacing) * <number>); max-block-<fraction> max-block-size: calc(<fraction> * 100%); max-block-none max-block-size: none; max-block-px max-block-size: 1px; max-block-full max-block-size: 100%; max-block-screen max-block-size: 100vh; max-block-dvh max-block-size: 100dvh; max-block-dvw max-block-size: 100dvw; max-block-lvh max-block-size: 100lvh; max-block-lvw max-block-size: 100lvw; SHOW MORE EXAMPLES Basic example Use max-block-<number> utilities like max-block-24 and max-block-64 to set an element to a fixed maximum block size based on the spacing scale: max-block-80 max-block-64 max-block-48 max-block-40 max-block-32 <div class=\"block-96 ...\"> <div class=\"block-full max-block-80 ...\">max-block-80</div> <div class=\"block-full max-block-64 ...\">max-block-64</div> <div class=\"block-full max-block-48 ...\">max-block-48</div> <div class=\"block-full max-block-40 ...\">max-block-40</div> <div class=\"block-full max-block-32 ...\">max-block-32</div> </div> Using a percentage Use max-block-full or max-block-<fraction> utilities like max-block-1/2 and max-block-2/5 to give an element a percentage-based maximum block size: max-block-9/10 max-block-3/4 max-block-1/2 max-block-full <div class=\"block-96 ...\"> <div class=\"block-full max-block-9/10 ...\">max-block-9/10</div> <div class=\"block-full max-block-3/4 ...\">max-block-3/4</div> <div class=\"block-full max-block-1/2 ...\">max-block-1/2</div> <div class=\"block-full max-block-full ...\">max-block-full</div> </div> Using a custom value Use the max-block-[<value>] syntax to set the maximum block size based on a completely custom value: <div class=\"max-block-[220px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the max-block-(<custom-property>) syntax: <div class=\"max-block-(--my-max-block-size) ...\"> <!-- ... --> </div> This is just a shorthand for max-block-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a max-block-size utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"block-48 max-block-full md:max-block-screen ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme The max-block-<number> utilities are driven by the --spacing theme variable, which can be customized in your own theme: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme variable documentation. min-block-size font-family",
+  "code_examples": [
+    "<div class=\"block-96 ...\">\n  <div class=\"block-full max-block-80 ...\">max-block-80</div>\n  <div class=\"block-full max-block-64 ...\">max-block-64</div>\n  <div class=\"block-full max-block-48 ...\">max-block-48</div>\n  <div class=\"block-full max-block-40 ...\">max-block-40</div>\n  <div class=\"block-full max-block-32 ...\">max-block-32</div>\n</div>",
+    "<div class=\"block-96 ...\">\n  <div class=\"block-full max-block-9/10 ...\">max-block-9/10</div>\n  <div class=\"block-full max-block-3/4 ...\">max-block-3/4</div>\n  <div class=\"block-full max-block-1/2 ...\">max-block-1/2</div>\n  <div class=\"block-full max-block-full ...\">max-block-full</div>\n</div>",
+    "<div class=\"max-block-[220px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"max-block-(--my-max-block-size) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"block-48 max-block-full md:max-block-screen ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/max-block-size/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2650,
+          "pageY": 2707,
+          "scrollY": 2707,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:02:42.026534+00:00"
+}

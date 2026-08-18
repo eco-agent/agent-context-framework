@@ -1,0 +1,62 @@
+{
+  "path": "/docs/filter-hue-rotate",
+  "url": "https://tailwindcss.com/docs/filter-hue-rotate",
+  "slug": "filter-hue-rotate",
+  "source_cache_file": "filter-hue-rotate.md",
+  "title": "filter: hue-rotate() - Filters - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "filter: hue-rotate()",
+    "EXAMPLES",
+    "Basic example",
+    "Using negative values",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FILTERS filter: hue-rotate() Utilities for applying hue-rotate filters to an element. Class Styles hue-rotate-<number> filter: hue-rotate(<number>deg); -hue-rotate-<number> filter: hue-rotate(calc(<number>deg * -1)); hue-rotate-(<custom-property>) filter: hue-rotate(var(<custom-property>)); hue-rotate-[<value>] filter: hue-rotate(<value>); EXAMPLES Basic example Use utilities like hue-rotate-90 and hue-rotate-180 to rotate the hue of an element by degrees: hue-rotate-15 hue-rotate-90 hue-rotate-180 hue-rotate-270 <img class=\"hue-rotate-15\" src=\"/img/mountains.jpg\" /> <img class=\"hue-rotate-90\" src=\"/img/mountains.jpg\" /> <img class=\"hue-rotate-180\" src=\"/img/mountains.jpg\" /> <img class=\"hue-rotate-270\" src=\"/img/mountains.jpg\" /> Using negative values Use utilities like -hue-rotate-15 and -hue-rotate-45 to set a negative hue rotate value: -hue-rotate-15 -hue-rotate-45 -hue-rotate-90 <img class=\"-hue-rotate-15\" src=\"/img/mountains.jpg\" /> <img class=\"-hue-rotate-45\" src=\"/img/mountains.jpg\" /> <img class=\"-hue-rotate-90\" src=\"/img/mountains.jpg\" /> Using a custom value Use the hue-rotate-[<value>] syntax to set the hue rotation based on a completely custom value: <img class=\"hue-rotate-[3.142rad] ...\" src=\"/img/mountains.jpg\" /> For CSS variables, you can also use the hue-rotate-(<custom-property>) syntax: <img class=\"hue-rotate-(--my-hue-rotate) ...\" src=\"/img/mountains.jpg\" /> This is just a shorthand for hue-rotate-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a filter: hue-rotate() utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <img class=\"hue-rotate-60 md:hue-rotate-0 ...\" src=\"/img/mountains.jpg\" /> Learn more about using variants in the variants documentation. grayscale invert",
+  "code_examples": [
+    "<img class=\"hue-rotate-15\" src=\"/img/mountains.jpg\" />\n<img class=\"hue-rotate-90\" src=\"/img/mountains.jpg\" />\n<img class=\"hue-rotate-180\" src=\"/img/mountains.jpg\" />\n<img class=\"hue-rotate-270\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"-hue-rotate-15\" src=\"/img/mountains.jpg\" />\n<img class=\"-hue-rotate-45\" src=\"/img/mountains.jpg\" />\n<img class=\"-hue-rotate-90\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"hue-rotate-[3.142rad] ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"hue-rotate-(--my-hue-rotate) ...\" src=\"/img/mountains.jpg\" />",
+    "<img class=\"hue-rotate-60 md:hue-rotate-0 ...\" src=\"/img/mountains.jpg\" />"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/filter-hue-rotate/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1244,
+          "pageY": 1301,
+          "scrollY": 1301,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:42.071696+00:00"
+}

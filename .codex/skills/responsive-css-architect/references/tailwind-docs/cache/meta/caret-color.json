@@ -1,0 +1,63 @@
+{
+  "path": "/docs/caret-color",
+  "url": "https://tailwindcss.com/docs/caret-color",
+  "slug": "caret-color",
+  "source_cache_file": "caret-color.md",
+  "title": "caret-color - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "caret-color",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "INTERACTIVITY caret-color Utilities for controlling the color of the text input cursor. Class Styles caret-inherit caret-color: inherit; caret-current caret-color: currentColor; caret-transparent caret-color: transparent; caret-black caret-color: var(--color-black); /* #000 */ caret-white caret-color: var(--color-white); /* #fff */ caret-red-50 caret-color: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ caret-red-100 caret-color: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ caret-red-200 caret-color: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ caret-red-300 caret-color: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ caret-red-400 caret-color: var(--color-red-400); /* oklch(70.4% 0.191 22.216) */ SHOW MORE EXAMPLES Basic example Use utilities like caret-rose-500 and caret-lime-600 to change the color of the text input cursor: Focus the textarea to see the new caret color <textarea class=\"caret-pink-500 ...\"></textarea> Using a custom value Use the caret-[<value>] syntax to set the caret color based on a completely custom value: <textarea class=\"caret-[#50d71e] ...\"></textarea> For CSS variables, you can also use the caret-(<custom-property>) syntax: <textarea class=\"caret-(--my-caret-color) ...\"></textarea> This is just a shorthand for caret-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a caret-color utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <textarea class=\"caret-rose-500 md:caret-lime-600 ...\"></textarea> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the caret-regal-blue utility can be used in your markup: <textarea class=\"caret-regal-blue\"></textarea> Learn more about customizing your theme in the theme documentation. appearance color-scheme",
+  "code_examples": [
+    "<textarea class=\"caret-pink-500 ...\"></textarea>",
+    "<textarea class=\"caret-[#50d71e] ...\"></textarea>",
+    "<textarea class=\"caret-(--my-caret-color) ...\"></textarea>",
+    "<textarea class=\"caret-rose-500 md:caret-lime-600 ...\"></textarea>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<textarea class=\"caret-regal-blue\"></textarea>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/caret-color/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1389,
+          "pageY": 1446,
+          "scrollY": 1446,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:27.906032+00:00"
+}

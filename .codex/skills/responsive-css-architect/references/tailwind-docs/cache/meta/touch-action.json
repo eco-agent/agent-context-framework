@@ -1,0 +1,57 @@
+{
+  "path": "/docs/touch-action",
+  "url": "https://tailwindcss.com/docs/touch-action",
+  "slug": "touch-action",
+  "source_cache_file": "touch-action.md",
+  "title": "touch-action - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "touch-action",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "INTERACTIVITY touch-action Utilities for controlling how an element can be scrolled and zoomed on touchscreens. Class Styles touch-auto touch-action: auto; touch-none touch-action: none; touch-pan-x touch-action: pan-x; touch-pan-left touch-action: pan-left; touch-pan-right touch-action: pan-right; touch-pan-y touch-action: pan-y; touch-pan-up touch-action: pan-up; touch-pan-down touch-action: pan-down; touch-pinch-zoom touch-action: pinch-zoom; touch-manipulation touch-action: manipulation; EXAMPLES Basic example Use utilities like touch-pan-y and touch-pinch-zoom to control how an element can be scrolled (panned) and zoomed (pinched) on touchscreens: Try panning these images on a touchscreen touch-auto touch-none touch-pan-x touch-pan-y <div class=\"h-48 w-full touch-auto overflow-auto ...\"> <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" /> </div> <div class=\"h-48 w-full touch-none overflow-auto ...\"> <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" /> </div> <div class=\"h-48 w-full touch-pan-x overflow-auto ...\"> <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" /> </div> <div class=\"h-48 w-full touch-pan-y overflow-auto ...\"> <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" /> </div> Responsive design Prefix a touch-action utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"touch-pan-x md:touch-auto ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. scroll-snap-type user-select",
+  "code_examples": [
+    "<div class=\"h-48 w-full touch-auto overflow-auto ...\">\n  <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" />\n</div>\n<div class=\"h-48 w-full touch-none overflow-auto ...\">\n  <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" />\n</div>\n<div class=\"h-48 w-full touch-pan-x overflow-auto ...\">\n  <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" />\n</div>\n<div class=\"h-48 w-full touch-pan-y overflow-auto ...\">\n  <img class=\"h-auto w-[150%] max-w-none\" src=\"...\" />\n</div>",
+    "<div class=\"touch-pan-x md:touch-auto ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/touch-action/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1144,
+          "pageY": 1201,
+          "scrollY": 1201,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:08:08.958151+00:00"
+}

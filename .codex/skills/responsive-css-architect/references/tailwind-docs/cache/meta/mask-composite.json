@@ -1,0 +1,47 @@
+{
+  "path": "/docs/mask-composite",
+  "url": "https://tailwindcss.com/docs/mask-composite",
+  "slug": "mask-composite",
+  "source_cache_file": "mask-composite.md",
+  "title": "mask-composite - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "mask-composite",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS mask-composite Utilities for controlling how multiple masks are combined together. Class Styles mask-add mask-composite: add; mask-subtract mask-composite: subtract; mask-intersect mask-composite: intersect; mask-exclude mask-composite: exclude; EXAMPLES Basic example Use utilities like mask-add and mask-intersect to control how an element's masks are combined together: mask-add mask-subtract mask-intersect mask-exclude <div class=\"mask-add mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div> <div class=\"mask-subtract mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div> <div class=\"mask-intersect mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div> <div class=\"mask-exclude mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div> Responsive design Prefix a mask-composite utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"mask-add md:mask-subtract ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. mask-clip mask-image",
+  "code_examples": [
+    "<div class=\"mask-add mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div>\n<div class=\"mask-subtract mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div>\n<div class=\"mask-intersect mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div>\n<div class=\"mask-exclude mask-[url(/img/circle.png),url(/img/circle.png)] mask-position-[30%_50%,70%_50%] bg-[url(/img/mountains.jpg)]\"></div>",
+    "<div class=\"mask-add md:mask-subtract ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/mask-composite/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 518,
+          "pageY": 575,
+          "scrollY": 575,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:04.655269+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "pg-boss",
+  "version": "12.26.3",
+  "source": "https://github.com/timgit/pg-boss/tree/b98853bf67032ccca996edfa675d0c07c6182369",
+  "license": "MIT",
+  "integrity": "sha512-slpR0zeMXzX3c+gAI6035XzJfNfUYndCdvxudJojB2S1LZEMxT31xBBEVm7shEcJQ35Vj2ik+w2Hf7lmLuvrZQ==",
+  "purpose": "Own PostgreSQL archive-job creation, bounded claims, retries, expiry recovery, and dead-letter mechanics required by ADR-0019.",
+  "alternativesConsidered": [
+    "Project-owned PostgreSQL archive lease and retry tables",
+    "Synchronous blob writes inside data ingress",
+    "Directory scanning as the archive queue"
+  ],
+  "maintenanceStatus": "Pinned to pg-boss 12.26.3 and its published source revision; requires Node.js 22.12 or newer and PostgreSQL 13 or newer.",
+  "securityEvidence": "Registry metadata, package integrity, exact upstream source revision, frozen lockfile, production dependency audit, and local PostgreSQL conformance are required for this adoption.",
+  "modifications": "None; Agent Context Framework retains archive identity, authorization, immutable receipts, blob verification, and recovery policy.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "data-platform"
+}

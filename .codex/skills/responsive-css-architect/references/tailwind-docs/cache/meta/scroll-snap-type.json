@@ -1,0 +1,71 @@
+{
+  "path": "/docs/scroll-snap-type",
+  "url": "https://tailwindcss.com/docs/scroll-snap-type",
+  "slug": "scroll-snap-type",
+  "source_cache_file": "scroll-snap-type.md",
+  "title": "scroll-snap-type - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "scroll-snap-type",
+    "EXAMPLES",
+    "Horizontal scroll snapping",
+    "Mandatory scroll snapping",
+    "Proximity scroll snapping",
+    "Responsive design"
+  ],
+  "content_text": "INTERACTIVITY scroll-snap-type Utilities for controlling how strictly snap points are enforced in a snap container. Class Styles snap-none scroll-snap-type: none; snap-x scroll-snap-type: x var(--tw-scroll-snap-strictness); snap-y scroll-snap-type: y var(--tw-scroll-snap-strictness); snap-both scroll-snap-type: both var(--tw-scroll-snap-strictness); snap-mandatory --tw-scroll-snap-strictness: mandatory; snap-proximity --tw-scroll-snap-strictness: proximity; EXAMPLES Horizontal scroll snapping Use the snap-x utility to enable horizontal scroll snapping within an element: Scroll in the grid of images to see the expected behavior snap point <div class=\"snap-x ...\"> <div class=\"snap-center ...\"> <img src=\"/img/vacation-01.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-02.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-03.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-04.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-05.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-06.jpg\" /> </div> </div> For scroll snapping to work, you need to also set the scroll snap alignment on the children. Mandatory scroll snapping Use the snap-mandatory utility to force a snap container to always come to rest on a snap point: Scroll in the grid of images to see the expected behavior snap point <div class=\"snap-x snap-mandatory ...\"> <div class=\"snap-center ...\"> <img src=\"/img/vacation-01.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-02.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-03.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-04.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-05.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-06.jpg\" /> </div> </div> Proximity scroll snapping Use the snap-proximity utility to make a snap container come to rest on snap points that are close in proximity: Scroll in the grid of images to see the expected behavior snap point <div class=\"snap-x snap-proximity ...\"> <div class=\"snap-center ...\"> <img src=\"/img/vacation-01.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-02.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-03.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-04.jpg\" /> </div> <div class=\"snap-center ...\"> <img src=\"/img/vacation-05.jpg\" /> </div> </div> Responsive design Prefix a scroll-snap-type utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"snap-none md:snap-x ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. scroll-snap-stop touch-action",
+  "code_examples": [
+    "<div class=\"snap-x ...\">\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-01.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-02.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-03.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-04.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-05.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-06.jpg\" />\n  </div>\n</div>",
+    "<div class=\"snap-x snap-mandatory ...\">\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-01.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-02.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-03.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-04.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-05.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-06.jpg\" />\n  </div>\n</div>",
+    "<div class=\"snap-x snap-proximity ...\">\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-01.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-02.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-03.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-04.jpg\" />\n  </div>\n  <div class=\"snap-center ...\">\n    <img src=\"/img/vacation-05.jpg\" />\n  </div>\n</div>",
+    "<div class=\"snap-none md:snap-x ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/scroll-snap-type/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 2798,
+          "pageY": 2855,
+          "scrollY": 2855,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:08:06.526404+00:00"
+}

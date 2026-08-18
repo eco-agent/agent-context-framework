@@ -1,0 +1,32 @@
+# Environment files
+.env
+*.env
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Editors/OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.DS_Store
+artifacts/
+node_modules/
+*.log
+
+# Generated TypeScript and Codex workflow state
+dist/
+dist-test/
+*.tsbuildinfo
+.codex/artifacts/
+.codex/runs/
+.codex/work/reference-checkouts/

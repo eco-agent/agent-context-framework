@@ -1,0 +1,47 @@
+{
+  "path": "/docs/transition-behavior",
+  "url": "https://tailwindcss.com/docs/transition-behavior",
+  "slug": "transition-behavior",
+  "source_cache_file": "transition-behavior.md",
+  "title": "transition-behavior - Transitions & Animation - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "transition-behavior",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "TRANSITIONS & ANIMATION transition-behavior Utilities to control the behavior of CSS transitions. Class Styles transition-normal transition-behavior: normal; transition-discrete transition-behavior: allow-discrete; EXAMPLES Basic example Use the transition-discrete utility to start transitions when changing properties with a discrete set of values, such as elements that change from hidden to block: Interact with the checkboxes to see the expected behavior transition-normal I hide transition-discrete I fade out <label class=\"peer ...\"> <input type=\"checkbox\" checked /> </label> <button class=\"hidden transition-all not-peer-has-checked:opacity-0 peer-has-checked:block ...\"> I hide </button> <label class=\"peer ...\"> <input type=\"checkbox\" checked /> </label> <button class=\"hidden transition-all transition-discrete not-peer-has-checked:opacity-0 peer-has-checked:block ...\"> I fade out </button> Responsive design Prefix a transition-behavior utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <button class=\"transition-discrete md:transition-normal ...\"> <!-- ... --> </button> Learn more about using variants in the variants documentation. transition-property transition-duration",
+  "code_examples": [
+    "<label class=\"peer ...\">\n  <input type=\"checkbox\" checked />\n</label>\n<button class=\"hidden transition-all not-peer-has-checked:opacity-0 peer-has-checked:block ...\">\n  I hide\n</button>\n<label class=\"peer ...\">\n  <input type=\"checkbox\" checked />\n</label>\n<button class=\"hidden transition-all transition-discrete not-peer-has-checked:opacity-0 peer-has-checked:block ...\">\n  I fade out\n</button>",
+    "<button class=\"transition-discrete md:transition-normal ...\">\n  <!-- ... -->\n</button>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/transition-behavior/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 404,
+          "pageY": 461,
+          "scrollY": 461,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:06:31.651713+00:00"
+}

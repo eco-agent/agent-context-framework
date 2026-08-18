@@ -1,0 +1,47 @@
+{
+  "path": "/docs/mask-mode",
+  "url": "https://tailwindcss.com/docs/mask-mode",
+  "slug": "mask-mode",
+  "source_cache_file": "mask-mode.md",
+  "title": "mask-mode - Effects - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "mask-mode",
+    "EXAMPLES",
+    "Basic example",
+    "Responsive design"
+  ],
+  "content_text": "EFFECTS mask-mode Utilities for controlling an element's mask mode. Class Styles mask-alpha mask-mode: alpha; mask-luminance mask-mode: luminance; mask-match mask-mode: match-source; EXAMPLES Basic example Use the mask-alpha, mask-luminance and mask-match utilities to control the mode of an element's mask: mask-alpha mask-luminance <div class=\"mask-alpha mask-r-from-black mask-r-from-50% mask-r-to-transparent bg-[url(/img/mountains.jpg)] ...\"></div> <div class=\"mask-luminance mask-r-from-white mask-r-from-50% mask-r-to-black bg-[url(/img/mountains.jpg)] ...\"></div> When using mask-luminance the luminance value of the mask determines visibility, so sticking with grayscale colors will produce the most predictable results. With mask-alpha, the opacity of the mask determines the visibility of the masked element. Responsive design Prefix a mask-mode utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"mask-alpha md:mask-luminance ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. mask-image mask-origin",
+  "code_examples": [
+    "<div class=\"mask-alpha mask-r-from-black mask-r-from-50% mask-r-to-transparent bg-[url(/img/mountains.jpg)] ...\"></div>\n<div class=\"mask-luminance mask-r-from-white mask-r-from-50% mask-r-to-black bg-[url(/img/mountains.jpg)] ...\"></div>",
+    "<div class=\"mask-alpha md:mask-luminance ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/mask-mode/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 637,
+          "pageY": 694,
+          "scrollY": 694,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:05:12.591589+00:00"
+}

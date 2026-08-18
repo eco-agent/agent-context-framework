@@ -1,0 +1,50 @@
+{
+  "path": "/docs/outline-offset",
+  "url": "https://tailwindcss.com/docs/outline-offset",
+  "slug": "outline-offset",
+  "source_cache_file": "outline-offset.md",
+  "title": "outline-offset - Borders - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "outline-offset",
+    "EXAMPLES",
+    "Basic example",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "BORDERS outline-offset Utilities for controlling the offset of an element's outline. Class Styles outline-offset-<number> outline-offset: <number>px; -outline-offset-<number> outline-offset: calc(<number>px * -1); outline-offset-(<custom-property>) outline-offset: var(<custom-property>); outline-offset-[<value>] outline-offset: <value>; EXAMPLES Basic example Use utilities like outline-offset-2 and outline-offset-4 to change the offset of an element's outline: outline-offset-0 Button A outline-offset-2 Button B outline-offset-4 Button C <button class=\"outline-2 outline-offset-0 ...\">Button A</button> <button class=\"outline-2 outline-offset-2 ...\">Button B</button> <button class=\"outline-2 outline-offset-4 ...\">Button C</button> Using a custom value Use the outline-offset-[<value>] syntax to set the outline offset based on a completely custom value: <div class=\"outline-offset-[2vw] ...\"> <!-- ... --> </div> For CSS variables, you can also use the outline-offset-(<custom-property>) syntax: <div class=\"outline-offset-(--my-outline-offset) ...\"> <!-- ... --> </div> This is just a shorthand for outline-offset-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix an outline-offset utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"outline md:outline-offset-2 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. outline-style box-shadow",
+  "code_examples": [
+    "<button class=\"outline-2 outline-offset-0 ...\">Button A</button>\n<button class=\"outline-2 outline-offset-2 ...\">Button B</button>\n<button class=\"outline-2 outline-offset-4 ...\">Button C</button>",
+    "<div class=\"outline-offset-[2vw] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"outline-offset-(--my-outline-offset) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"outline md:outline-offset-2 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/outline-offset/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 817,
+          "pageY": 874,
+          "scrollY": 874,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:44.378860+00:00"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@effect/sql-pg",
+  "version": "0.53.0",
+  "source": "https://github.com/Effect-TS/effect/tree/e670e0f6befb959b84208d5f77631276521020ae/packages/sql-pg",
+  "license": "MIT",
+  "integrity": "sha512-E9LPkP3aB9RNPhAl9R19z6dcmleNyJJGatg0N/zpH3LyIg3dB/4Qhv543rNOGyQlox5ebUADbHUxWk5UzDfSCA==",
+  "purpose": "Provide scoped PostgreSQL pooling, statements, and transactions for canonical ingress and consumer state.",
+  "alternativesConsidered": [
+    "Direct node-postgres pooling and transaction wrappers",
+    "A project-owned SQL client abstraction"
+  ],
+  "maintenanceStatus": "Pinned with Effect 3.22.0 at the same upstream release commit.",
+  "securityEvidence": "Registry metadata, package integrity, upstream release source, frozen lockfile, and production dependency audit were reviewed.",
+  "modifications": "None; schema, transactions, receipts, ordering, and authorization remain application-owned.",
+  "requiredNotices": "Preserve the MIT license notice in distributions.",
+  "owner": "data-platform"
+}

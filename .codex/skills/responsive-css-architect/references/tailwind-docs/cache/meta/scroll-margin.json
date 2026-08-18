@@ -1,0 +1,87 @@
+{
+  "path": "/docs/scroll-margin",
+  "url": "https://tailwindcss.com/docs/scroll-margin",
+  "slug": "scroll-margin",
+  "source_cache_file": "scroll-margin.md",
+  "title": "scroll-margin - Interactivity - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "scroll-margin",
+    "EXAMPLES",
+    "Basic example",
+    "Using negative values",
+    "Using logical properties",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "INTERACTIVITY scroll-margin Utilities for controlling the scroll offset around items in a snap container. Class Styles scroll-m-<number> scroll-margin: calc(var(--spacing) * <number>); -scroll-m-<number> scroll-margin: calc(var(--spacing) * -<number>); scroll-m-(<custom-property>) scroll-margin: var(<custom-property>); scroll-m-[<value>] scroll-margin: <value>; scroll-mx-<number> scroll-margin-inline: calc(var(--spacing) * <number>); -scroll-mx-<number> scroll-margin-inline: calc(var(--spacing) * -<number>); scroll-mx-(<custom-property>) scroll-margin-inline: var(<custom-property>); scroll-mx-[<value>] scroll-margin-inline: <value>; scroll-my-<number> scroll-margin-block: calc(var(--spacing) * <number>); -scroll-my-<number> scroll-margin-block: calc(var(--spacing) * -<number>); SHOW MORE EXAMPLES Basic example Use the scroll-mt-<number>, scroll-mr-<number>, scroll-mb-<number>, and scroll-ml-<number> utilities like scroll-ml-4 and scroll-mt-6 to set the scroll offset around items within a snap container: Scroll in the grid of images to see the expected behavior <div class=\"snap-x ...\"> <div class=\"snap-start scroll-ml-6 ...\"> <img src=\"/img/vacation-01.jpg\"/> </div> <div class=\"snap-start scroll-ml-6 ...\"> <img src=\"/img/vacation-02.jpg\"/> </div> <div class=\"snap-start scroll-ml-6 ...\"> <img src=\"/img/vacation-03.jpg\"/> </div> <div class=\"snap-start scroll-ml-6 ...\"> <img src=\"/img/vacation-04.jpg\"/> </div> <div class=\"snap-start scroll-ml-6 ...\"> <img src=\"/img/vacation-05.jpg\"/> </div> </div> Using negative values To use a negative scroll margin value, prefix the class name with a dash to convert it to a negative value: <div class=\"snap-start -scroll-ml-6 ...\"> <!-- ... --> </div> Using logical properties Use the scroll-ms-<number> and scroll-me-<number> utilities to set the scroll-margin-inline-start and scroll-margin-inline-end logical properties, which map to either the left or right side based on the text direction: Scroll in the grid of images to see the expected behavior Left-to-right Right-to-left <div dir=\"ltr\"> <div class=\"snap-x ...\"> <div class=\"snap-start scroll-ms-6 ...\"> <img src=\"/img/vacation-01.jpg\"/> </div> <!-- ... --> </div> </div> <div dir=\"rtl\"> <div class=\"snap-x ...\"> <div class=\"snap-start scroll-ms-6 ...\"> <img src=\"/img/vacation-01.jpg\"/> </div> <!-- ... --> </div> </div> For more control, you can also use the LTR and RTL modifiers to conditionally apply specific styles depending on the current text direction. Use the scroll-mbs-<number> and scroll-mbe-<number> utilities to set the scroll-margin-block-start and scroll-margin-block-end logical properties, which map to either the top or bottom side based on the writing mode: <div class=\"snap-y ...\"> <div class=\"snap-start scroll-mbs-6 ...\"> <!-- ... --> </div> </div> Using a custom value Use utilities like scroll-ml-[<value>] and scroll-me-[<value>] to set the scroll margin based on a completely custom value: <div class=\"scroll-ml-[24rem] ...\"> <!-- ... --> </div> For CSS variables, you can also use the scroll-ml-(<custom-property>) syntax: <div class=\"scroll-ml-(--my-scroll-margin) ...\"> <!-- ... --> </div> This is just a shorthand for scroll-ml-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a scroll-margin utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"scroll-m-8 md:scroll-m-0 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme The scroll-m-<number>,scroll-mx-<number>,scroll-my-<number>,scroll-ms-<number>,scroll-me-<number>,scroll-mbs-<number>,scroll-mbe-<number>,scroll-mt-<number>,scroll-mr-<number>,scroll-mb-<number>, and scroll-ml-<number> utilities are driven by the --spacing theme variable, which can be customized in your own theme: @theme { --spacing: 1px; } Learn more about customizing the spacing scale in the theme variable documentation. scrollbar-gutter scroll-padding",
+  "code_examples": [
+    "<div class=\"snap-x ...\">\n  <div class=\"snap-start scroll-ml-6 ...\">\n    <img src=\"/img/vacation-01.jpg\"/>\n  </div>\n  <div class=\"snap-start scroll-ml-6 ...\">\n    <img src=\"/img/vacation-02.jpg\"/>\n  </div>\n  <div class=\"snap-start scroll-ml-6 ...\">\n    <img src=\"/img/vacation-03.jpg\"/>\n  </div>\n  <div class=\"snap-start scroll-ml-6 ...\">\n    <img src=\"/img/vacation-04.jpg\"/>\n  </div>\n  <div class=\"snap-start scroll-ml-6 ...\">\n    <img src=\"/img/vacation-05.jpg\"/>\n  </div>\n</div>",
+    "<div class=\"snap-start -scroll-ml-6 ...\">\n  <!-- ... -->\n</div>",
+    "<div dir=\"ltr\">\n  <div class=\"snap-x ...\">\n    <div class=\"snap-start scroll-ms-6 ...\">\n      <img src=\"/img/vacation-01.jpg\"/>\n    </div>\n    <!-- ... -->\n  </div>\n</div>\n<div dir=\"rtl\">\n  <div class=\"snap-x ...\">\n    <div class=\"snap-start scroll-ms-6 ...\">\n      <img src=\"/img/vacation-01.jpg\"/>\n    </div>\n    <!-- ... -->\n  </div>\n</div>",
+    "<div class=\"snap-y ...\">\n  <div class=\"snap-start scroll-mbs-6 ...\">\n    <!-- ... -->\n  </div>\n</div>",
+    "<div class=\"scroll-ml-[24rem] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scroll-ml-(--my-scroll-margin) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"scroll-m-8 md:scroll-m-0 ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --spacing: 1px; \n}"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/scroll-margin/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 2080,
+          "pageY": 2137,
+          "scrollY": 2137,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 3,
+          "file": "003.png",
+          "contentOffsetY": 3120,
+          "pageY": 3177,
+          "scrollY": 3177,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 4,
+          "file": "004.png",
+          "contentOffsetY": 3839,
+          "pageY": 3896,
+          "scrollY": 3896,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:07:53.710225+00:00"
+}

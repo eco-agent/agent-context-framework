@@ -1,0 +1,7 @@
+interface:
+  display_name: "Accessible Interfaces"
+  short_description: "Implement accessible interface behavior"
+  default_prompt: "Use $design-accessible-interfaces to implement the requested interface with native accessible behavior."
+
+policy:
+  allow_implicit_invocation: false

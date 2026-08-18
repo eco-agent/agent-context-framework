@@ -1,0 +1,62 @@
+{
+  "path": "/docs/grid-template-columns",
+  "url": "https://tailwindcss.com/docs/grid-template-columns",
+  "slug": "grid-template-columns",
+  "source_cache_file": "grid-template-columns.md",
+  "title": "grid-template-columns - Flexbox & Grid - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "grid-template-columns",
+    "EXAMPLES",
+    "Specifying the grid columns",
+    "Implementing a subgrid",
+    "Using a custom value",
+    "Responsive design"
+  ],
+  "content_text": "FLEXBOX & GRID grid-template-columns Utilities for specifying the columns in a grid layout. Class Styles grid-cols-<number> grid-template-columns: repeat(<number>, minmax(0, 1fr)); grid-cols-none grid-template-columns: none; grid-cols-subgrid grid-template-columns: subgrid; grid-cols-[<value>] grid-template-columns: <value>; grid-cols-(<custom-property>) grid-template-columns: var(<custom-property>); EXAMPLES Specifying the grid columns Use grid-cols-<number> utilities like grid-cols-2 and grid-cols-4 to create grids with n equally sized columns: 01 02 03 04 05 06 07 08 09 <div class=\"grid grid-cols-4 gap-4\"> <div>01</div> <!-- ... --> <div>09</div> </div> Implementing a subgrid Use the grid-cols-subgrid utility to adopt the column tracks defined by the item's parent: 01 02 03 04 05 06 <div class=\"grid grid-cols-4 gap-4\"> <div>01</div> <!-- ... --> <div>05</div> <div class=\"col-span-3 grid grid-cols-subgrid gap-4\"> <div class=\"col-start-2\">06</div> </div> </div> Using a custom value Use the grid-cols-[<value>] syntax to set the columns based on a completely custom value: <div class=\"grid-cols-[200px_minmax(900px,_1fr)_100px] ...\"> <!-- ... --> </div> For CSS variables, you can also use the grid-cols-(<custom-property>) syntax: <div class=\"grid-cols-(--my-grid-cols) ...\"> <!-- ... --> </div> This is just a shorthand for grid-cols-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix a grid-template-columns utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"grid grid-cols-1 md:grid-cols-6 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. order grid-column",
+  "code_examples": [
+    "<div class=\"grid grid-cols-4 gap-4\">\n  <div>01</div>\n  <!-- ... -->\n  <div>09</div>\n</div>",
+    "<div class=\"grid grid-cols-4 gap-4\">\n  <div>01</div>\n  <!-- ... -->\n  <div>05</div>\n  <div class=\"col-span-3 grid grid-cols-subgrid gap-4\">\n    <div class=\"col-start-2\">06</div>\n  </div>\n</div>",
+    "<div class=\"grid-cols-[200px_minmax(900px,_1fr)_100px] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"grid-cols-(--my-grid-cols) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"grid grid-cols-1 md:grid-cols-6 ...\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/grid-template-columns/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1577,
+          "pageY": 1634,
+          "scrollY": 1634,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:01:10.049402+00:00"
+}

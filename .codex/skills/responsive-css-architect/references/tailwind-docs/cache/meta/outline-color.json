@@ -1,0 +1,65 @@
+{
+  "path": "/docs/outline-color",
+  "url": "https://tailwindcss.com/docs/outline-color",
+  "slug": "outline-color",
+  "source_cache_file": "outline-color.md",
+  "title": "outline-color - Borders - Tailwind CSS",
+  "content_selector": "h1[data-title] ancestor containing [data-content]",
+  "headings": [
+    "outline-color",
+    "EXAMPLES",
+    "Basic example",
+    "Changing the opacity",
+    "Using a custom value",
+    "Responsive design",
+    "Customizing your theme"
+  ],
+  "content_text": "BORDERS outline-color Utilities for controlling the color of an element's outline. Class Styles outline-inherit outline-color: inherit; outline-current outline-color: currentColor; outline-transparent outline-color: transparent; outline-black outline-color: var(--color-black); /* #000 */ outline-white outline-color: var(--color-white); /* #fff */ outline-red-50 outline-color: var(--color-red-50); /* oklch(97.1% 0.013 17.38) */ outline-red-100 outline-color: var(--color-red-100); /* oklch(93.6% 0.032 17.717) */ outline-red-200 outline-color: var(--color-red-200); /* oklch(88.5% 0.062 18.334) */ outline-red-300 outline-color: var(--color-red-300); /* oklch(80.8% 0.114 19.571) */ outline-red-400 outline-color: var(--color-red-400); /* oklch(70.4% 0.191 22.216) */ SHOW MORE EXAMPLES Basic example Use utilities like outline-rose-500 and outline-lime-100 to control the color of an element's outline: outline-blue-500 Button A outline-cyan-500 Button B outline-pink-500 Button C <button class=\"outline-2 outline-offset-2 outline-blue-500 ...\">Button A</button> <button class=\"outline-2 outline-offset-2 outline-cyan-500 ...\">Button B</button> <button class=\"outline-2 outline-offset-2 outline-pink-500 ...\">Button C</button> Changing the opacity Use the color opacity modifier to control the opacity of an element's outline color: outline-blue-500/100 Button A outline-blue-500/75 Button B outline-blue-500/50 Button C <button class=\"outline-2 outline-blue-500/100 ...\">Button A</button> <button class=\"outline-2 outline-blue-500/75 ...\">Button B</button> <button class=\"outline-2 outline-blue-500/50 ...\">Button C</button> Using a custom value Use the outline-[<value>] syntax to set the outline color based on a completely custom value: <div class=\"outline-[#243c5a] ...\"> <!-- ... --> </div> For CSS variables, you can also use the outline-(<custom-property>) syntax: <div class=\"outline-(--my-color) ...\"> <!-- ... --> </div> This is just a shorthand for outline-[var(<custom-property>)] that adds the var() function for you automatically. Responsive design Prefix an outline-color utility with a breakpoint variant like md: to only apply the utility at medium screen sizes and above: <div class=\"outline md:outline-blue-400 ...\"> <!-- ... --> </div> Learn more about using variants in the variants documentation. Customizing your theme Use the --color-* theme variables to customize the color utilities in your project: @theme { --color-regal-blue: #243c5a; } Now the outline-regal-blue utility can be used in your markup: <div class=\"outline-regal-blue\"> <!-- ... --> </div> Learn more about customizing your theme in the theme documentation. outline-width outline-style",
+  "code_examples": [
+    "<button class=\"outline-2 outline-offset-2 outline-blue-500 ...\">Button A</button>\n<button class=\"outline-2 outline-offset-2 outline-cyan-500 ...\">Button B</button>\n<button class=\"outline-2 outline-offset-2 outline-pink-500 ...\">Button C</button>",
+    "<button class=\"outline-2 outline-blue-500/100 ...\">Button A</button>\n<button class=\"outline-2 outline-blue-500/75 ...\">Button B</button>\n<button class=\"outline-2 outline-blue-500/50 ...\">Button C</button>",
+    "<div class=\"outline-[#243c5a] ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"outline-(--my-color) ...\">\n  <!-- ... -->\n</div>",
+    "<div class=\"outline md:outline-blue-400 ...\">\n  <!-- ... -->\n</div>",
+    "@theme {\n  --color-regal-blue: #243c5a; \n}",
+    "<div class=\"outline-regal-blue\">\n  <!-- ... -->\n</div>"
+  ],
+  "screenshots": {
+    "desktop": {
+      "directory": "screenshots/outline-color/desktop",
+      "chunks": [
+        {
+          "index": 0,
+          "file": "000.png",
+          "contentOffsetY": 0,
+          "pageY": 57,
+          "scrollY": 57,
+          "width": 696,
+          "height": 1200,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "file": "001.png",
+          "contentOffsetY": 1040,
+          "pageY": 1097,
+          "scrollY": 1097,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        },
+        {
+          "index": 2,
+          "file": "002.png",
+          "contentOffsetY": 1974,
+          "pageY": 2031,
+          "scrollY": 2031,
+          "width": 696,
+          "height": 1200,
+          "overlap": 160
+        }
+      ]
+    }
+  },
+  "fetched": "2026-07-29T07:04:39.660181+00:00"
+}
