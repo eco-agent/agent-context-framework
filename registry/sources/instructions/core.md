@@ -1,12 +1,11 @@
 # Project agent context
 
-> Commit often. Do not push. Use a branch for each logical work stream. Add an
-> ephemeral worktree only when concurrent or isolated work needs its own
-> checkout.
-> Keep long-horizon evidence in `.codex/work` Markdown. Use the `visualize`
-> skill for an in-conversation visual when it materially improves
-> understanding. Do not create standalone HTML response files unless the user
-> explicitly asks to export one.
+> Make checkpoint commits often, and never push. Give each logical work stream
+> its own branch. Create an ephemeral worktree only when concurrent work or an
+> isolated check needs another checkout.
+> Keep long-running task evidence in `.codex/work` Markdown. Use the `visualize`
+> skill when an in-conversation visual would materially improve understanding.
+> Create a standalone HTML response file only when the user asks for an export.
 
 ## Communication
 
@@ -101,37 +100,44 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 ## Work
 
-- Preserve unrelated changes. Never push or deploy unless explicitly asked.
-- Resolve the intended baseline to one full commit ID before creating a branch,
-  and record it. A moving branch name is not durable evidence.
-- Let one branch own each logical work stream. Use the current checkout for
-  serial work. Add a linked worktree only when concurrent work or an isolated
-  check needs a separate checkout. Record the branch and absolute worktree path.
-- Treat an agent-created worktree as disposable execution state. Remove only a
-  clean worktree created by the current run, through `git worktree remove`, after
-  its commits and paths are recorded. Never force removal or delete the path
-  directly.
-- Keep task-owned dirty state in checkpoint commits on the task branch. Never use
-  `git stash`, and never include unrelated user changes in a checkpoint.
-- Before substantial code, write `.codex/work/<task>.md` with the outcome,
-  decisions, state, topology, slice, replacements, non-goals, and propagation.
-- Record one answer and owner per decision. Keep specialists scoped.
-- Edit the owner and replace directly. Do not add compatibility layers,
-  migrations, adapters, dual writes, fallbacks, or parallel representations
-  unless requested.
-- Git and previews provide recovery. Reduce obsolete paths, then propagate the
-  chosen representation through entry points, clients, contracts, and reverse
-  actions. Mark gaps explicitly.
-- Prefer a package dependency when its public API is sufficient. For
-  repository-shaped vendored source with an upstream update lifecycle, use
-  `git subtree` when the host provides it. Record the upstream URL, commit,
-  prefix, license, and update procedure. Keep selected-file adoption as pinned,
-  attributed copies. Do not add or mutate a submodule unless a project contract
-  requires its separate repository lifecycle.
-- Do not change global Git configuration. Repository or worktree configuration
-  changes require an explicit project decision.
-- Derive limits from a measured model, transport, storage, or runtime boundary.
-  Report when a limit is reached.
+Preserve unrelated changes. Never push or deploy unless the user asks.
+
+Resolve the intended baseline to a full commit ID before creating a branch, then
+record it. A moving branch name is not durable evidence. Use a branch for each
+logical work stream. Use the current checkout for serial work, and add a linked
+worktree only when concurrency or an isolated check needs another checkout.
+Record the worktree's branch and absolute path.
+
+An agent-created worktree is disposable execution state. Remove only a clean
+worktree created by the current run, and only after recording its commits and
+path. Use `git worktree remove`; never force removal or delete the path directly.
+
+Keep task-owned dirty state in checkpoint commits on the task branch. Never use
+`git stash`, and never include unrelated user changes in a checkpoint.
+
+Before substantial code, write `.codex/work/<task>.md`. Record the outcome,
+decisions, state, topology, smallest complete slice, replacements, non-goals,
+and propagation. Give every decision one answer and one owner. Keep specialists
+within their assigned scope.
+
+Edit the owning representation and replace obsolete paths directly. Do not add
+compatibility layers, migrations, adapters, dual writes, fallbacks, or parallel
+representations unless the user asks. Git and previews provide recovery. Carry
+the chosen representation through entry points, clients, contracts, and reverse
+actions, and record any remaining gap.
+
+Prefer a package dependency when its public API is enough. Use `git subtree` for
+repository-shaped vendored source with an upstream update lifecycle when the
+host provides it. Record the upstream URL, commit, prefix, license, and update
+procedure. A selected-file adoption remains a pinned, attributed copy. Do not
+add or mutate a submodule unless a project contract requires its separate
+repository lifecycle.
+
+Do not change global Git configuration. Any repository or worktree
+configuration change requires an explicit project decision.
+
+Derive limits from a measured model, transport, storage, or runtime boundary,
+and report when a limit is reached.
 
 ## Protected framework baseline
 
@@ -151,11 +157,12 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 ## Verification
 
-- For code changes, run the narrowest applicable type and behavior checks before
-  handoff. Read-only review, explanation, and status work do not authorize tests.
-- Browser control, computer control, and broad or repository-wide checks require
-  an explicit request or a declared final-acceptance contract.
-- Report skipped checks and unverified behavior.
+For code changes, run the narrowest applicable type and behavior checks before
+handoff. Read-only review, explanation, and status work do not authorize tests.
+
+Browser control, computer control, and broad or repository-wide checks require
+an explicit user request or a declared final-acceptance contract. Report every
+skipped check and every behavior that remains unverified.
 
 ## Writing check
 

@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.4",
-  "decisionPath": "registry/decisions/0.8.4-agent-prose-hotspots.md",
+  "revision": "0.8.5",
+  "decisionPath": "registry/decisions/0.8.5-framework-policy-prose.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:4c5d323fe860800566b16ee292c6b7ee0b55f078f30f97de4f048f2f19e7d33f",
+      "revision": "sha256:aa43cda3ab8f6fb99faeaa8f22c311dd458872b3b4aa786b61ec76793ab68f88",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "2f3fbe643b319314b4518fb84c79efd10ffe55eaef5ebde93f81721f9a94ce30",
+          "sourceSha256": "2baf73cadb18b46fb02ae354fd2106341e418d05fd102452515042e336366639",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -681,7 +681,7 @@
     },
     {
       "name": "frontend",
-      "revision": "sha256:e4859e30878f3967e860f9eac082d75c1ed41f11d6c0945c1ddf9d0155d463de",
+      "revision": "sha256:119f5271a6d8784d2e0708840dff4c903b0db7171614b1f929d1a5c3256829a9",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -716,7 +716,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend.md",
-          "sourceSha256": "795e70acf82769125284eddc6ebca720f2d03c92b39738b8f6486f3c5f18291b",
+          "sourceSha256": "35054ac2f3dcc541913edfce4c3717192a0e76420db4f499b13eea664d4c5f49",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend",
           "markerStyle": "markdown"
@@ -725,7 +725,7 @@
     },
     {
       "name": "frontend-tailwind",
-      "revision": "sha256:fa95ae69b258bae991f0a1fe9e21542d9d52d6ea6e30073f6a7672ebd4fcf32e",
+      "revision": "sha256:c03c74c4f26a8c79dc1cf80983ac18d09317e7b1fd58807bce66eb8e46ecf581",
       "dependencies": [
         "frontend",
         "skill-responsive-css-architect",
@@ -745,7 +745,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-          "sourceSha256": "111b50b53f026b8977a0bc51c8a652842646dbbbdf6ffc92b11304cfeb77e240",
+          "sourceSha256": "12f7dcfbb8872b673a445550a4bb74cc8bba036147d590ef30751d8438a46212",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend-tailwind",
           "markerStyle": "markdown"
@@ -1472,7 +1472,7 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:635b7d8b921c2337082e804a560cb6be55c918d8dcbdf71d1b32135a5b4f67a8",
+      "revision": "sha256:5483d75e1afa3cc19d01ae8147a3a37b311425c28af5ab8bd7838f9d6335656d",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-diagnose",
@@ -1509,7 +1509,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/engineering.md",
-          "sourceSha256": "8b436c6f7f4888928af300b273bf424705babcc9363ccf239d0193596b58e99a",
+          "sourceSha256": "f56b907349bda632057f2573b346690d42494a8dd72fa39de76d945ca820da80",
           "targetPath": "AGENTS.md",
           "sectionId": "engineering",
           "markerStyle": "markdown"
@@ -1517,7 +1517,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/documentation.md",
-          "sourceSha256": "86e7eec1cc3d86cf4cada227a9033f1b58a6b9e357c0b8dc86d3032a10a1dd01",
+          "sourceSha256": "55904f39eb6ae94cc51509b9e5060b5298dc48a8e65c99fc9074d280a6e9a7b8",
           "targetPath": "docs/AGENTS.md",
           "sectionId": "documentation",
           "markerStyle": "markdown"
@@ -1540,7 +1540,7 @@
     },
     {
       "name": "typescript-engineering",
-      "revision": "sha256:4cdc829df63135fa5fb2fbb59f218ae770e679168ea11a0deeb3d7af664fda2e",
+      "revision": "sha256:2d2f7901b6ed18242aa41f2077f6f6b7b00e662741cab36d716126a4558c0855",
       "dependencies": [
         "engineering",
         "skill-design-typescript-invariants"
@@ -1559,7 +1559,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/typescript-engineering.md",
-          "sourceSha256": "ebe84c1e9d6d26abb91644428f0540b936e8753113eb15f3a5444855aada3ebb",
+          "sourceSha256": "a2ae83edcee9541a65392944ffcf275a28576a469f99eaabebcdb98fedb09187",
           "targetPath": "AGENTS.md",
           "sectionId": "typescript-engineering",
           "markerStyle": "markdown"
@@ -1575,7 +1575,7 @@
     },
     {
       "name": "session-quality",
-      "revision": "sha256:da85a171c6cae42c7a6c32da15be4c87c7071c7908f8961738aaca8a97929e0e",
+      "revision": "sha256:6a8f898d75b3b97704fbe994738e89c932422c951aa6b4911f6ce7cdf5c8eb14",
       "dependencies": [
         "skill-optimize-codex-sessions"
       ],
@@ -1614,7 +1614,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/session-quality.md",
-          "sourceSha256": "8575facab8d2e2aa72a9d2b49157c373ea1b9986c49369e9d7ac48ed2ad6b94d",
+          "sourceSha256": "f9ed25e3ef10a70a0b1b0a392cba5d0fe2af879e0647f0d60fc41f20599ae562",
           "targetPath": "AGENTS.md",
           "sectionId": "session-quality",
           "markerStyle": "markdown"
@@ -1804,7 +1804,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:143dffeb1b8fa2ced8e188a4b019c686f37462e692b22546c7b7fbe22eada19b",
+      "revision": "sha256:145b4df58173e0d3f756e283cca1dfd6a5c03d5f396a7f45e7087dfce77df13c",
       "dependencies": [
         "core",
         "runtime-base"
@@ -1895,7 +1895,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/repository-policy.md",
-          "sourceSha256": "dc15236d52bbca122e135c11c92ea5d561c4738a31e9429ecf35617df638e889",
+          "sourceSha256": "e7c8a5c1d0d99f20e9ec1d62538ba28ba0686848146922bca3d5176c8bbbd419",
           "targetPath": "AGENTS.md",
           "sectionId": "repository-policy",
           "markerStyle": "markdown"

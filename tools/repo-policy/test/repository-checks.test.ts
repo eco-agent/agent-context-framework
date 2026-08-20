@@ -25,9 +25,9 @@ test("instruction hierarchy retains communication, anti-prior, and direct-reuse 
   );
   assert.match(rootInstructions, /in plain English/u);
   assert.match(rootInstructions, /Do not impose character, word, paragraph, or bullet limits/u);
-  assert.match(rootInstructions, /Use the `visualize` skill for an in-conversation visual/u);
-  assert.match(rootInstructions, /Do not create standalone HTML response files/u);
-  assert.match(rootInstructions, /eyebrows, kickers, overlines, pills, badges/u);
+  assert.match(rootInstructions, /Use the `visualize`[\s>]+skill when an in-conversation visual/u);
+  assert.match(rootInstructions, /Create a standalone HTML response file only when the user asks/u);
+  assert.match(rootInstructions, /eyebrows,\s+kickers, overlines, pills, badges/u);
   assert.match(
     frontendInstructions,
     /A heading moved into helper text has changed even when its\s+words remain the same/u,

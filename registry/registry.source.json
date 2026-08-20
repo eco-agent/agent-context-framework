@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.4",
-  "decisionPath": "registry/decisions/0.8.4-agent-prose-hotspots.md",
+  "revision": "0.8.5",
+  "decisionPath": "registry/decisions/0.8.5-framework-policy-prose.md",
   "components": [
     {
       "name": "core",

@@ -1,15 +1,15 @@
 [
   {
     "path": "AGENTS.md",
-    "start": "> Commit often. Do not push. Use a branch for each logical work stream.",
+    "start": "> Make checkpoint commits often, and never push.",
     "end": "# Agent Context Framework",
-    "sha256": "e743de4c38d1e202f3d180d3b95eaf51fe748e4ba3bc1ba61e8d20ce748ea45a"
+    "sha256": "b81febe3451a741a3990210bd4fe12fc603337898af48ed19d8a5998847738a1"
   },
   {
     "path": "docs/AGENTS.md",
-    "start": "## Prose and Reporting Style",
+    "start": "## Prose and reporting style",
     "end": "## Commands",
-    "sha256": "9e290a4546f8e11920710fd07e32fc02e4259db21bebd55f9d4dca7c1a12811b"
+    "sha256": "e346680a7041786ccae0764dcb9b31f69ebfabdc379e3f5b8487c669900c1bb9"
   },
   {
     "path": ".codex/skills/reuse-before-implementation/SKILL.md",

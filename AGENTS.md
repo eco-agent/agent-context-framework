@@ -1,5 +1,9 @@
-> Commit often. Do not push. Use a branch for each logical work stream. Add an ephemeral worktree only when concurrent or isolated work needs its own checkout.
-> Keep long-horizon evidence in `.codex/work` Markdown. Use the `visualize` skill for an in-conversation visual when it materially improves understanding. Do not create standalone HTML response files unless the user explicitly asks to export one.
+> Make checkpoint commits often, and never push. Give each logical work stream
+> its own branch. Create an ephemeral worktree only when concurrent work or an
+> isolated check needs another checkout.
+> Keep long-running task evidence in `.codex/work` Markdown. Use the `visualize`
+> skill when an in-conversation visual would materially improve understanding.
+> Create a standalone HTML response file only when the user asks for an export.
 
 # Agent Context Framework
 
@@ -97,18 +101,46 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 ## Work
 
-- Before substantial code write `.codex/work/<task>.md`: outcome, decisions, state, topology, slice, replacements, non-goals, propagation.
-- Record one answer and owner per decision. Specialists stay scoped.
-- Resolve and record one full baseline commit before a new work stream starts. Let one `codex/<task>` branch own that stream.
-- Use the current checkout for serial work. Add an ephemeral linked worktree only for concurrent work or an isolated check. Record its branch and absolute path. Give one mutable branch and index to one active writer at a time.
-- Store task-owned dirty state in checkpoint commits. Never use `git stash` and never capture unrelated user changes.
-- Remove only a clean worktree created by the current run, through `git worktree remove`, after recording its tip. Never force removal or delete its directory directly. Run `git worktree prune` only when every reported stale entry belongs to the run.
-- Complete one cross-layer slice and applicable loading, empty, error, populated, hover, focus-visible, active, and disabled states.
-- Edit the owner. Consolidate and replace directly. Never add compatibility, migrations, deprecations, adapters, dual writes, fallbacks, or parallel representations unless requested.
-- Git and previews provide recovery. Reduce, then propagate to entry points, clients, adapters, contracts, and reverse actions. Mark gaps.
-- Use `git subtree` for repository-shaped vendored source with an upstream update lifecycle when it is available. Keep selected-file adoption as pinned, attributed copies. Avoid submodules unless a project contract requires a separate checkout and release lifecycle.
-- Never change global Git configuration. Record and justify repository or worktree configuration changes.
-- Limits must protect a measured model, transport, storage, or runtime boundary. Derive them from that boundary, report when they are reached, and never silently truncate mandatory context or user-facing explanation.
+Before substantial code, create `.codex/work/<task>.md`. Record the intended
+outcome, decisions, current state, topology, smallest complete slice,
+replacements, non-goals, and propagation paths. Give every decision one answer
+and one owner, and keep specialists within their assigned scope.
+
+Resolve the baseline to a full commit ID before starting a new work stream, then
+record it. One `codex/<task>` branch owns that stream. Use the current checkout
+for serial work. Create an ephemeral linked worktree only when concurrent work
+or an isolated check needs another checkout. Record its branch and absolute
+path, and give each mutable branch and index to one active writer at a time.
+
+Checkpoint task-owned dirty state with commits. Never use `git stash`, and never
+include unrelated user changes. A run may remove only a clean worktree that it
+created, after recording the worktree tip. Remove it with `git worktree remove`.
+Do not force removal or delete the directory directly. Run `git worktree prune`
+only when every stale entry Git reports belongs to the current run.
+
+Complete one cross-layer slice. Where the product has these states, include
+loading, empty, error, populated, hover, focus-visible, active, and disabled
+behavior.
+
+Edit the owning representation, consolidate there, and replace obsolete paths
+directly. Do not add compatibility layers, migrations, deprecations, adapters,
+dual writes, fallbacks, or parallel representations unless the user asks for
+them. Git and
+previews provide recovery. After reducing the old representation, carry the
+chosen one through entry points, clients, adapters, contracts, and reverse
+actions. Record any gap you cannot close.
+
+Use `git subtree` for repository-shaped vendored source that has an upstream
+update lifecycle, when Git makes subtree support available. A selected-file
+adoption remains a pinned, attributed copy. Avoid submodules unless a project
+contract requires a separate checkout and release lifecycle.
+
+Never change global Git configuration. Record and justify any repository or
+worktree configuration change.
+
+Every limit must protect a measured model, transport, storage, or runtime
+boundary. Derive the limit from that boundary and report when it is reached.
+Never silently cut mandatory context or user-facing explanation.
 
 ## Protected framework baseline
 
@@ -128,61 +160,144 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 ## Frontend
 
-- Never fill decisions from model priors or generic familiar UI.
-- Before substantial frontend implementation, use `frontend-design-discipline` to settle the product representation from user tasks and observed states. Treat schemas and the current implementation as evidence, not as the default interface.
-- Treat desktop and mobile as projections of the same product model. Record whether each mobile surface should `preserve`, `adapt`, `recompose`, `split`, `replace`, or `remove`. Preservation is not the default.
-- For substantial topology, shells, or replacement workflows, use `adopt-established-product`: pin licensed source, copy or adapt its implementation first, preserve topology and interactions, then make only the required delta. A prose description or independent look-alike is not adoption when the license permits reuse.
-- Established CSS/accessibility/state/interaction repairs need no precedent research.
-- Do not use text to frame text/elements or use cards for hierarchy. Use one primary surface.
-- Invent no content, controls, navigation, summaries, or features. Omit decorative eyebrows, kickers, overlines, pills, badges, hero copy, fake metrics, and card grids unless the user, product contract, data, existing interface, or pinned source requires them in that semantic role.
-- Preserve visible-copy and heading roles from their evidence. Moving precedent text into a new hierarchy position is a deviation, not styling.
-- Treat visual assets as first-class implementation inputs. Preserve required product, brand, and precedent assets first. Otherwise, create code-native SVG for icons, vectors, patterns, and animated artwork, and use the `imagegen` skill for raster textures or illustration. Do not approximate artwork with nested elements, CSS gradients, pseudo-elements, or generic glyphs when a purpose-built asset would serve the recorded role better.
-- Prefer a restrained animated SVG when motion adds state, feedback, direction, or product character. Provide a static `prefers-reduced-motion` result. An invented asset may fulfill an evidenced visual role. It must not invent product meaning, content, controls, navigation, or features.
-- For a muted SVG with overlapping strokes or paths, keep `currentColor` fully opaque and apply CSS `opacity` once to the root `<svg>` or a wrapper around the complete icon. Do not use alpha-bearing `color`, `fill`, `stroke`, `fill-opacity`, or `stroke-opacity` for this effect because each paint operation compounds at intersections. Do not replace the neutral with a background-specific solid tint.
-- On every frontend, set `-webkit-font-smoothing: antialiased` and `-moz-osx-font-smoothing: grayscale` on `body` in the global base stylesheet.
-- Default to minimalism. Use claymorphism, glassmorphism, or neumorphism only when specified.
+Do not make product decisions from model priors or a familiar generic interface.
+Before substantial frontend implementation, use `frontend-design-discipline` to
+settle the product representation from the user's tasks and the states you can
+observe. Treat schemas and the current implementation as evidence, not as the
+default interface.
+
+Treat desktop and mobile as projections of the same product model. For each
+mobile surface, record whether the correct treatment is `preserve`, `adapt`,
+`recompose`, `split`, `replace`, or `remove`. Preservation is not the default.
+
+When the task changes substantial topology, an application shell, or a
+replacement workflow, use `adopt-established-product`. Pin licensed source,
+copy or adapt its implementation, preserve its topology and interactions, then
+make only the required change. If the license permits reuse, a prose description
+or an independently built look-alike does not count as adoption. Established
+repairs to CSS, accessibility, state, or interaction need no precedent search.
+
+Use one primary surface. Do not use cards to create hierarchy. Do not add text
+whose only purpose is to frame other text or elements. Do not invent content,
+controls, navigation, summaries, or features. Decorative eyebrows,
+kickers, overlines, pills, badges, hero copy, fake metrics, and card grids belong
+only where the user, product contract, data, existing interface, or pinned source
+gives them that role.
+
+Preserve the evidenced role of visible copy and headings. Moving precedent text
+to a different place in the hierarchy changes the product; it is not a styling
+choice.
+
+Treat visual assets as implementation inputs. Preserve required product, brand,
+and precedent assets first. Otherwise, create code-native SVG for icons,
+vectors, patterns, and animated artwork. Use `imagegen` for raster textures and
+illustration. When a purpose-built asset fits the recorded role, do not imitate
+it with nested elements, CSS gradients, pseudo-elements, or generic glyphs.
+
+Use restrained SVG animation when motion explains state, feedback, direction,
+or product character. Always provide a static `prefers-reduced-motion` result.
+An invented asset may fill an evidenced visual role, but it may not invent
+product meaning, content, controls, navigation, or features.
+
+For a muted SVG with overlapping strokes or paths, leave `currentColor` fully
+opaque. Apply CSS `opacity` once to the root `<svg>` or to a wrapper around the
+whole icon. Alpha-bearing `color`, `fill`, `stroke`, `fill-opacity`, and
+`stroke-opacity` compound where paint operations overlap, so do not use them for
+this effect. Do not replace the neutral with a solid tint chosen for one
+background.
+
+Every frontend must set `-webkit-font-smoothing: antialiased` and
+`-moz-osx-font-smoothing: grayscale` on `body` in the global base stylesheet.
+Default to minimalism. Use claymorphism, glassmorphism, or neumorphism only when
+specified.
 
 ## Verification
 
-- For code changes, run the narrowest applicable type and behavior checks before
-  handoff. Read-only review, explanation, and status work do not authorize tests.
-- Browser control, computer control, and broad or repository-wide checks require
-  an explicit request or a declared final-acceptance contract. Checks detect
-  breakage; users judge visuals.
-- Run only repository-declared TypeScript, lint, invariant, and test gates. Report
-  skips and unverified behavior. Reports follow `docs/AGENTS.md`.
-- During implementation, run focused checks for the owner being changed. For final acceptance, commit first and run `pnpm --silent verify:acceptance -- --fixture <absolute-path>` once from a clean worktree; it owns the single full-workspace, isolation, and downstream-fixture proof sequence.
-- After that acceptance run, do not repeat broad executable gates for documentation-only commits. Record the tested revision and confirm the later diff is documentation-only.
-- Use `reuse-before-implementation` for substantial implementation.
+For code changes, run the narrowest applicable type and behavior checks before
+handoff. During implementation, focus those checks on the owner being changed.
+Read-only review, explanation, and status work do not authorize tests. Run only
+the TypeScript, lint, invariant, and test gates declared by repository policy.
+
+Browser control, computer control, and broad or repository-wide checks require
+an explicit request or a declared final-acceptance contract. Automated
+checks can find breakage; the user still judges visual quality.
+
+Final acceptance has one owner. Commit the implementation, start from a clean
+worktree, and run
+`pnpm --silent verify:acceptance -- --fixture <absolute-path>` once. That command
+owns the full-workspace, isolation, and downstream-fixture proof sequence.
+
+If later commits change documentation only, do not repeat the broad executable
+gates. Record the tested revision and confirm that the later diff contains only
+documentation.
+
+Report every skipped check and every behavior that remains unverified. Format
+verification reports according to `docs/AGENTS.md`. Use
+`reuse-before-implementation` for substantial implementation.
 
 ## Repository policy
 
-- Treat `.agent-context/policy.json` as the project-owned authority for repository facts and verification profiles. Inspection output is observational and must never write or silently become policy.
-- Configure repository type, relevant languages, documentation roots, exact project contract paths, package manager, package layout, and frontend presence explicitly before relying on policy verification.
-- Treat declared project contracts as additive or stricter repository policy. They do not disable, replace, or weaken the maintainer-owned framework baseline.
-- Run verification through a named project-declared profile. Commands are typed process or package-script tokens, not shell command strings, and registry components must not supply executable commands.
-- Bootstrap and rebuild the isolated `.agent-context/runtime` through its fixed project-local operation. Repository policy must not modify or depend on the host package graph.
-- Do not infer TypeScript, frontend, monorepo, package-manager, or verification requirements from framework defaults.
+`.agent-context/policy.json` is the project-owned authority for repository facts
+and verification profiles. Inspection can describe the repository, but its
+output must never write policy or silently become policy.
+
+Before relying on policy verification, configure the repository type, relevant
+languages, documentation roots, exact project contract paths, package manager,
+package layout, and frontend presence. Do not infer TypeScript, frontend,
+monorepo, package-manager, or verification requirements from framework
+defaults.
+
+Project contracts add repository-specific rules or make existing rules stricter.
+They do not disable, replace, or weaken the maintainer-owned framework baseline.
+
+Run verification through a named profile declared by the project. Each command
+must be expressed as typed process or package-script tokens, never as a shell
+command string. Registry components must not provide executable commands.
+
+Bootstrap and rebuild the isolated `.agent-context/runtime` through its fixed
+project-local operation. Repository policy must neither modify nor depend on the
+host package graph.
 
 ## Engineering
 
-- Use `codebase-inventory` for explicit structure reports, shape comparisons, or quantitative scoping of unfamiliar large repositories.
-- Use `diagnose` for causally uncertain bugs and regressions that require a reproduce, minimise, instrument, and fix loop.
-- Use `reuse-before-implementation` before substantial runtime mechanisms, integrations, algorithms, parsers, protocols, adapters, fixtures, or schemas.
-- Use `write-technical-prose` only for technical documentation selected by a repository-declared deterministic check.
-- Start durable task evidence from `.codex/templates/work-record.md` and project decisions from `.codex/templates/project-decision.md` when those artifacts are installed and the repository has no more specific owner.
-- General engineering context does not imply frontend, TypeScript, session optimization, skill authoring, runtime tooling, or objective orchestration.
+Use `codebase-inventory` when the task needs an explicit structure report, a
+shape comparison, or quantitative scoping of a large unfamiliar repository. Use
+`diagnose` when a bug or regression still needs a reproduce, minimise,
+instrument, and fix loop to establish its cause.
+
+Before building a substantial runtime mechanism, integration, algorithm,
+parser, protocol, adapter, fixture, or schema, use
+`reuse-before-implementation`. Use `write-technical-prose` only when repository
+policy selects technical documentation for a deterministic prose check.
+
+When the installed templates have no more specific owner, start durable task
+evidence from `.codex/templates/work-record.md` and project decisions from
+`.codex/templates/project-decision.md`.
+
+General engineering work does not automatically require frontend, TypeScript,
+session optimization, skill authoring, runtime tooling, or objective
+orchestration instructions.
 
 ## TypeScript engineering
 
-- Use `design-typescript-invariants` for TypeScript domain contracts, state machines, schemas, adapters, persistence, errors, or code that permits impossible states.
-- Start a substantial type-model record from `.codex/templates/type-contract.md` when it is installed and no existing architecture record owns the decision.
-- Run only repository-declared TypeScript, lint, invariant, and test gates. Do not assume a framework-specific application path or command.
+Use `design-typescript-invariants` for TypeScript domain contracts, state
+machines, schemas, adapters, persistence, errors, and code that currently
+permits impossible states.
+
+For a substantial type model, start from
+`.codex/templates/type-contract.md` when that template is installed and no
+existing architecture record owns the decision.
+
+Run only the TypeScript, lint, invariant, and test gates declared by repository
+policy. Do not assume that a framework-specific application path or command is
+available.
 
 ## Session quality
 
-- Use `optimize-codex-sessions` only for a completed Codex task with an exact repository range and evidence-backed delivery boundary.
-- Keep session optimization read-only unless implementation is separately authorized. Do not turn incomplete work into a final workflow judgment.
+Use `optimize-codex-sessions` only after a Codex task is complete and has an
+exact repository range plus an evidence-backed delivery boundary. The review is
+read-only unless the user separately authorizes implementation. Do not judge an
+unfinished task as though it were a completed workflow.
 
 ## Skill authoring
 

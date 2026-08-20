@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.8.4",
-  "decisionPath": "registry/decisions/0.8.4-agent-prose-hotspots.md",
+  "registryRevision": "0.8.5",
+  "decisionPath": "registry/decisions/0.8.5-framework-policy-prose.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "2f3fbe643b319314b4518fb84c79efd10ffe55eaef5ebde93f81721f9a94ce30"
+      "sha256": "2baf73cadb18b46fb02ae354fd2106341e418d05fd102452515042e336366639"
     },
     {
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
-      "sha256": "795e70acf82769125284eddc6ebca720f2d03c92b39738b8f6486f3c5f18291b"
+      "sha256": "35054ac2f3dcc541913edfce4c3717192a0e76420db4f499b13eea664d4c5f49"
     },
     {
       "invariantId": "frontend-representation-router",
@@ -76,37 +76,37 @@
     {
       "invariantId": "frontend-tailwind-explicit",
       "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-      "sha256": "111b50b53f026b8977a0bc51c8a652842646dbbbdf6ffc92b11304cfeb77e240"
+      "sha256": "12f7dcfbb8872b673a445550a4bb74cc8bba036147d590ef30751d8438a46212"
     },
     {
       "invariantId": "repository-work",
       "sourcePath": "registry/sources/instructions/repository-work.md",
-      "sha256": "5406ff89d01290ae1d5f9bb8349fec045377cbf15b707dbbc4f703cbb31452c8"
+      "sha256": "9c4ba0f37ccccfbb405ee06aaa26fd8cfc49be3aa9a9d6dec0fcf8edf0ec5021"
     },
     {
       "invariantId": "verification",
       "sourcePath": "registry/sources/instructions/verification.md",
-      "sha256": "452a234c6d75743905e01a662173f5ff62564087db629eae0f2591d3d577fcb6"
+      "sha256": "53345f4af4b56888ab0e715b0089ba69838f4f9db439643f3b049ab71ef21c38"
     },
     {
       "invariantId": "documentation-prose",
       "sourcePath": "registry/sources/instructions/documentation.md",
-      "sha256": "86e7eec1cc3d86cf4cada227a9033f1b58a6b9e357c0b8dc86d3032a10a1dd01"
+      "sha256": "55904f39eb6ae94cc51509b9e5060b5298dc48a8e65c99fc9074d280a6e9a7b8"
     },
     {
       "invariantId": "engineering-independent",
       "sourcePath": "registry/sources/instructions/engineering.md",
-      "sha256": "8b436c6f7f4888928af300b273bf424705babcc9363ccf239d0193596b58e99a"
+      "sha256": "f56b907349bda632057f2573b346690d42494a8dd72fa39de76d945ca820da80"
     },
     {
       "invariantId": "typescript-engineering-explicit",
       "sourcePath": "registry/sources/instructions/typescript-engineering.md",
-      "sha256": "ebe84c1e9d6d26abb91644428f0540b936e8753113eb15f3a5444855aada3ebb"
+      "sha256": "a2ae83edcee9541a65392944ffcf275a28576a469f99eaabebcdb98fedb09187"
     },
     {
       "invariantId": "session-quality-explicit",
       "sourcePath": "registry/sources/instructions/session-quality.md",
-      "sha256": "8575facab8d2e2aa72a9d2b49157c373ea1b9986c49369e9d7ac48ed2ad6b94d"
+      "sha256": "f9ed25e3ef10a70a0b1b0a392cba5d0fe2af879e0647f0d60fc41f20599ae562"
     },
     {
       "invariantId": "skill-authoring-explicit",
@@ -116,7 +116,7 @@
     {
       "invariantId": "repository-policy-explicit",
       "sourcePath": "registry/sources/instructions/repository-policy.md",
-      "sha256": "dc15236d52bbca122e135c11c92ea5d561c4738a31e9429ecf35617df638e889"
+      "sha256": "e7c8a5c1d0d99f20e9ec1d62538ba28ba0686848146922bca3d5176c8bbbd419"
     },
     {
       "invariantId": "codex-agent-selection",
@@ -277,7 +277,7 @@
       "invariantId": "documentation-prose",
       "sourcePath": "registry/sources/instructions/documentation.md",
       "targetPath": "docs/AGENTS.md",
-      "heading": "## Prose and Reporting Style"
+      "heading": "## Prose and reporting style"
     },
     {
       "invariantId": "engineering-independent",

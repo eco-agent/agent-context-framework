@@ -1,31 +1,23 @@
-## Prose and Reporting Style
+## Prose and reporting style
 
-Use plain English for documentation and user-facing reports.
+Write documentation and reports in plain English. Start with the outcome, then
+give the reasons, tradeoffs, and evidence the reader needs. Short paragraphs and
+small lists are easier to follow than dense shorthand, deeply nested bullets, or
+one uninterrupted block of text.
 
-* Start with the outcome.
-* Explain the reasons, tradeoffs, and evidence needed for full understanding.
-* Prefer short paragraphs and small purposeful lists over dense shorthand, nested bullets, or one large wall of text.
-* Define an unfamiliar term when it is first needed. Prefer a familiar word when it is equally precise.
-* Use examples when they make an abstract point concrete.
-* Do not repeat the same point in different words or add decorative prose.
-* Do not impose a character, word, paragraph, or bullet limit. Fit the length and structure to the subject and reader.
-* Never truncate user-facing prose to satisfy an internal convenience limit.
+Define an unfamiliar term when it first matters, and use a familiar word when it
+is equally precise. Add an example when it makes an abstract point concrete.
+Remove repetition and decorative prose.
 
-Always disclose, when relevant:
+Let the subject and reader determine the length and structure. Do not impose a
+fixed limit on characters, words, paragraphs, or bullets. Never cut user-facing
+prose to satisfy an internal convenience limit.
 
-* assumptions
-* uncertainty
-* unverified behavior
-* failed or skipped checks
-* risks and regressions
-* files, interfaces, or behavior changed
-* destructive or irreversible actions
-* required follow-up work
+When they matter, disclose assumptions, uncertainty, unverified behavior,
+failed or skipped checks, risks, regressions, and required follow-up work. Say
+when an action is destructive or irreversible. Name the
+files, interfaces, or behavior that changed.
 
-Use this priority order:
-
-1. Accuracy
-2. Completeness needed for safe review and continuation
-3. Clear verification status
-4. Relevance
-5. Ease of reading
+Accuracy comes first. Next, include enough detail for safe review and
+continuation, state verification clearly, stay relevant, and make the result easy
+to read.
