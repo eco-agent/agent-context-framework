@@ -169,7 +169,7 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 - Use `codebase-inventory` for explicit structure reports, shape comparisons, or quantitative scoping of unfamiliar large repositories.
 - Use `diagnose` for causally uncertain bugs and regressions that require a reproduce, minimise, instrument, and fix loop.
 - Use `reuse-before-implementation` before substantial runtime mechanisms, integrations, algorithms, parsers, protocols, adapters, fixtures, or schemas.
-- Use `write-technical-prose` only when the repository declares a deterministic technical-prose check.
+- Use `write-technical-prose` only for technical documentation selected by a repository-declared deterministic check.
 - Start durable task evidence from `.codex/templates/work-record.md` and project decisions from `.codex/templates/project-decision.md` when those artifacts are installed and the repository has no more specific owner.
 - General engineering context does not imply frontend, TypeScript, session optimization, skill authoring, runtime tooling, or objective orchestration.
 
@@ -187,7 +187,7 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 ## Skill authoring
 
 - Use `writing-great-skills` to create or edit predictable skill instructions, invocation metadata, progressive disclosure, and completion criteria.
-- Run a repository-declared technical-prose check after pruning skill instructions when one exists. Do not assume the framework's policy command is installed.
+- Run a repository-declared agent-prose check after pruning model-facing Markdown when one exists. Use technical-prose checks only for technical documentation selected by repository policy. Do not assume either command is installed.
 
 ## Writing check
 

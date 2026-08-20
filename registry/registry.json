@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.3",
-  "decisionPath": "registry/decisions/0.8.3-agent-prose-placement.md",
+  "revision": "0.8.4",
+  "decisionPath": "registry/decisions/0.8.4-agent-prose-hotspots.md",
   "components": [
     {
       "name": "core",
@@ -70,7 +70,7 @@
     },
     {
       "name": "skill-adopt-established-product",
-      "revision": "sha256:250fd52c39332fc719aad90529eb43d650fbcdd99b99306412c071543686565a",
+      "revision": "sha256:ef74d3d6921d0c618684b87a1a7513801548a28bd78fbff2d83b78b20b2d1553",
       "dependencies": [],
       "capabilities": [
         {
@@ -92,14 +92,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/adopt-established-product/agents/openai.yaml",
-          "sourceSha256": "95be1eb7ce536e4357ced60da12a9698be7a1bd0bf9b836e62fe518f22ab0524",
+          "sourceSha256": "20dfac35534543df5a1f6656857db5890361f5e00ca803bd8799027f90cc7e4d",
           "targetPath": ".codex/skills/adopt-established-product/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/adopt-established-product/SKILL.md",
-          "sourceSha256": "2ea404cbf54c475b54e2b810bcd06fd182c3c73e771a11357ae035b9dd9d5133",
+          "sourceSha256": "b9d131797bf146a060aa7a7c7716d8263f151b85704022b92a6bcbf0c2e071c0",
           "targetPath": ".codex/skills/adopt-established-product/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -107,7 +107,7 @@
     },
     {
       "name": "skill-choose-react-animation",
-      "revision": "sha256:b339cca8da0d08014c33d7b7969815c4fc393299fec1b2e6096c96536d53c443",
+      "revision": "sha256:7db184377acbb555c26be668bdbea025ae521d047430430902de84c17bb8a99c",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -130,7 +130,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/choose-react-animation/SKILL.md",
-          "sourceSha256": "5208dc7b9ac34576302f6796cae4ddf3aa035c382676c79ba4efa0a28d1102dc",
+          "sourceSha256": "8a5326be25fdb62945fa64f35e54fec85fab223177e0b7f7857d92c16afcea60",
           "targetPath": ".codex/skills/choose-react-animation/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -300,7 +300,7 @@
     },
     {
       "name": "skill-design-interface-details",
-      "revision": "sha256:ba0bace8634b6a48e1d7461402e9aca2f9ff1a2b717269f831bf3d82c2822302",
+      "revision": "sha256:464180c37c0b26d8ec631c8f17b3a927c16c436225e030fbcadb0368fbb46aec",
       "dependencies": [],
       "capabilities": [
         {
@@ -351,7 +351,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-interface-details/SKILL.md",
-          "sourceSha256": "da4fe2b25cd055e7add0b37d8146a7cf0b7e7504459f2926203021e552f487bb",
+          "sourceSha256": "0037f9565d66ad1555675aee366f85902c9a39ce60a89bf8dfffbf77c25f1490",
           "targetPath": ".codex/skills/design-interface-details/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -440,7 +440,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:e1b656d1149255180bebba515a394a0624edd4e5fe8f12d5309dd8b9148b93e8",
+      "revision": "sha256:ab3fb9b789860a244d2312728511ab7231273d5363ea3b55f638fe2d441d1716",
       "dependencies": [],
       "capabilities": [
         {
@@ -462,7 +462,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
-          "sourceSha256": "c10de4998a1bfa29d48e36aa958b8c125e5a21ffc1dca874f33654b2ab317006",
+          "sourceSha256": "743ce40efe80f66aa923368794acfe8b1bf8374125ed1d41e4f4df9b7a78a854",
           "targetPath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -532,7 +532,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "991f450c5a551b9dbfce860f7b301ee4d1014263caa234ac1a7d4be9fb86ce04",
+          "sourceSha256": "f102a2c4ed782c04a4043737d44e14f51946a4cf7320e9e1b8e3da381040da7e",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -540,7 +540,7 @@
     },
     {
       "name": "skill-responsive-css-architect",
-      "revision": "sha256:6d78790af3af120e6665986fec14c0fd3f6923038fe18354c140bb2712b75631",
+      "revision": "sha256:410e03a95482e1a7ac4dcf171c737547955371d17c1b1f8a48ca0cc2c1a7a70a",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -584,7 +584,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/SKILL.md",
-          "sourceSha256": "d489b9bdaf966ed6d2828636ceedf94b7e6f2fce1cb5be8dd4108f3168a4bc28",
+          "sourceSha256": "d2318f8d61ae5fedb085ab6288884042472c1eaaa571df4572af687e0a3998a4",
           "targetPath": ".codex/skills/responsive-css-architect/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -592,7 +592,7 @@
     },
     {
       "name": "skill-tailwind-css-architect",
-      "revision": "sha256:2e95fc3ea3d5cf7083ad63d11e68fee996dd58896426baa7e2995647dda8a51e",
+      "revision": "sha256:40c94db0f8763c31828b7f3ae6d1ea1fb91b51639f854ba5870d2bec4c4ee57e",
       "dependencies": [],
       "capabilities": [
         {
@@ -673,7 +673,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
-          "sourceSha256": "76b036de2d6fb0df99d4c2098eef025f185af030c9ae2c3c7c68bf6110089c05",
+          "sourceSha256": "e0cda5159558ce70f3a62e8af50207acb304fa31c02153765b4ca4be43f22155",
           "targetPath": ".codex/skills/tailwind-css-architect/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -754,7 +754,7 @@
     },
     {
       "name": "skill-codebase-inventory",
-      "revision": "sha256:90ba318485a1fa8b415bbd955e11e91617f0f2883e407c23ec947a1b2168331e",
+      "revision": "sha256:9cface0648e77fdda3ded63dee273a82bf95120a558c38563a07c661a4e92c08",
       "dependencies": [],
       "capabilities": [
         {
@@ -860,7 +860,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/codebase-inventory/SKILL.md",
-          "sourceSha256": "73b8808fa2742512a08071641f6e3fc44b90bfd3a697c24ffb88923330068431",
+          "sourceSha256": "f6b436bb4a4239509ded1ce461d911a414e7c472f23d932d96fbe7fb6ad61dfa",
           "targetPath": ".codex/skills/codebase-inventory/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -868,7 +868,7 @@
     },
     {
       "name": "skill-design-typescript-invariants",
-      "revision": "sha256:6c751546bcf1d4cc3d4d1b52cd9037dd6c682aa5156ff76c99491707f36bfda1",
+      "revision": "sha256:9bbb27a859503ae2c5ca520414f23b5cd9fc1aeb826eae95e2e5de5ba95c9193",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -885,7 +885,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-typescript-invariants/agents/openai.yaml",
-          "sourceSha256": "a90409a6f5df118158fe5ccba6d5c190cdfa568081d9ed625e84902bc1ac0738",
+          "sourceSha256": "22c0d50c4d52d3a162aba31a8621e835efe07a81679025ab2505d620a20fc78d",
           "targetPath": ".codex/skills/design-typescript-invariants/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -941,7 +941,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
-          "sourceSha256": "57cf8fec2cff79276f03abed56e37e5838012b5241c9b11af6b7cabe4a1b80b5",
+          "sourceSha256": "f7b647c5062227873cfbf0090e23389dedfaff79e6e8d593fbf992c14bac4c36",
           "targetPath": ".codex/skills/design-typescript-invariants/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -956,7 +956,7 @@
     },
     {
       "name": "skill-diagnose",
-      "revision": "sha256:1bb67febef6b2874d862a661e2a5ee91d51bc6325924dcb68d62885504a10efc",
+      "revision": "sha256:385e3cbb7a46780c3cd1407f5d3f716e89932edf13d14c4e3eabf4db5930b7f7",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -979,7 +979,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/diagnose/SKILL.md",
-          "sourceSha256": "3bea7cfe2263c8603c8caedf013560a9f8dd783d5483096b0abc84675bd8fcac",
+          "sourceSha256": "dc819f14910aba12a962630daa2746f556fc2333d58926e0b09055622311a6ce",
           "targetPath": ".codex/skills/diagnose/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -987,7 +987,7 @@
     },
     {
       "name": "skill-reuse-before-implementation",
-      "revision": "sha256:003495622adfb4a68ae54cb6f8a1e459f40f3e2dc9c69d919bf149062a228c6d",
+      "revision": "sha256:b5b15d8457497c0eb772cdaa2a653895c38d102eade80a0c5b09d3aef7fb623b",
       "dependencies": [],
       "capabilities": [
         {
@@ -1016,7 +1016,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/reuse-before-implementation/SKILL.md",
-          "sourceSha256": "65d5d3979925a9a24b7899e409099429400afcff38c1980493d4ad7cd7fb3098",
+          "sourceSha256": "d0a60e74f737db73acfaab6ed8e8792b06ecc67746919c8794f9a8d0d3f93ee2",
           "targetPath": ".codex/skills/reuse-before-implementation/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -1024,7 +1024,7 @@
     },
     {
       "name": "skill-write-technical-prose",
-      "revision": "sha256:8a5c1867f827c87eee908f2ca50379ae5306dfb285d9bb31775350986d795ad6",
+      "revision": "sha256:2648628c1e62eb735c65e097dbbac3cfd57a76dc180fb8ddd55397cc64170271",
       "dependencies": [],
       "capabilities": [
         {
@@ -1055,7 +1055,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/write-technical-prose/agents/openai.yaml",
-          "sourceSha256": "0d4136866474bd5532618fc6410f122cd1744fb00efeb6ebe8f9ab5841ca9442",
+          "sourceSha256": "1815663bac16e775b5a42bc48752b5b1f5b33c931470213fbaac9e1d2e828a16",
           "targetPath": ".codex/skills/write-technical-prose/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1076,7 +1076,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/write-technical-prose/SKILL.md",
-          "sourceSha256": "83b7e8948ad8f93125750dc861b3720f047cb19cfffb20a575a7da9a939203f8",
+          "sourceSha256": "840dee86b7c927d1d49ff6dbe9552b2cdfdfab69e0413cedde935208b837b53a",
           "targetPath": ".codex/skills/write-technical-prose/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -1091,7 +1091,7 @@
     },
     {
       "name": "skill-writing-great-skills",
-      "revision": "sha256:51b2b06057ad6a961438b0fac004e7e16f293c56fbad940dcf9173d930365fb8",
+      "revision": "sha256:57340887d96319d1811e5b4f6c977002b3046fc517dc2b000c298e4c8063de1b",
       "dependencies": [],
       "capabilities": [
         {
@@ -1114,7 +1114,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/writing-great-skills/agents/openai.yaml",
-          "sourceSha256": "91809b1d9418619a0064239f841975c366252c3a040ad48523f399bbc46d6b49",
+          "sourceSha256": "7aab2fc177e901dfd49d67fe2289becb35dfa85bc1b1a7c184275e1e0cbef298",
           "targetPath": ".codex/skills/writing-great-skills/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1135,7 +1135,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/writing-great-skills/SKILL.md",
-          "sourceSha256": "0ec67d8e4c43b6c7f251673998569d3aa6c344265d13f9dc597f6ef5ef9ba0a4",
+          "sourceSha256": "a21c8848cf22ad26a380b9534b96a75e87c63b2de7522c7e281cdfb51c5e3df6",
           "targetPath": ".codex/skills/writing-great-skills/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -1150,7 +1150,7 @@
     },
     {
       "name": "skill-optimize-codex-sessions",
-      "revision": "sha256:627ec8efda0bbb0c54662ecb6b571c104e23139cf1a734170ec667cf9746bd78",
+      "revision": "sha256:4f697a67b320b4cb335970d804308633216d71f1ca2c559bc9d28e42e0c62676",
       "dependencies": [],
       "capabilities": [
         {
@@ -1187,7 +1187,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/optimize-codex-sessions/agents/openai.yaml",
-          "sourceSha256": "70da6d356a61b4055b71729dc97c85b42549200548cf4174cf9f07dd5276f0c2",
+          "sourceSha256": "5f830bb5092b53157d346af5fc1acd72f8977e4413d141bfebd846d038e3eccf",
           "targetPath": ".codex/skills/optimize-codex-sessions/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1236,7 +1236,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/optimize-codex-sessions/SKILL.md",
-          "sourceSha256": "8f02eb85bd8a02c5f6f874a2b8a4780accd45d9aa768a1dd2a0bffe81a05c38a",
+          "sourceSha256": "94c2bfe67f3cb17cb1c1e4cea4850082726912a46ac54885d0452c45618144ca",
           "targetPath": ".codex/skills/optimize-codex-sessions/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -1244,7 +1244,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:a78499a19137200c3f2f39d2c12f83e3970c53bf12bb3ada5451f5bc772532b0",
+      "revision": "sha256:af252f03c8c3bab9b429cbfee05b46dae2c836efc1011afaf7e4027834a88115",
       "dependencies": [],
       "capabilities": [
         {
@@ -1289,7 +1289,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/agents/openai.yaml",
-          "sourceSha256": "272db9c66115b28861e1234f33699c053e0f5c5fd171e417ff5591959a73c634",
+          "sourceSha256": "8ab4813c7eee91136ae3c5eab3344de6a0aed0abf85664d71b41827478490bec",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1450,14 +1450,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/loop-catalog.md",
-          "sourceSha256": "4972f30eb469080770565e02a61cee3c29020680a91cfcb138c3845cb14d3b13",
+          "sourceSha256": "ba41e4ca961bdfd6b63646f6b996b0a1620d0891b8ccf6ff454211ca7f9861cd",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/references/loop-catalog.md",
           "mediaType": "text/markdown"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-          "sourceSha256": "97684eff76e67cbdaa34f4d096dab06708bcd720ff330e5c2f2890bd5e2fd449",
+          "sourceSha256": "772a13454d26921836e195c69c9829eaaff09db38e115de4c6f423076b2a8cc4",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -1472,7 +1472,7 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:38efb4713689a5f938988ef0820c8dd8be74df1b2e222d1c7f6db647b2880ab4",
+      "revision": "sha256:635b7d8b921c2337082e804a560cb6be55c918d8dcbdf71d1b32135a5b4f67a8",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-diagnose",
@@ -1509,7 +1509,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/engineering.md",
-          "sourceSha256": "168c5a1e460939739273a81835d96e20427854dbf7aa236cc9860b4a9d3933c2",
+          "sourceSha256": "8b436c6f7f4888928af300b273bf424705babcc9363ccf239d0193596b58e99a",
           "targetPath": "AGENTS.md",
           "sectionId": "engineering",
           "markerStyle": "markdown"
@@ -1623,15 +1623,14 @@
     },
     {
       "name": "skill-authoring",
-      "revision": "sha256:fb2f8b7040a445e3a461c6e9e6e40caead5f83f1893d49f3233254acdab54729",
+      "revision": "sha256:9865d0d5675e49833a43c4d8c161babaf0dec1669e243b38edfe00a4971ab862",
       "dependencies": [
-        "skill-write-technical-prose",
         "skill-writing-great-skills"
       ],
       "capabilities": [
         {
           "kind": "runtime",
-          "name": "technical-prose-check",
+          "name": "agent-prose-check",
           "requirement": "recommended"
         }
       ],
@@ -1648,7 +1647,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/skill-authoring.md",
-          "sourceSha256": "6c448e92e85762a6505e329768cc3a9ac91494f917a5e303d30f8c3e8539c085",
+          "sourceSha256": "d194312b344f3c298266180cff6f88e3589edd55498fdc3103f97678eb6de99a",
           "targetPath": "AGENTS.md",
           "sectionId": "skill-authoring",
           "markerStyle": "markdown"

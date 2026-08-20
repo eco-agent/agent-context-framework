@@ -1,52 +1,74 @@
 ---
 name: adopt-established-product
-description: Adopt a pinned, externally evidenced product and licensed source implementation for substantial product-topology work. Use when creating or replacing an application shell, navigation and information architecture, feed, issue tracker, project workflow, chat, media library, admin tool, or dashboard. Do not use for bounded fixes to an established interface.
+description: Adopt a pinned, licensed product implementation when creating or replacing substantial application structure.
 ---
 
-# Adopt Established Product
+# Adopt an established product
 
-Suppress model priors by grounding product decisions in one real external precedent. When its license and architecture permit reuse, copy, vendor, fork, or port the maintained source before writing project-specific changes. A prose summary followed by an independent rewrite is not adoption. Reproduce observable behavior independently only when source reuse is prohibited. Change only the user-required delta.
+Use this skill when the task creates or replaces an application shell,
+navigation system, feed, issue tracker, project workflow, chat, media library,
+admin tool, or dashboard. Bounded CSS, accessibility, state, and interaction
+repairs do not need it when the existing product structure is already settled.
 
-This skill is an explicit product-topology branch. It does not apply to CSS fixes, accessibility remediation, state repair, isolated interaction changes, or work whose topology and product grammar are already established.
+Choose one real product that handles the same main user task. When a maintained
+implementation has a compatible license and architecture, begin with that source
+instead of generating a similar interface from a written description. Change
+only what the user's requirements demand.
 
-## Select one precedent
+## Pin one source
 
-1. Derive the dominant user job and product category from the request and data contracts.
-2. Search current product behavior and public source; do not select from memory.
-3. Choose the closest successful product and one maintained licensed implementation. Do not produce an option matrix.
-4. Record the repository, exact commit, license, reference routes or screenshots, and why its user job matches.
+Search current products and public source code. Do not choose from memory.
 
-Do not treat generic cards, dashboards, forms, modals, visual-style adjectives, or the repository's accidental UI as product precedent.
+Record:
 
-## Freeze the adoption contract
+- the user task the precedent handles;
+- the source repository and full commit ID;
+- the license and required notices;
+- the routes, screenshots, and interactions used for comparison;
+- why the source fits this product better than the alternatives you rejected.
 
-Write the current implementation contract before the frontend specification. Record:
+Choose one precedent rather than presenting an option matrix. Generic cards,
+forms, modals, visual adjectives, and the repository's accidental current layout
+are not precedents.
 
-- existing owners to remove or rewrite;
-- product name, source repository, exact revision, and license;
-- a repository evidence file with captured routes, screenshots, and behavior;
-- topology, navigation, density, interactions, responsive behavior, and states to adopt unchanged;
-- only deviations required by named acceptance gates.
+## Record what will stay and what will change
 
-Use the repository's current implementation-contract version. For reusable source, also record every upstream file to materialize, its owned target, whether the target remains an exact copy or is adapted, and the retained license-notice path. For independent observation, record the source-reuse prohibition and the acceptance gate that authorizes it.
+Write the repository's current implementation contract before the frontend
+specification. Name the existing code to replace, the source files to copy, their
+new locations, and the license notice that must remain.
 
-If the user has not requested a difference, preserve the precedent decision. Ask only when user requirements, data contracts, and the selected precedent materially conflict.
+Record the navigation, density, interactions, responsive behavior, and relevant
+states that will stay faithful to the precedent. List only the differences
+required by the task's acceptance checks.
 
-## Adopt source before writing replacements
+If the user's requirements, data model, and precedent disagree in a way that
+changes the product, ask the user to decide. Otherwise keep the precedent's
+choice.
 
-Prefer, in order:
+## Start from the licensed implementation
 
-1. fork the suitable implementation at the pinned revision;
-2. vendor or subtree the relevant application or components;
-3. adapt its coherent topology and interaction implementation in the existing owner;
-4. independently reproduce pinned observable behavior only when source reuse is not permitted.
+Use the closest practical form of reuse:
 
-For source reuse, materialize the named files into the worktree before generating new implementation code. Preserve the required license and copyright notices. Make changes as a diff from those files so Git shows the upstream implementation and the project-specific delta.
+1. Fork the suitable implementation at the pinned commit.
+2. Vendor or add a subtree for the relevant application or components.
+3. Copy and adapt a coherent set of source files into the existing code owner.
+4. Reproduce observed behavior independently only when the source cannot legally
+   be reused.
 
-Do not rebuild the established shell from primitives merely because generated code is cheap or because copying licensed code feels risky. A verified permissive license is authority to reuse under its terms. Remove the implementation being replaced; do not retain a fallback or parallel experience.
+Materialize reusable source before writing replacement code. Keep the required
+copyright and license notices. Review project changes as a diff from the pinned
+files so the new work is visible.
 
-## Verify reference fidelity
+Remove the implementation being replaced. Do not leave a fallback or a second
+version of the same experience.
 
-Exercise the dominant workflow in the reference and implementation. Capture evidence for topology, navigation, content density, applicable states, keyboard behavior, and responsive behavior. Verify every deviation against its acceptance gate and remove unrequired deviations.
+## Compare the result with the precedent
 
-Completion requires a pinned source, retained license, named source-to-target mappings, materialized source bytes, a divergence-only contract, observable local behavior, and no model-prior substitute. For copied files, verify exact hashes. For adapted files, retain the upstream path and hash and review the diff from those bytes.
+Exercise the main workflow in both products. Compare navigation, information
+density, keyboard behavior, responsive behavior, and every state required by the
+task. Each difference must have a named acceptance reason.
+
+The work is complete when the source and license are pinned, source files map to
+their project locations, the required bytes have been copied, and the local
+workflow behaves as recorded. Verify exact hashes for unchanged copies. For
+adapted files, retain the upstream path and hash and review the project diff.

@@ -1,6 +1,6 @@
 ---
 name: codebase-inventory
-description: "Inventory repositories with deterministic JSON for explicit structure reports, shape comparisons, or quantitative scoping of unfamiliar large codebases."
+description: "Measure repository structure and compare codebase shape with deterministic JSON."
 ---
 
 # Codebase Inventory

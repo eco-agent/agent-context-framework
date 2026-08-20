@@ -1,141 +1,117 @@
 ---
 name: design-typescript-invariants
-description: Model TypeScript invariants for domain contracts, state machines, schemas, adapters, persistence, errors, or code that permits impossible states.
+description: Design TypeScript types that exclude invalid domain states at runtime and persistence boundaries.
 ---
 
-# Design TypeScript Invariants
+# Design valid TypeScript states
 
-Shape valid states before writing the execution path. Ask: **What states are valid, where does uncertainty enter, and which invalid states can the compiler exclude?**
+Start with the states the program permits. Then write the execution path against
+those types. Do not accept every plausible value and rebuild the rules with
+conditionals later.
 
-Do not begin by accepting every plausible value and reconstructing domain rules with conditionals.
+## Learn the repository's type conventions
 
-## Establish repository grammar
+Read the compiler and lint settings, glossary, nearby domain types, validators,
+error conventions, persistence code, transport adapters, and tests that describe
+the behavior. Follow the existing approach unless it is the reason an invalid
+state remains possible.
 
-Read the relevant:
+Resolve overloaded domain terms before creating another type for them. If the
+request, glossary, and code disagree, report the conflict.
 
-- compiler options and lint rules
-- repository glossary and architecture decisions
-- neighboring domain types and public contracts
-- validators/schemas at external boundaries
-- error conventions
-- persistence and transport adapters
-- tests that express invariants
+For a substantial state-model change, update the existing architecture record.
+If no record owns the decision, copy [type-contract.md](assets/type-contract.md)
+to `.codex/work/types/<task-slug>.md` and record the valid states, input checks,
+conversions, and behavior that must remain unchanged.
 
-Follow a coherent existing pattern unless it permits the invalid state causing the task. Do not introduce brands, result types, classes, schema libraries, or generics ceremonially.
+## Keep related behavior together
 
-Resolve fuzzy or overloaded domain terms before encoding them. If the glossary, code, and request disagree, surface the conflict instead of creating another representation.
+Preserve existing null, undefined, error, ordering, and side-effect behavior
+unless the task changes it deliberately.
 
-For a substantial model change, update an existing architecture record. If none exists, copy [type-contract.md](assets/type-contract.md) to `.codex/work/types/<task-slug>.md`. Persist the state space, boundaries, conversions, invariants, and decisions so later patches do not erode them.
+File length alone is not a reason to split a module. Keep workflow, validation,
+persistence, access rules, and audit behavior together when they form one
+contract. Extract a module when it has its own inputs, failures, side effects,
+and useful test seam. Common examples are an API adapter, platform bridge, cache,
+access check, view-model conversion, or telemetry writer.
 
-## Preserve cohesion when restructuring
+Read [deep-modules.md](references/deep-modules.md) before adding or extracting a
+module. Define what the new module receives, returns, changes, and reports when
+it fails. Verify discovery rules and callers before moving routes, generated
+code, public backend functions, auth code, native bridges, or secrets.
 
-Preserve existing null, undefined, error, ordering, and side-effect behavior unless the task intentionally changes it. Encode preserved contracts in types when possible.
+## Model the state before the behavior
 
-Do not split a file because it is long. Keep tightly coupled workflow, validation, persistence, authority, and audit rules together when extraction would force reviewers to reconstruct one contract across several files.
-
-Extract a module when it owns a stable boundary with independent failure behavior and a useful test seam. Common boundaries include:
-
-- remote API calls and response normalization
-- native or platform bridges
-- cache and persistence adapters
-- eligibility, authority, and access policy
-- domain-to-view-model conversion
-- telemetry emission
-
-Read [deep-modules.md](references/deep-modules.md) before adding or extracting a module boundary.
-
-Define the extracted module's inputs, return shape, failure mode, side effects, ordering requirements, authority boundary, and user-visible effect. If that contract is vague, improve names and internal sections before splitting the file.
-
-Before moving generated code, public backend functions, routes, native bridges, auth, or secret-bearing code, verify discovery rules, caller compatibility, regeneration ownership, and security boundaries.
-
-Use comments for reasoning and contracts, not narration. Use named predicates, options objects, builders, early returns, and declarative transforms only when they expose an invariant or make an existing behavioral contract easier to follow.
-
-## Model before implementing
-
-1. Name the domain concepts and keep unrelated concepts distinct.
-2. Enumerate valid states and transitions.
+1. Name distinct domain concepts.
+2. List valid states and transitions.
 3. Identify which fields exist in each state.
-4. Identify external trust boundaries.
-5. Distinguish transport, persistence, domain, draft, summary, and loaded representations only where their guarantees differ.
-6. Choose the smallest type structure that makes illegal combinations unavailable.
+4. Mark every place untrusted data enters.
+5. Separate transport, stored, draft, loaded, and domain types only when their
+   guarantees differ.
+6. Choose the smallest type structure that makes invalid combinations
+   unavailable.
 7. Write representative valid and invalid examples or type tests.
-8. Implement runtime behavior against the model.
+8. Implement the runtime behavior against the model.
 
-Prefer discriminated unions when one field controls the availability or meaning of other fields. Prefer separate types when lifecycle stages have different guarantees. Use optional properties only when absence is itself valid in that exact representation.
+Use a discriminated union when one field controls which other fields exist or
+what they mean. Use separate types when lifecycle stages make different
+guarantees. Make a property optional only when its absence is valid in that
+specific state.
 
-Read [modeling-procedure.md](references/modeling-procedure.md) when introducing or changing domain state.
+Read [modeling-procedure.md](references/modeling-procedure.md) when changing a
+domain state model.
 
-## End uncertainty at boundaries
+## Validate data where it enters
 
-Validate untrusted input where it enters:
+Check network input, URL parameters, user-controlled files, environment values,
+weakly constrained database rows, and third-party data at their entry point.
+Parse them once into a trusted type. Code inside that check should accept the
+trusted type without repeatedly testing required fields.
 
-- network/request input
-- URL/search parameters
-- user-controlled files
-- environment variables
-- database rows with weaker guarantees
-- deserialized or third-party data
+Convert transport and stored shapes explicitly. A cast is not a conversion.
+Keep the conversion beside the input check.
 
-Parse once into a trusted representation. Inside the validated boundary, accept the trusted type and stop repeatedly asking whether required fields exist.
+Read [boundaries-and-failures.md](references/boundaries-and-failures.md) before
+adding validation, adapters, or error handling.
 
-Do not cast a transport or persistence shape into a domain type. Convert it explicitly. Keep conversion logic near the boundary.
+## Limit type escape hatches
 
-Read [boundaries-and-failures.md](references/boundaries-and-failures.md) before adding validation, adapters, or error handling.
+Add `Partial<T>`, a type assertion, a non-null assertion, or
+`Record<string, unknown>` only when the uncertainty cannot be represented more
+precisely at that location, a nearby check proves the operation safe, and a
+short comment names the guarantee TypeScript cannot express.
 
-## Control escape hatches
+Generated code and third-party declarations are exempt. Handwritten code is not
+exempt merely because generated code uses assertions.
 
-Do not add `Partial<T>`, a type assertion, a non-null assertion, or `Record<string, unknown>` unless all are true:
+Keep explicit `any` out of handwritten code. When third-party interop makes it
+unavoidable, use the narrowest lint exception and a `type-invariant:` comment
+that names the external limitation. Use `unknown` for untrusted input and narrow
+it once before trusted application logic.
 
-1. the uncertainty cannot be modeled more precisely at that location
-2. the escape hatch is narrower than the surrounding domain
-3. a boundary check or proof makes the operation safe
-4. a concise comment explains the lost invariant and why it is unavoidable
+## Preserve the repository's failure behavior
 
-Exclude generated code and third-party declarations from this rule. Do not preserve handwritten ambiguity merely because generated code contains assertions.
+Use typed variants for expected outcomes that callers must handle. Throw for
+broken invariants, unavailable infrastructure, programmer errors, or the
+repository's established exception cases. Preserve useful error details when
+translating between layers.
 
-Do not add explicit `any` to handwritten code. If third-party interop makes it unavoidable, use the narrowest ESLint disable and attach a `type-invariant:` proof explaining the external limitation.
+Do not catch and rethrow without adding recovery, cleanup, useful context, or a
+real change in meaning. Do not introduce a custom result type when the repository
+already has a clear convention.
 
-Use `unknown` for genuinely untrusted input, then narrow it once. Do not carry `unknown` through trusted application logic.
+## Revisit the model as requirements change
 
-## Run the automated invariant gate
+A new flag, optional state field, compatibility path, duplicate validator, or
+runtime branch for an impossible case is a sign to list the valid states again.
+Update the types first, then remove branches the new model makes unnecessary.
 
-Read the repository instructions and manifests for its TypeScript, lint, invariant, and test commands. Run the declared invariant gate when one exists; otherwise run the repository's narrow typecheck and lint commands and perform the semantic review below. Do not assume a framework-specific application path, ESLint plugin, comparison base, or environment variable.
+For each new conditional, ask whether it handles external uncertainty, an
+expected outcome, or a state the input type should forbid. Redesign the input
+type when the branch handles the last case.
 
-A repository gate may enforce low-noise rules globally and added-line heuristics separately. Treat its configured scope and comparison base as authoritative.
-
-Treat `type-invariant:` comments as proof obligations, not suppression labels. State the boundary check or compiler limitation that makes the escape safe.
-
-Read [lint-rules.md](references/lint-rules.md) when interpreting or configuring a repository-owned gate.
-
-## Choose failure semantics deliberately
-
-- Represent expected domain outcomes as typed variants when callers must branch on them.
-- Throw for invariant violations, unavailable infrastructure, programmer errors, or the repository's established exceptional boundary.
-- Preserve original error identity and detail when translating layers.
-- Do not add catch-and-rethrow blocks that provide no context, cleanup, recovery, or semantic translation.
-- Do not turn every failure into a custom `Result` if the framework or repository already has a coherent convention.
-
-## Reconsider the model when requirements change
-
-Do not attach each new requirement to the visible procedure with another flag, optional field, or nested branch.
-
-Pause when a change introduces:
-
-- a boolean parameter
-- a mode flag controlling other arguments
-- another optional field on a state object
-- a compatibility shim
-- a second validator for the same concept
-- a runtime branch for a supposedly impossible case
-
-Re-enumerate the state space and update the types first. Then simplify the runtime path.
-
-## Review from runtime branches back to types
-
-For every new conditional or validation branch, ask:
-
-> Does this branch handle external uncertainty, an expected outcome, or a state the input type should forbid?
-
-If the type should forbid it, redesign the type and remove the branch.
-
-Run the invariant gate, repository typecheck, and focused tests. Also review public call sites, not only the implementation. Use [review-checklist.md](references/review-checklist.md) only for semantic checks the linter cannot prove.
+Run only the repository-declared type, lint, invariant, and focused test
+commands. Treat `type-invariant:` comments as proof claims, not suppression
+labels. Read [lint-rules.md](references/lint-rules.md) when the repository has an
+invariant check, and use [review-checklist.md](references/review-checklist.md) for
+the semantic points tools cannot prove.

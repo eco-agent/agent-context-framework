@@ -1,4 +1,8 @@
 import { runInternalCheck } from "./check-support.js";
+import {
+  checkAgentProse,
+  formatAgentProseFinding,
+} from "./checks/agent-prose.js";
 import { checkAgents } from "./checks/agents.js";
 import { checkBoundaries } from "./checks/boundaries.js";
 import { checkDependencyAdoptions } from "./checks/dependency-adoptions.js";
@@ -100,8 +104,35 @@ export async function runTechnicalProseCheck(
   };
 }
 
+export async function runAgentProseCheck(
+  root: string,
+  operation: string,
+  files: readonly string[],
+): Promise<PolicyResult> {
+  const started = performance.now();
+  const report = await checkAgentProse(root, files);
+  const check: CheckResult = {
+    id: "agent-prose",
+    ok: report.ok,
+    durationMs: Math.round(performance.now() - started),
+    summary: report.ok
+      ? `agent-prose passed for ${report.files.length} file(s).`
+      : `agent-prose found ${report.findings.length} issue(s) in ${report.files.length} file(s).`,
+    diagnostics: report.findings.slice(0, 50).map(formatAgentProseFinding),
+  };
+  return {
+    ok: check.ok,
+    operation,
+    changedFiles: report.files,
+    affectedUnits: [],
+    checks: [check],
+  };
+}
+
 async function runCheck(root: string, id: CheckId, runDirectory: string): Promise<CheckResult> {
   switch (id) {
+    case "agent-prose":
+      throw new Error("Agent prose checks require explicit files.");
     case "agents":
       return await runInternalCheck(id, async () => await checkAgents(root));
     case "boundaries":

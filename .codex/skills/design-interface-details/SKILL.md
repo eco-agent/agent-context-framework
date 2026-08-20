@@ -1,6 +1,6 @@
 ---
 name: design-interface-details
-description: Apply settled interface-detail mechanics for icons, code-native SVG assets, optical alignment, depth, and transitions.
+description: Implement settled icons, SVG assets, optical alignment, depth, and transitions without changing product structure.
 ---
 
 # Interface details

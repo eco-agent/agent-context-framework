@@ -1,6 +1,6 @@
 ---
 name: responsive-css-architect
-description: Engineer responsive CSS and stylesheet ownership. Use for layout, overflow, interaction states, container or media queries, or stylesheet structure.
+description: Structure responsive CSS for layout, overflow, interaction states, container queries, and stylesheet ownership.
 ---
 
 # Responsive CSS Architect

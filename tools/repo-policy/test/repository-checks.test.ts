@@ -28,9 +28,15 @@ test("instruction hierarchy retains communication, anti-prior, and direct-reuse 
   assert.match(rootInstructions, /Use the `visualize` skill for an in-conversation visual/u);
   assert.match(rootInstructions, /Do not create standalone HTML response files/u);
   assert.match(rootInstructions, /eyebrows, kickers, overlines, pills, badges/u);
-  assert.match(frontendInstructions, /semantic role as well as the words/u);
-  assert.match(adoptionInstructions, /materialize the named files into the worktree/u);
-  assert.match(adoptionInstructions, /A prose summary followed by an independent rewrite is not adoption/u);
+  assert.match(
+    frontendInstructions,
+    /A heading moved into helper text has changed even when its\s+words remain the same/u,
+  );
+  assert.match(adoptionInstructions, /Materialize reusable source before writing replacement code/u);
+  assert.match(
+    adoptionInstructions,
+    /begin with that source\s+instead of generating a similar interface from a written description/u,
+  );
 });
 
 test("workspace package boundaries are valid", async () => {

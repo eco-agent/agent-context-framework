@@ -12,6 +12,7 @@ export const verificationProfileIds = [
 export type VerificationProfileId = (typeof verificationProfileIds)[number];
 
 export type CheckId =
+  | "agent-prose"
   | "agents"
   | "boundaries"
   | "dependency-adoptions"

@@ -1,57 +1,69 @@
-# Loop catalog
+# Choose a loop helper
 
-Use one primary loop and add gates only where they reduce a named risk. All loops require finite budgets and ledgered transitions.
+Use one helper as the main workflow. Add another only when it handles a named
+return path that the first helper cannot express. Every helper needs a finite
+limit and must record its stage changes.
 
-## Selection
-
-| Need | Loop | Required bound |
+| Need | Runtime helper | Required limit |
 | --- | --- | --- |
-| Predictable artifact stages | Holonic relay chain | transitions and repairs |
-| Route variable requests to fixed roles | Membrane routing | routes and confidence threshold |
-| Independent correction | Reviewer–repair spiral | review passes |
-| Act from observed feedback | Autonomous environment loop | steps and stagnant observations |
-| Respect a known scope tree | Static scope reconciliation | hops and cycle detection |
-| Escalate only when local authority fails | Subsidiarity escalation | ascents and cycle detection |
-| Accumulate attributed partial work | Shared artifact convergence | rounds and concurrency |
-| Separate forms of correctness | Progressive authority ladder | transitions and return targets |
+| Move one result through fixed stages | `runRelayChain` | stages and repairs |
+| Send varied requests to fixed roles | `runMembraneRouting` | routes and confidence threshold |
+| Alternate implementation and independent review | `runReviewerRepair` | review passes |
+| Act on observed system changes | `runAutonomousEnvironment` | steps and unchanged observations |
+| Move through a known scope tree | `runScopeReconciliation` | hops and cycle detection |
+| Ask a broader role only after a local role fails | `runSubsidiarityEscalation` | ascents and cycle detection |
+| Combine attributed partial results | `runSharedArtifactConvergence` | rounds and concurrency |
+| Give different checks to different roles | `runAuthorityLadder` | stages and return targets |
 
-## Holonic relay chain
+## `runRelayChain`
 
-Move one artifact through fixed stages. A stage can accept, request repair from the current or previous stage, or escalate. Use narrow stage inputs and concrete evidence. Do not reconstruct the full task at every stage.
+Pass one result through fixed stages. A stage may accept it, request a repair
+from the current or previous stage, or stop. Give each stage only the result and
+facts it needs.
 
-## Membrane routing
+## `runMembraneRouting`
 
-Let one fixed router select from a fixed role registry based on capability, scope, and authority. Preserve failed-route evidence. Routing is not permission to choose arbitrary models, spawn roles, or repeat indefinitely.
+Let one fixed router choose from a fixed role registry using capability, scope,
+and permission. Record failed routes. The router may not invent roles, change
+models, or retry without a limit.
 
-## Reviewer–repair spiral
+## `runReviewerRepair`
 
-Let the implementer produce the artifact. Run review in fresh context when independence matters. The reviewer can repair only within explicit repair authority. Otherwise, return visible findings to the implementer.
+Let an implementer produce the result and a separate reviewer inspect it. Give
+the reviewer repair permission only when the workflow says it may edit. Otherwise
+return the findings to the implementer.
 
-## Autonomous environment loop
+## `runAutonomousEnvironment`
 
-Observe, decide, act, and observe again. Measure change between observations. Stop when repeated actions do not change relevant state, when authority is insufficient, or when the step budget ends.
+Observe the system, choose an action, run it, and observe again. Measure the
+relevant change. Stop when repeated actions leave that state unchanged, the role
+lacks permission, or the step limit ends.
 
-## Static scope reconciliation
+## `runScopeReconciliation`
 
-Traverse a scope tree declared before execution. Move to a parent or named sibling only through the nearest parent decision. Detect cycles. This loop reconciles known boundaries. It must not discover or create a recursive holarchy.
+Walk a scope tree declared before execution. Move to a parent or named sibling
+through the nearest parent decision. Detect cycles. This helper does not discover
+new levels or create roles.
 
-## Subsidiarity escalation
+## `runSubsidiarityEscalation`
 
-Start at the lowest known capable role. Escalate with attempted actions, evidence, unresolved work, and required authority. A parent may solve, ascend, or route to a known sibling.
+Start with the narrowest role that should be able to solve the problem. If it
+cannot, pass its attempted actions, returned facts, unfinished work, and missing
+permission to a broader known role.
 
-## Shared artifact convergence
+## `runSharedArtifactConvergence`
 
-Assign gaps against one durable artifact. Append attributed contributions, integrate them, and reopen only concrete missing dependencies or contradictions. Parallelism is bounded work distribution, not a sibling quorum: there is no voting, consensus threshold, or repeated sampling of the same claim.
+Assign missing parts of one stored result. Record who contributed each part,
+combine them, and reopen work only for a specific missing dependency or
+contradiction. This is bounded work distribution, not voting or repeated sampling
+of the same claim.
 
-## Progressive authority ladder
+## `runAuthorityLadder`
 
-Keep progress, user-journey, code-quality, and release decisions separate. Each stage has distinct evidence and authority. A later stage may return to a named earlier stage. It cannot silently assume that stage's authority.
+Assign progress, user-flow, code-quality, and release checks to roles with
+different permissions. A later stage may return to a named earlier stage. It may
+not perform that earlier role's decision itself.
 
-## Explicit exclusions
-
-Do not implement:
-
-- **Adaptive orchestrator holarchy:** no recursive discovery, dynamic decomposition, or agent-created topology.
-- **Sibling quorum:** no majority vote, consensus loop, or duplicated prompts used as confidence.
-
-If the task cannot be decomposed without either pattern, stop and ask for a revised static plan.
+Do not use these helpers to build recursive role discovery or majority voting.
+If the work cannot fit a fixed plan without either behavior, ask for a different
+plan.

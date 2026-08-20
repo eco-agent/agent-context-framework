@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.8.3",
-  "decisionPath": "registry/decisions/0.8.3-agent-prose-placement.md",
+  "registryRevision": "0.8.4",
+  "decisionPath": "registry/decisions/0.8.4-agent-prose-hotspots.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -16,7 +16,7 @@
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "991f450c5a551b9dbfce860f7b301ee4d1014263caa234ac1a7d4be9fb86ce04"
+      "sha256": "f102a2c4ed782c04a4043737d44e14f51946a4cf7320e9e1b8e3da381040da7e"
     },
     {
       "invariantId": "frontend-design-search-artifact",
@@ -61,7 +61,7 @@
     {
       "invariantId": "responsive-relationship-contract",
       "sourcePath": ".codex/skills/responsive-css-architect/SKILL.md",
-      "sha256": "d489b9bdaf966ed6d2828636ceedf94b7e6f2fce1cb5be8dd4108f3168a4bc28"
+      "sha256": "d2318f8d61ae5fedb085ab6288884042472c1eaaa571df4572af687e0a3998a4"
     },
     {
       "invariantId": "responsive-layout-relationships",
@@ -96,7 +96,7 @@
     {
       "invariantId": "engineering-independent",
       "sourcePath": "registry/sources/instructions/engineering.md",
-      "sha256": "168c5a1e460939739273a81835d96e20427854dbf7aa236cc9860b4a9d3933c2"
+      "sha256": "8b436c6f7f4888928af300b273bf424705babcc9363ccf239d0193596b58e99a"
     },
     {
       "invariantId": "typescript-engineering-explicit",
@@ -111,7 +111,7 @@
     {
       "invariantId": "skill-authoring-explicit",
       "sourcePath": "registry/sources/instructions/skill-authoring.md",
-      "sha256": "6c448e92e85762a6505e329768cc3a9ac91494f917a5e303d30f8c3e8539c085"
+      "sha256": "d194312b344f3c298266180cff6f88e3589edd55498fdc3103f97678eb6de99a"
     },
     {
       "invariantId": "repository-policy-explicit",
@@ -151,7 +151,7 @@
     {
       "invariantId": "orchestration-skill-contract",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-      "sha256": "97684eff76e67cbdaa34f4d096dab06708bcd720ff330e5c2f2890bd5e2fd449"
+      "sha256": "772a13454d26921836e195c69c9829eaaff09db38e115de4c6f423076b2a8cc4"
     },
     {
       "invariantId": "orchestration-git-transaction",
@@ -161,7 +161,7 @@
     {
       "invariantId": "orchestration-loop-catalog",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/loop-catalog.md",
-      "sha256": "4972f30eb469080770565e02a61cee3c29020680a91cfcb138c3845cb14d3b13"
+      "sha256": "ba41e4ca961bdfd6b63646f6b996b0a1620d0891b8ccf6ff454211ca7f9861cd"
     },
     {
       "invariantId": "orchestration-runtime-package",

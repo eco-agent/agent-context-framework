@@ -39,6 +39,7 @@
     "verify:changed": "pnpm verify:task",
     "verify:profile": "pnpm policy:build && pnpm policy verify-profile",
     "check:scope": "pnpm policy:build && pnpm policy check-scope",
+    "check:agent-prose": "pnpm policy:build && pnpm policy check-agent-prose",
     "check:technical-prose": "pnpm policy:build && pnpm policy check-technical-prose",
     "check:typescript-projects": "pnpm policy:build && pnpm policy check-typescript-projects",
     "check:boundaries": "pnpm policy:build && pnpm policy check-boundaries",

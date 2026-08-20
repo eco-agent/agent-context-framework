@@ -8,7 +8,12 @@ import {
 } from "./git.js";
 import { isVerificationProfileId, type PolicyResult } from "./model.js";
 import { profileForChanges } from "./profiles.js";
-import { runProfile, runSingleCheck, runTechnicalProseCheck } from "./runner.js";
+import {
+  runAgentProseCheck,
+  runProfile,
+  runSingleCheck,
+  runTechnicalProseCheck,
+} from "./runner.js";
 import { affectedWorkspaceUnits, discoverWorkspaceUnits } from "./workspace.js";
 
 const root = process.cwd();
@@ -26,7 +31,11 @@ try {
     affectedUnits: [],
     checks: [
       {
-        id: operation === "check-technical-prose" ? "technical-prose" : "scope",
+        id: operation === "check-agent-prose"
+          ? "agent-prose"
+          : operation === "check-technical-prose"
+            ? "technical-prose"
+            : "scope",
         ok: false,
         durationMs: 0,
         summary: "Repository policy could not run.",
@@ -60,6 +69,10 @@ async function dispatch(args: readonly string[]): Promise<PolicyResult> {
       );
     case "check-agents":
       return await runSingleCheck(root, operation, "agents");
+    case "check-agent-prose": {
+      const files = optionValues(args, "--files");
+      return await runAgentProseCheck(root, operation, files);
+    }
     case "check-boundaries":
       return await runSingleCheck(root, operation, "boundaries");
     case "check-dependency-adoptions":
@@ -98,7 +111,7 @@ async function dispatch(args: readonly string[]): Promise<PolicyResult> {
     }
     default:
       throw new Error(
-        "Unknown operation. Use verify, verify-task, verify-branch, verify-profile, check-scope, check-boundaries, check-dependency-adoptions, check-technical-prose, check-typescript-projects, or check-agents.",
+        "Unknown operation. Use verify, verify-task, verify-branch, verify-profile, check-scope, check-agent-prose, check-boundaries, check-dependency-adoptions, check-technical-prose, check-typescript-projects, or check-agents.",
       );
   }
 }

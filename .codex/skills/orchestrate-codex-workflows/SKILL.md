@@ -1,59 +1,82 @@
 ---
 name: orchestrate-codex-workflows
-description: Build or revise bounded, ledgered TypeScript orchestration around the OpenAI Codex SDK. Reach for this instead of native subagents when later actions need persisted evidence, deterministic transitions, enforced finite budgets or authority, measured repair loops, or role-bound thread continuity. Prefer native subagents for independent bounded work that the primary can integrate during one task, and use neither for short serial work. Use for long-horizon coding harnesses, explicit task decomposition, staged handoffs, environment feedback, scope escalation, shared artifacts, or progressive completion gates. Do not use for open-ended recursive agent spawning, adaptive hierarchies, quorum loops, or a complete durable scheduler.
+description: Build Codex SDK workflows when later actions depend on stored state, enforced limits, or role handoffs that survive a restart.
 ---
 
-# Orchestrate Codex Workflows
+# Build a Codex SDK workflow
 
-Build an external control plane around `@openai/codex-sdk`. Keep the primary agent responsible for implementation and integration. Use other Codex threads to add work or independent evidence, not to transfer task ownership.
+Use `@openai/codex-sdk` when code must decide what happens after each role
+returns. The primary agent still owns the requested implementation and combines
+the result.
 
-## Select the execution mechanism
+## Choose the simplest execution method
 
-Choose before planning:
-
-| Condition | Use |
+| Work shape | Method |
 | --- | --- |
-| Work is short, serial, and reviewable in the current task | Primary agent only |
-| Two or more independent, bounded slices can return once to the primary | Native subagents |
-| Later actions depend on persisted evidence, enforced transitions, repair state, authority gates, or finite budgets | SDK workflow |
+| Short work that one agent can retain and check | Primary agent |
+| Independent tasks that each return once | Native subagents |
+| Later actions depend on stored results, retry state, permissions, or fixed budgets | SDK workflow |
 
-Use task structure, not task size, as the deciding signal.
+Task structure matters more than size. Several serial steps need an ordinary
+plan, not a workflow. Parallel work needs subagents only when their assignments
+and return values are independent.
 
-- Do not create subagents only because a task is large. Use them when parallel work has independent scopes and explicit return contracts.
-- Do not create a workflow only because a task has several steps. Use an ordinary plan when the primary can retain and verify the state directly.
-- Choose a workflow when a missed transition, lost observation, repeated attempt, or authority breach must be prevented by code rather than remembered by the model.
-- Keep native subagents outside workflow execution. SDK roles are the workflow workers. Mixing unledgered subagents into the run bypasses its budgets and evidence contracts.
-- Build or revise the harness when this skill triggers during a coding task. Do not run the harness as a hidden method for completing the current task unless the user asks to operate it.
+Choose an SDK workflow when code must prevent a skipped stage, repeated attempt,
+lost result, or permission breach. SDK roles are the workflow workers. Do not mix
+native subagents into a running workflow because their work would bypass its
+limits and records.
 
-If uncertain, start with the primary agent. Add native subagents for independent throughput. Move to a workflow only when transition or evidence enforcement becomes a requirement.
+Build or revise the workflow package when this skill applies. Run it against the
+current task only when the user asks you to operate it.
 
-## Non-negotiable boundaries
+## Fix the workflow before running it
 
-- Exclude adaptive orchestrator holarchies and sibling quorum loops.
-- Fix the workflow topology, role registry, budgets, and authority before execution.
-- Permit bounded returns to earlier stages. Do not let agents invent new agents or recursively decompose work.
-- Persist evidence before each state transition.
-- Stop on acceptance, budget exhaustion, authority breach, cycle detection, or measured lack of progress.
-- Keep model and reasoning choices in the role registry. Do not let a worker select its own model or effort.
-- Give each role the least filesystem, network, and approval authority it needs.
-- Keep the primary role active in implementation and integration.
+Define the stages, roles, budgets, permissions, return paths, and stopping
+conditions in project code. Roles may return work to a named earlier stage. They
+may not create roles or recursively split the task.
 
-## Build the workflow
+Store each result before using it to choose the next stage. Stop when the work is
+accepted, a budget ends, a role lacks permission, a route cycles, or measured
+state stops changing.
 
-1. Read [references/loop-catalog.md](references/loop-catalog.md) to select the smallest loop composition that fits the task.
-2. When any role creates commits, branches, refs, or worktrees, or review compares Git history, read [references/git-transaction.md](references/git-transaction.md). Define the Git transaction and cleanup evidence before role execution.
-3. Choose an explicit project-owned package directory. Copy `assets/typescript-runtime/` into that directory without overlaying an existing package manifest, and preserve its tests until the project-specific workflow passes.
-4. Define the objective, acceptance criteria, static stages, role registry, budgets, and evidence contracts in project code.
-5. Construct `CodexWorkflowClient` with the validated plan, then implement role calls with `invoke()` against named task IDs. Supply the required per-turn timeout, structured output decoder, and output-evidence extractor for every control decision.
-6. Have the project controller evaluate each task criterion with concrete checks, decode and freeze that declaration with `validateTaskAcceptanceEvaluation()`, then pass it to `acceptTask(taskId, evaluation)`. The client requires exact criterion coverage with every result true, consumes only the latest successful attempt's evidence, and unlocks dependencies only after persisting acceptance. It does not interpret prose criteria.
-7. Compose loops around domain callbacks. Keep Codex prompts at the boundary. Keep transition logic deterministic.
-8. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
-9. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
-10. Inspect the JSONL ledger. Verify role calls record their actor, task, attempt, thread, and evidence. Confirm delegations stay within the fixed envelope and completed, escalated, or budget-exhausted loops have a terminal reason. Wrap project callbacks at the outer runner when thrown callback failures must also produce a loop-terminal event.
+Keep model and reasoning settings in the role registry. Give each role only the
+filesystem, network, and approval access it needs. The primary role must remain
+responsible for implementation and integration. This skill does not support
+recursive manager trees, sibling voting, or an open-ended scheduler.
 
-## Choose thread authority
+## Build the project package
 
-Default workers to:
+1. Read [references/loop-catalog.md](references/loop-catalog.md) and choose the
+   smallest helper that matches the required return path.
+2. Read [references/git-transaction.md](references/git-transaction.md) before a
+   role creates commits, branches, refs, or worktrees, or when review compares
+   Git history. Define cleanup checks before execution.
+3. Copy `assets/typescript-runtime/` into a new project-owned package directory.
+   Do not overwrite an existing package manifest. Keep the copied tests until
+   the project workflow passes them.
+4. Define the objective, acceptance criteria, fixed tasks, role registry,
+   budgets, and required results in project code.
+5. Construct `CodexWorkflowClient` with the validated plan. Call `invoke()` with
+   named task IDs, a per-turn timeout, a structured-output decoder, and an
+   extractor for every value used by later code.
+6. Check each task criterion in project code. Decode the complete result with
+   `validateTaskAcceptanceEvaluation()` before calling
+   `acceptTask(taskId, evaluation)`. Acceptance uses only the latest successful
+   attempt and unlocks later tasks after the result is stored.
+7. Keep Codex inside role calls. Write stage selection and stopping logic as
+   normal TypeScript.
+8. Start a fresh thread for independent review. Reuse a thread only when the
+   role needs its earlier conversation.
+9. Run the copied mock tests before any live Codex call. A live run also needs
+   separate user permission. Begin with one low-risk workflow and restricted
+   access.
+10. Inspect the JSONL record. Each call should name the role, task, attempt,
+    thread, and returned data. Every finished, stopped, or exhausted loop needs
+    a recorded reason.
+
+## Set role permissions
+
+Start workers with:
 
 ```ts
 {
@@ -63,42 +86,43 @@ Default workers to:
 }
 ```
 
-Use `read-only` for interpretation and review when possible. Do not use `danger-full-access` as a convenience. Require explicit user authority for broader access or consequential external actions.
+Use `read-only` for review and interpretation when possible. Broader filesystem
+or network access requires the user's permission when the action itself would
+require it.
 
-## Preserve control-plane integrity
+## Treat role output as input data
 
-- Treat structured output as untrusted input even when an output schema is supplied.
-- Decode JSON before using it in a transition.
-- Never execute a command supplied only as structured control data without a separate authority check.
-- Record SDK errors, malformed output, timeouts, and aborted turns as failed attempts.
-- Use the client's required per-turn timeout plus an outer process deadline for live runs. Pass an `AbortSignal` when the caller also needs cancellation.
-- Resume a thread only from a ledgered thread ID with the same role and scope.
-- Make artifact writes idempotent or content-addressed before adding retry behavior.
+An output schema does not make a response trustworthy. Decode JSON before a
+stage uses it. Never execute a command found only in returned data without a
+separate permission check.
 
-## Use the bundled runtime
+Record SDK errors, invalid output, timeouts, and cancelled turns as failed
+attempts. Use the required per-turn timeout and an outer process deadline for a
+live run. Pass an `AbortSignal` when the caller also needs cancellation.
 
-The template exports:
+Resume only a thread ID stored for the same role and task. Make retried file
+writes idempotent or address them by content.
 
-- `CodexWorkflowClient` for plan-bound structured SDK calls, finite task and turn budgets, explicit evidence-backed task acceptance, and role-bound thread continuity.
-- `JsonlLedger` and `MemoryLedger` for single-process file-backed audit or test evidence.
-- Eight bounded loops: relay chain, membrane routing, reviewer–repair, autonomous environment, static scope reconciliation, subsidiarity escalation, shared artifact convergence, and progressive authority ladder.
-- Mock tests for repair, stagnation, and return-path behavior.
+## Know what the copied runtime does
 
-The JSONL ledger is an audit record, not a complete process checkpoint, queue, scheduler, multi-process database, or guarantee that an in-flight workflow can be restored after a crash. Task attempts and accepted-task state are current-process control state and are not reconstructed from the ledger.
+The template provides `CodexWorkflowClient`, `JsonlLedger`, `MemoryLedger`, eight
+bounded loop helpers, and mock tests for repairs, stalled state, and return paths.
 
-The project controller also owns the workflow-level acceptance decision. The template validates task transitions but does not infer whether the plan's final prose acceptance criteria are satisfied.
+The JSONL file records events. It is not a process checkpoint, queue, scheduler,
+or multi-process database. A new process does not rebuild in-memory attempts and
+accepted-task state from that file.
 
-Loop counters bound transitions, attempts, rounds, hops, and concurrency. They cannot bound arbitrary project callbacks. Wrap non-Codex callbacks in consumer-owned deadlines when wall-clock completion is required.
+The project controller decides whether the complete workflow met its acceptance
+criteria. The template checks task transitions but does not interpret prose
+criteria.
 
-The template is verified against `@openai/codex-sdk` 0.145.0 and Node.js 22+. Review the official SDK types before changing the pinned SDK version.
+Loop counters limit attempts, stages, routes, rounds, and concurrent role calls.
+They do not limit arbitrary project callbacks. Add project-owned deadlines when
+wall-clock completion matters.
 
-## Reject accidental expansion
+The template is checked against `@openai/codex-sdk` 0.145.0 and Node.js 22 or
+newer. Read the official SDK types before changing the pinned version.
 
-Stop and redesign if a proposal introduces:
-
-- recursive task discovery.
-- dynamic creation of roles.
-- majority voting or consensus sampling.
-- unbounded retries, routes, transitions, or reviewer passes.
-- a manager-only primary agent.
-- completion based on prose confidence without observable evidence.
+Stop and redesign a proposal that adds recursive task discovery, dynamic roles,
+majority voting, unbounded retries, a manager-only primary agent, or completion
+based only on a model's confidence.

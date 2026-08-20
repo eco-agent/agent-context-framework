@@ -1,6 +1,6 @@
 ---
 name: choose-react-animation
-description: Animate React interfaces and code-native SVG assets with CSS, View Transitions, or Motion. Use for animated icons, vector illustrations, interaction feedback, enter/exit, route, shared-element, drag, scroll-linked, or layout motion.
+description: Animate React interfaces and SVG assets when motion clarifies state, feedback, navigation, drag, scroll, or layout changes.
 ---
 
 # Choose React Animation

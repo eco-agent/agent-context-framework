@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.3",
-  "decisionPath": "registry/decisions/0.8.3-agent-prose-placement.md",
+  "revision": "0.8.4",
+  "decisionPath": "registry/decisions/0.8.4-agent-prose-hotspots.md",
   "components": [
     {
       "name": "core",
@@ -531,9 +531,9 @@
     },
     {
       "name": "skill-authoring",
-      "dependencies": ["skill-write-technical-prose", "skill-writing-great-skills"],
+      "dependencies": ["skill-writing-great-skills"],
       "capabilities": [
-        { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
+        { "kind": "runtime", "name": "agent-prose-check", "requirement": "recommended" }
       ],
       "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
       "artifacts": [

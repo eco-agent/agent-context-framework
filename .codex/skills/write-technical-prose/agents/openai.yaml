@@ -1,7 +1,7 @@
 interface:
   display_name: "Technical Prose"
-  short_description: "Rewrite prose against exact policy findings"
-  default_prompt: "Use $write-technical-prose to revise this technical prose and clear the configured policy findings."
+  short_description: "Revise technical documentation from policy findings"
+  default_prompt: "Use $write-technical-prose to revise this technical documentation and clear its configured policy findings."
 
 policy:
   allow_implicit_invocation: false

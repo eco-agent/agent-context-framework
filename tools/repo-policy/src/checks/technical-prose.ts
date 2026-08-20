@@ -31,7 +31,7 @@ interface SourcePosition {
   readonly column: number;
 }
 
-interface ProseBlock {
+export interface ProseBlock {
   readonly text: string;
   readonly positions: readonly SourcePosition[];
   readonly excerptLines: ReadonlyMap<number, string>;
@@ -182,7 +182,7 @@ export function formatTechnicalProseFinding(finding: TechnicalProseFinding): str
   return `${finding.file}:${finding.line}:${finding.column} [${finding.rule}] ${finding.message}`;
 }
 
-function proseBlocks(markdown: string): readonly ProseBlock[] {
+export function proseBlocks(markdown: string): readonly ProseBlock[] {
   const lines = markdown.replaceAll("\r\n", "\n").split("\n");
   const tableLines = markdownTableLines(lines);
   const frontmatterEnd =

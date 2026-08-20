@@ -1,6 +1,6 @@
 ---
 name: tailwind-css-architect
-description: Engineer Tailwind CSS v4 styling boundaries, CSS-first configuration, and utility ownership. Use when a frontend explicitly uses Tailwind CSS.
+description: Structure Tailwind CSS v4 styling when a frontend explicitly uses Tailwind.
 ---
 
 # Tailwind CSS Architect

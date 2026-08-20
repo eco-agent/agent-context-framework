@@ -1,4 +1,4 @@
 interface:
   display_name: "Adopt Established Product"
-  short_description: "Fork proven product patterns before UI invention"
-  default_prompt: "Use $adopt-established-product to select and adapt a pinned product precedent for this interface."
+  short_description: "Adopt a pinned licensed product implementation"
+  default_prompt: "Use $adopt-established-product to pin and reuse a licensed product implementation for this application structure."

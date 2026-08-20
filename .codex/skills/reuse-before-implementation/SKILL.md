@@ -1,6 +1,6 @@
 ---
 name: reuse-before-implementation
-description: Reuse maintained code before substantial implementation. Use for runtime mechanisms, integrations, algorithms, parsers, protocols, adapters, fixtures, or schemas.
+description: Find and assess maintained code before implementing a substantial mechanism or integration.
 ---
 
 ## Prefer reuse over implementation
