@@ -5,7 +5,10 @@ description: Engineer responsive CSS and stylesheet ownership. Use for layout, o
 
 # Responsive CSS Architect
 
-Use this skill to create resilient CSS and keep stylesheets organized. Treat CSS as a constraint system: choose the layout primitive, define the responsiveness boundary, protect against overflow, then place styles in the file that owns the concern.
+Use this skill to create resilient CSS and keep stylesheets organized. Treat CSS as
+a constraint system: express relationships rather than screenshot measurements,
+choose the layout primitive, define the responsiveness boundary, protect against
+overflow, then place styles in the file that owns the concern.
 
 Implement only the CSS concern recorded in the owning task contract. Do not decide product topology, visible content, state ownership, or task completion. Return control after the CSS concern and its applicable states are implemented.
 
@@ -27,6 +30,12 @@ Implement only the CSS concern recorded in the owning task contract. Do not deci
    * Which interaction states must exist?
    * Which stylesheet owns the change?
 
+   Before introducing a numeric value, ask whether intrinsic sizing, min/max
+   constraints, flex growth or shrink, grid tracks, content wrapping,
+   `aspect-ratio`, `clamp()`, `min()`, `max()`, `minmax()`, `auto-fit`,
+   `auto-fill`, container units, container queries, or logical properties express
+   the relationship directly.
+
 3. Prefer intrinsic, content-aware CSS.
 
    * Use `min()`, `max()`, `clamp()`, `minmax()`, `fit-content`, `auto-fit`, and `auto-fill` when they express the constraint directly.
@@ -38,6 +47,9 @@ Implement only the CSS concern recorded in the owning task contract. Do not deci
 
    * Do not use fixed widths for page layout unless required by a specific asset or external system.
    * Do not use absolute positioning for ordinary layout.
+   * Use a hard-coded number when the thing itself is intentionally fixed, such as
+     a minimum touch target, border thickness, icon size, or known control height.
+     Do not use a number to compensate for unresolved layout.
    * Do not rely on exact text length.
    * Do not hide focus outlines without replacing them.
    * Do not use deep selector chains.
@@ -107,7 +119,9 @@ Do not use import order as a secret override mechanism. If two files fight, move
 4. Write shallow class-based selectors.
 5. Add interaction states: hover, focus-visible, active, disabled, loading, empty, and error where applicable.
 6. Check responsiveness at narrow, medium, wide, and long-content states.
-7. Verify reduced-motion behavior for animations.
+7. Place reusable components in their actual containers. Check whether a drawer,
+   grid column, full-width page, or modal would require geometric rewrites.
+8. Verify reduced-motion behavior for animations.
 
 ## CSS invariants
 
@@ -115,6 +129,8 @@ Preserve these within the recorded concern:
 
 * The layout works at narrow, medium, and wide widths.
 * Components respond to their container when reused in different contexts.
+* Moving a component between its supported containers requires little or no CSS
+  rewriting.
 * Long text does not break the layout.
 * Empty, loading, disabled, and error states are styled.
 * Keyboard focus is visible.

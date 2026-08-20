@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.7.0",
-  "decisionPath": "registry/decisions/0.7.0-optional-orchestration-authoring.md",
+  "registryRevision": "0.8.0",
+  "decisionPath": "registry/decisions/0.8.0-representation-first-frontend.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -11,7 +11,67 @@
     {
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
-      "sha256": "aeca2871ffe3bd9c788ae2972935ec252f3984bccae2fb94c6919e28546df34e"
+      "sha256": "795e70acf82769125284eddc6ebca720f2d03c92b39738b8f6486f3c5f18291b"
+    },
+    {
+      "invariantId": "frontend-representation-router",
+      "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
+      "sha256": "9afd27a733ebb407bc9361188641bc1b852309eb09d2f6521ad82eedadcc926b"
+    },
+    {
+      "invariantId": "frontend-design-search-artifact",
+      "sourcePath": ".codex/skills/frontend-design-discipline/assets/design-search.md",
+      "sha256": "e52525a6dce9bd68fb6573ba64e8355d178ba275e43cea974bc601895c0810b9"
+    },
+    {
+      "invariantId": "frontend-approved-specification",
+      "sourcePath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
+      "sha256": "98db78ae6cddc2447d6ddfb619e6de8a3c76abfdd692040a6579c8ff0f7358dc"
+    },
+    {
+      "invariantId": "frontend-product-reframing",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/product-reframing.md",
+      "sha256": "4b6db17fef7f80eb17f15e7edc2cad9e7624d642dcf0f9138d178c82c6af48f8"
+    },
+    {
+      "invariantId": "frontend-representation-search",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/representation-search.md",
+      "sha256": "2ae18651ad687bed3bcfa5911d805757fe9dd4e8362117b79a9218e666ed9eb3"
+    },
+    {
+      "invariantId": "frontend-mobile-recomposition",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/mobile-recomposition.md",
+      "sha256": "1266f281a3ecbdf4290b5e914b5d2622b1b7bcc42987cc028e9b163babb78ea8"
+    },
+    {
+      "invariantId": "frontend-progressive-context",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/progressive-context.md",
+      "sha256": "49dac890747e39f03ef8676e6af2735a6dc720d0f6becbfd749a75805c1aa489"
+    },
+    {
+      "invariantId": "frontend-implementation-reconciliation",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
+      "sha256": "7128075234d1dd2f25daefc9c33b9355e0f88947b8e41cf534ad16eae1f780b3"
+    },
+    {
+      "invariantId": "frontend-visual-review",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/visual-review.md",
+      "sha256": "40b4c88f96f2447d4d5e23b4a37c3ed0920b28c2f1d0c9b15f0d882757db5238"
+    },
+    {
+      "invariantId": "responsive-relationship-contract",
+      "sourcePath": ".codex/skills/responsive-css-architect/SKILL.md",
+      "sha256": "d489b9bdaf966ed6d2828636ceedf94b7e6f2fce1cb5be8dd4108f3168a4bc28"
+    },
+    {
+      "invariantId": "responsive-layout-relationships",
+      "sourcePath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
+      "sha256": "bad8d8909e4aef40bbc024435c948190d8217d3594c893332d6745de193741c7"
+    },
+    {
+      "invariantId": "responsive-portability-review",
+      "sourcePath": ".codex/skills/responsive-css-architect/references/review-checklist.md",
+      "sha256": "ff7fb1f08c3d15f75ee1ba223f3426434cd556c897e7ca257a78a60385bfdf82"
     },
     {
       "invariantId": "frontend-tailwind-explicit",

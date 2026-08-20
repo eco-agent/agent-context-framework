@@ -166,6 +166,8 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
   );
   for (const required of [
     "Never fill decisions from model priors or generic familiar UI.",
+    "Treat schemas and the current implementation as evidence, not as the default interface.",
+    "Treat desktop and mobile as projections of the same product model.",
     "Do not use text to frame text/elements or use cards for hierarchy.",
     "Invent no content, controls, navigation, summaries, or features.",
     "Default to minimalism",
@@ -180,6 +182,14 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     assert.equal((await diffProject(root, frameworkRoot)).current, true);
     const installedAgents = await readFile(path.join(root, "AGENTS.md"), "utf8");
     assert.equal(installedAgents.includes(frontendSource), true);
+
+    for (const expected of [
+      ".codex/skills/frontend-design-discipline/assets/design-search.md",
+      ".codex/skills/frontend-design-discipline/references/progressive-context.md",
+      ".codex/skills/frontend-design-discipline/references/representation-search.md",
+    ]) {
+      assert.equal(await exists(path.join(root, ...expected.split("/"))), true);
+    }
 
     for (const component of resolveContextComponents(registry, ["frontend"])) {
       for (const artifact of component.artifacts.filter((candidate) =>
@@ -524,7 +534,7 @@ test("governance rejects stale protected projections", async () => {
     await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"), { recursive: true });
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
-    await copyGovernedOrchestrationSkill(temporaryRoot);
+    await copyGovernedSkills(temporaryRoot);
     const agentsPath = path.join(temporaryRoot, "AGENTS.md");
     await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("Never fill decisions", "Sometimes fill decisions"));
     await assert.rejects(
@@ -547,7 +557,7 @@ test("governance rejects semantic dilution even before protected hashes are refr
     await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
-    await copyGovernedOrchestrationSkill(temporaryRoot);
+    await copyGovernedSkills(temporaryRoot);
     const corePath = path.join(temporaryRoot, "registry", "sources", "instructions", "core.md");
     await writeFile(
       corePath,
@@ -576,7 +586,7 @@ test("governance rejects dilution of orchestration safety semantics", async () =
     await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
-    await copyGovernedOrchestrationSkill(temporaryRoot);
+    await copyGovernedSkills(temporaryRoot);
     const skillPath = path.join(
       temporaryRoot,
       ".codex",
@@ -601,6 +611,43 @@ test("governance rejects dilution of orchestration safety semantics", async () =
   }
 });
 
+test("governance rejects dilution of representation and context boundaries", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-representation-governance-"));
+  try {
+    await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+    await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+    await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
+    await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+    await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    await copyGovernedSkills(temporaryRoot);
+    const contextPath = path.join(
+      temporaryRoot,
+      ".codex",
+      "skills",
+      "frontend-design-discipline",
+      "references",
+      "progressive-context.md",
+    );
+    await writeFile(
+      contextPath,
+      (await readFile(contextPath, "utf8")).replace(
+        "Hard isolation is a control property.",
+        "A new chat is always isolated.",
+      ),
+      "utf8",
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /violates a maintainer-owned semantic requirement/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
 test("governance requires human review ownership for protected framework surfaces", async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-review-ownership-"));
   try {
@@ -613,7 +660,7 @@ test("governance requires human review ownership for protected framework surface
     await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
     await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
     await writeFile(path.join(temporaryRoot, ".github", "CODEOWNERS"), "/registry/ @bet01\n", "utf8");
-    await copyGovernedOrchestrationSkill(temporaryRoot);
+    await copyGovernedSkills(temporaryRoot);
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
       /review ownership is missing/u,
@@ -687,14 +734,20 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
   );
 }
 
-async function copyGovernedOrchestrationSkill(temporaryRoot: string): Promise<void> {
+async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
   const targetRoot = path.join(temporaryRoot, ".codex", "skills");
   await mkdir(targetRoot, { recursive: true });
-  await cp(
-    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows"),
-    path.join(targetRoot, "orchestrate-codex-workflows"),
-    { recursive: true },
-  );
+  for (const skill of [
+    "frontend-design-discipline",
+    "orchestrate-codex-workflows",
+    "responsive-css-architect",
+  ]) {
+    await cp(
+      path.join(frameworkRoot, ".codex", "skills", skill),
+      path.join(targetRoot, skill),
+      { recursive: true },
+    );
+  }
 }
 
 async function exists(candidate: string): Promise<boolean> {

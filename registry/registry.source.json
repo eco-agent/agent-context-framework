@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.7.0",
-  "decisionPath": "registry/decisions/0.7.0-optional-orchestration-authoring.md",
+  "revision": "0.8.0",
+  "decisionPath": "registry/decisions/0.8.0-representation-first-frontend.md",
   "components": [
     {
       "name": "core",

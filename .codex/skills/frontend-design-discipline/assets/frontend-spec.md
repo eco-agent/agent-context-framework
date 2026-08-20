@@ -1,15 +1,44 @@
 # Frontend specification
 
+This artifact is the approved, deliberately lossy interface between design search
+and implementation. Do not copy discarded alternatives or exploratory discussion
+into it.
+
 ## Outcome
 
 -
 
-## Evidence
+## Approved representation
 
-- User requirements:
-- Existing product:
-- Accepted decisions:
-- Data and state contracts:
+- Representation thesis:
+- Product job:
+- Primary interaction:
+- What users perceive:
+- What remains quiet or hidden:
+- Required accessibility equivalents:
+- Evidence sources:
+- Unresolved feasibility questions:
+
+## State behavior
+
+| State | Representative value or fixture | Visible, behavioral, ambient, or narrative result | Accessible equivalent |
+| --- | --- | --- | --- |
+| Typical |  |  |  |
+| Neutral |  |  |  |
+| Extreme |  |  |  |
+| Empty or missing |  |  |  |
+| Awkward or long |  |  |  |
+| Loading |  |  |  |
+| Failure |  |  |  |
+| Transition or update |  |  |  |
+
+## Context boundary
+
+- Subject and decision:
+- Implementation context allowed now:
+- Context still excluded:
+- Required output and stopping condition:
+- Isolation status (`runtime-enforced` or `best-effort`):
 
 ## Product precedent
 
@@ -50,13 +79,24 @@
 
 -
 
+### Mobile or alternate-form-factor composition
+
+- Classification (`preserve`, `adapt`, `recompose`, `split`, `replace`, `remove`, or not applicable):
+- Task-frequency ordering:
+- Regions removed, merged, split, or replaced:
+- Navigation and interaction changes:
+- Shared domain/state behavior:
+- Divergent presentation owners:
+
 ### Visible content and actions
 
 | Region or action | Exact content or behavior | Evidence source | Semantic role |
 | --- | --- | --- | --- |
 |  |  |  |  |
 
-Unspecified decorative framing is absent. This includes eyebrows, kickers, overlines, pills, badges, generic hero copy, fake metrics, card grids, and ornamental summaries.
+Unspecified decorative framing is absent. This includes eyebrows, kickers,
+overlines, pills, badges, generic hero copy, fake metrics, card grids, and ornamental
+summaries.
 
 ### Visual assets
 
@@ -64,19 +104,30 @@ Unspecified decorative framing is absent. This includes eyebrows, kickers, overl
 | --- | --- | --- | --- | --- |
 |  |  |  |  |  |
 
-An invented asset may fulfill a recorded visual role. It does not add product meaning, visible content, actions, navigation, or features.
+An invented asset may fulfill a recorded visual role. It does not add product
+meaning, visible content, actions, navigation, or features.
 
-### State
-
--
-
-### Ownership
+### State ownership
 
 -
 
-### Exact code locations
+### Responsive behavior
+
+- Layout relationships:
+- Actual container contexts:
+- Intrinsic constraints:
+- Intentional fixed physical constraints:
+- Narrow, medium, wide, and long-content behavior:
+
+### Ownership and exact code locations
 
 -
+
+## Implementation reconciliation
+
+| Current owner | Retain, replace, or remove | Approved target owner | Shared lower-layer behavior | Reason |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
 
 ## First vertical slice
 
@@ -103,3 +154,14 @@ An invented asset may fulfill a recorded visual role. It does not add product me
 - Applicable contracts:
 - Reverse actions:
 - Unsupported surfaces:
+
+## Authorized visual review
+
+- Authorization or acceptance contract:
+- Rendered states and transitions:
+- Screenshots or frames:
+- Major decision removed or replaced:
+- Materially different comparison:
+- Selected result and reason:
+- Human judgment owner:
+- Unverified behavior and risks:

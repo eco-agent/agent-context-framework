@@ -1,116 +1,126 @@
 ---
 name: frontend-design-discipline
-description: Specify substantial frontends before implementation when topology, state, ownership, interaction, or visual asset roles are unsettled.
+description: Reframe and specify substantial frontends before implementation when product representation, mobile composition, data-driven UI, topology, interaction, or visual asset roles are unsettled.
 ---
 
 # Frontend Design Discipline
 
-Turn user requirements and repository evidence into a durable task contract, then implement one complete vertical slice.
+Design the product independently of its schema and current implementation, then
+hand one approved representation to bounded implementation specialists.
+
+## Choose the attention stage
+
+Before loading more context, name the current subject and decision:
+
+```text
+product     What should this product or form factor fundamentally be?
+screen      What is this screen for?
+interaction What should this action communicate or change?
+component   What representation best expresses the approved state?
+layout      How should the composition respond to available space?
+CSS         Which intrinsic relationship expresses that layout?
+line        Is this implementation detail necessary?
+```
+
+Choose reasoning granularity separately. A visual thesis needs a coarse operation
+over narrow product context. A CSS repair needs a fine operation over one component
+and its real containers. A completed flow review may need several screens together.
+
+Load the smallest context that can support the current decision. Do not load code,
+schemas, routes, and the full design manual merely because they are relevant to the
+project. Record unavailable evidence and expand context only for a named deficiency.
+Read [progressive-context.md](references/progressive-context.md) when work crosses
+stages, uses separate workers, or suffers from implementation anchoring.
+
+## Route the work
+
+- For a new product thesis, substantial topology, or a data-driven representation,
+  read [product-reframing.md](references/product-reframing.md) and
+  [representation-search.md](references/representation-search.md). Copy
+  [design-search.md](assets/design-search.md) to
+  `.codex/work/frontend/<task>-design-search.md`.
+- For desktop-to-mobile or cross-form-factor work, also read
+  [mobile-recomposition.md](references/mobile-recomposition.md) before choosing
+  mobile topology.
+- After one representation is approved, copy
+  [frontend-spec.md](assets/frontend-spec.md) to
+  `.codex/work/frontend/<task>.md`. Transfer only the approved thesis and its
+  evidence, not discarded alternatives or exploratory discussion.
+- Before reading or modifying the current component tree, read
+  [implementation-reconciliation.md](references/implementation-reconciliation.md).
+- For layout, overflow, container behavior, or CSS ownership, use
+  `responsive-css-architect` after topology and composition are settled.
+- For an authorized rendered review, read
+  [visual-review.md](references/visual-review.md). If browser or visual review is
+  not authorized, record it as unverified instead of claiming inspection.
 
 ## Establish evidence
 
-Read the existing interface, product requirements, accepted decisions, and data contracts.
+Read user requirements, actual rendered states, representative runtime data, user
+tasks, accepted decisions, nearby product surfaces, and any pinned precedent needed
+by the active stage. Treat type definitions and schema names as correctness evidence,
+not as a command to make each field visible.
 
-Do not fill missing decisions from familiar model-generated UI patterns.
+Do not fill missing decisions from familiar generated UI. Every visible region and
+hierarchy role needs evidence from the user, product behavior, runtime state,
+existing interface, or accepted precedent. Preserve the role as well as the words.
 
-Every visible content region and hierarchy role needs evidence from the user, product or data contract, existing interface, or pinned precedent. Preserve the semantic role as well as the words. Treat moving a precedent title into an eyebrow, badge, summary, or other hierarchy position as a deviation that needs an acceptance gate.
+When the task creates or replaces substantial product topology or an application
+shell, use `adopt-established-product` to pin a licensed implementation precedent.
+Resolve any conflict between that precedent and an approved representation before
+implementation. When its license permits reuse, begin from the named materialized
+source rather than independently regenerating a look-alike.
 
-Omit common generated-UI seasoning unless the evidence requires it in that role: eyebrows, kickers, overlines, decorative microheadings, pills, badges, generic hero statements, fake metrics, card grids, gradient panels, and ornamental summaries. These are not harmless defaults.
+## Approve one target
 
-When the task creates or replaces substantial product topology or an application shell, use `adopt-established-product` to select one current external product and pinned licensed implementation precedent. Do not invoke product adoption for bounded repairs to an established interface. When adoption applies, resolve topology, visible content, actions, state, and interaction from that evidence. Ask only when user requirements, data contracts, and the precedent materially conflict.
-
-When the selected license permits reuse, begin from the materialized source files named by the implementation contract. Do not read them and independently regenerate equivalent components.
-
-## Plan visual assets
-
-Inventory every required icon, texture, illustration, pattern, background, empty-state visual, and identity mark before implementation.
-
-Preserve accepted product, brand, and precedent assets first. When none exists, create code-native SVG for icons, vectors, patterns, and self-contained animated artwork. Use the `imagegen` skill for bitmap textures, illustrative imagery, photo-like content, and raster variants derived from references. Do not substitute nested elements, CSS gradients, pseudo-elements, emoji, or an arbitrary library glyph when a purpose-built asset would express the recorded visual role better.
-
-Prefer restrained animated SVG when motion communicates state, feedback, direction, or product character. Record the static reduced-motion result. Use a static asset when motion adds nothing.
-
-An invented asset may realize an already-required visual role. It must not create product meaning, visible content, actions, navigation, or features that lack evidence.
-
-## Write the frontend specification
-
-For substantial frontend work, copy [frontend-spec.md](assets/frontend-spec.md) to `.codex/work/frontend/<task>.md`.
-
-Write decisions, not questions, aspirations, design adjectives, or option lists.
-
-Expand decisions in this order:
+The design-search artifact may contain alternatives. The frontend specification
+must contain one answer and one owner for each settled decision:
 
 ```text
 outcome
-→ topology
-→ visible content and actions
-→ visual assets
-→ state
-→ ownership
-→ exact code locations
+-> representation thesis
+-> topology
+-> visible content and actions
+-> visual assets
+-> state and transitions
+-> responsive behavior
+-> ownership
+-> exact code locations
 ```
 
-Stop expanding when every decision has one answer and one owner.
+The first acceptable design is a draft. Inspect representative states, remove or
+replace one major decision, and compare a materially different solution before
+approval. Keep the first only if it survives that comparison.
 
-Expand established decisions into implementation decisions. Do not turn an absent product decision into permission to choose one.
+## Plan visual assets
 
-Record existing code, UI, state, and files that the implementation replaces or removes.
+Inventory every required icon, texture, illustration, pattern, background,
+empty-state visual, and identity mark. Preserve accepted product, brand, and
+precedent assets first. Otherwise create code-native SVG for icons and vectors, and
+use `imagegen` for bitmap textures, illustration, or photo-like content.
 
-## Choose the first vertical slice
+An invented asset may realize an approved visual role. It must not invent product
+meaning, content, actions, navigation, or features. Record the static reduced-motion
+result for motion that communicates state, feedback, direction, or character.
 
-Choose the smallest end-to-end user path that exercises the dominant interaction.
+## Implement one vertical slice
 
-Record its entry, action, state transition, result, owner, and exact code locations.
+Choose the smallest end-to-end path that exercises the dominant interaction. Record
+its entry, action, state transition, result, applicable states, owner, and exact code
+locations. Implement only the approved target.
 
-Record every applicable state in the slice.
+Use bounded specialists for settled concerns such as accessibility, color,
+typography, interface details, animation, raster assets, and responsive CSS. A
+specialist must not revise the approved representation, topology, visible content,
+actions, or state ownership.
 
-Do not start a second slice until the first is consolidated.
+## Consolidate and propagate
 
-## Preserve reference fidelity
+Read the complete specification and diff. Remove output not required by the target,
+duplicate state representations, compatibility layers, obsolete code, and files or
+abstractions without distinct ownership. Update the specification if an approved
+implementation decision changed.
 
-When a product precedent is selected, preserve its information hierarchy, density, navigation, interaction grammar, and responsive behavior. Preserve repository style rules unless the user explicitly replaces them. Do not blend the precedent with generic model-prior cards, dashboards, forms, or modals.
-
-## Use bounded specialists
-
-Use a specialist only when the recorded slice contains its concern:
-
-- `responsive-css-architect`: layout, responsiveness, CSS ownership, Tailwind, and overflow.
-- `design-accessible-interfaces`: recorded keyboard, focus, form, naming, announcement, hit-area, motion-preference, or zoom behavior.
-- `design-web-typography`: an explicit typography-system decision.
-- `design-color-systems`: an explicit color-system or contrast-remediation decision.
-- `design-interface-details`: a settled interface-detail, icon, or code-native SVG decision.
-- `imagegen`: an original bitmap texture, illustration, photo-like image, or raster variant from accepted references.
-- `choose-react-animation`: specified motion behavior, including animated SVG.
-
-A specialist implements its concern. It must not change precedent, topology, visible content, actions, state ownership, or scope.
-
-Return to this specification after each specialist concern.
-
-## Implement the first slice
-
-Implement only the recorded content, actions, state, topology, and ownership.
-
-Adopt the pinned implementation before writing a new owner. Otherwise edit the existing owner before creating a new component, abstraction, or file. Remove the implementation that the specification replaces.
-
-For adopted source, preserve copied files exactly and express adaptations as reviewable diffs from their verified upstream bytes. Keep the required license notice.
-
-## Consolidate the slice
-
-Read the complete specification and diff.
-
-Remove:
-
-- output not required by the specification;
-- duplicate representations of state;
-- parallel implementations of the same concern;
-- obsolete code left behind by the change;
-- files or abstractions without distinct ownership.
-
-Update the specification if an implementation decision changed. Review the revised diff again before verification.
-
-## Propagate
-
-After the first slice is complete and reduced, implement the same shared behavior on every applicable propagation surface recorded in the specification.
-
-Record unsupported surfaces. Do not infer new product behavior while propagating.
-
-Repeat the workflow for another slice only after applicable propagation is complete.
+Propagate the consolidated behavior only to entry points, clients, adapters,
+contracts, and reverse actions named in the specification. Record unsupported
+surfaces. Do not infer a new product decision during propagation.

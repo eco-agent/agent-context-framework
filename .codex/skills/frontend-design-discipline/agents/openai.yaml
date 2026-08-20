@@ -1,4 +1,4 @@
 interface:
   display_name: "Frontend Design Discipline"
-  short_description: "Specify frontend slices and visual assets"
-  default_prompt: "Use $frontend-design-discipline to specify the frontend slice, visual assets, states, owners, and propagation before implementation."
+  short_description: "Search and specify product representations"
+  default_prompt: "Use $frontend-design-discipline to choose the current attention stage, search representations from observed product state, and hand one approved target to implementation."

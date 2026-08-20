@@ -2,6 +2,44 @@
 
 Use this reference when writing or refactoring responsive CSS.
 
+## Express Relationships, Not Measurements
+
+Let the browser solve geometry from content and available space. Prefer rules that
+describe how items relate:
+
+```css
+.collection {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.content {
+  inline-size: min(100%, 42rem);
+}
+
+.row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.item {
+  flex: 1 1 16rem;
+}
+```
+
+Avoid encoding the geometry of one screenshot:
+
+```css
+.panel {
+  width: 372px;
+  margin-left: 18px;
+  top: 74px;
+  height: 493px;
+}
+```
+
+A number is appropriate when it describes an intentional physical constraint, such
+as a minimum touch target, border thickness, icon size, or known control height. It
+is a smell when it repairs the current placement instead of expressing layout intent.
+
 ## Layout Primitive Selection
 
 | Situation | Prefer | Notes |
@@ -73,6 +111,9 @@ This responds to available space without naming devices.
 ```
 
 Use container queries when a component may appear in sidebars, modals, dashboards, or full-width pages.
+
+Review the same component in those actual contexts. Its internal CSS should respond
+to available space without learning which page happened to contain it.
 
 ## DO: Use Flex for One-Dimensional Controls
 
@@ -151,7 +192,7 @@ Use container queries when a component may appear in sidebars, modals, dashboard
 }
 ```
 
-## DON'T: Fixed Page Widths
+## DO NOT: Use Fixed Page Widths
 
 ```css
 /* Bad */
@@ -166,7 +207,7 @@ Use container queries when a component may appear in sidebars, modals, dashboard
 }
 ```
 
-## DON'T: Absolute Positioning for Normal Layout
+## DO NOT: Use Absolute Positioning for Normal Layout
 
 ```css
 /* Bad */
@@ -183,7 +224,7 @@ Use container queries when a component may appear in sidebars, modals, dashboard
 }
 ```
 
-## DON'T: Fragile Fixed Grids
+## DO NOT: Use Fragile Fixed Grids
 
 ```css
 /* Bad */
@@ -197,7 +238,7 @@ Use container queries when a component may appear in sidebars, modals, dashboard
 }
 ```
 
-## DON'T: Hide Focus Without Replacement
+## DO NOT: Hide Focus Without Replacement
 
 ```css
 /* Bad */
@@ -212,7 +253,7 @@ Use container queries when a component may appear in sidebars, modals, dashboard
 }
 ```
 
-## DON'T: Animate Everything
+## DO NOT: Animate Everything
 
 ```css
 /* Bad */

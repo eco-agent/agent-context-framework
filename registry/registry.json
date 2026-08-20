@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.7.0",
-  "decisionPath": "registry/decisions/0.7.0-optional-orchestration-authoring.md",
+  "revision": "0.8.0",
+  "decisionPath": "registry/decisions/0.8.0-representation-first-frontend.md",
   "components": [
     {
       "name": "core",
@@ -413,7 +413,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:73504eeba1963bb7122b0d83ab1c0a0d21f8e9cf0c3ecf283620deb4991e6105",
+      "revision": "sha256:f30aba0e08599067a8f6807affafcd3b1a73f4769150711e7cd1afdbac9f0d3b",
       "dependencies": [],
       "capabilities": [
         {
@@ -435,14 +435,21 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
-          "sourceSha256": "90c43dc9ae78859a2a96d3d4b69c54af04825376bbc9760bfe96d29b91d2ace6",
+          "sourceSha256": "c10de4998a1bfa29d48e36aa958b8c125e5a21ffc1dca874f33654b2ab317006",
           "targetPath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
         {
           "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/assets/design-search.md",
+          "sourceSha256": "e52525a6dce9bd68fb6573ba64e8355d178ba275e43cea974bc601895c0810b9",
+          "targetPath": ".codex/skills/frontend-design-discipline/assets/design-search.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
-          "sourceSha256": "b15e391a5fbabf4c3d0393664906bda6015ee63509f6ac45434ba801aa575f6a",
+          "sourceSha256": "98db78ae6cddc2447d6ddfb619e6de8a3c76abfdd692040a6579c8ff0f7358dc",
           "targetPath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
           "mediaType": "text/markdown"
         },
@@ -455,8 +462,50 @@
         },
         {
           "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
+          "sourceSha256": "7128075234d1dd2f25daefc9c33b9355e0f88947b8e41cf534ad16eae1f780b3",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/mobile-recomposition.md",
+          "sourceSha256": "1266f281a3ecbdf4290b5e914b5d2622b1b7bcc42987cc028e9b163babb78ea8",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/mobile-recomposition.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/product-reframing.md",
+          "sourceSha256": "4b6db17fef7f80eb17f15e7edc2cad9e7624d642dcf0f9138d178c82c6af48f8",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/product-reframing.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/progressive-context.md",
+          "sourceSha256": "49dac890747e39f03ef8676e6af2735a6dc720d0f6becbfd749a75805c1aa489",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/progressive-context.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/representation-search.md",
+          "sourceSha256": "2ae18651ad687bed3bcfa5911d805757fe9dd4e8362117b79a9218e666ed9eb3",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/representation-search.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/visual-review.md",
+          "sourceSha256": "40b4c88f96f2447d4d5e23b4a37c3ed0920b28c2f1d0c9b15f0d882757db5238",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/visual-review.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "1c78abd44a4ecb745bc5c2b1e051b4dc092113a02a6bb061d3ff1dad4d089a90",
+          "sourceSha256": "9afd27a733ebb407bc9361188641bc1b852309eb09d2f6521ad82eedadcc926b",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -464,7 +513,7 @@
     },
     {
       "name": "skill-responsive-css-architect",
-      "revision": "sha256:4c8b3192ab50c3457ee4d03d5c80addf968616515e3b9f7f7e9f309f0b7fc9a6",
+      "revision": "sha256:6d78790af3af120e6665986fec14c0fd3f6923038fe18354c140bb2712b75631",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -487,14 +536,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
-          "sourceSha256": "f22344c99f05b4747ac701b1cc046bf249bb485f151209fbb506ca4c548be06c",
+          "sourceSha256": "bad8d8909e4aef40bbc024435c948190d8217d3594c893332d6745de193741c7",
           "targetPath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
           "mediaType": "text/markdown"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/references/review-checklist.md",
-          "sourceSha256": "1f62d3ecedb3bbc1d86d6923a10f736d90e9feecb382ea12840fba1e1ed2cffe",
+          "sourceSha256": "ff7fb1f08c3d15f75ee1ba223f3426434cd556c897e7ca257a78a60385bfdf82",
           "targetPath": ".codex/skills/responsive-css-architect/references/review-checklist.md",
           "mediaType": "text/markdown"
         },
@@ -508,7 +557,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/SKILL.md",
-          "sourceSha256": "84ee40eba170fca55449847ee71953b6a4da0246ad74004f961f9613fb4643a3",
+          "sourceSha256": "d489b9bdaf966ed6d2828636ceedf94b7e6f2fce1cb5be8dd4108f3168a4bc28",
           "targetPath": ".codex/skills/responsive-css-architect/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -605,7 +654,7 @@
     },
     {
       "name": "frontend",
-      "revision": "sha256:e11ab1e3eb629aab02979c3ba3f85abd95168426b5c9ee881924c0c6390bce9e",
+      "revision": "sha256:e4859e30878f3967e860f9eac082d75c1ed41f11d6c0945c1ddf9d0155d463de",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -640,7 +689,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend.md",
-          "sourceSha256": "aeca2871ffe3bd9c788ae2972935ec252f3984bccae2fb94c6919e28546df34e",
+          "sourceSha256": "795e70acf82769125284eddc6ebca720f2d03c92b39738b8f6486f3c5f18291b",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend",
           "markerStyle": "markdown"

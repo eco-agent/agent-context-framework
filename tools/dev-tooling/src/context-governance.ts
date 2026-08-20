@@ -34,6 +34,55 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "exact project contract paths",
     "They do not disable, replace, or weaken the maintainer-owned framework baseline.",
   ]],
+  ["registry/sources/instructions/frontend.md", [
+    "Treat schemas and the current implementation as evidence, not as the default interface.",
+    "Treat desktop and mobile as projections of the same product model.",
+    "Preservation is not the default.",
+  ]],
+  [".codex/skills/frontend-design-discipline/SKILL.md", [
+    "Design the product independently of its schema and current implementation",
+    "Load the smallest context that can support the current decision.",
+    "Transfer only the approved thesis and its evidence, not discarded alternatives or exploratory discussion.",
+    "The first acceptable design is a draft.",
+    "A specialist must not revise the approved representation",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/product-reframing.md", [
+    "A schema describes stored values. It rarely identifies the product experience.",
+    "The source value need not become a number, badge, progress bar, card, or gradient.",
+    "Remove the schema and current implementation from the mental model.",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/representation-search.md", [
+    "At least one candidate must not display the source value at all.",
+    "not materially different when only palette, typography, spacing, border radius, or component arrangement changes",
+    "The first technically valid design is a draft, not the implementation target.",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/mobile-recomposition.md", [
+    "Desktop and mobile are projections of the same product model, not two sizes of one view.",
+    "`preserve` is not the default.",
+    "Some duplicated presentation logic is healthier than a universal component",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/progressive-context.md", [
+    "Do not retrieve everything relevant.",
+    "Use artifacts as lossy interfaces",
+    "Hard isolation is a control property.",
+    "Minimum sufficient context is an empirical target, not a mechanically provable global property",
+    "do not claim hard isolation or minimality.",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md", [
+    "The existing implementation is evidence about behavior, integrations, and cost.",
+    "Deletion is unrestricted within the approved change.",
+    "Do not let implementation convenience silently revise the approved target.",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/visual-review.md", [
+    "Review the actual result rather than inferring behavior from JSX, CSS, types, or a single screenshot.",
+    "remove or replace one major design decision and attempt a materially different solution.",
+    "Human review owns whether the representation is coherent, useful, and sufficiently quiet.",
+  ]],
+  [".codex/skills/responsive-css-architect/SKILL.md", [
+    "express relationships rather than screenshot measurements",
+    "Do not use a number to compensate for unresolved layout.",
+    "Moving a component between its supported containers requires little or no CSS rewriting.",
+  ]],
   [".codex/skills/orchestrate-codex-workflows/SKILL.md", [
     "Exclude adaptive orchestrator holarchies and sibling quorum loops.",
     "Fix the workflow topology, role registry, budgets, and authority before execution.",

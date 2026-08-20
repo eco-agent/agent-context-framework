@@ -15,6 +15,10 @@ removal preserve unrelated project content.
   focused-verification baseline into a managed `AGENTS.md` section.
 - Engineering, TypeScript, session-quality, skill-authoring, and frontend
   components install only their declared instructions, templates, and skills.
+- `frontend` routes substantial design through observed-state product reframing,
+  representation search, mobile recomposition, approved stage artifacts,
+  implementation reconciliation, and authorized rendered review. It treats schemas
+  and current components as evidence rather than default interface representations.
 - `frontend` and `skill-responsive-css-architect` are plain-CSS neutral.
   `frontend-tailwind` explicitly adds the separate Tailwind instruction and
   `skill-tailwind-css-architect` closure.
@@ -43,6 +47,12 @@ Objective kernels, objective runtimes,
 schedulers, queues, databases, task envelopes, binding producers, adaptive
 agent hierarchies, sibling quorums, and long-running unbounded loops remain
 outside every distributable closure.
+
+Progressive frontend references can reduce the context deliberately loaded for one
+design stage and pass an approved, lossy artifact forward. They do not enforce fresh
+worker isolation, restrict repository or tool access, audit actual context exposure,
+or prove minimum sufficient context. Those properties require a separately selected
+controller and empirical evaluation harness that this registry does not distribute.
 
 ## Protected instructions and project contracts
 

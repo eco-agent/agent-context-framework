@@ -8,6 +8,10 @@ Use this reference before finalizing CSS changes.
 - Page width uses intrinsic constraints such as `min()`, `max()`, or `inline-size: min(...)` rather than fixed viewport guesses.
 - Collections use responsive grid patterns such as `repeat(auto-fit, minmax(min(100%, X), 1fr))` when appropriate.
 - Reusable components respond to their container, not only the viewport.
+- The component can move among its supported drawer, grid, page, and modal contexts
+  with little or no geometric rewriting.
+- Numeric values describe intentional constraints rather than compensate for one
+  screenshot or containing page.
 - Long text, missing images, one item, many items, and empty states do not break the layout.
 
 ## Interaction and Accessibility
