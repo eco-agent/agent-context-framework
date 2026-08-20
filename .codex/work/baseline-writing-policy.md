@@ -75,3 +75,4 @@ registry, component revision, governance hash, and local projections.
   and exact preservation is part of this decision.
 - No browser, broad workspace, downstream fixture, or acceptance check ran. This
   change has no executable code and repository policy is unconfigured.
+- Tested implementation revision: `f2a9666b22f95cbef774b7484684b476429c47a7`.
