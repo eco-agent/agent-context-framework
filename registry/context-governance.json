@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.8.0",
-  "decisionPath": "registry/decisions/0.8.0-representation-first-frontend.md",
+  "registryRevision": "0.8.1",
+  "decisionPath": "registry/decisions/0.8.1-baseline-writing-policy.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "8f073e79678d0a1572aedb56cc3663af380f67f72d0db9a688d21443e8b638ef"
+      "sha256": "d8f22c69482967a5c8514bd4114f0d8d29ba863123dd5f433877144b75cb0d1a"
     },
     {
       "invariantId": "frontend-discipline",

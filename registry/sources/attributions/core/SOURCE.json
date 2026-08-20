@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/cursor/plugins",
+  "revision": "fd6dd6f7276956a532bb78a748a8d2818b6eb5f4",
+  "license": "MIT",
+  "sourceSkill": "pstack/skills/unslop",
+  "adaptedFiles": ["registry/sources/instructions/core.md"],
+  "localChanges": "Moved the skill body into protected core policy, added an exact-text and machine-syntax scope boundary, and changed heading levels to fit the installed AGENTS.md structure."
+}

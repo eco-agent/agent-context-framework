@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.0",
-  "decisionPath": "registry/decisions/0.8.0-representation-first-frontend.md",
+  "revision": "0.8.1",
+  "decisionPath": "registry/decisions/0.8.1-baseline-writing-policy.md",
   "components": [
     {
       "name": "core",
@@ -9,7 +9,16 @@
       "capabilities": [
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [
+        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "fd6dd6f7276956a532bb78a748a8d2818b6eb5f4",
+          "noticePath": ".agent-context/LICENSE.cursor-unslop.upstream"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -25,6 +34,20 @@
           "sourcePath": "LICENSE",
           "targetPath": ".agent-context/LICENSE.agent-context-framework",
           "mediaType": "text/plain"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/licenses/LICENSE.cursor-unslop.upstream",
+          "targetPath": ".agent-context/LICENSE.cursor-unslop.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/attributions/core/SOURCE.json",
+          "targetPath": ".agent-context/sources/core/SOURCE.json",
+          "mediaType": "application/json"
         }
       ]
     },

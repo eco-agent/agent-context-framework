@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.0",
-  "decisionPath": "registry/decisions/0.8.0-representation-first-frontend.md",
+  "revision": "0.8.1",
+  "decisionPath": "registry/decisions/0.8.1-baseline-writing-policy.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:986561e85244683c0ba0651c3be32de9d4241f344572af6e97e3d6e9fe9bb8aa",
+      "revision": "sha256:6bd88dea11b3185b89ec9d63791d1c9990eb40938e35e97d364635275cb54387",
       "dependencies": [],
       "capabilities": [
         {
@@ -21,13 +21,21 @@
           "sourcePath": "LICENSE",
           "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "fd6dd6f7276956a532bb78a748a8d2818b6eb5f4",
+          "noticePath": ".agent-context/LICENSE.cursor-unslop.upstream",
+          "noticeSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
         }
       ],
       "artifacts": [
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "8f073e79678d0a1572aedb56cc3663af380f67f72d0db9a688d21443e8b638ef",
+          "sourceSha256": "d8f22c69482967a5c8514bd4114f0d8d29ba863123dd5f433877144b75cb0d1a",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -38,6 +46,20 @@
           "sourceSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3",
           "targetPath": ".agent-context/LICENSE.agent-context-framework",
           "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/licenses/LICENSE.cursor-unslop.upstream",
+          "sourceSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+          "targetPath": ".agent-context/LICENSE.cursor-unslop.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/attributions/core/SOURCE.json",
+          "sourceSha256": "a9827bd103412b8c6a4b274deb904f3098561b7a01f671675d02c25977bd6f70",
+          "targetPath": ".agent-context/sources/core/SOURCE.json",
+          "mediaType": "application/json"
         }
       ]
     },
