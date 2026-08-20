@@ -104,3 +104,31 @@ The external test copy remains at
 because runtime policy rejected recursive cleanup even after the target was
 resolved and verified under the system temporary directory. It is outside both
 repositories and is not distributable input.
+
+## Acceptance and downstream installation
+
+- The single repository-declared acceptance invocation ran from clean framework
+  revision `25501529b02c53a5161d01e0ddb29cebb6d28f3d` against a disposable
+  Control Tower worktree.
+- Its workspace stage passed typecheck, tests, check, and registry check. Its
+  isolation stage passed. The aggregate result stopped at the first downstream
+  precondition because Control Tower commit `a73fbce` contained a commented
+  legacy host-workspace/`tsx` MCP example. The runtime verifier intentionally
+  rejects that unsafe text even when commented.
+- The disposable fixture removed only that stale example, corrected its
+  project-owned repository type, installed its frozen dependencies, and
+  bootstrapped its isolated runtime. The exact downstream runtime verifier then
+  returned `mcp: initialize-list-read-search`; the fixture's declared default
+  policy profile passed typecheck and tests.
+- Broad framework stages were not repeated after the downstream-only fixture
+  repair. The recovered evidence retains the original framework revision and
+  records the exact failed precondition instead of presenting the aggregate run
+  as an uninterrupted pass.
+- Live Control Tower installed registry 0.8.0 in commit
+  `72c659b` with eight direct selections, 30 resolved components, and 192
+  artifacts. The orchestration component is explicit and the host manifest,
+  lockfile, and workspace declaration are unchanged.
+- Live installer diff is current with zero drift. Doctor is healthy; runtime,
+  repository policy, and Codex interface are ready. The installed runtime passed
+  the same initialize/list/read/search proof, and Control Tower's declared
+  default typecheck/test profile passed.
