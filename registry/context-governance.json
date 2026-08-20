@@ -111,7 +111,7 @@
     {
       "invariantId": "skill-authoring-explicit",
       "sourcePath": "registry/sources/instructions/skill-authoring.md",
-      "sha256": "d194312b344f3c298266180cff6f88e3589edd55498fdc3103f97678eb6de99a"
+      "sha256": "0cbf0ce8a6122e382ecd09ddc8c96537fb48879488e9eb0c8361672a0a084efb"
     },
     {
       "invariantId": "repository-policy-explicit",

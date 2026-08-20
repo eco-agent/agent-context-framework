@@ -2,16 +2,13 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import { normalizeRelative, pathExists, resolvesInside } from "../filesystem.js";
-import { proseBlocks, type ProseBlock } from "./technical-prose.js";
 
 export const agentProseRuleIds = [
-  "catalog-description",
   "chatbot-phrase",
   "curly-quote",
   "em-dash",
   "inline-header",
   "not-just-but",
-  "title-case-heading",
 ] as const;
 
 export type AgentProseRuleId = (typeof agentProseRuleIds)[number];
@@ -32,13 +29,24 @@ export interface AgentProseReport {
 }
 
 interface TextRule {
-  readonly rule: Exclude<
-    AgentProseRuleId,
-    "catalog-description" | "inline-header" | "title-case-heading"
-  >;
+  readonly rule: Exclude<AgentProseRuleId, "inline-header">;
   readonly pattern: RegExp;
   readonly message: string;
 }
+
+const supportedExtensions = new Set([
+  ".cjs",
+  ".cts",
+  ".js",
+  ".jsx",
+  ".md",
+  ".mdx",
+  ".mjs",
+  ".mts",
+  ".toml",
+  ".ts",
+  ".tsx",
+]);
 
 const textRules: readonly TextRule[] = [
   {
@@ -82,8 +90,8 @@ export async function checkAgentProse(
     if (!(await pathExists(absolute))) {
       throw new Error(`Agent prose target does not exist: ${file}`);
     }
-    if (!absolute.endsWith(".md")) {
-      throw new Error(`Agent prose target must be Markdown: ${file}`);
+    if (!supportedExtensions.has(path.extname(absolute).toLowerCase())) {
+      throw new Error(`Agent prose target has an unsupported file type: ${file}`);
     }
 
     const relative = normalizeRelative(root, absolute);
@@ -100,70 +108,38 @@ export async function checkAgentProse(
 
 export function lintAgentProse(
   file: string,
-  markdown: string,
+  content: string,
 ): readonly AgentProseFinding[] {
+  const markdown = isMarkdown(file);
   const findings: AgentProseFinding[] = [];
 
-  const description = frontmatterDescription(markdown);
-  if (description !== null) {
-    const words = description.value.match(/[\p{L}\p{N}][\p{L}\p{N}'-]*/gu) ?? [];
-    const hasSecondSentence = /[.!?]\s+[\p{Lu}\p{N}]/gu.test(description.value);
-    if (words.length > 30 || hasSecondSentence) {
-      findings.push({
-        file,
-        line: description.line,
-        column: description.column,
-        rule: "catalog-description",
-        message: "Keep a skill description to one discriminating sentence of at most 30 words.",
-        excerpt: description.source,
-      });
-    }
+  for (const line of sourceLines(file, content)) {
+    const text = markdown ? blankInlineCode(line.text) : line.text;
     for (const rule of textRules) {
-      for (const match of description.value.matchAll(rule.pattern)) {
+      const checked =
+        line.quotedExamples && isPhraseRule(rule) ? blankDoubleQuotedExamples(text) : text;
+      for (const match of checked.matchAll(rule.pattern)) {
         findings.push({
           file,
-          line: description.line,
-          column: description.column + match.index,
+          line: line.number,
+          column: match.index + 1,
           rule: rule.rule,
           message: rule.message,
-          excerpt: description.source,
+          excerpt: line.text.trim(),
         });
       }
     }
-  }
 
-  for (const block of proseBlocks(markdown)) {
-    for (const rule of textRules) {
-      for (const match of block.text.matchAll(rule.pattern)) {
-        findings.push(findingAt(file, block, match.index, rule.rule, rule.message));
-      }
-    }
-  }
-
-  for (const line of markdownLinesOutsideFences(markdown)) {
-    const inlineHeader = line.text.match(/^\s*[-+*]\s+\*\*[^*\n]+:\*\*/u);
-    if (inlineHeader !== null) {
-      findings.push({
-        file,
-        line: line.number,
-        column: (inlineHeader.index ?? 0) + 1,
-        rule: "inline-header",
-        message: "Replace the bold label and colon with prose or a real heading.",
-        excerpt: line.text.trim(),
-      });
-    }
-
-    const heading = line.text.match(/^\s*#{1,6}\s+(.+?)\s*#*\s*$/u);
-    if (heading !== null && looksTitleCased(heading[1] ?? "")) {
-      findings.push({
-        file,
-        line: line.number,
-        column: line.text.indexOf(heading[1] ?? "") + 1,
-        rule: "title-case-heading",
-        message: "Use sentence case for this heading.",
-        excerpt: line.text.trim(),
-      });
-    }
+    const match = text.match(/(?:^\s*|["'`]\s*)[-+*]\s+\*\*[^*\n]+:\*\*/u);
+    if (match === null) continue;
+    findings.push({
+      file,
+      line: line.number,
+      column: (match.index ?? 0) + 1,
+      rule: "inline-header",
+      message: "Replace the bold label and colon with prose or a real heading.",
+      excerpt: line.text.trim(),
+    });
   }
 
   return findings.sort(compareFindings);
@@ -173,38 +149,28 @@ export function formatAgentProseFinding(finding: AgentProseFinding): string {
   return `${finding.file}:${finding.line}:${finding.column} [${finding.rule}] ${finding.message}`;
 }
 
-function frontmatterDescription(markdown: string): {
-  readonly value: string;
-  readonly line: number;
-  readonly column: number;
-  readonly source: string;
-} | null {
-  const lines = markdown.replaceAll("\r\n", "\n").split("\n");
-  if (lines[0]?.trim() !== "---") return null;
-  const end = lines.findIndex((line, index) => index > 0 && line.trim() === "---");
-  if (end < 0) return null;
-  for (let index = 1; index < end; index += 1) {
-    const source = lines[index] ?? "";
-    const match = source.match(/^\s*description:\s*(.+?)\s*$/u);
-    if (match === null) continue;
-    const raw = match[1] ?? "";
-    const value = raw.replace(/^(?:"(.*)"|'(.*)')$/u, "$1$2");
-    return {
-      value,
-      line: index + 1,
-      column: source.indexOf(raw) + 1,
-      source: source.trim(),
-    };
-  }
-  return null;
+function isPhraseRule(rule: TextRule): boolean {
+  return rule.rule === "chatbot-phrase" || rule.rule === "not-just-but";
 }
 
-function markdownLinesOutsideFences(markdown: string): readonly {
+function sourceLines(file: string, content: string): readonly {
   readonly number: number;
   readonly text: string;
+  readonly quotedExamples: boolean;
 }[] {
-  const result: { number: number; text: string }[] = [];
-  const lines = markdown.replaceAll("\r\n", "\n").split("\n");
+  if (!isMarkdown(file)) {
+    return content.replaceAll("\r\n", "\n").split("\n").map((text, index) => ({
+      number: index + 1,
+      text,
+      quotedExamples: false,
+    }));
+  }
+
+  const result: { number: number; text: string; quotedExamples: boolean }[] = [];
+  const lines = content.replaceAll("\r\n", "\n").split("\n");
+  const frontmatterEnd = lines[0]?.trim() === "---"
+    ? lines.findIndex((line, index) => index > 0 && line.trim() === "---")
+    : -1;
   let fenced = false;
   let marker = "";
   for (let index = 0; index < lines.length; index += 1) {
@@ -220,36 +186,37 @@ function markdownLinesOutsideFences(markdown: string): readonly {
       }
       continue;
     }
-    if (!fenced) result.push({ number: index + 1, text });
+    if (!fenced) {
+      result.push({
+        number: index + 1,
+        text,
+        quotedExamples: frontmatterEnd < 0 || index > frontmatterEnd,
+      });
+    }
   }
   return result;
 }
 
-function looksTitleCased(heading: string): boolean {
-  const plain = heading.replace(/`[^`]*`/gu, "");
-  const words = plain.match(/[\p{L}][\p{L}'-]*/gu) ?? [];
-  const candidates = words.filter((word) => word.length > 2 && word !== word.toUpperCase());
-  if (candidates.length < 2) return false;
-  return candidates.every((word) => /^\p{Lu}/u.test(word));
+function isMarkdown(file: string): boolean {
+  return file.endsWith(".md") || file.endsWith(".mdx");
 }
 
-function findingAt(
-  file: string,
-  block: ProseBlock,
-  index: number,
-  rule: AgentProseRuleId,
-  message: string,
-): AgentProseFinding {
-  const bounded = Math.max(0, Math.min(index, block.positions.length - 1));
-  const position = block.positions[bounded] ?? { line: 1, column: 1 };
-  return {
-    file,
-    line: position.line,
-    column: position.column,
-    rule,
-    message,
-    excerpt: block.excerptLines.get(position.line) ?? "",
-  };
+function blankDoubleQuotedExamples(text: string): string {
+  return blankMatches(text, /"[^"\n]*"/gu);
+}
+
+function blankInlineCode(text: string): string {
+  return blankMatches(text, /`+[^`]*`+/gu);
+}
+
+function blankMatches(text: string, pattern: RegExp): string {
+  const characters = text.split("");
+  for (const match of text.matchAll(pattern)) {
+    for (let index = match.index; index < match.index + match[0].length; index += 1) {
+      characters[index] = " ";
+    }
+  }
+  return characters.join("");
 }
 
 function compareFindings(left: AgentProseFinding, right: AgentProseFinding): number {

@@ -58,7 +58,7 @@ behavior more prominent.
 
 ## Check model-facing prose separately
 
-After pruning model-facing Markdown, run the repository-declared agent-prose
+After pruning model-facing instructions, run the repository-declared agent-prose
 check when one exists. It catches a small set of visible writing problems. It
 does not judge tone or meaning. Resolve findings without dropping facts or
 constraints.

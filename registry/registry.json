@@ -1091,7 +1091,7 @@
     },
     {
       "name": "skill-writing-great-skills",
-      "revision": "sha256:57340887d96319d1811e5b4f6c977002b3046fc517dc2b000c298e4c8063de1b",
+      "revision": "sha256:ffc4b1997c1512664886ce50eef96111281c89034ee1bdf7b350054d68c2c987",
       "dependencies": [],
       "capabilities": [
         {
@@ -1135,7 +1135,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/writing-great-skills/SKILL.md",
-          "sourceSha256": "a21c8848cf22ad26a380b9534b96a75e87c63b2de7522c7e281cdfb51c5e3df6",
+          "sourceSha256": "2fa718625b5d5a7160a704dc72607a0987292681da7ecc63cb736d3bb0e0a5e4",
           "targetPath": ".codex/skills/writing-great-skills/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -1623,7 +1623,7 @@
     },
     {
       "name": "skill-authoring",
-      "revision": "sha256:9865d0d5675e49833a43c4d8c161babaf0dec1669e243b38edfe00a4971ab862",
+      "revision": "sha256:6deac149ebd3e7a2b32b8e13c3b70b6865cbfeb2c0269921d5074cae24a6751e",
       "dependencies": [
         "skill-writing-great-skills"
       ],
@@ -1647,7 +1647,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/skill-authoring.md",
-          "sourceSha256": "d194312b344f3c298266180cff6f88e3589edd55498fdc3103f97678eb6de99a",
+          "sourceSha256": "0cbf0ce8a6122e382ecd09ddc8c96537fb48879488e9eb0c8361672a0a084efb",
           "targetPath": "AGENTS.md",
           "sectionId": "skill-authoring",
           "markerStyle": "markdown"

@@ -14,7 +14,9 @@ technical-document check to prompts and skills.
 - Rewrite the six previously identified high-density skills: orchestration,
   TypeScript invariants, frontend design discipline, session optimization,
   diagnosis, and established-product adoption.
-- Extend the existing repository policy command structure for agent-prose checks.
+- Extend the existing repository policy command structure with five exact
+  agent-prose rules for explicitly selected Markdown, TOML, JavaScript, and
+  TypeScript sources.
 
 ## State and topology
 
@@ -47,8 +49,8 @@ policy command list owns it.
 ## Verification
 
 - All 17 ACF skill folders pass the skill validator.
-- The selected skill entrypoints, loop reference, and prose-routing instructions
-  pass `check-agent-prose`.
-- The repository policy package passes all 32 tests.
+- The selected skill entrypoints, loop reference, role TOML, TypeScript prompt
+  source, and prose-routing instructions pass `check-agent-prose`.
+- The repository policy package passes all 37 tests.
 - Registry 0.8.4 builds and passes its consistency check.
 - The protected `AGENTS.md` check passes.
