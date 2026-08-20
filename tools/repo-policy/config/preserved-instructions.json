@@ -1,9 +1,9 @@
 [
   {
     "path": "AGENTS.md",
-    "start": "> Commit often; do not push. Use worktrees for large diffs.",
+    "start": "> Commit often. Do not push. Use a branch for each logical work stream.",
     "end": "# Agent Context Framework",
-    "sha256": "4900d7a991d588c06b8e563a2f2f82efa6c062f1754e0b40cfcda26b0106ba3b"
+    "sha256": "e743de4c38d1e202f3d180d3b95eaf51fe748e4ba3bc1ba61e8d20ce748ea45a"
   },
   {
     "path": "docs/AGENTS.md",

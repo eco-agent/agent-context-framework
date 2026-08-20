@@ -354,6 +354,7 @@ test("optional orchestration authoring is an explicit leaf with a governed safet
   );
   assert.deepEqual(component.capabilities, [
     { kind: "runtime", name: "codex-authentication", requirement: "required" },
+    { kind: "runtime", name: "git", requirement: "recommended" },
     { kind: "runtime", name: "network", requirement: "required" },
     { kind: "runtime", name: "node", requirement: "required" },
   ]);
@@ -599,6 +600,43 @@ test("governance rejects dilution of orchestration safety semantics", async () =
       (await readFile(skillPath, "utf8")).replace(
         "Persist evidence before each state transition.",
         "Record evidence when convenient.",
+      ),
+      "utf8",
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /violates a maintainer-owned semantic requirement/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance rejects dilution of agent Git transaction semantics", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-git-governance-"));
+  try {
+    await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
+    await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+    await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+    await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
+    await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+    await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+    await copyGovernedSkills(temporaryRoot);
+    const transactionPath = path.join(
+      temporaryRoot,
+      ".codex",
+      "skills",
+      "orchestrate-codex-workflows",
+      "references",
+      "git-transaction.md",
+    );
+    await writeFile(
+      transactionPath,
+      (await readFile(transactionPath, "utf8")).replace(
+        "If any identity, path, cleanliness check, or reachability proof differs from the\nledger, stop cleanup.",
+        "Cleanup may continue after ledger mismatches.",
       ),
       "utf8",
     );

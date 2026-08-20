@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.1",
-  "decisionPath": "registry/decisions/0.8.1-baseline-writing-policy.md",
+  "revision": "0.8.2",
+  "decisionPath": "registry/decisions/0.8.2-agent-git-protocol.md",
   "components": [
     {
       "name": "core",
       "dependencies": [],
       "capabilities": [
+        { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
       ],
       "licenses": [
@@ -410,6 +411,7 @@
       "dependencies": [],
       "capabilities": [
         { "kind": "runtime", "name": "codex-authentication", "requirement": "required" },
+        { "kind": "runtime", "name": "git", "requirement": "recommended" },
         { "kind": "runtime", "name": "network", "requirement": "required" },
         { "kind": "runtime", "name": "node", "requirement": "required" }
       ],

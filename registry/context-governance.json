@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.8.1",
-  "decisionPath": "registry/decisions/0.8.1-baseline-writing-policy.md",
+  "registryRevision": "0.8.2",
+  "decisionPath": "registry/decisions/0.8.2-agent-git-protocol.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "d8f22c69482967a5c8514bd4114f0d8d29ba863123dd5f433877144b75cb0d1a"
+      "sha256": "bc65b27b195eaf5c59ebbae02c62a2cbc68fcaf36c42dc3e6df37ca4bc0ebfcf"
     },
     {
       "invariantId": "frontend-discipline",
@@ -81,7 +81,7 @@
     {
       "invariantId": "repository-work",
       "sourcePath": "registry/sources/instructions/repository-work.md",
-      "sha256": "ac21eb656a3c766ce6f5853f976434e1461b575f9368de3e6c3442a44b9bcd24"
+      "sha256": "5406ff89d01290ae1d5f9bb8349fec045377cbf15b707dbbc4f703cbb31452c8"
     },
     {
       "invariantId": "verification",
@@ -151,7 +151,12 @@
     {
       "invariantId": "orchestration-skill-contract",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-      "sha256": "19a791a0a06cbb23c07400076b1df15afa685a82c496ab84535cda07ba104245"
+      "sha256": "97684eff76e67cbdaa34f4d096dab06708bcd720ff330e5c2f2890bd5e2fd449"
+    },
+    {
+      "invariantId": "orchestration-git-transaction",
+      "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
+      "sha256": "70062e74af80262ec955792b4ca439e072e098cd85cb10203c22e3d364860ffb"
     },
     {
       "invariantId": "orchestration-loop-catalog",

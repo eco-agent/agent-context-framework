@@ -11,8 +11,9 @@ removal preserve unrelated project content.
 
 ## Selectable layers
 
-- `core` installs the protected working, communication, project-contract, and
-  focused-verification baseline into a managed `AGENTS.md` section.
+- `core` requires Git and installs the protected branch-first working,
+  communication, project-contract, and focused-verification baseline into a
+  managed `AGENTS.md` section.
 - Engineering, TypeScript, session-quality, skill-authoring, and frontend
   components install only their declared instructions, templates, and skills.
 - `frontend` routes substantial design through observed-state product reframing,

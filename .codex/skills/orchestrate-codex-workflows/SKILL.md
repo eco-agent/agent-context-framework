@@ -41,14 +41,15 @@ If uncertain, start with the primary agent. Add native subagents for independent
 ## Build the workflow
 
 1. Read [references/loop-catalog.md](references/loop-catalog.md) to select the smallest loop composition that fits the task.
-2. Choose an explicit project-owned package directory. Copy `assets/typescript-runtime/` into that directory without overlaying an existing package manifest, and preserve its tests until the project-specific workflow passes.
-3. Define the objective, acceptance criteria, static stages, role registry, budgets, and evidence contracts in project code.
-4. Construct `CodexWorkflowClient` with the validated plan, then implement role calls with `invoke()` against named task IDs. Supply the required per-turn timeout, structured output decoder, and output-evidence extractor for every control decision.
-5. Have the project controller evaluate each task criterion with concrete checks, decode and freeze that declaration with `validateTaskAcceptanceEvaluation()`, then pass it to `acceptTask(taskId, evaluation)`. The client requires exact criterion coverage with every result true, consumes only the latest successful attempt's evidence, and unlocks dependencies only after persisting acceptance. It does not interpret prose criteria.
-6. Compose loops around domain callbacks. Keep Codex prompts at the boundary. Keep transition logic deterministic.
-7. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
-8. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
-9. Inspect the JSONL ledger. Verify role calls record their actor, task, attempt, thread, and evidence. Confirm delegations stay within the fixed envelope and completed, escalated, or budget-exhausted loops have a terminal reason. Wrap project callbacks at the outer runner when thrown callback failures must also produce a loop-terminal event.
+2. When any role creates commits, branches, refs, or worktrees, or review compares Git history, read [references/git-transaction.md](references/git-transaction.md). Define the Git transaction and cleanup evidence before role execution.
+3. Choose an explicit project-owned package directory. Copy `assets/typescript-runtime/` into that directory without overlaying an existing package manifest, and preserve its tests until the project-specific workflow passes.
+4. Define the objective, acceptance criteria, static stages, role registry, budgets, and evidence contracts in project code.
+5. Construct `CodexWorkflowClient` with the validated plan, then implement role calls with `invoke()` against named task IDs. Supply the required per-turn timeout, structured output decoder, and output-evidence extractor for every control decision.
+6. Have the project controller evaluate each task criterion with concrete checks, decode and freeze that declaration with `validateTaskAcceptanceEvaluation()`, then pass it to `acceptTask(taskId, evaluation)`. The client requires exact criterion coverage with every result true, consumes only the latest successful attempt's evidence, and unlocks dependencies only after persisting acceptance. It does not interpret prose criteria.
+7. Compose loops around domain callbacks. Keep Codex prompts at the boundary. Keep transition logic deterministic.
+8. Use a fresh Codex thread for independent review. Reuse a thread only when conversational continuity is part of the role.
+9. Run the mock tests before any live Codex execution. If the user separately authorizes a live run, start with one low-risk workflow under restricted authority.
+10. Inspect the JSONL ledger. Verify role calls record their actor, task, attempt, thread, and evidence. Confirm delegations stay within the fixed envelope and completed, escalated, or budget-exhausted loops have a terminal reason. Wrap project callbacks at the outer runner when thrown callback failures must also produce a loop-terminal event.
 
 ## Choose thread authority
 

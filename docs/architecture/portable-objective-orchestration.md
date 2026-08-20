@@ -46,29 +46,35 @@ content identity is an error.
 
 The framework does not select, create, persist, or clean a work directory. A
 runtime adapter receives the directory as execution configuration. The
-objective stores exact Git, artifact, or external context references. This
-keeps these valid policies outside the kernel:
+objective stores full Git commit IDs, artifact references, and external context
+identities. A branch owns a logical work stream. A linked worktree only
+materializes a branch when concurrent or isolated filesystem access needs a
+separate checkout.
 
-- one worktree per objective;
-- one worktree per worker with serialized assignment;
-- an ephemeral checkout restored from a Git revision and artifact checkpoint;
-- a read-only repository for inspection objectives; or
+These policies remain outside the kernel:
+
+- one task branch in the current checkout for serial work.
+- one task branch plus one ephemeral linked worktree for a concurrent writer.
+- one worker worktree with serialized branch assignment.
+- an ephemeral checkout restored from a recorded commit and artifact checkpoint.
+- a read-only repository for inspection objectives.
 - a remote execution environment referenced by a provider key.
 
-A work directory is disposable execution state unless a deployment chooses a
-different policy. Durable resume depends on the objective envelope, exact
-context references, compact checkpoint, artifacts, and runtime resume token.
-It does not depend on the originating chat.
+The host gives one mutable branch and index to one active writer at a time. A
+work directory and its worktree registration are disposable execution state.
+Durable resume depends on the objective envelope, full commit IDs, compact
+checkpoint, artifacts, and runtime resume token. It does not depend on a path,
+moving branch name, private local ref, or originating chat.
 
 ## Agent work persistence
 
 Persist:
 
-- the immutable objective definition and parent or dependency identities;
-- authority, acceptance gates, and consumed budgets;
-- the latest compact checkpoint and opaque runtime resume token;
-- content-addressed artifact references;
-- command receipts and per-objective events; and
+- the immutable objective definition and parent or dependency identities.
+- authority, acceptance gates, and consumed budgets.
+- the latest compact checkpoint and opaque runtime resume token.
+- content-addressed artifact references.
+- command receipts and per-objective events.
 - typed terminal evidence and reason.
 
 Do not persist secrets, hidden reasoning, repository file contents, raw chat
@@ -99,7 +105,7 @@ latest compact checkpoint, task contract, strict implementation contract,
 applicable implementation skills, and pinned product evidence into a
 `TaskEnvelopeV2`. Typed source roles distinguish those mandatory inputs from
 supplemental repository context. A reuse contract also contributes every
-declared upstream source file as a complete `product_precedent_source`; prose
+declared upstream source file as a complete `product_precedent_source`. Prose
 about a source file is not a substitute for its bytes. Mandatory sources must
 fit the objective's remaining measured context and prompt capacity without
 truncation. Supplemental references are admitted only while the serialized
@@ -117,7 +123,7 @@ Git revision, license, local evidence file, adopted behaviors, and deviations
 owned by objective acceptance gates. Its implementation state is a
 discriminated union. `reuse` maps named source paths to writable targets as
 `copy` or `adapt` and names the retained license notice. `observe` requires a
-reuse prohibition and an acceptance gate; permissive licenses such as MIT
+reuse prohibition and an acceptance gate. Permissive licenses such as MIT
 cannot select it. No compatibility, migration, fallback, deprecation, or
 dual-state selector exists in the contract.
 

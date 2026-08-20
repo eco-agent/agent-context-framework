@@ -24,6 +24,9 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "repository.projectContracts",
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",
     "Read-only review, explanation, and status work do not authorize tests.",
+    "Use a branch for each logical work stream.",
+    "Never use `git stash`",
+    "Do not change global Git configuration.",
   ]],
   ["registry/sources/instructions/verification.md", [
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",
@@ -92,6 +95,12 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Do not run the harness as a hidden method for completing the current task unless the user asks to operate it.",
     "Run the mock tests before any live Codex execution.",
     "The JSONL ledger is an audit record, not a complete process checkpoint",
+  ]],
+  [".codex/skills/orchestrate-codex-workflows/references/git-transaction.md", [
+    "A branch owns a logical work stream.",
+    "Give one mutable branch and index to one active writer at a time.",
+    "Never use `git stash`.",
+    "If any identity, path, cleanliness check, or reachability proof differs from the ledger, stop cleanup.",
   ]],
 ]);
 
