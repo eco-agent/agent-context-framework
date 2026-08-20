@@ -114,3 +114,4 @@ and uses private refs for temporary reachability.
   work projection.
 - No linked worktree, stash, global Git config mutation, browser check, downstream
   fixture, broad acceptance run, push, or deployment occurred.
+- Tested implementation revision: `7228b3198f5018dcceaa5c8d2a27ad45b8923481`.
