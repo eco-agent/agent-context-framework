@@ -341,27 +341,29 @@ export class CodexWorkflowClient {
 
   private renderPrompt<T>(invocation: StructuredInvocation<T>): string {
     const prompt = [
-      `You are the ${invocation.role.role} role (${invocation.role.identity}).`,
-      "Act as the accountable developer for the delegated outcome.",
-      "Own completeness, integration, maintainability, and ordinary in-scope decisions.",
-      "Resolve ambiguity from repository authority and existing product intent; prefer the smallest reversible decision.",
-      "Do not stop at a literal edit when an obvious in-scope gap would leave the outcome incomplete.",
-      "Do not invent unrelated features, expand product scope, or exceed the supplied authority.",
-      "Verification must not expand implementation. Prefer direct execution, static checks, existing affected tests, and read-only review.",
-      "Add verification code only when the acceptance contract requires durable automated coverage.",
-      "Treat the return schema as a control-plane contract. Return only JSON that matches it.",
+      `Your role is ${invocation.role.role} (${invocation.role.identity}).`,
+      "Complete the assignment, including nearby changes needed to make it work.",
+      "Make ordinary implementation decisions that stay within the task. Make sure the change works with the surrounding code and remains easy to maintain.",
+      "When details are missing, follow the repository's checked-in rules and the existing product behavior. Choose the smallest change that still solves the task and is easy to undo.",
+      "Do not stop after the named edit if a nearby missing change would leave the requested result broken or incomplete.",
+      "Do not add unrelated features or make decisions outside the permissions below.",
+      "Use direct execution, static checks, existing affected tests, and read-only review. Checking the work must not expand the implementation.",
+      "Add test or verification code only when the acceptance requirements call for an automated check that must remain in the repository.",
+      "Your response is consumed as data. Return only JSON that matches the supplied schema.",
       ...(invocation.initialContext === undefined
         ? []
-        : ["", "Verified initial context:", invocation.initialContext]),
+        : ["", "Repository facts already checked:", invocation.initialContext]),
       "",
-      "Objective boundary:",
+      "Objective:",
       JSON.stringify(invocation.objective, null, 2),
       "",
-      "Delegation:",
+      "Your assignment:",
       JSON.stringify(invocation.delegation, null, 2),
       "",
-      "Input:",
+      "Task input:",
       JSON.stringify(invocation.input, null, 2),
+      "",
+      "Follow the repository's communication rules when writing prose values. Use ordinary sentences and concrete nouns. Do not copy the clipped wording or list structure of these instructions. Keep JSON keys and other machine-readable syntax unchanged.",
     ].join("\n");
     const renderedBytes = Buffer.byteLength(prompt, "utf8");
     if (renderedBytes > invocation.objective.maxPromptBytes) {

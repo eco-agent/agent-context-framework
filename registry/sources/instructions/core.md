@@ -156,3 +156,9 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 - Browser control, computer control, and broad or repository-wide checks require
   an explicit request or a declared final-acceptance contract.
 - Report skipped checks and unverified behavior.
+
+## Writing check
+
+Apply the Communication and Unslop rules whenever you write prose. The terse
+wording used to state policy is not a model for your own writing. Use ordinary
+sentences, concrete nouns, and whatever structure the subject needs.

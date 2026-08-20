@@ -164,11 +164,22 @@ test("objective envelope is required and included in every invocation", async ()
     fake,
   );
 
-  await client.invoke(invocation(objective("objective-a")));
+  await client.invoke({
+    ...invocation(objective("objective-a")),
+    initialContext: "The repository facts needed for this task.",
+  });
 
   assert.match(fake.prompts[0] ?? "", /codex\/objective-a/u);
   assert.match(fake.prompts[0] ?? "", /base-objective-a/u);
   assert.match(fake.prompts[0] ?? "", /focused tests/u);
+  assert.match(fake.prompts[0] ?? "", /Repository facts already checked:/u);
+  assert.match(fake.prompts[0] ?? "", /Objective:/u);
+  assert.match(fake.prompts[0] ?? "", /Your assignment:/u);
+  assert.match(fake.prompts[0] ?? "", /Task input:/u);
+  assert.match(
+    fake.prompts[0] ?? "",
+    /Follow the repository's communication rules when writing prose values\.[^]*machine-readable syntax unchanged\.$/u,
+  );
 });
 
 test("rejects an oversized rendered prompt before starting a thread", async () => {

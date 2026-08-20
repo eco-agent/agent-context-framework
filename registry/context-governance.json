@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "registryRevision": "0.8.2",
-  "decisionPath": "registry/decisions/0.8.2-agent-git-protocol.md",
+  "registryRevision": "0.8.3",
+  "decisionPath": "registry/decisions/0.8.3-agent-prose-placement.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "bc65b27b195eaf5c59ebbae02c62a2cbc68fcaf36c42dc3e6df37ca4bc0ebfcf"
+      "sha256": "2f3fbe643b319314b4518fb84c79efd10ffe55eaef5ebde93f81721f9a94ce30"
     },
     {
       "invariantId": "frontend-discipline",
@@ -126,17 +126,17 @@
     {
       "invariantId": "codex-agent-default-profile",
       "sourcePath": "registry/sources/codex/agents/default.toml",
-      "sha256": "78301787ca3846fd7174dedf14c07e44f4310eff845409d490409aaf6270f1fb"
+      "sha256": "a3ad5b769d8601ed44cf3af1744eaf197d4e90d2f57cce984ba842e1b2b8245f"
     },
     {
       "invariantId": "codex-agent-scout-profile",
       "sourcePath": "registry/sources/codex/agents/scout.toml",
-      "sha256": "454756eebc847d0ac1938f1c793c7043f5f5622414741c93c9e41d1c1814b165"
+      "sha256": "47a2e9d1aaebe1ac3e4e8eedc42c711a5a7fd934c44b17e020cec799a9fbdde2"
     },
     {
       "invariantId": "codex-agent-worker-profile",
       "sourcePath": "registry/sources/codex/agents/worker.toml",
-      "sha256": "cdf2c5dca187c5d4ec4cf83332e3acab3261d01b1f7cf345236608b727084088"
+      "sha256": "880d3a51ac1227673f468568157496cb6ca4e28cd5c808d2feb4e6a923ab69a2"
     },
     {
       "invariantId": "codex-hooks-project-local",

@@ -188,3 +188,9 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 - Use `writing-great-skills` to create or edit predictable skill instructions, invocation metadata, progressive disclosure, and completion criteria.
 - Run a repository-declared technical-prose check after pruning skill instructions when one exists. Do not assume the framework's policy command is installed.
+
+## Writing check
+
+Apply the Communication and Unslop rules whenever you write prose. The terse
+wording used to state policy is not a model for your own writing. Use ordinary
+sentences, concrete nouns, and whatever structure the subject needs.

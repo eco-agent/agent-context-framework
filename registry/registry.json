@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.2",
-  "decisionPath": "registry/decisions/0.8.2-agent-git-protocol.md",
+  "revision": "0.8.3",
+  "decisionPath": "registry/decisions/0.8.3-agent-prose-placement.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:788713ead519230828cd80850878fbc31a77cb91acd012f91f277e79be128925",
+      "revision": "sha256:4c5d323fe860800566b16ee292c6b7ee0b55f078f30f97de4f048f2f19e7d33f",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "bc65b27b195eaf5c59ebbae02c62a2cbc68fcaf36c42dc3e6df37ca4bc0ebfcf",
+          "sourceSha256": "2f3fbe643b319314b4518fb84c79efd10ffe55eaef5ebde93f81721f9a94ce30",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -1925,7 +1925,7 @@
     },
     {
       "name": "codex-agents",
-      "revision": "sha256:3b207d5aae0fe18f9ab39ad6490319d78958404d04a82e0536e1312f1754c28f",
+      "revision": "sha256:818df339a35ddeb58e0cd2b8b045829ece05c3fb910aa6615273fd3b01ebaaf4",
       "dependencies": [
         "core"
       ],
@@ -1943,21 +1943,21 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/codex/agents/default.toml",
-          "sourceSha256": "78301787ca3846fd7174dedf14c07e44f4310eff845409d490409aaf6270f1fb",
+          "sourceSha256": "a3ad5b769d8601ed44cf3af1744eaf197d4e90d2f57cce984ba842e1b2b8245f",
           "targetPath": ".codex/agents/default.toml",
           "mediaType": "application/toml"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/codex/agents/scout.toml",
-          "sourceSha256": "454756eebc847d0ac1938f1c793c7043f5f5622414741c93c9e41d1c1814b165",
+          "sourceSha256": "47a2e9d1aaebe1ac3e4e8eedc42c711a5a7fd934c44b17e020cec799a9fbdde2",
           "targetPath": ".codex/agents/scout.toml",
           "mediaType": "application/toml"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/codex/agents/worker.toml",
-          "sourceSha256": "cdf2c5dca187c5d4ec4cf83332e3acab3261d01b1f7cf345236608b727084088",
+          "sourceSha256": "880d3a51ac1227673f468568157496cb6ca4e28cd5c808d2feb4e6a923ab69a2",
           "targetPath": ".codex/agents/worker.toml",
           "mediaType": "application/toml"
         },

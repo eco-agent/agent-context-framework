@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.2",
-  "decisionPath": "registry/decisions/0.8.2-agent-git-protocol.md",
+  "revision": "0.8.3",
+  "decisionPath": "registry/decisions/0.8.3-agent-prose-placement.md",
   "components": [
     {
       "name": "core",
