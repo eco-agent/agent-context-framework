@@ -20,7 +20,6 @@ and uses private refs for temporary reachability.
 | Review history | Preserve the implemented series, add reviewer repairs as fixup commits, compare series with `range-diff`, and autosquash only during authorized finalization. | Orchestration Git reference |
 | Integration preflight | Run `merge-tree --write-tree --quiet` against recorded target and accepted tips. Treat exit 0 as clean, 1 as conflict, and other values as errors. | Orchestration Git reference |
 | Git configuration | The framework does not mutate global Git configuration. Repository or worktree config changes require an explicit project decision. | Core and orchestration policy |
-| Optional tools | Difftastic, Git Town, Graphite, and Jujutsu remain user-selected tools, not framework dependencies or correctness gates. | Registry decision |
 | Capability | Core requires Git. The optional orchestration skill recommends Git because only its Git-backed workflow branch needs it. | Registry capability metadata |
 
 ## State
