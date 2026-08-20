@@ -413,7 +413,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:f30aba0e08599067a8f6807affafcd3b1a73f4769150711e7cd1afdbac9f0d3b",
+      "revision": "sha256:e1b656d1149255180bebba515a394a0624edd4e5fe8f12d5309dd8b9148b93e8",
       "dependencies": [],
       "capabilities": [
         {
@@ -505,7 +505,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "9afd27a733ebb407bc9361188641bc1b852309eb09d2f6521ad82eedadcc926b",
+          "sourceSha256": "991f450c5a551b9dbfce860f7b301ee4d1014263caa234ac1a7d4be9fb86ce04",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -1217,7 +1217,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:7bb8ba1d05ed317b7c327213c330243b8e6c18a5c01475b2e2627635ece768ec",
+      "revision": "sha256:98d31944a3c22740c466a4e6ddc1024e3976d48e556c94a56571bff582730479",
       "dependencies": [],
       "capabilities": [
         {
@@ -1278,7 +1278,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/package.json",
-          "sourceSha256": "a5f6bd4bade46ab261fee28cb1076e4b8b12a1bf5d9272c070aca1370548de09",
+          "sourceSha256": "ea33452e2b9af101b94003022f545892ec49c468ccb69f9b3d345271898e2c7c",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/package.json",
           "mediaType": "application/json"
         },

@@ -16,7 +16,7 @@
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "9afd27a733ebb407bc9361188641bc1b852309eb09d2f6521ad82eedadcc926b"
+      "sha256": "991f450c5a551b9dbfce860f7b301ee4d1014263caa234ac1a7d4be9fb86ce04"
     },
     {
       "invariantId": "frontend-design-search-artifact",
@@ -161,7 +161,7 @@
     {
       "invariantId": "orchestration-runtime-package",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/package.json",
-      "sha256": "a5f6bd4bade46ab261fee28cb1076e4b8b12a1bf5d9272c070aca1370548de09"
+      "sha256": "ea33452e2b9af101b94003022f545892ec49c468ccb69f9b3d345271898e2c7c"
     },
     {
       "invariantId": "orchestration-runtime-typescript",

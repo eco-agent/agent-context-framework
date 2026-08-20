@@ -62,3 +62,45 @@ the relocated framework before updating Control Tower as a downstream consumer.
 - Registry source, generated registry, governance, decisions, installer planner, setup UI disclosures, and copied skill assets move together through the replayed commits.
 - Downstream propagation is limited to the components selected in Control Tower plus the explicitly selected orchestration leaf.
 - Project-owned policy remains consumer-owned and must be corrected deliberately rather than overwritten by the registry seed.
+
+## Relocation adaptations
+
+The ten replayed commits retained byte-identical source across all 58 changed
+paths. The standalone repository then exposed three stricter local contracts that
+did not exist in the former lineage:
+
+- its instruction-hierarchy check requires the frontend skill to preserve the
+  visible element's **semantic role** as well as its words;
+- its workspace inventory requires every nested package manifest, including a
+  distributable template, to declare `agentContext.category` and
+  `agentContext.owner`;
+- its adopted development toolchain is `@types/node` 24.13.3 and TypeScript
+  7.0.2, replacing the former template's 22.10.2 and 6.0.2 declarations.
+
+The canonical skill and template now satisfy those standalone repository
+contracts. Governance hashes and the generated 0.8.0 registry were refreshed;
+no safety, closure, or dependency-installation boundary was weakened.
+
+## Focused verification
+
+- Workspace dependency installation completed from the frozen root lockfile.
+- Registry generation and deterministic `registry:check` passed at 0.8.0 with
+  30 components.
+- Root TypeScript build passed.
+- The complete dev-tooling suite passed 84/84 after its required workspace build.
+- The affected registry-builder, installer, CLI, and setup-server subset passed
+  40/40 after relocation adaptations.
+- Repository-policy tests passed 29/29.
+- Both changed skills passed the system skill validator.
+- Setup UI production build passed.
+- An external copy of the distributable orchestration template installed its
+  declared dependencies, compiled with TypeScript 7.0.2, and passed 30/30 mock
+  tests. No dependency or generated output entered the canonical skill directory.
+- `git diff --check` passed and the canonical orchestration asset contains no
+  `dist`, `node_modules`, `.codex-runs`, or temporary verification configuration.
+
+The external test copy remains at
+`C:/Users/EthanO/AppData/Local/Temp/agent-context-orchestration-0.8-991f450c`
+because runtime policy rejected recursive cleanup even after the target was
+resolved and verified under the system temporary directory. It is outside both
+repositories and is not distributable input.

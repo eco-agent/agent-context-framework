@@ -63,7 +63,7 @@ not as a command to make each field visible.
 
 Do not fill missing decisions from familiar generated UI. Every visible region and
 hierarchy role needs evidence from the user, product behavior, runtime state,
-existing interface, or accepted precedent. Preserve the role as well as the words.
+existing interface, or accepted precedent. Preserve the semantic role as well as the words.
 
 When the task creates or replaces substantial product topology or an application
 shell, use `adopt-established-product` to pin a licensed implementation precedent.
