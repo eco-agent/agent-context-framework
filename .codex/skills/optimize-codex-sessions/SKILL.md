@@ -1,6 +1,6 @@
 ---
 name: optimize-codex-sessions
-description: Review a completed Codex task for avoidable work, repeated repair, stale context, and workflow drift.
+description: Review a completed Codex task from session and Git evidence for avoidable usage, repeated repair, stale context, model-prior drift, and misplaced context or tooling.
 ---
 
 # Review completed Codex work
@@ -48,6 +48,8 @@ Use `mcp__repo_context__repo_context` when available. Batch up to four reads or
 searches in one call. Otherwise use direct repository reads within the task's
 permissions. Start with 10,000 UTF-8 content bytes, 200 lines per read, 50 search
 matches, and two context lines. Follow `nextCursor` when more records are needed.
+Managed workflows must use `ObjectiveRepositoryContext` so nested reads consume
+the ledger-backed `maxRepositoryOutputBytes` budget.
 
 For an exact Git range, run:
 
@@ -89,7 +91,9 @@ scope.
 Duration alone does not decide the category. Use counts and named events:
 
 - shell outcomes by turn, with expected search misses kept separate from errors;
-- total and percentile output sizes, plus results over the configured limits;
+- total, maximum, p50, and p90 tool-output characters;
+- results above 5,000, 10,000, and 40,000 characters, plus characters suppressed
+  at the configured ceiling;
 - transport status kept separate from the delivered result;
 - repeated edits to the same files;
 - focused and full verification runs;
@@ -134,13 +138,26 @@ review must continue across sessions.
 ## Start a new objective cleanly
 
 An accepted result, a permission stop, budget exhaustion, or a completed review
-ends the current objective. Managed workflows should reuse a thread only for the
-same role and objective ID. Independent review gets a fresh thread. A transport
-failure does not prove the objective failed, and only decoded results can close
-it.
+ends the current objective. Managed workflows require a stable `objectiveId` and
+may reuse a thread only for the same role and objective ID. Independent review
+gets a fresh thread. A transport failure does not prove the objective failed,
+and only decoded results can close it. Persist compact structured results and
+ledger evidence instead of another handoff document.
 
 Creating a native Codex task requires user permission. When the user asks for a
-rollover prompt, include only the repository, branch, full starting and final
-commits, one objective, permissions, focused checks, necessary prior result, and
-stop conditions. Do not create another handoff when Git and an existing required
-record already provide that information.
+rollover prompt, use this exact shape:
+
+```text
+Repository: <absolute path>
+Branch: <exact branch>
+Base revision: <full commit>
+Head revision: <full commit>
+Objective: <one bounded outcome>
+Authority: <read, write, and verification limits plus prohibited external actions>
+Acceptance gates: <focused executable checks>
+Prior structured result: <only the fields needed by this objective, or null>
+Stop conditions: <acceptance, authority gap, budget exhaustion, or durable blocker>
+```
+
+Do not create another handoff when Git and an existing required record already
+provide that information.

@@ -1,6 +1,6 @@
 ---
 name: orchestrate-codex-workflows
-description: Build Codex SDK workflows when later actions depend on stored state, enforced limits, or role handoffs that survive a restart.
+description: Build bounded Codex SDK workflows when later actions depend on stored evidence, enforced transitions, finite budgets or permissions, repair state, role continuity, environment feedback, shared artifacts, or completion gates. Use native subagents for independent work that returns once, and ordinary plans for short serial work.
 ---
 
 # Build a Codex SDK workflow
@@ -62,7 +62,9 @@ recursive manager trees, sibling voting, or an open-ended scheduler.
 6. Check each task criterion in project code. Decode the complete result with
    `validateTaskAcceptanceEvaluation()` before calling
    `acceptTask(taskId, evaluation)`. Acceptance uses only the latest successful
-   attempt and unlocks later tasks after the result is stored.
+   attempt, requires exact coverage with every criterion true, and unlocks later
+   tasks only after the result is stored. Prose confidence cannot satisfy a
+   criterion.
 7. Keep Codex inside role calls. Write stage selection and stopping logic as
    normal TypeScript.
 8. Start a fresh thread for independent review. Reuse a thread only when the
@@ -71,8 +73,10 @@ recursive manager trees, sibling voting, or an open-ended scheduler.
    separate user permission. Begin with one low-risk workflow and restricted
    access.
 10. Inspect the JSONL record. Each call should name the role, task, attempt,
-    thread, and returned data. Every finished, stopped, or exhausted loop needs
-    a recorded reason.
+    thread, and returned data. Confirm each delegation stays inside the fixed
+    permission and budget envelope. Every finished, stopped, or exhausted loop
+    needs a recorded reason. Wrap project callbacks at the outer runner when a
+    thrown callback must also record a terminal event.
 
 ## Set role permissions
 
@@ -101,7 +105,7 @@ Record SDK errors, invalid output, timeouts, and cancelled turns as failed
 attempts. Use the required per-turn timeout and an outer process deadline for a
 live run. Pass an `AbortSignal` when the caller also needs cancellation.
 
-Resume only a thread ID stored for the same role and task. Make retried file
+Resume only a thread ID stored for the same role and scope. Make retried file
 writes idempotent or address them by content.
 
 ## Know what the copied runtime does
@@ -125,5 +129,5 @@ The template is checked against `@openai/codex-sdk` 0.145.0 and Node.js 22 or
 newer. Read the official SDK types before changing the pinned version.
 
 Stop and redesign a proposal that adds recursive task discovery, dynamic roles,
-majority voting, unbounded retries, a manager-only primary agent, or completion
-based only on a model's confidence.
+majority voting, unbounded retries, routes, transitions, or reviewer passes, a
+manager-only primary agent, or completion based only on a model's confidence.

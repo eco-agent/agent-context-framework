@@ -1,6 +1,6 @@
 ---
 name: frontend-design-discipline
-description: Define substantial frontend structure and behavior before implementation when the product direction is unsettled.
+description: Reframe and specify substantial frontends before implementation when product representation, mobile composition, data-driven UI, topology, interaction, or visual asset roles are unsettled.
 ---
 
 # Define the frontend before implementing it
@@ -46,7 +46,7 @@ implementation.
   [frontend-spec.md](assets/frontend-spec.md) to
   `.codex/work/frontend/<task>.md`. Keep the approved answer and the facts that
   support it. Leave rejected explorations behind.
-- Before changing the current component tree, read
+- Before reading or changing the current component tree, read
   [implementation-reconciliation.md](references/implementation-reconciliation.md).
 - After composition is settled, use `responsive-css-architect` for layout,
   overflow, containers, and stylesheet ownership.
@@ -73,8 +73,8 @@ licensed source when its terms permit reuse.
 ## Approve one design
 
 Exploration may contain alternatives. The implementation specification must
-settle one answer for the product direction, navigation, visible content,
-actions, assets, states, responsive behavior, and code locations.
+settle one answer and one owner for the product direction, navigation, visible
+content, actions, assets, states, responsive behavior, and code locations.
 
 Treat the first acceptable design as a draft. Replace one major choice and
 compare the result with a genuinely different solution. Keep the first choice
@@ -95,7 +95,8 @@ who prefer reduced motion.
 
 Choose the smallest user path that exercises the main interaction. Record where
 it starts, the action, state change, result, required states, and exact code
-locations. Implement the approved design only.
+locations. Name the owner of each code location. Implement the approved design
+only.
 
 Specialists may handle settled accessibility, color, typography, interface
 details, animation, bitmap assets, and responsive CSS. They must not change the

@@ -1,6 +1,6 @@
 ---
 name: adopt-established-product
-description: Adopt a pinned, licensed product implementation when creating or replacing substantial application structure.
+description: Adopt pinned product evidence and licensed source when creating or replacing an application shell, navigation, feed, tracker, workflow, chat, media library, admin tool, or dashboard. Do not use it for bounded repairs to settled product structure.
 ---
 
 # Adopt an established product
@@ -34,8 +34,9 @@ are not precedents.
 ## Record what will stay and what will change
 
 Write the repository's current implementation contract before the frontend
-specification. Name the existing code to replace, the source files to copy, their
-new locations, and the license notice that must remain.
+specification. Name each existing owner to remove or rewrite. Map every upstream
+file to its project location, mark the target as an exact copy or an adaptation,
+and name the license notice that must remain.
 
 Record the navigation, density, interactions, responsive behavior, and relevant
 states that will stay faithful to the precedent. List only the differences
@@ -55,6 +56,9 @@ Use the closest practical form of reuse:
 4. Reproduce observed behavior independently only when the source cannot legally
    be reused.
 
+Independent reproduction requires the implementation contract to record the
+source-reuse prohibition and the acceptance check that authorizes this path.
+
 Materialize reusable source before writing replacement code. Keep the required
 copyright and license notices. Review project changes as a diff from the pinned
 files so the new work is visible.
@@ -72,3 +76,5 @@ The work is complete when the source and license are pinned, source files map to
 their project locations, the required bytes have been copied, and the local
 workflow behaves as recorded. Verify exact hashes for unchanged copies. For
 adapted files, retain the upstream path and hash and review the project diff.
+The contract may contain only required differences from the precedent. A
+model-prior substitute does not count as completion.

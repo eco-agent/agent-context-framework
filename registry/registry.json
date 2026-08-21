@@ -70,7 +70,7 @@
     },
     {
       "name": "skill-adopt-established-product",
-      "revision": "sha256:ef74d3d6921d0c618684b87a1a7513801548a28bd78fbff2d83b78b20b2d1553",
+      "revision": "sha256:5e6c5663fc8cd92a89abf6fb63b8644c8d4352ddba9f7491d99aeaf7bd4e57a5",
       "dependencies": [],
       "capabilities": [
         {
@@ -99,7 +99,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/adopt-established-product/SKILL.md",
-          "sourceSha256": "b9d131797bf146a060aa7a7c7716d8263f151b85704022b92a6bcbf0c2e071c0",
+          "sourceSha256": "78af4c2e2df2ed5062f81f1498d07c3bdaf01cad310673e048b688473ec0fc80",
           "targetPath": ".codex/skills/adopt-established-product/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -440,7 +440,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:ab3fb9b789860a244d2312728511ab7231273d5363ea3b55f638fe2d441d1716",
+      "revision": "sha256:1249fa032e8487db4ac1a01a3b9b59de6339c00c062d7531978b3d3c9681cb56",
       "dependencies": [],
       "capabilities": [
         {
@@ -532,7 +532,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "f102a2c4ed782c04a4043737d44e14f51946a4cf7320e9e1b8e3da381040da7e",
+          "sourceSha256": "c3cce8d59d82a84ce2ebe23c9e3858864b2b36e8ea21def22cc3ddd355f9381e",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -868,7 +868,7 @@
     },
     {
       "name": "skill-design-typescript-invariants",
-      "revision": "sha256:e1370391ecea1a81300f576024d28cb5942ae1fdc1b5ea96f1cb6c1e8157cd86",
+      "revision": "sha256:646675aa9fef7cda253daebd995db458866246999c48b01eeecc6938e3020029",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -941,7 +941,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
-          "sourceSha256": "519a7d179edc43490fddce323df9001e61b25b40182753742c29fefc3bd0c387",
+          "sourceSha256": "9462947a1b3fc779752777787060b2b9d46d77643f0eb27fd7153422377df032",
           "targetPath": ".codex/skills/design-typescript-invariants/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -956,7 +956,7 @@
     },
     {
       "name": "skill-diagnose",
-      "revision": "sha256:385e3cbb7a46780c3cd1407f5d3f716e89932edf13d14c4e3eabf4db5930b7f7",
+      "revision": "sha256:6dce91a3e3601ea4b314779fb09b25bc39e91e669819ed4a9781e6f8c39eb50a",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -979,7 +979,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/diagnose/SKILL.md",
-          "sourceSha256": "dc819f14910aba12a962630daa2746f556fc2333d58926e0b09055622311a6ce",
+          "sourceSha256": "22140067a32c5d000a67ac11e61e8da6cc87ede12e7bb37340d12582aaec6251",
           "targetPath": ".codex/skills/diagnose/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -1150,7 +1150,7 @@
     },
     {
       "name": "skill-optimize-codex-sessions",
-      "revision": "sha256:4f697a67b320b4cb335970d804308633216d71f1ca2c559bc9d28e42e0c62676",
+      "revision": "sha256:f923c89cfcff2cf8723c935a15a933aba208cd9eacfa3603529a5bfd08145c57",
       "dependencies": [],
       "capabilities": [
         {
@@ -1236,7 +1236,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/optimize-codex-sessions/SKILL.md",
-          "sourceSha256": "94c2bfe67f3cb17cb1c1e4cea4850082726912a46ac54885d0452c45618144ca",
+          "sourceSha256": "b37daddf0343da7d80f50150e0a6fd4e0ec075b155ff7ba8230cfc0233e5910a",
           "targetPath": ".codex/skills/optimize-codex-sessions/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -1244,7 +1244,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:d4d5d607a1e6977695581536f28aabc58301735306ceeb46a33ae24ee3dfd633",
+      "revision": "sha256:0cefe0b69ef95f8dd40300e2a55059a332d0bea50ea56948599184758861e1ba",
       "dependencies": [],
       "capabilities": [
         {
@@ -1457,7 +1457,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-          "sourceSha256": "2c1fdd53f7399928b48136eece40747f4bce9110a938a215038321ba0c85e262",
+          "sourceSha256": "2e302d9fb7509e0aaffc7a69f97cf3caed52560bc83d5bb28e36e9e0851ed529",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
           "mediaType": "text/markdown"
         },

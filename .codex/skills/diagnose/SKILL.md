@@ -1,6 +1,6 @@
 ---
 name: diagnose
-description: Diagnose bugs whose cause remains uncertain after targeted code inspection.
+description: Diagnose bugs and regressions with uncertain causes by reproducing, minimizing, instrumenting, and fixing them when targeted inspection cannot establish the cause.
 ---
 
 # Diagnose uncertain bugs
@@ -24,6 +24,8 @@ establishing the risk unless the user requested a fix.
 
 Ordinary implementation and refactoring do not need this workflow. Neither does
 a local mismatch whose cause is already clear from the code.
+
+Skip a phase only when you record why it cannot improve the diagnosis.
 
 ## Build a repeatable check
 
@@ -71,15 +73,19 @@ Run the check more than once. Confirm that it produces the symptom the user
 described, not merely an adjacent error. Record the exact output, exception,
 timing, or state that the eventual fix must change.
 
+Do not proceed to cause testing until the reported failure is reproduced. If a
+source audit can prove only a risk, keep the result labelled as suspected.
+
 ## Test competing causes
 
-List at least two plausible causes when the failure is still ambiguous. Rank
+List three to five plausible causes when the failure is still ambiguous. Rank
 them using the code path and the reproduction result. For each cause, state a
 prediction that a probe can disprove.
 
-Share the ranking before an expensive, destructive, or production-facing probe
-because the user may know which conditions have already been ruled out. Continue
-with safe local probes without waiting for a reply.
+Share the ranking before testing it because the user may know which conditions
+have already been ruled out. Continue with safe local probes without waiting for
+a reply. Wait for permission before an expensive, destructive, or
+production-facing probe.
 
 A small source-backed mismatch does not need a formal hypothesis list. Cross-
 service failures, live incidents, flakes, and expensive probes do.
@@ -124,7 +130,9 @@ Before finishing:
 - Delete throwaway programs unless the repository should retain one as a test.
 - Stop processes started during diagnosis, or report any process that remains.
 - State which cause was proved and which observation ruled out its alternatives.
+- State the proved cause in the checkpoint commit or pull request message.
 
 Recommend follow-up architecture work only when the diagnosis exposed a missing
 test seam, hidden coupling, or another concrete condition that could reproduce
-the bug.
+the bug. Name the evidence, the boundary that should change, and the verification
+seam the follow-up should create.

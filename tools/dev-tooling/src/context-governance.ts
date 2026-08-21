@@ -58,6 +58,32 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Keep the approved answer and the facts that support it. Leave rejected explorations behind.",
     "Treat the first acceptable design as a draft.",
     "They must not change the approved product structure",
+    "Before reading or changing the current component tree",
+    "settle one answer and one owner",
+  ]],
+  [".codex/skills/adopt-established-product/SKILL.md", [
+    "mark the target as an exact copy or an adaptation",
+    "Independent reproduction requires the implementation contract to record the source-reuse prohibition",
+    "A model-prior substitute does not count as completion.",
+  ]],
+  [".codex/skills/diagnose/SKILL.md", [
+    "Skip a phase only when you record why it cannot improve the diagnosis.",
+    "Do not proceed to cause testing until the reported failure is reproduced.",
+    "List three to five plausible causes when the failure is still ambiguous.",
+    "Share the ranking before testing it",
+    "State the proved cause in the checkpoint commit or pull request message.",
+  ]],
+  [".codex/skills/design-typescript-invariants/SKILL.md", [
+    "only when all four conditions hold",
+    "The escape hatch is narrower than the surrounding domain.",
+    "Otherwise run the narrow typecheck and lint commands, then perform the semantic review",
+    "review public call sites as well as the changed implementation.",
+  ]],
+  [".codex/skills/optimize-codex-sessions/SKILL.md", [
+    "nested reads consume the ledger-backed `maxRepositoryOutputBytes` budget.",
+    "Managed workflows require a stable `objectiveId`",
+    "Persist compact structured results and ledger evidence instead of another handoff document.",
+    "When the user asks for a rollover prompt, use this exact shape:",
   ]],
   [".codex/skills/frontend-design-discipline/references/product-reframing.md", [
     "A schema describes stored values. It rarely identifies the product experience.",
@@ -105,6 +131,10 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Run it against the current task only when the user asks you to operate it.",
     "Run the copied mock tests before any live Codex call.",
     "The JSONL file records events. It is not a process checkpoint",
+    "requires exact coverage with every criterion true",
+    "Confirm each delegation stays inside the fixed permission and budget envelope.",
+    "Do not grant `danger-full-access` for convenience.",
+    "unbounded retries, routes, transitions, or reviewer passes",
   ]],
   [".codex/skills/orchestrate-codex-workflows/references/git-transaction.md", [
     "A branch owns a logical work stream.",

@@ -115,8 +115,12 @@ For each new conditional, ask whether it handles external uncertainty, an
 expected outcome, or a state the input type should forbid. Redesign the input
 type when the branch handles the last case.
 
-Run only the repository-declared type, lint, invariant, and focused test
-commands. Treat `type-invariant:` comments as proof claims, not suppression
-labels. Read [lint-rules.md](references/lint-rules.md) when the repository has an
-invariant check, and use [review-checklist.md](references/review-checklist.md) for
-the semantic points tools cannot prove.
+Run the repository-declared invariant check when one exists. Otherwise run the
+narrow typecheck and lint commands, then perform the semantic review in
+[review-checklist.md](references/review-checklist.md). Do not invent a framework
+command, comparison base, or environment value.
+
+Treat `type-invariant:` comments as proof claims, not suppression labels. Read
+[lint-rules.md](references/lint-rules.md) when the repository has an invariant
+check. Run the focused tests declared by repository policy and review public
+call sites as well as the changed implementation.

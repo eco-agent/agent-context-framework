@@ -21,7 +21,27 @@
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "f102a2c4ed782c04a4043737d44e14f51946a4cf7320e9e1b8e3da381040da7e"
+      "sha256": "c3cce8d59d82a84ce2ebe23c9e3858864b2b36e8ea21def22cc3ddd355f9381e"
+    },
+    {
+      "invariantId": "established-product-adoption",
+      "sourcePath": ".codex/skills/adopt-established-product/SKILL.md",
+      "sha256": "78af4c2e2df2ed5062f81f1498d07c3bdaf01cad310673e048b688473ec0fc80"
+    },
+    {
+      "invariantId": "causal-diagnosis",
+      "sourcePath": ".codex/skills/diagnose/SKILL.md",
+      "sha256": "22140067a32c5d000a67ac11e61e8da6cc87ede12e7bb37340d12582aaec6251"
+    },
+    {
+      "invariantId": "typescript-invariant-design",
+      "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
+      "sha256": "9462947a1b3fc779752777787060b2b9d46d77643f0eb27fd7153422377df032"
+    },
+    {
+      "invariantId": "session-optimization",
+      "sourcePath": ".codex/skills/optimize-codex-sessions/SKILL.md",
+      "sha256": "b37daddf0343da7d80f50150e0a6fd4e0ec075b155ff7ba8230cfc0233e5910a"
     },
     {
       "invariantId": "frontend-design-search-artifact",
@@ -156,7 +176,7 @@
     {
       "invariantId": "orchestration-skill-contract",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-      "sha256": "2c1fdd53f7399928b48136eece40747f4bce9110a938a215038321ba0c85e262"
+      "sha256": "2e302d9fb7509e0aaffc7a69f97cf3caed52560bc83d5bb28e36e9e0851ed529"
     },
     {
       "invariantId": "orchestration-git-transaction",

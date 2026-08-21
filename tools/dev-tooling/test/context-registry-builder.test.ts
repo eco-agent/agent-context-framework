@@ -690,6 +690,49 @@ test("governance rejects dilution of orchestration safety semantics", async () =
   }
 });
 
+test("governance rejects dilution of restored skill guards", async () => {
+  const cases = [
+    {
+      skill: "adopt-established-product",
+      remove: "model-prior substitute does not count as completion.",
+    },
+    {
+      skill: "diagnose",
+      remove: "Skip a phase only when you record why it cannot improve the diagnosis.",
+    },
+    {
+      skill: "design-typescript-invariants",
+      remove: "2. The escape hatch is narrower than the surrounding domain.",
+    },
+    {
+      skill: "optimize-codex-sessions",
+      remove: "Managed workflows require a stable `objectiveId`",
+    },
+  ] as const;
+
+  for (const item of cases) {
+    const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), `agent-context-${item.skill}-governance-`));
+    try {
+      await copyGovernanceFixture(temporaryRoot);
+      const skillPath = path.join(temporaryRoot, ".codex", "skills", item.skill, "SKILL.md");
+      const source = await readFile(skillPath, "utf8");
+      const diluted = source.replace(item.remove, "Removed guard");
+      assert.notEqual(diluted, source, item.skill);
+      await writeFile(
+        skillPath,
+        diluted,
+        "utf8",
+      );
+      await assert.rejects(
+        checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+        /violates a maintainer-owned semantic requirement/u,
+      );
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test("governance rejects dilution of agent Git transaction semantics", async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-git-governance-"));
   try {
@@ -854,7 +897,11 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
   const targetRoot = path.join(temporaryRoot, ".codex", "skills");
   await mkdir(targetRoot, { recursive: true });
   for (const skill of [
+    "adopt-established-product",
+    "design-typescript-invariants",
+    "diagnose",
     "frontend-design-discipline",
+    "optimize-codex-sessions",
     "orchestrate-codex-workflows",
     "responsive-css-architect",
   ]) {
