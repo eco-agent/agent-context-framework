@@ -537,7 +537,57 @@ test("governance rejects stale protected projections", async () => {
     await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
     await copyGovernedSkills(temporaryRoot);
     const agentsPath = path.join(temporaryRoot, "AGENTS.md");
-    await writeFile(agentsPath, (await readFile(agentsPath, "utf8")).replace("Never fill decisions", "Sometimes fill decisions"));
+    await writeFile(
+      agentsPath,
+      (await readFile(agentsPath, "utf8")).replace(
+        "Do not make product decisions from model priors or a familiar generic interface.",
+        "Use a familiar generic interface when convenient.",
+      ),
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /Protected context projection differs/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance rejects changes outside the named root instruction sections", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-root-prefix-governance-"));
+  try {
+    await copyGovernanceFixture(temporaryRoot);
+    const agentsPath = path.join(temporaryRoot, "AGENTS.md");
+    await writeFile(
+      agentsPath,
+      (await readFile(agentsPath, "utf8")).replace(
+        "Preserve unrelated changes. Never push or deploy.",
+        "Unrelated changes may be discarded.",
+      ),
+      "utf8",
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /Protected context projection differs/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance compares canonical and installed role prompts as complete files", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-role-governance-"));
+  try {
+    await copyGovernanceFixture(temporaryRoot);
+    const scoutPath = path.join(temporaryRoot, ".codex", "agents", "scout.toml");
+    await writeFile(
+      scoutPath,
+      (await readFile(scoutPath, "utf8")).replace(
+        "Do not edit files or turn the investigation into a redesign.",
+        "Edit files when it helps the investigation.",
+      ),
+      "utf8",
+    );
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
       /Protected context projection differs/u,
@@ -563,7 +613,7 @@ test("governance rejects semantic dilution even before protected hashes are refr
     await writeFile(
       corePath,
       (await readFile(corePath, "utf8")).replace(
-        "Do not edit,\n  remove, override, or weaken it from project work.",
+        "Do not edit,\n  remove, override, or weaken them from project work.",
         "Project authors may weaken this section.",
       ),
     );
@@ -598,7 +648,7 @@ test("governance rejects dilution of orchestration safety semantics", async () =
     await writeFile(
       skillPath,
       (await readFile(skillPath, "utf8")).replace(
-        "Persist evidence before each state transition.",
+        "Store each result before using it to choose the next stage.",
         "Record evidence when convenient.",
       ),
       "utf8",
@@ -786,6 +836,23 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
       { recursive: true },
     );
   }
+  await cp(
+    path.join(frameworkRoot, ".codex", "agents"),
+    path.join(temporaryRoot, ".codex", "agents"),
+    { recursive: true },
+  );
+}
+
+async function copyGovernanceFixture(temporaryRoot: string): Promise<void> {
+  await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+  await cp(path.join(frameworkRoot, "registry", "sources"), path.join(temporaryRoot, "registry", "sources"), { recursive: true });
+  await cp(path.join(frameworkRoot, "registry", "decisions"), path.join(temporaryRoot, "registry", "decisions"), { recursive: true });
+  await cp(path.join(frameworkRoot, "registry", "context-governance.json"), path.join(temporaryRoot, "registry", "context-governance.json"));
+  await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+  await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
+  await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+  await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
+  await copyGovernedSkills(temporaryRoot);
 }
 
 async function exists(candidate: string): Promise<boolean> {

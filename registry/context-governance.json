@@ -1,12 +1,17 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "registryRevision": "0.8.5",
   "decisionPath": "registry/decisions/0.8.5-framework-policy-prose.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "2baf73cadb18b46fb02ae354fd2106341e418d05fd102452515042e336366639"
+      "sha256": "0d95132fec9a15d527e0e5d485a6d6efa8dd908c31f9103e81bc138cdaf5da89"
+    },
+    {
+      "invariantId": "framework-root-prefix",
+      "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
+      "sha256": "54bcac3973f82307c27cec7e08f1f08d493420f51a6c1fa39aa1a8521341e682"
     },
     {
       "invariantId": "frontend-discipline",
@@ -151,7 +156,7 @@
     {
       "invariantId": "orchestration-skill-contract",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-      "sha256": "772a13454d26921836e195c69c9829eaaff09db38e115de4c6f423076b2a8cc4"
+      "sha256": "2c1fdd53f7399928b48136eece40747f4bce9110a938a215038321ba0c85e262"
     },
     {
       "invariantId": "orchestration-git-transaction",
@@ -256,58 +261,120 @@
   ],
   "projections": [
     {
+      "kind": "markdown-prefix",
+      "invariantId": "framework-root-prefix",
+      "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
+      "targetPath": "AGENTS.md",
+      "beforeHeading": "## Communication"
+    },
+    {
+      "kind": "markdown-section",
+      "invariantId": "portable-core",
+      "sourcePath": "registry/sources/instructions/core.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Communication"
+    },
+    {
+      "kind": "markdown-section",
       "invariantId": "repository-work",
       "sourcePath": "registry/sources/instructions/repository-work.md",
       "targetPath": "AGENTS.md",
       "heading": "## Work"
     },
     {
+      "kind": "markdown-section",
+      "invariantId": "portable-core",
+      "sourcePath": "registry/sources/instructions/core.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Protected framework baseline"
+    },
+    {
+      "kind": "markdown-section",
+      "invariantId": "portable-core",
+      "sourcePath": "registry/sources/instructions/core.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Project contracts"
+    },
+    {
+      "kind": "markdown-section",
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
       "targetPath": "AGENTS.md",
       "heading": "## Frontend"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "verification",
       "sourcePath": "registry/sources/instructions/verification.md",
       "targetPath": "AGENTS.md",
       "heading": "## Verification"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "documentation-prose",
       "sourcePath": "registry/sources/instructions/documentation.md",
       "targetPath": "docs/AGENTS.md",
       "heading": "## Prose and reporting style"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "engineering-independent",
       "sourcePath": "registry/sources/instructions/engineering.md",
       "targetPath": "AGENTS.md",
       "heading": "## Engineering"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "typescript-engineering-explicit",
       "sourcePath": "registry/sources/instructions/typescript-engineering.md",
       "targetPath": "AGENTS.md",
       "heading": "## TypeScript engineering"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "session-quality-explicit",
       "sourcePath": "registry/sources/instructions/session-quality.md",
       "targetPath": "AGENTS.md",
       "heading": "## Session quality"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "skill-authoring-explicit",
       "sourcePath": "registry/sources/instructions/skill-authoring.md",
       "targetPath": "AGENTS.md",
       "heading": "## Skill authoring"
     },
     {
+      "kind": "markdown-section",
       "invariantId": "repository-policy-explicit",
       "sourcePath": "registry/sources/instructions/repository-policy.md",
       "targetPath": "AGENTS.md",
       "heading": "## Repository policy"
+    },
+    {
+      "kind": "markdown-section",
+      "invariantId": "portable-core",
+      "sourcePath": "registry/sources/instructions/core.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Writing check"
+    },
+    {
+      "kind": "file",
+      "invariantId": "codex-agent-default-profile",
+      "sourcePath": "registry/sources/codex/agents/default.toml",
+      "targetPath": ".codex/agents/default.toml"
+    },
+    {
+      "kind": "file",
+      "invariantId": "codex-agent-scout-profile",
+      "sourcePath": "registry/sources/codex/agents/scout.toml",
+      "targetPath": ".codex/agents/scout.toml"
+    },
+    {
+      "kind": "file",
+      "invariantId": "codex-agent-worker-profile",
+      "sourcePath": "registry/sources/codex/agents/worker.toml",
+      "targetPath": ".codex/agents/worker.toml"
     }
   ]
 }

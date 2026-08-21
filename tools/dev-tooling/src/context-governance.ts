@@ -19,8 +19,8 @@ const REQUIRED_REVIEW_PATTERNS = [
 
 const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   ["registry/sources/instructions/core.md", [
-    "Treat this framework-managed section as maintainer-owned policy.",
-    "Do not edit, remove, override, or weaken it from project work.",
+    "Treat framework-managed instructions as maintainer-owned policy.",
+    "Do not edit, remove, override, or weaken them from project work.",
     "repository.projectContracts",
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",
     "Read-only review, explanation, and status work do not authorize tests.",
@@ -105,7 +105,7 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
 ]);
 
 interface ContextGovernanceManifest {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 2;
   readonly registryRevision: string;
   readonly decisionPath: string;
   readonly protectedSources: readonly ProtectedSource[];
@@ -118,12 +118,30 @@ interface ProtectedSource {
   readonly sha256: string;
 }
 
-interface ProtectedProjection {
+interface FileProjection {
+  readonly kind: "file";
+  readonly invariantId: string;
+  readonly sourcePath: string;
+  readonly targetPath: string;
+}
+
+interface MarkdownSectionProjection {
+  readonly kind: "markdown-section";
   readonly invariantId: string;
   readonly sourcePath: string;
   readonly targetPath: string;
   readonly heading: string;
 }
+
+interface MarkdownPrefixProjection {
+  readonly kind: "markdown-prefix";
+  readonly invariantId: string;
+  readonly sourcePath: string;
+  readonly targetPath: string;
+  readonly beforeHeading: string;
+}
+
+type ProtectedProjection = FileProjection | MarkdownSectionProjection | MarkdownPrefixProjection;
 
 export async function checkContextGovernance(
   root: string,
@@ -167,10 +185,17 @@ export async function checkContextGovernance(
       repositoryPath(root, projection.targetPath),
       projection.targetPath,
     ));
-    const region = markdownHeadingRegion(target, projection.heading, projection.targetPath);
-    if (region !== source) {
+    const expected = projection.kind === "markdown-section"
+      ? markdownHeadingRegion(source, projection.heading, projection.sourcePath)
+      : source;
+    const installed = projection.kind === "file"
+      ? target
+      : projection.kind === "markdown-section"
+        ? markdownHeadingRegion(target, projection.heading, projection.targetPath)
+        : markdownPrefixRegion(target, projection.beforeHeading, projection.targetPath);
+    if (installed !== expected) {
       throw new Error(
-        `Protected context projection differs from ${projection.sourcePath}: ${projection.targetPath} ${projection.heading}.`,
+        `Protected context projection differs from ${projection.sourcePath}: ${projection.targetPath}.`,
       );
     }
   }
@@ -226,17 +251,28 @@ function markdownHeadingRegion(document: string, heading: string, targetPath: st
   return document.slice(start, end).replace(/\n+$/u, "\n");
 }
 
+function markdownPrefixRegion(document: string, beforeHeading: string, targetPath: string): string {
+  if (!/^#{1,6}\s+\S/u.test(beforeHeading)) {
+    throw new Error(`Invalid governed heading: ${beforeHeading}.`);
+  }
+  const end = document.indexOf(`${beforeHeading}\n`);
+  if (end < 0 || document.indexOf(`${beforeHeading}\n`, end + beforeHeading.length + 1) >= 0) {
+    throw new Error(`Governed heading must occur exactly once in ${targetPath}: ${beforeHeading}.`);
+  }
+  return document.slice(0, end).replace(/\n+$/u, "\n");
+}
+
 function decodeManifest(value: unknown): ContextGovernanceManifest {
   const record = strictRecord(value, "Context governance manifest", [
     "schemaVersion", "registryRevision", "decisionPath", "protectedSources", "projections",
   ]);
-  if (record.schemaVersion !== 1) throw new Error("Context governance schemaVersion must be 1.");
+  if (record.schemaVersion !== 2) throw new Error("Context governance schemaVersion must be 2.");
   const protectedSources = decodeArray(record.protectedSources, "protectedSources", decodeProtectedSource);
   const projections = decodeArray(record.projections, "projections", decodeProjection);
   requireUnique(protectedSources.map((item) => item.invariantId), "protected invariant IDs");
   requireUnique(protectedSources.map((item) => item.sourcePath), "protected source paths");
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     registryRevision: requiredString(record, "registryRevision"),
     decisionPath: portableRelativePath(record, "decisionPath"),
     protectedSources,
@@ -256,15 +292,28 @@ function decodeProtectedSource(value: unknown): ProtectedSource {
 }
 
 function decodeProjection(value: unknown): ProtectedProjection {
-  const record = strictRecord(value, "Protected context projection", [
-    "invariantId", "sourcePath", "targetPath", "heading",
+  const base = strictRecord(value, "Protected context projection", [
+    "kind", "invariantId", "sourcePath", "targetPath", "heading", "beforeHeading",
   ]);
-  return {
-    invariantId: identifier(record, "invariantId"),
-    sourcePath: portableRelativePath(record, "sourcePath"),
-    targetPath: portableRelativePath(record, "targetPath"),
-    heading: requiredString(record, "heading"),
+  const shared = {
+    invariantId: identifier(base, "invariantId"),
+    sourcePath: portableRelativePath(base, "sourcePath"),
+    targetPath: portableRelativePath(base, "targetPath"),
   };
+  if (base.kind === "file") {
+    assertAbsent(base, "heading", "File projection");
+    assertAbsent(base, "beforeHeading", "File projection");
+    return { kind: "file", ...shared };
+  }
+  if (base.kind === "markdown-section") {
+    assertAbsent(base, "beforeHeading", "Markdown section projection");
+    return { kind: "markdown-section", ...shared, heading: requiredString(base, "heading") };
+  }
+  if (base.kind === "markdown-prefix") {
+    assertAbsent(base, "heading", "Markdown prefix projection");
+    return { kind: "markdown-prefix", ...shared, beforeHeading: requiredString(base, "beforeHeading") };
+  }
+  throw new Error("Protected context projection kind is invalid.");
 }
 
 async function readJson(candidate: string): Promise<unknown> {
@@ -323,6 +372,10 @@ function requiredString(record: Readonly<Record<string, unknown>>, key: string):
   const value = record[key];
   if (typeof value !== "string" || value.length === 0) throw new Error(`${key} must be a non-empty string.`);
   return value;
+}
+
+function assertAbsent(record: Readonly<Record<string, unknown>>, key: string, label: string): void {
+  if (record[key] !== undefined) throw new Error(`${label} must not define ${key}.`);
 }
 
 function identifier(record: Readonly<Record<string, unknown>>, key: string): string {

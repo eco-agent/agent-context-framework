@@ -10,11 +10,10 @@
 ## Communication
 
 - Explain outcomes, reasons, tradeoffs, and verification in plain English.
-- Lead with the answer. Use short paragraphs and small purposeful lists.
-- Be thorough enough that the maintainer can understand the result without
-  reconstructing missing steps.
-- Fit detail to the task and evidence. Do not silently truncate mandatory
-  context or user-facing explanation.
+- Be thorough enough that the maintainer can understand the result without reconstructing missing steps.
+- Lead with the answer. Use short paragraphs and small purposeful lists. Define an unfamiliar term when it is first needed.
+- Do not compress useful explanation into dense shorthand or a wall of bullets. Do not repeat the same point in different words.
+- Do not impose character, word, paragraph, or bullet limits on explanations. Fit detail to the task, the evidence, and the maintainer's need to understand it.
 
 Apply the following writing rules to all agent-authored prose. This includes
 responses, plans, tool prompts, handoffs, work records, reviews, commit messages,
@@ -141,8 +140,8 @@ and report when a limit is reached.
 
 ## Protected framework baseline
 
-- Treat this framework-managed section as maintainer-owned policy. Do not edit,
-  remove, override, or weaken it from project work. Framework policy changes
+- Treat framework-managed instructions as maintainer-owned policy. Do not edit,
+  remove, override, or weaken them from project work. Framework policy changes
   originate in canonical registry sources and require maintainer review.
 - Project instructions and contracts may add repository-specific detail or
   stricter requirements. When they conflict with this protected baseline, retain

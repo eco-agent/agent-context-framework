@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:aa43cda3ab8f6fb99faeaa8f22c311dd458872b3b4aa786b61ec76793ab68f88",
+      "revision": "sha256:49e7ec1e0fe3f80dceb21a296cebb7625df6bfbd1c3b84bd6abf896960d65b63",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "2baf73cadb18b46fb02ae354fd2106341e418d05fd102452515042e336366639",
+          "sourceSha256": "0d95132fec9a15d527e0e5d485a6d6efa8dd908c31f9103e81bc138cdaf5da89",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -868,7 +868,7 @@
     },
     {
       "name": "skill-design-typescript-invariants",
-      "revision": "sha256:9bbb27a859503ae2c5ca520414f23b5cd9fc1aeb826eae95e2e5de5ba95c9193",
+      "revision": "sha256:e1370391ecea1a81300f576024d28cb5942ae1fdc1b5ea96f1cb6c1e8157cd86",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -941,7 +941,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
-          "sourceSha256": "f7b647c5062227873cfbf0090e23389dedfaff79e6e8d593fbf992c14bac4c36",
+          "sourceSha256": "519a7d179edc43490fddce323df9001e61b25b40182753742c29fefc3bd0c387",
           "targetPath": ".codex/skills/design-typescript-invariants/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -1244,7 +1244,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:af252f03c8c3bab9b429cbfee05b46dae2c836efc1011afaf7e4027834a88115",
+      "revision": "sha256:d4d5d607a1e6977695581536f28aabc58301735306ceeb46a33ae24ee3dfd633",
       "dependencies": [],
       "capabilities": [
         {
@@ -1457,7 +1457,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-          "sourceSha256": "772a13454d26921836e195c69c9829eaaff09db38e115de4c6f423076b2a8cc4",
+          "sourceSha256": "2c1fdd53f7399928b48136eece40747f4bce9110a938a215038321ba0c85e262",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
           "mediaType": "text/markdown"
         },
