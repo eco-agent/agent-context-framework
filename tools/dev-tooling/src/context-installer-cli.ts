@@ -26,6 +26,7 @@ import {
   type RuntimeBootstrapResult,
 } from "./runtime-bootstrap.js";
 import { startSetupServer } from "./setup-server.js";
+import { checkContextRegistry } from "./context-registry-builder.js";
 
 type ContextInstallerArguments =
   | {
@@ -80,6 +81,7 @@ type ContextInstallerArguments =
       readonly output: "text";
       readonly port: number;
       readonly openBrowser: boolean;
+      readonly exitAfterInstall: boolean;
     };
 
 type ExecutableContextArguments = Exclude<
@@ -111,13 +113,14 @@ Usage:
   pnpm agent-context doctor [--cwd PROJECT] [--json]
   pnpm agent-context recover [--cwd PROJECT]
   pnpm agent-context bootstrap-runtime [--no-install] [--cwd PROJECT]
-  pnpm agent-context setup [--port PORT] [--no-open] [--cwd PROJECT]
+  pnpm agent-context setup [--port PORT] [--no-open] [--exit-after-install] [--cwd PROJECT]
   pnpm agent-context help
 
 Behavior:
   inspect, plan, diff, and doctor are read-only. plan resolves proposed additions
   through the real installer planner without writing. setup starts a token-protected
   loopback UI and installs through the same transactional materializer.
+  --exit-after-install closes setup after a successful installation response.
   Normal update preserves local managed edits; --overwrite replaces only the
   selected registry-owned scopes. The CLI never pushes or deploys.`;
 
@@ -133,6 +136,7 @@ export function parseContextInstallerArguments(
   let setupPort: number | null = null;
   let openBrowser = true;
   let noOpen = false;
+  let exitAfterInstall = false;
   let help = false;
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
@@ -162,6 +166,9 @@ export function parseContextInstallerArguments(
     } else if (argument === "--no-open") {
       openBrowser = false;
       noOpen = true;
+    } else if (argument === "--exit-after-install") {
+      if (exitAfterInstall) throw new Error("--exit-after-install may be specified only once.");
+      exitAfterInstall = true;
     } else if (!argument || argument.startsWith("-")) {
       throw new Error(`Unknown agent-context argument ${argument ?? ""}.`);
     } else {
@@ -187,7 +194,7 @@ export function parseContextInstallerArguments(
     command !== "setup"
   ) {
     throw new Error(
-      "Usage: pnpm agent-context <inspect|plan [COMPONENT...]|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]|setup [--port PORT] [--no-open]> [--cwd PROJECT] [--json].",
+      "Usage: pnpm agent-context <inspect|plan [COMPONENT...]|init|add COMPONENT|diff|update [COMPONENT] [--overwrite]|remove COMPONENT|doctor|recover|bootstrap-runtime [--no-install]|setup [--port PORT] [--no-open] [--exit-after-install]> [--cwd PROJECT] [--json].",
     );
   }
   if (json && command !== "inspect" && command !== "plan" && command !== "diff" && command !== "doctor") {
@@ -204,6 +211,9 @@ export function parseContextInstallerArguments(
   }
   if (noOpen && command !== "setup") {
     throw new Error("--no-open is valid only with agent-context setup.");
+  }
+  if (exitAfterInstall && command !== "setup") {
+    throw new Error("--exit-after-install is valid only with agent-context setup.");
   }
   if (command === "add" || command === "remove") {
     const component = positionals[1];
@@ -250,6 +260,7 @@ export function parseContextInstallerArguments(
       output: "text",
       port: setupPort ?? 0,
       openBrowser,
+      exitAfterInstall,
     };
   }
   return { command, projectRoot, component: null, output: json ? "json" : "text" };
@@ -387,6 +398,7 @@ async function main(): Promise<void> {
     return;
   }
   if (arguments_.command === "setup") {
+    await checkContextRegistry(frameworkRoot);
     const running = await startSetupServer({
       projectRoot: arguments_.projectRoot,
       frameworkRoot,
@@ -394,9 +406,14 @@ async function main(): Promise<void> {
       openBrowser: arguments_.openBrowser,
     });
     console.log(`Agent Context Setup: ${running.url}`);
-    console.log("Press Ctrl+C to stop the local setup server.");
-    await waitForShutdown(running.close);
+    console.log(arguments_.exitAfterInstall
+      ? "The setup server will close after a successful installation response."
+      : "Press Ctrl+C to stop the local setup server.");
+    await waitForSetupCompletion(running, arguments_.exitAfterInstall);
     return;
+  }
+  if (arguments_.command !== "recover" && arguments_.command !== "bootstrap-runtime") {
+    await checkContextRegistry(frameworkRoot);
   }
   const result = await execute(arguments_);
   console.log(arguments_.output === "json" ? JSON.stringify(result, null, 2) : formatContextResult(result));
@@ -410,15 +427,25 @@ async function main(): Promise<void> {
   }
 }
 
-async function waitForShutdown(close: () => Promise<void>): Promise<void> {
+async function waitForSetupCompletion(
+  running: { readonly applied: Promise<void>; close(): Promise<void> },
+  exitAfterInstall: boolean,
+): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    const shutdown = () => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
       process.off("SIGINT", shutdown);
       process.off("SIGTERM", shutdown);
-      void close().then(resolve, reject);
+      void running.close().then(resolve, reject);
+    };
+    const shutdown = () => {
+      finish();
     };
     process.once("SIGINT", shutdown);
     process.once("SIGTERM", shutdown);
+    if (exitAfterInstall) void running.applied.then(finish, reject);
   });
 }
 

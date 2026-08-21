@@ -1,9 +1,9 @@
 [
   {
     "path": "AGENTS.md",
-    "start": "> Make checkpoint commits often, and never push.",
+    "start": "> Make checkpoint commits often. Push only when the user explicitly requests",
     "end": "# Agent Context Framework",
-    "sha256": "b81febe3451a741a3990210bd4fe12fc603337898af48ed19d8a5998847738a1"
+    "sha256": "d2e37ae0ffb3fdf326e720efdecf13cc6c301e3f6692cfd498c60e78aa833ba1"
   },
   {
     "path": "docs/AGENTS.md",

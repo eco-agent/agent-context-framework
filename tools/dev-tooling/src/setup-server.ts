@@ -13,6 +13,7 @@ import {
   type ContextOperationResult,
   type ContextSelectionPreview,
 } from "./context-installer.js";
+import { checkContextRegistry } from "./context-registry-builder.js";
 import {
   parseSetupPlanCommand,
   parseSetupInstallCommand,
@@ -37,6 +38,7 @@ export interface SetupServerOptions {
 export interface RunningSetupServer {
   readonly url: string;
   readonly port: number;
+  readonly applied: Promise<void>;
   close(): Promise<void>;
 }
 
@@ -78,6 +80,7 @@ export async function planSetupSelection(
   frameworkRoot: string,
   input: unknown,
 ): Promise<SetupSelectionPreview> {
+  await checkContextRegistry(frameworkRoot);
   const snapshot = await readSetupSnapshot(projectRoot, frameworkRoot);
   const command = parseSetupPlanCommand(
     input,
@@ -95,6 +98,7 @@ export async function installSetupComponents(
   frameworkRoot: string,
   input: unknown,
 ): Promise<SetupInstallOutcome> {
+  await checkContextRegistry(frameworkRoot);
   let snapshot = await readSetupSnapshot(projectRoot, frameworkRoot);
   const command = parseSetupInstallCommand(
     input,
@@ -131,6 +135,7 @@ export async function installSetupComponents(
 }
 
 export async function startSetupServer(options: SetupServerOptions): Promise<RunningSetupServer> {
+  await checkContextRegistry(options.frameworkRoot);
   const projectRoot = await realpath(options.projectRoot);
   const frameworkRoot = await realpath(options.frameworkRoot);
   const clientRoot = await realpath(
@@ -142,12 +147,17 @@ export async function startSetupServer(options: SetupServerOptions): Promise<Run
     );
   });
   const token = options.token ?? randomBytes(32).toString("base64url");
+  let resolveApplied: (() => void) | undefined;
+  const applied = new Promise<void>((resolve) => {
+    resolveApplied = resolve;
+  });
   const server = createServer((request, response) => {
     void handleRequest(request, response, {
       projectRoot,
       frameworkRoot,
       clientRoot,
       token,
+      onApplied: () => resolveApplied?.(),
     });
   });
   await new Promise<void>((resolve, reject) => {
@@ -164,10 +174,16 @@ export async function startSetupServer(options: SetupServerOptions): Promise<Run
   }
   const url = `http://${LOOPBACK_HOST}:${address.port}/?token=${encodeURIComponent(token)}`;
   if (options.openBrowser) openSetupBrowser(url);
+  let closed = false;
   return {
     url,
     port: address.port,
-    close: async () => await closeServer(server),
+    applied,
+    close: async () => {
+      if (closed) return;
+      closed = true;
+      await closeServer(server);
+    },
   };
 }
 
@@ -176,6 +192,7 @@ interface RequestContext {
   readonly frameworkRoot: string;
   readonly clientRoot: string;
   readonly token: string;
+  readonly onApplied: () => void;
 }
 
 async function handleRequest(
@@ -188,7 +205,7 @@ async function handleRequest(
     const requestUrl = new URL(request.url ?? "/", `http://${LOOPBACK_HOST}`);
     if (requestUrl.pathname === "/api/setup" && request.method === "GET") {
       requireApiToken(request, context.token);
-      sendJson(response, 200, await readSetupSnapshot(context.projectRoot, context.frameworkRoot));
+      await sendJson(response, 200, await readSetupSnapshot(context.projectRoot, context.frameworkRoot));
       return;
     }
     if (requestUrl.pathname === "/api/plan" && request.method === "POST") {
@@ -198,7 +215,7 @@ async function handleRequest(
         context.frameworkRoot,
         await readJsonBody(request, "Setup plan request"),
       );
-      sendJson(response, preview.status === "blocked" ? 409 : 200, preview);
+      await sendJson(response, preview.status === "blocked" ? 409 : 200, preview);
       return;
     }
     if (requestUrl.pathname === "/api/install" && request.method === "POST") {
@@ -208,7 +225,8 @@ async function handleRequest(
         context.frameworkRoot,
         await readJsonBody(request, "Setup install request"),
       );
-      sendJson(response, outcome.status === "blocked" ? 409 : 200, outcome);
+      await sendJson(response, outcome.status === "blocked" ? 409 : 200, outcome);
+      if (outcome.status === "applied") context.onApplied();
       return;
     }
     if (request.method !== "GET") {
@@ -347,10 +365,12 @@ async function sendFile(response: ServerResponse, filePath: string): Promise<voi
   response.end(content);
 }
 
-function sendJson(response: ServerResponse, status: number, value: unknown): void {
+async function sendJson(response: ServerResponse, status: number, value: unknown): Promise<void> {
   const body = Buffer.from(`${JSON.stringify(value)}\n`);
   response.writeHead(status, { "content-type": "application/json; charset=utf-8", "content-length": body.byteLength });
-  response.end(body);
+  await new Promise<void>((resolve) => {
+    response.end(body, resolve);
+  });
 }
 
 function sendText(response: ServerResponse, status: number, value: string): void {

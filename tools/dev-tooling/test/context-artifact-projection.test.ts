@@ -3,6 +3,7 @@ import test from "node:test";
 
 import type {
   ContextJsonArrayItemOwnership,
+  ContextJsonArrayValueOwnership,
   ContextRegistryArtifact,
 } from "@agent-context/repo-policy";
 import { parse as parseToml } from "smol-toml";
@@ -21,11 +22,25 @@ test("text sections preserve surrounding prose and strip markers when preserving
     markerStyle: "markdown",
   }), "## Rules\n\nCanonical.\n");
   const installed = projection.install("Local prefix.\n");
-  assert.match(installed, /^Local prefix\.\n\n<!-- agent-context:rules:start -->/u);
+  assert.match(installed, /^Local prefix\.\n\n<!-- agent-context:rules:start -->\n\n## Rules/u);
   assert.equal(projection.read(installed).state, "present");
   assert.equal(projection.remove(installed, true), "Local prefix.\n\n## Rules\n\nCanonical.\n");
   assert.equal(projection.remove(installed, false), "Local prefix.\n");
   assert.equal(projection.read("<!-- agent-context:rules:start -->\nbroken\n").state, "malformed");
+});
+
+test("markdown text sections replace legacy marker spacing with formatter-stable spacing", () => {
+  const projection = createArtifactProjection(artifact({
+    operation: "text-section",
+    sectionId: "core",
+    markerStyle: "markdown",
+  }), "# Canonical\n");
+  const legacy = "<!-- agent-context:core:start -->\n# Local\n<!-- agent-context:core:end -->\n";
+  assert.equal(projection.read(legacy).state, "present");
+  assert.equal(
+    projection.replace(legacy),
+    "<!-- agent-context:core:start -->\n\n# Canonical\n<!-- agent-context:core:end -->\n",
+  );
 });
 
 test("text sections preserve CRLF repositories while comparing canonical LF bytes", () => {
@@ -132,6 +147,22 @@ test("JSON array item ownership preserves unrelated matchers and identifies item
   assert.deepEqual(removed.hooks.SessionStart, []);
 });
 
+test("JSON array value ownership preserves unrelated formatter ignores", () => {
+  const projection = createArtifactProjection(artifact({
+    operation: "json-array-values",
+    ownedValues: [{ arrayPointer: "/ignorePatterns", value: ".agent-context/**" }],
+  }), '{"ignorePatterns":[".agent-context/**"]}\n');
+  const installed = projection.install('{"ignorePatterns":["dist/**"]}\n');
+  assert.deepEqual(JSON.parse(installed), { ignorePatterns: ["dist/**", ".agent-context/**"] });
+  assert.equal(projection.read(installed).state, "present");
+  assert.equal(projection.read('{"ignorePatterns":[]}\n').state, "absent");
+  assert.equal(
+    projection.read('{"ignorePatterns":[".agent-context/**",".agent-context/**"]}\n').state,
+    "malformed",
+  );
+  assert.deepEqual(JSON.parse(projection.remove(installed, false) ?? ""), { ignorePatterns: ["dist/**"] });
+});
+
 test("TOML member ownership preserves unrelated agent settings and removes only declared paths", () => {
   const projection = createArtifactProjection(artifact({
     operation: "toml-members",
@@ -218,6 +249,7 @@ function artifact(
     | { readonly operation: "text-section"; readonly sectionId: string; readonly markerStyle: "markdown" }
     | { readonly operation: "json-members"; readonly ownedPointers: readonly string[] }
     | { readonly operation: "json-array-items"; readonly ownedItems: readonly ContextJsonArrayItemOwnership[] }
+    | { readonly operation: "json-array-values"; readonly ownedValues: readonly ContextJsonArrayValueOwnership[] }
     | { readonly operation: "toml-tables"; readonly ownedTables: readonly string[]; readonly sectionId: string }
     | { readonly operation: "toml-members"; readonly ownedMembers: readonly string[] },
 ): ContextRegistryArtifact {
@@ -228,6 +260,8 @@ function artifact(
       ? "package.json"
       : fields.operation === "json-array-items"
         ? ".codex/hooks.json"
+        : fields.operation === "json-array-values"
+          ? ".oxfmtrc.json"
         : fields.operation === "toml-tables" || fields.operation === "toml-members"
           ? ".codex/config.toml"
           : fields.operation === "seed-file"

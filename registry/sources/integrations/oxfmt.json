@@ -1,0 +1,5 @@
+{
+  "ignorePatterns": [
+    ".agent-context/**"
+  ]
+}

@@ -1092,6 +1092,8 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
     const jsonArrayPointers = targetArtifacts.flatMap((artifact) =>
       artifact.operation === "json-array-items"
         ? artifact.ownedItems.map((item) => item.arrayPointer)
+        : artifact.operation === "json-array-values"
+          ? artifact.ownedValues.map((value) => value.arrayPointer)
         : []);
     requireNoOverlappingPaths(
       [...jsonPointers, ...new Set(jsonArrayPointers)],
@@ -1104,6 +1106,13 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
         : []);
     if (new Set(jsonArrayIdentities).size !== jsonArrayIdentities.length) {
       throw new Error(`JSON target ${targetPath} contains duplicate array item ownership.`);
+    }
+    const jsonArrayValueIdentities = targetArtifacts.flatMap((artifact) =>
+      artifact.operation === "json-array-values"
+        ? artifact.ownedValues.map((value) => `${value.arrayPointer}:${JSON.stringify(value.value)}`)
+        : []);
+    if (new Set(jsonArrayValueIdentities).size !== jsonArrayValueIdentities.length) {
+      throw new Error(`JSON target ${targetPath} contains duplicate array value ownership.`);
     }
     const tomlPaths = targetArtifacts.flatMap((artifact) => {
       if (artifact.operation === "toml-tables") return artifact.ownedTables;

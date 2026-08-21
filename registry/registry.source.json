@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.9.1",
-  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
+  "revision": "0.9.2",
+  "decisionPath": "registry/decisions/0.9.2-installation-boundaries.md",
   "components": [
     {
       "name": "core",
@@ -28,6 +28,12 @@
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
+        },
+        {
+          "kind": "artifact",
+          "operation": "seed-file",
+          "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
+          "targetPath": ".gitattributes"
         },
         {
           "kind": "artifact",
@@ -803,6 +809,23 @@
           "targetPath": ".codex/config.toml",
           "ownedTables": ["mcp_servers.repo_context"],
           "sectionId": "codex-repo-context"
+        }
+      ]
+    },
+    {
+      "name": "integration-oxfmt",
+      "dependencies": ["core"],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "artifact",
+          "operation": "json-array-values",
+          "sourcePath": "registry/sources/integrations/oxfmt.json",
+          "targetPath": ".oxfmtrc.json",
+          "ownedValues": [
+            { "arrayPointer": "/ignorePatterns", "value": ".agent-context/**" }
+          ]
         }
       ]
     },

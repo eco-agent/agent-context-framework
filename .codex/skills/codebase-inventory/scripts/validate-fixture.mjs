@@ -12,6 +12,7 @@ const fixtureSource = path.resolve(here, '../fixtures/sample-repo');
 const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'codebase-inventory-fixture-'));
 const root = path.join(temporaryRoot, 'sample-repo');
 cpSync(fixtureSource, root, { recursive: true });
+writeFileSync(path.join(root, 'ignored.tmp'), 'ignored\n');
 writeFileSync(path.join(root, 'src/components/logo.png'), Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
 process.on('exit', () => rmSync(temporaryRoot, { recursive: true, force: true }));
 const envelopeSchema = JSON.parse(readFileSync(path.resolve(here, '../references/result-envelope.schema.json'), 'utf8'));

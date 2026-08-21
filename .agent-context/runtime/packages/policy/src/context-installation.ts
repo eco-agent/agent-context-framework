@@ -77,6 +77,16 @@ export interface ContextJsonArrayItemsArtifact extends ContextArtifactBase {
   readonly ownedItems: readonly ContextJsonArrayItemOwnership[];
 }
 
+export interface ContextJsonArrayValueOwnership {
+  readonly arrayPointer: string;
+  readonly value: string;
+}
+
+export interface ContextJsonArrayValuesArtifact extends ContextArtifactBase {
+  readonly operation: "json-array-values";
+  readonly ownedValues: readonly ContextJsonArrayValueOwnership[];
+}
+
 export interface ContextTomlTablesArtifact extends ContextArtifactBase {
   readonly operation: "toml-tables";
   readonly ownedTables: readonly string[];
@@ -100,6 +110,7 @@ export type ContextRegistryArtifact =
   | ContextTextSectionArtifact
   | ContextJsonMembersArtifact
   | ContextJsonArrayItemsArtifact
+  | ContextJsonArrayValuesArtifact
   | ContextTomlTablesArtifact
   | ContextTomlMembersArtifact
   | ContextRuntimeWorkspaceArtifact;
@@ -243,6 +254,8 @@ export function artifactIdentity(artifact: ContextRegistryArtifact | ContextLock
       return `json-members:${artifact.targetPath}:${artifact.ownedPointers.join(",")}`;
     case "json-array-items":
       return `json-array-items:${artifact.targetPath}:${artifact.ownedItems.map(jsonArrayItemIdentity).join(",")}`;
+    case "json-array-values":
+      return `json-array-values:${artifact.targetPath}:${artifact.ownedValues.map(jsonArrayValueIdentity).join(",")}`;
     case "toml-tables":
       return `toml-tables:${artifact.targetPath}:${artifact.ownedTables.join(",")}`;
     case "toml-members":
@@ -433,6 +446,20 @@ function decodeArtifact(record: Record<string, unknown>, label: string): Context
       );
       return { operation, ...base(), ownedItems };
     }
+    case "json-array-values": {
+      strictRecord(record, label, [...baseKeys, "ownedValues"]);
+      const ownedValues = decodeArray(
+        record.ownedValues,
+        "JSON array ownedValues",
+        decodeJsonArrayValueOwnership,
+      );
+      if (ownedValues.length === 0) throw new Error("JSON array ownedValues must not be empty.");
+      requireSortedUnique(
+        ownedValues.map(jsonArrayValueIdentity),
+        "JSON array ownedValues",
+      );
+      return { operation, ...base(), ownedValues };
+    }
     case "toml-tables": {
       strictRecord(record, label, [...baseKeys, "ownedTables", "sectionId"]);
       const ownedTables = decodeArray(record.ownedTables, "TOML ownedTables", tomlTablePath);
@@ -458,7 +485,7 @@ function decodeArtifact(record: Record<string, unknown>, label: string): Context
     }
     default:
       throw new Error(
-        "Context registry artifact operation must be file, seed-file, text-section, json-members, json-array-items, toml-tables, toml-members, or runtime-workspace.",
+        "Context registry artifact operation must be file, seed-file, text-section, json-members, json-array-items, json-array-values, toml-tables, toml-members, or runtime-workspace.",
       );
   }
 }
@@ -478,6 +505,18 @@ function decodeJsonArrayItemOwnership(value: unknown): ContextJsonArrayItemOwner
 
 function jsonArrayItemIdentity(item: ContextJsonArrayItemOwnership): string {
   return `${item.arrayPointer}:${item.identityPointer}:${JSON.stringify(item.identity)}`;
+}
+
+function decodeJsonArrayValueOwnership(value: unknown): ContextJsonArrayValueOwnership {
+  const record = strictRecord(value, "JSON array value ownership", ["arrayPointer", "value"]);
+  return {
+    arrayPointer: jsonPointer(record.arrayPointer),
+    value: requiredString(record, "value"),
+  };
+}
+
+function jsonArrayValueIdentity(value: ContextJsonArrayValueOwnership): string {
+  return `${value.arrayPointer}:${JSON.stringify(value.value)}`;
 }
 
 function requireSchemaVersion(value: unknown, label: string): void {

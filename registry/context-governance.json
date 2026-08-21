@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "registryRevision": "0.9.1",
-  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
+  "registryRevision": "0.9.2",
+  "decisionPath": "registry/decisions/0.9.2-installation-boundaries.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",

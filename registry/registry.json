@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.9.1",
-  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
+  "revision": "0.9.2",
+  "decisionPath": "registry/decisions/0.9.2-installation-boundaries.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:bc0a5c013ce2ddac473716eb24255c3d5466d1697ccb8a38bf00029b572b88ff",
+      "revision": "sha256:c5b503d4ddfaea2143bec7eef363f275b7336ed442cd7aba5f73d6a97e92f387",
       "dependencies": [],
       "capabilities": [
         {
@@ -44,6 +44,12 @@
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
+        },
+        {
+          "operation": "seed-file",
+          "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
+          "sourceSha256": "95e3325fad03b45aba81b8ea1e4afd78ef8542fafe8e7a9017c2bb207a7c266e",
+          "targetPath": ".gitattributes"
         },
         {
           "operation": "file",
@@ -754,7 +760,7 @@
     },
     {
       "name": "skill-codebase-inventory",
-      "revision": "sha256:9cface0648e77fdda3ded63dee273a82bf95120a558c38563a07c661a4e92c08",
+      "revision": "sha256:285c6b049acacca8c55cf62c1651b3d97d4c7d22d5f62ba59a74064db44379e0",
       "dependencies": [],
       "capabilities": [
         {
@@ -778,13 +784,6 @@
           "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/.gitignore",
           "sourceSha256": "42b8122e063c576d8a4f23859bbe4ce5a660505b1229518a3512ef8b5fe80652",
           "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/.gitignore",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/codebase-inventory/fixtures/sample-repo/ignored.tmp",
-          "sourceSha256": "a6c7e3c5ddd823efc8b7a30853eabc152dac866843bd7a39dc4a29e0a0eb68b3",
-          "targetPath": ".codex/skills/codebase-inventory/fixtures/sample-repo/ignored.tmp",
           "mediaType": "text/plain"
         },
         {
@@ -853,7 +852,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/codebase-inventory/scripts/validate-fixture.mjs",
-          "sourceSha256": "72dbad1f92e872c1994859e02ea1bfb010c63142f551873d870418424a54e421",
+          "sourceSha256": "4999189eefd24d0f9284bd953f723a1c318125faf95a0a24819cbe37eb0513cf",
           "targetPath": ".codex/skills/codebase-inventory/scripts/validate-fixture.mjs",
           "mediaType": "text/plain"
         },
@@ -868,7 +867,7 @@
     },
     {
       "name": "skill-design-operational-boundaries",
-      "revision": "sha256:b2acb8c57fcb84e65d81e5ac40cb55ad437e9e874380958380a79e7c035985c6",
+      "revision": "sha256:15864358ba021c64bfb82324a1c7cc3ba081ed34f23d1580019b0aff0a3d1209",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -884,7 +883,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-operational-boundaries/agents/openai.yaml",
-          "sourceSha256": "e8d270df928520ef49d7c2b19c18c4b2d0a0db2e02ef65474b79cd3c72fbde8b",
+          "sourceSha256": "b867702fa27f16a971e7bd6f4531cabe8ee23b93ddf732cb1758e2ed2361ab15",
           "targetPath": ".codex/skills/design-operational-boundaries/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1033,7 +1032,7 @@
     },
     {
       "name": "skill-reduce-reader-load",
-      "revision": "sha256:00432b0d15fe2ac821e074ecf2cc3e095cc1448d3bb06928514a90f30eb5f90f",
+      "revision": "sha256:558f63db3f245a58ed9e168bd564e3874ca21b5f2add34522557512976aaaddf",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -1050,7 +1049,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/reduce-reader-load/agents/openai.yaml",
-          "sourceSha256": "bfa89549b620806056317244940f6e4cd54288fcaf86b8026e39a797be837148",
+          "sourceSha256": "129c1f61d325da7e850214f5a0ae64eb4e79d4193adae7cb88de643523e77dd6",
           "targetPath": ".codex/skills/reduce-reader-load/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1116,7 +1115,7 @@
     },
     {
       "name": "skill-separate-shared-state",
-      "revision": "sha256:7fe72ee69c2131cb99253bd9b6b6bff78b70b28aaf5b40c5c42605aab9764301",
+      "revision": "sha256:1ff23a6c58dc25c9501d6e91087d91471b3728be74d6a01b287791297aca3e98",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -1133,7 +1132,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/separate-shared-state/agents/openai.yaml",
-          "sourceSha256": "ca6f55bdd4b241d421b5f71acd703400adff654a1863aa96c9702b784c385e6f",
+          "sourceSha256": "6ff3286e14c81722d3dad42b527c7da12afc0d5a53ccea604b330d5062dc9827",
           "targetPath": ".codex/skills/separate-shared-state/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
@@ -1994,7 +1993,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:145b4df58173e0d3f756e283cca1dfd6a5c03d5f396a7f45e7087dfce77df13c",
+      "revision": "sha256:0f4f91226c3acefb65167cb6bc0f442fbbc55b0a193f2780db0c86c52fa43405",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2037,7 +2036,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "4e54ac4c38a238d88b59d758b3fc5826d1ac06123995a8f4f5024fd8d28a2b69",
+          "sourceSha256": "6ca74035a9b447e4def626693f8992b8db79ce5a57b05b533cb6e210203c20ea",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2378,6 +2377,37 @@
             "mcp_servers.repo_context"
           ],
           "sectionId": "codex-repo-context"
+        }
+      ]
+    },
+    {
+      "name": "integration-oxfmt",
+      "revision": "sha256:c8de69e536837554fbbfec4c845266edc7340fd002c16fded0ed090ebf464784",
+      "dependencies": [
+        "core"
+      ],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "json-array-values",
+          "sourcePath": "registry/sources/integrations/oxfmt.json",
+          "sourceSha256": "1feac67543cb32bee13d9486239e787b3330cd3fe3d056f0ca15a1e3aef4a9ca",
+          "targetPath": ".oxfmtrc.json",
+          "ownedValues": [
+            {
+              "arrayPointer": "/ignorePatterns",
+              "value": ".agent-context/**"
+            }
+          ]
         }
       ]
     },

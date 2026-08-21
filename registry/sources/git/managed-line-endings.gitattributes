@@ -1,0 +1,4 @@
+.gitattributes text eol=lf
+AGENTS.md text eol=lf
+.agent-context/** text eol=lf
+.codex/** text eol=lf

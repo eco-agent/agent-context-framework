@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import type {
   ContextJsonArrayItemOwnership,
+  ContextJsonArrayValueOwnership,
   ContextRegistryArtifact,
 } from "@agent-context/repo-policy";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
@@ -22,6 +23,7 @@ export interface ArtifactProjection {
 
 interface SectionLocation {
   readonly blockStart: number;
+  readonly markerEnd: number;
   readonly innerStart: number;
   readonly innerEnd: number;
   readonly blockEnd: number;
@@ -43,6 +45,8 @@ export function createArtifactProjection(
       return jsonMembersProjection(source, artifact.ownedPointers);
     case "json-array-items":
       return jsonArrayItemsProjection(source, artifact.ownedItems);
+    case "json-array-values":
+      return jsonArrayValuesProjection(source, artifact.ownedValues);
     case "toml-tables":
       return tomlTablesProjection(source, artifact.ownedTables);
     case "toml-members":
@@ -75,6 +79,11 @@ export function createArtifactRemovalProjection(
       return removalOnlyProjection(
         (target) => readJsonArrayItems(target, artifact.ownedItems),
         (target, preserveContent) => removeJsonArrayItems(target, preserveContent, artifact.ownedItems),
+      );
+    case "json-array-values":
+      return removalOnlyProjection(
+        (target) => readJsonArrayValues(target, artifact.ownedValues),
+        (target, preserveContent) => removeJsonArrayValues(target, preserveContent, artifact.ownedValues),
       );
     case "toml-tables":
       return removalOnlyProjection(
@@ -151,7 +160,7 @@ function seedFileRemovalProjection(): ArtifactProjection {
 
 function textSectionProjection(
   source: string,
-  markers: { readonly start: string; readonly end: string },
+  markers: MarkerPair,
 ): ArtifactProjection {
   if (!source.endsWith("\n")) throw new Error("Text-section source must end with a newline.");
   return {
@@ -265,6 +274,114 @@ function jsonArrayItemsProjection(
     },
     remove: (target, preserveContent) => removeJsonArrayItems(target, preserveContent, ownedItems),
   };
+}
+
+function jsonArrayValuesProjection(
+  source: string,
+  ownedValues: readonly ContextJsonArrayValueOwnership[],
+): ArtifactProjection {
+  const sourceValue = parseJsonObject(source, "JSON array value source");
+  selectJsonArrayValues(sourceValue, ownedValues, "source");
+  const sourceDisplay = stableJson(ownedValues.map((ownership) => ownership.value));
+  return {
+    sourceSha256: contentHash(sourceDisplay),
+    sourceDisplay,
+    read: (target) => readJsonArrayValues(target, ownedValues),
+    install: (target) => {
+      const targetValue = target === null ? {} : parseJsonObject(target, "JSON array value target");
+      for (const ownership of ownedValues) {
+        const targetArray = getOrCreateJsonArray(targetValue, ownership.arrayPointer);
+        if (targetArray.includes(ownership.value)) {
+          throw new Error(`JSON target already contains owned array value ${jsonArrayValueLabel(ownership)}.`);
+        }
+        targetArray.push(ownership.value);
+      }
+      return stableJson(targetValue);
+    },
+    replace: (target) => {
+      const targetValue = parseJsonObject(target, "JSON array value target");
+      selectJsonArrayValues(targetValue, ownedValues, "target");
+      return stableJson(targetValue);
+    },
+    remove: (target, preserveContent) => removeJsonArrayValues(target, preserveContent, ownedValues),
+  };
+}
+
+function readJsonArrayValues(
+  target: string | null,
+  ownedValues: readonly ContextJsonArrayValueOwnership[],
+): ProjectedScope {
+  if (target === null) return { state: "absent" };
+  let targetValue: Record<string, unknown>;
+  try {
+    targetValue = parseJsonObject(target, "JSON array value target");
+  } catch (error) {
+    return { state: "malformed", detail: error instanceof Error ? error.message : String(error) };
+  }
+  const presence: boolean[] = [];
+  for (const ownership of ownedValues) {
+    if (!hasJsonPointer(targetValue, ownership.arrayPointer)) {
+      presence.push(false);
+      continue;
+    }
+    let targetArray: unknown[];
+    try {
+      targetArray = requireJsonArray(targetValue, ownership.arrayPointer, "target");
+    } catch (error) {
+      return { state: "malformed", detail: error instanceof Error ? error.message : String(error) };
+    }
+    const matches = targetArray.filter((value) => value === ownership.value).length;
+    if (matches > 1) {
+      return {
+        state: "malformed",
+        detail: `JSON target contains duplicate owned array value ${jsonArrayValueLabel(ownership)}.`,
+      };
+    }
+    presence.push(matches === 1);
+  }
+  if (presence.every((present) => !present)) return { state: "absent" };
+  if (presence.some((present) => !present)) {
+    return { state: "malformed", detail: "JSON target contains only part of the owned array value set." };
+  }
+  const display = stableJson(ownedValues.map((ownership) => ownership.value));
+  return { state: "present", sha256: contentHash(display), display };
+}
+
+function removeJsonArrayValues(
+  target: string,
+  preserveContent: boolean,
+  ownedValues: readonly ContextJsonArrayValueOwnership[],
+): string {
+  if (preserveContent) return target;
+  const targetValue = parseJsonObject(target, "JSON array value target");
+  for (const ownership of ownedValues) {
+    if (!hasJsonPointer(targetValue, ownership.arrayPointer)) continue;
+    const targetArray = requireJsonArray(targetValue, ownership.arrayPointer, "target");
+    const matches = targetArray.flatMap((value, index) => value === ownership.value ? [index] : []);
+    if (matches.length > 1) {
+      throw new Error(`JSON target contains duplicate owned array value ${jsonArrayValueLabel(ownership)}.`);
+    }
+    const match = matches[0];
+    if (match !== undefined) targetArray.splice(match, 1);
+  }
+  return stableJson(targetValue);
+}
+
+function selectJsonArrayValues(
+  value: Record<string, unknown>,
+  ownedValues: readonly ContextJsonArrayValueOwnership[],
+  label: string,
+): void {
+  for (const ownership of ownedValues) {
+    const sourceArray = requireJsonArray(value, ownership.arrayPointer, label);
+    if (sourceArray.filter((candidate) => candidate === ownership.value).length !== 1) {
+      throw new Error(`JSON ${label} must contain exactly one owned array value ${jsonArrayValueLabel(ownership)}.`);
+    }
+  }
+}
+
+function jsonArrayValueLabel(ownership: ContextJsonArrayValueOwnership): string {
+  return `${ownership.arrayPointer} equal to ${JSON.stringify(ownership.value)}`;
 }
 
 function readJsonArrayItems(
@@ -541,7 +658,7 @@ function serializeTomlObject(value: Record<string, unknown>): string {
 
 function readMarkedScope(
   target: string | null,
-  markers: { readonly start: string; readonly end: string },
+  markers: MarkerPair,
   normalize: (inner: string) => string,
 ): ProjectedScope {
   if (target === null) return { state: "absent" };
@@ -558,7 +675,7 @@ function readMarkedScope(
 function appendMarkedSection(
   target: string,
   source: string,
-  markers: { readonly start: string; readonly end: string },
+  markers: MarkerPair,
 ): string {
   const separator = target.length === 0
     ? ""
@@ -567,29 +684,28 @@ function appendMarkedSection(
       : target.endsWith("\n")
         ? "\n"
         : "\n\n";
-  return `${target}${separator}${markers.start}\n${source}${markers.end}\n`;
+  return `${target}${separator}${markers.start}\n${markers.blankLineAfterStart ? "\n" : ""}${source}${markers.end}\n`;
 }
 
 function replaceMarkedSection(
   target: string,
   source: string,
-  markers: { readonly start: string; readonly end: string },
+  markers: MarkerPair,
 ): string {
   const section = locateMarkedSection(target, markers);
   if (!section) throw new Error("Cannot replace a missing or malformed owned section.");
-  return `${target.slice(0, section.innerStart)}${source}${target.slice(section.innerEnd)}`;
+  return `${target.slice(0, section.markerEnd)}${markers.blankLineAfterStart ? "\n" : ""}${source}${target.slice(section.innerEnd)}`;
 }
 
 function removeMarkedSection(
   target: string,
   preserveContent: boolean,
-  markers: { readonly start: string; readonly end: string },
+  markers: MarkerPair,
 ): string | null {
   const section = locateMarkedSection(target, markers);
   if (!section) throw new Error("Cannot remove a missing or malformed owned section.");
   const replacement = preserveContent ? target.slice(section.innerStart, section.innerEnd) : "";
-  const removalStart = preserveContent ? section.innerStart - `${markers.start}\n`.length : section.blockStart;
-  const result = `${target.slice(0, removalStart)}${replacement}${target.slice(section.blockEnd)}`;
+  const result = `${target.slice(0, section.blockStart)}${replacement}${target.slice(section.blockEnd)}`;
   const normalized = result.replace(/^\n+/u, "").replace(/\n{3,}/gu, "\n\n");
   return normalized.length === 0 ? null : normalized;
 }
@@ -608,12 +724,15 @@ function withLineEnding(value: string, lineEnding: "\n" | "\r\n"): string {
 
 function locateMarkedSection(
   target: string,
-  markers: { readonly start: string; readonly end: string },
+  markers: MarkerPair,
 ): SectionLocation | null {
   const startToken = `${markers.start}\n`;
   const firstStart = target.indexOf(startToken);
   if (firstStart < 0 || target.indexOf(startToken, firstStart + startToken.length) >= 0) return null;
-  const innerStart = firstStart + startToken.length;
+  const markerEnd = firstStart + startToken.length;
+  const innerStart = markers.blankLineAfterStart && target[markerEnd] === "\n"
+    ? markerEnd + 1
+    : markerEnd;
   const firstEnd = target.indexOf(markers.end, innerStart);
   if (firstEnd < 0 || target.indexOf(markers.end, firstEnd + markers.end.length) >= 0) return null;
   if (target.indexOf(markers.end) < firstStart) return null;
@@ -622,28 +741,37 @@ function locateMarkedSection(
     : firstStart;
   const afterEnd = firstEnd + markers.end.length;
   const blockEnd = target[afterEnd] === "\n" ? afterEnd + 1 : afterEnd;
-  return { blockStart, innerStart, innerEnd: firstEnd, blockEnd };
+  return { blockStart, markerEnd, innerStart, innerEnd: firstEnd, blockEnd };
+}
+
+interface MarkerPair {
+  readonly start: string;
+  readonly end: string;
+  readonly blankLineAfterStart: boolean;
 }
 
 function markerPair(
   sectionId: string,
   style: "markdown" | "toml" | "javascript",
-): { readonly start: string; readonly end: string } {
+): MarkerPair {
   switch (style) {
     case "markdown":
       return {
         start: `<!-- agent-context:${sectionId}:start -->`,
         end: `<!-- agent-context:${sectionId}:end -->`,
+        blankLineAfterStart: true,
       };
     case "toml":
       return {
         start: `# agent-context:${sectionId}:start`,
         end: `# agent-context:${sectionId}:end`,
+        blankLineAfterStart: false,
       };
     case "javascript":
       return {
         start: `// agent-context:${sectionId}:start`,
         end: `// agent-context:${sectionId}:end`,
+        blankLineAfterStart: false,
       };
   }
 }

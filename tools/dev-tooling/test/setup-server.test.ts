@@ -166,6 +166,7 @@ test("loopback setup server requires its token and installs through the real mat
     assert.equal(installResponse.status, 200);
     const outcome = decodeSetupInstallOutcome(await installResponse.json());
     assert.equal(outcome.status, "applied");
+    await running.applied;
     assert.deepEqual(outcome.snapshot.installedDirectComponents, ["core"]);
     assert.deepEqual(outcome.snapshot.installedResolvedComponents, ["core"]);
     assert.match(await readFile(path.join(projectRoot, "AGENTS.md"), "utf8"), /agent-context:core/u);
@@ -220,6 +221,7 @@ test("setup plan is token-protected and a blocked preview performs zero writes",
     assert.equal(await readFile(conflictPath, "utf8"), before);
     assert.equal(await readFile(path.join(projectRoot, ".agent-context", "config.json"), "utf8").catch(() => null), null);
     assert.equal(await readFile(path.join(projectRoot, ".agent-context", "lock.json"), "utf8").catch(() => null), null);
+    assert.equal((await fetch(`${origin}/?token=fixture-token`)).status, 200);
   } finally {
     await running.close();
     await rm(root, { recursive: true, force: true });

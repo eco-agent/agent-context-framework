@@ -43,3 +43,23 @@ test("CLI plan accepts zero or many unique component additions as read-only JSON
     /duplicate component core/u,
   );
 });
+
+test("CLI setup can close after a successful installation response", () => {
+  assert.deepEqual(
+    parseContextInstallerArguments(["setup", "--no-open", "--exit-after-install"], "D:\\project"),
+    {
+      command: "setup",
+      projectRoot: "D:\\project",
+      component: null,
+      output: "text",
+      port: 0,
+      openBrowser: false,
+      exitAfterInstall: true,
+    },
+  );
+  assert.throws(
+    () => parseContextInstallerArguments(["inspect", "--exit-after-install"], "D:\\project"),
+    /valid only with agent-context setup/u,
+  );
+  assert.match(CONTEXT_INSTALLER_HELP, /closes setup after a successful installation response/u);
+});

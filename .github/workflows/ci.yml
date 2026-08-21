@@ -37,6 +37,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: vp install
 
+      - name: Check generated registry
+        run: pnpm registry:check
+
       - name: Check formatting and lint
         run: vp check
 

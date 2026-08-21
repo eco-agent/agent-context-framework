@@ -200,6 +200,15 @@ test("member and identified-array-item ownership decode as closed artifact varia
       ...component,
       artifacts: [
         {
+          operation: "json-array-values",
+          sourcePath: "formatter.json",
+          sourceSha256: hash,
+          targetPath: ".oxfmtrc.json",
+          ownedValues: [
+            { arrayPointer: "/ignorePatterns", value: ".agent-context/**" },
+          ],
+        },
+        {
           operation: "json-array-items",
           sourcePath: "source.json",
           sourceSha256: hash,
@@ -227,6 +236,6 @@ test("member and identified-array-item ownership decode as closed artifact varia
   });
   assert.deepEqual(
     registry.components[0]?.artifacts.map((artifact) => artifact.operation),
-    ["json-array-items", "toml-members", "seed-file"],
+    ["json-array-items", "json-array-values", "toml-members", "seed-file"],
   );
 });

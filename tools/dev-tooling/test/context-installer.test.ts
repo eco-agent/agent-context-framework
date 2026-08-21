@@ -690,6 +690,7 @@ test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
   });
   assert.deepEqual(parseContextInstallerArguments(["setup", "--port", "4312", "--no-open"], "D:/repo"), {
     command: "setup", projectRoot: "D:/repo", component: null, output: "text", port: 4312, openBrowser: false,
+    exitAfterInstall: false,
   });
   assert.throws(() => parseContextInstallerArguments(["add"], "D:/repo"), /requires a component/u);
   assert.throws(() => parseContextInstallerArguments(["init", "--json"], "D:/repo"), /read-only/u);
