@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "registryRevision": "0.8.7",
-  "decisionPath": "registry/decisions/0.8.7-frontend-implementation-policy.md",
+  "registryRevision": "0.8.8",
+  "decisionPath": "registry/decisions/0.8.8-framework-maintainer-skill.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -47,6 +47,21 @@
       "invariantId": "frontend-tailwind-representation",
       "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
       "sha256": "2b80ae5130825c19bfb8e05da45c47ef1fbcb3ae96e33b653839056271f32dcc"
+    },
+    {
+      "invariantId": "framework-maintainer-contract",
+      "sourcePath": ".codex/skills/maintain-agent-context-framework/SKILL.md",
+      "sha256": "ea14b2321ecb27ea9bf0c2d56af71f70327484d6baa7f74e26288bf85074d6f3"
+    },
+    {
+      "invariantId": "framework-maintainer-enforcement-routing",
+      "sourcePath": ".codex/skills/maintain-agent-context-framework/references/prose-and-enforcement.md",
+      "sha256": "176c7ecd1ae6d9982ffec1acb88d0c60c68200558c35b822e77072683afacb10"
+    },
+    {
+      "invariantId": "framework-maintainer-invocation",
+      "sourcePath": ".codex/skills/maintain-agent-context-framework/agents/openai.yaml",
+      "sha256": "e1017944798b6548cb44ea428253645cc5c81f0d4febb6f0cc8c36611a300801"
     },
     {
       "invariantId": "established-product-adoption",

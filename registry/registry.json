@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.7",
-  "decisionPath": "registry/decisions/0.8.7-frontend-implementation-policy.md",
+  "revision": "0.8.8",
+  "decisionPath": "registry/decisions/0.8.8-framework-maintainer-skill.md",
   "components": [
     {
       "name": "core",
@@ -1145,6 +1145,55 @@
           "sourceSha256": "70c6356b1af24a097bd3b0d78746d0d26e42364c38888d1f8e67a41ee95b72e5",
           "targetPath": ".codex/skills/writing-great-skills/SOURCE.json",
           "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-maintain-agent-context-framework",
+      "revision": "sha256:c26b2adbd81417440be79f63cb0531b1da7f441d59e81c11ed624e220f5bb667",
+      "dependencies": [],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "agent-prose-check",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/maintain-agent-context-framework/agents/openai.yaml",
+          "sourceSha256": "e1017944798b6548cb44ea428253645cc5c81f0d4febb6f0cc8c36611a300801",
+          "targetPath": ".codex/skills/maintain-agent-context-framework/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/maintain-agent-context-framework/references/prose-and-enforcement.md",
+          "sourceSha256": "176c7ecd1ae6d9982ffec1acb88d0c60c68200558c35b822e77072683afacb10",
+          "targetPath": ".codex/skills/maintain-agent-context-framework/references/prose-and-enforcement.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/maintain-agent-context-framework/SKILL.md",
+          "sourceSha256": "ea14b2321ecb27ea9bf0c2d56af71f70327484d6baa7f74e26288bf85074d6f3",
+          "targetPath": ".codex/skills/maintain-agent-context-framework/SKILL.md",
+          "mediaType": "text/markdown"
         }
       ]
     },

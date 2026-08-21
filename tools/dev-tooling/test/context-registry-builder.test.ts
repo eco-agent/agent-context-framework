@@ -34,6 +34,7 @@ const packagedSkills = [
   "reuse-before-implementation",
   "write-technical-prose",
   "writing-great-skills",
+  "maintain-agent-context-framework",
   "optimize-codex-sessions",
   "orchestrate-codex-workflows",
 ];
@@ -66,7 +67,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
     "skill-optimize-codex-sessions",
   ];
   assert.equal(first.components.filter((component) =>
-    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 17);
+    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 18);
   for (const component of first.components) {
     assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
   }
@@ -262,6 +263,53 @@ test("frontend-tailwind owns the Tailwind instruction and skill closure", async 
     ]) {
       assert.equal(tailwindSkill.includes(required), true);
     }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("framework maintainer skill installs as an optional governed leaf", async () => {
+  const registry = await buildContextRegistry(frameworkRoot);
+  assert.deepEqual(componentNames(registry, "skill-maintain-agent-context-framework"), [
+    "skill-maintain-agent-context-framework",
+  ]);
+
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-framework-maintainer-"));
+  try {
+    await initProject(root, frameworkRoot);
+    const installed = await addComponent(root, frameworkRoot, "skill-maintain-agent-context-framework");
+    assert.equal(installed.plan.status, "ready");
+    assert.equal((await diffProject(root, frameworkRoot)).current, true);
+
+    const skillPath = path.join(
+      root,
+      ".codex",
+      "skills",
+      "maintain-agent-context-framework",
+      "SKILL.md",
+    );
+    const skill = (await readFile(skillPath, "utf8")).replace(/\s+/gu, " ");
+    for (const required of [
+      "Treat existing instructions as active constraints, not prose that can be freely summarized.",
+      "A boundary without an observation is a wish.",
+      "Assume the agent will take the least constrained reading that still appears compliant.",
+      "Process that only records that work happened is ceremony. Delete it.",
+    ]) {
+      assert.equal(skill.includes(required), true);
+    }
+
+    const metadata = await readFile(
+      path.join(
+        root,
+        ".codex",
+        "skills",
+        "maintain-agent-context-framework",
+        "agents",
+        "openai.yaml",
+      ),
+      "utf8",
+    );
+    assert.equal(metadata.includes("allow_implicit_invocation: true"), true);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -931,6 +979,7 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
     "design-web-typography",
     "diagnose",
     "frontend-design-discipline",
+    "maintain-agent-context-framework",
     "optimize-codex-sessions",
     "orchestrate-codex-workflows",
     "responsive-css-architect",

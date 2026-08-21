@@ -181,6 +181,32 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   [".codex/skills/responsive-css-architect/references/stylesheet-architecture.md", [
     "Adapt names to the project, but keep the ownership model.",
   ]],
+  [".codex/skills/maintain-agent-context-framework/SKILL.md", [
+    "Treat existing instructions as active constraints, not prose that can be freely summarized.",
+    "Only the user's request can authorize a removal or weaker requirement.",
+    "Assume the agent will take the least constrained reading that still appears compliant.",
+    "A boundary without an observation is a wish. A boundary without a grace path often produces a no-op agent.",
+    "Do not diagnose every drift as ignorance or refusal.",
+    "Do not solve attention pressure by repeating the same rule in more places.",
+    "Use prose for intent, ownership, permissions, judgment criteria, semantic boundaries, narrow exceptions, and grace paths.",
+    "Use deterministic code for syntax, schemas, path containment, exact projections, hashes, dependency closure, generated output, changed-file selection, and limits derived from measured boundaries.",
+    "Do not claim that a keyword check proves behavior it cannot observe",
+    "Instruction language becomes an example of how the agent writes.",
+    "Treat a skill's YAML `description` as its catalog trigger.",
+    "Process that only records that work happened is ceremony. Delete it.",
+    "Every changed boundary has an owner, observation, and grace path.",
+    "Temporary work state is removed after durable evidence reaches its owner.",
+  ]],
+  [".codex/skills/maintain-agent-context-framework/references/prose-and-enforcement.md", [
+    "Use the cheapest owner that can decide the rule without lying about what it observes.",
+    "If the checker cannot observe the claimed behavior, narrow its claim or keep the rule in prose.",
+    "A bare rejection encourages either repeated failure or a no-op.",
+    "Phrase presence tests are useful for protected policy, but they prove only that the declared text remains.",
+    "Programmatic checks must not write policy, choose a semantic interpretation, or silently repair the source they validate.",
+  ]],
+  [".codex/skills/maintain-agent-context-framework/agents/openai.yaml", [
+    "allow_implicit_invocation: true",
+  ]],
   [".codex/skills/orchestrate-codex-workflows/SKILL.md", [
     "This skill does not support recursive manager trees, sibling voting, or an open-ended scheduler.",
     "Define the stages, roles, budgets, permissions, return paths, and stopping conditions in project code.",

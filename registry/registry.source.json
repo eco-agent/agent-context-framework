@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.7",
-  "decisionPath": "registry/decisions/0.8.7-frontend-implementation-policy.md",
+  "revision": "0.8.8",
+  "decisionPath": "registry/decisions/0.8.8-framework-maintainer-skill.md",
   "components": [
     {
       "name": "core",
@@ -383,6 +383,23 @@
           "kind": "directory",
           "sourceDirectory": ".codex/skills/writing-great-skills",
           "targetDirectory": ".codex/skills/writing-great-skills",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-maintain-agent-context-framework",
+      "dependencies": [],
+      "capabilities": [
+        { "kind": "runtime", "name": "git", "requirement": "required" },
+        { "kind": "runtime", "name": "agent-prose-check", "requirement": "recommended" }
+      ],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/maintain-agent-context-framework",
+          "targetDirectory": ".codex/skills/maintain-agent-context-framework",
           "excludedPrefixes": []
         }
       ]

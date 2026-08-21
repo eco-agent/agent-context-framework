@@ -1,0 +1,7 @@
+interface:
+  display_name: "Maintain Agent Context Framework"
+  short_description: "Update ACF policy without dilution"
+  default_prompt: "Use $maintain-agent-context-framework to update this framework instruction or configuration without weakening its existing behavior."
+
+policy:
+  allow_implicit_invocation: true
