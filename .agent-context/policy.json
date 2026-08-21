@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "state": "configured",
+  "repository": {
+    "repositoryType": "framework",
+    "languages": [
+      "typescript",
+      "javascript"
+    ],
+    "documentationRoots": [
+      "docs",
+      "registry/decisions"
+    ],
+    "projectContracts": [],
+    "packageManager": {
+      "state": "declared",
+      "name": "pnpm",
+      "version": "10.22.0"
+    },
+    "layout": "monorepo",
+    "frontend": true
+  },
+  "commands": [
+    {
+      "id": "verify-docs",
+      "kind": "package-script",
+      "script": "verify:profile",
+      "arguments": [
+        "docs"
+      ],
+      "timeoutMs": 30000
+    },
+    {
+      "id": "verify-workflow",
+      "kind": "package-script",
+      "script": "verify:profile",
+      "arguments": [
+        "workflow"
+      ],
+      "timeoutMs": 240000
+    },
+    {
+      "id": "verify-full",
+      "kind": "package-script",
+      "script": "verify",
+      "arguments": [],
+      "timeoutMs": 240000
+    }
+  ],
+  "profiles": [
+    {
+      "id": "docs",
+      "commands": [
+        "verify-docs"
+      ]
+    },
+    {
+      "id": "frontend",
+      "commands": [
+        "verify-full"
+      ]
+    },
+    {
+      "id": "product-topology",
+      "commands": [
+        "verify-full"
+      ]
+    },
+    {
+      "id": "backend",
+      "commands": [
+        "verify-full"
+      ]
+    },
+    {
+      "id": "domain-module",
+      "commands": [
+        "verify-full"
+      ]
+    },
+    {
+      "id": "workspace-structure",
+      "commands": [
+        "verify-full"
+      ]
+    },
+    {
+      "id": "workflow",
+      "commands": [
+        "verify-workflow"
+      ]
+    },
+    {
+      "id": "full",
+      "commands": [
+        "verify-full"
+      ]
+    }
+  ],
+  "defaultProfile": "full"
+}
