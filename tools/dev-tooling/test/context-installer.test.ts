@@ -51,6 +51,37 @@ test("init preserves project prose and is byte-for-byte idempotent", async () =>
   }
 });
 
+test("update migrates legacy Markdown marker spacing without treating canonical spacing as local drift", async () => {
+  const fixture = await createFixture();
+  try {
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    const agentsPath = path.join(fixture.projectRoot, "AGENTS.md");
+    const lockPath = path.join(fixture.projectRoot, CONTEXT_LOCK_PATH);
+    const canonical = await readFile(agentsPath, "utf8");
+    const legacy = canonical.replace("<!-- agent-context:core:start -->\n\n", "<!-- agent-context:core:start -->\n");
+    await writeFile(agentsPath, legacy, "utf8");
+    await writeLegacyMarkdownLock(lockPath);
+
+    const migrated = await updateProject(fixture.projectRoot, fixture.frameworkRoot, null, "preserve-local");
+    assert.equal(migrated.plan.status, "ready");
+    assert.deepEqual(migrated.writtenPaths, ["AGENTS.md", CONTEXT_LOCK_PATH]);
+    assert.equal(await readFile(agentsPath, "utf8"), canonical);
+
+    await writeLegacyMarkdownLock(lockPath);
+    const provenanceOnly = await updateProject(
+      fixture.projectRoot,
+      fixture.frameworkRoot,
+      null,
+      "preserve-local",
+    );
+    assert.equal(provenanceOnly.plan.status, "ready");
+    assert.deepEqual(provenanceOnly.writtenPaths, [CONTEXT_LOCK_PATH]);
+    assert.equal(await readFile(agentsPath, "utf8"), canonical);
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("installer preserves CRLF documents across install, status, and update", async () => {
   const fixture = await createFixture();
   try {
@@ -870,6 +901,16 @@ async function structuredRegistryArtifacts(frameworkRoot: string): Promise<reado
 
 function sha(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
+}
+
+async function writeLegacyMarkdownLock(lockPath: string): Promise<void> {
+  const lock = JSON.parse(await readFile(lockPath, "utf8")) as {
+    artifacts: Array<{ operation: string; installedSha256: string }>;
+  };
+  const core = lock.artifacts.find((artifact) => artifact.operation === "text-section");
+  if (core === undefined) assert.fail("Fixture lock must contain the core text section.");
+  core.installedSha256 = sha("# Core rules\n");
+  await writeFile(lockPath, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
 }
 
 function selectionPreviewFixture(projectRoot: string): ContextSelectionPreview {

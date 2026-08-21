@@ -921,6 +921,7 @@ function assessDesired(
 
   const projectMatchesPrevious = current.state === "present" && current.sha256 === locked.installedSha256;
   const upstreamMatchesPrevious = desired.projection.sourceSha256 === locked.installedSha256;
+  const projectMatchesNext = current.state === "present" && current.sha256 === desired.projection.sourceSha256;
   if (projectMatchesPrevious && upstreamMatchesPrevious) {
     return {
       ...base,
@@ -943,6 +944,17 @@ function assessDesired(
         ? boundedDifference("registry-baseline", "project", desired.projection.sourceDisplay, current.display)
         : null,
       detail: current.state === "malformed" ? current.detail : "Project-owned source differs from its baseline.",
+    };
+  }
+  if (projectMatchesNext) {
+    return {
+      ...base,
+      status: "upstream-changed",
+      previousSourceSha256: locked.sourceSha256,
+      currentSha256: current.sha256,
+      nextSourceSha256: desired.artifact.sourceSha256,
+      difference: null,
+      detail: "Project source already matches the next registry projection; only provenance needs updating.",
     };
   }
   if (projectMatchesPrevious) {

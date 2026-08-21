@@ -165,7 +165,7 @@ function textSectionProjection(
 ): ArtifactProjection {
   if (!source.endsWith("\n")) throw new Error("Text-section source must end with a newline.");
   return {
-    sourceSha256: contentHash(source),
+    sourceSha256: markedScopeHash(source, markers),
     sourceDisplay: source,
     read: (target) => readMarkedScope(target === null ? null : normalizeLf(target), markers, (inner) => inner),
     install: (target) => withLineEnding(
@@ -670,7 +670,18 @@ function readMarkedScope(
       : { state: "absent" };
   }
   const display = normalize(target.slice(section.innerStart, section.innerEnd));
-  return { state: "present", sha256: contentHash(display), display };
+  const canonicalSpacing = !markers.blankLineAfterStart || section.innerStart > section.markerEnd;
+  return {
+    state: "present",
+    sha256: canonicalSpacing ? markedScopeHash(display, markers) : contentHash(display),
+    display,
+  };
+}
+
+function markedScopeHash(display: string, markers: MarkerPair): string {
+  return markers.blankLineAfterStart
+    ? contentHash(`markdown-marker-spacing-v2\n${display}`)
+    : contentHash(display);
 }
 
 function appendMarkedSection(

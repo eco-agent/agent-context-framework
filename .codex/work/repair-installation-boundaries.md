@@ -66,7 +66,19 @@ Canonical skill and instruction sources flow through `registry/registry.source.j
 
 ## Verification evidence
 
-- Pending.
+- `pnpm registry:check` passed for registry 0.9.2 with 35 components.
+- Repo-policy tests passed, 39 of 39.
+- Dev-tooling focused projection and installer tests passed, 38 of 38 before the
+  downstream preview. The migration-trigger repair then passed 28 of 28 focused
+  projection and installer tests plus the dev-tooling typecheck.
+- The actual downstream plan exposed that legacy marker spacing initially read
+  as unchanged. No installation write ran. The projection hash now versions the
+  marker format and the regression test covers legacy and already-canonical
+  targets.
+- The declared branch profile is blocked by four pre-existing broken links in
+  `docs/adr/0027-portable-objective-orchestration.md`. The changed-file agent
+  and agent-prose checks passed before that unrelated docs gate stopped the
+  profile.
 
 ## Closure
 
