@@ -37,3 +37,13 @@ Describe the owners and flow affected by the task.
 ## Verification evidence
 
 - Record commands, outputs, skipped checks, residual risks, and final revisions.
+
+## Closure
+
+| Field | Value |
+| --- | --- |
+| Status | `active`, `complete`, or `stopped` |
+| Final revision | Full commit ID, or `uncommitted` while active |
+| Durable destination | Canonical decision, handoff, or `this record` |
+| Retention reason | Policy requirement or evidence that exists nowhere else |
+| Cleanup | Temporary files, processes, branches, refs, and worktrees removed or reported |

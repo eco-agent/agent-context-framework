@@ -31,12 +31,16 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "stop and report the missing capability instead of inventing another vendoring method.",
     "Do not add or mutate a submodule unless a project contract requires its separate repository lifecycle.",
     "Do not change global Git configuration.",
+    "Treat the work record as temporary task state.",
+    "Otherwise remove it in the same task.",
   ]],
   ["registry/sources/instructions/repository-work.md", [
     "Prefer a package dependency when its public API is enough.",
     "Record the upstream URL, commit, prefix, license, and update procedure.",
     "stop and report the missing capability instead of inventing another vendoring method.",
     "Do not add or mutate a submodule unless a project contract requires its separate repository lifecycle.",
+    "Treat the work record as temporary task state.",
+    "Otherwise remove it in the same task.",
   ]],
   ["registry/sources/instructions/verification.md", [
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",
@@ -46,6 +50,16 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   ["registry/sources/instructions/repository-policy.md", [
     "exact project contract paths",
     "They do not disable, replace, or weaken the maintainer-owned framework baseline.",
+  ]],
+  ["registry/sources/instructions/skill-authoring.md", [
+    "Changed-file verification must run the repository-declared agent-prose check on model-facing files.",
+    "If the repository has no such check, report the gap.",
+    "Use technical-prose checks only for technical documentation selected by repository policy.",
+  ]],
+  ["registry/sources/templates/work-record.md", [
+    "Status | `active`, `complete`, or `stopped`",
+    "Durable destination | Canonical decision, handoff, or `this record`",
+    "Retention reason | Policy requirement or evidence that exists nowhere else",
   ]],
   ["registry/sources/instructions/frontend.md", [
     "Treat schemas and the current implementation as evidence, not as the default interface.",

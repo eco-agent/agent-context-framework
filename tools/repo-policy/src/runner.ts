@@ -1,5 +1,6 @@
 import { runInternalCheck } from "./check-support.js";
 import {
+  agentProseFilesForChanges,
   checkAgentProse,
   formatAgentProseFinding,
 } from "./checks/agent-prose.js";
@@ -35,7 +36,7 @@ export async function runProfile(root: string, options: RunProfileOptions): Prom
   const initialStatus = await collectWorktreeStatus(root);
 
   for (const checkId of profile.checks) {
-    const result = await runCheck(root, checkId, runDirectory);
+    const result = await runCheck(root, checkId, runDirectory, options.changedFiles ?? []);
     checks.push(result);
     if (!result.ok) {
       break;
@@ -129,10 +130,36 @@ export async function runAgentProseCheck(
   };
 }
 
-async function runCheck(root: string, id: CheckId, runDirectory: string): Promise<CheckResult> {
+async function runCheck(
+  root: string,
+  id: CheckId,
+  runDirectory: string,
+  changedFiles: readonly string[] = [],
+): Promise<CheckResult> {
   switch (id) {
-    case "agent-prose":
-      throw new Error("Agent prose checks require explicit files.");
+    case "agent-prose": {
+      const files = await agentProseFilesForChanges(root, changedFiles);
+      if (files.length === 0) {
+        return {
+          id,
+          ok: true,
+          durationMs: 0,
+          summary: "agent-prose had no changed model-facing files to check.",
+          diagnostics: [],
+        };
+      }
+      const started = performance.now();
+      const report = await checkAgentProse(root, files);
+      return {
+        id,
+        ok: report.ok,
+        durationMs: Math.round(performance.now() - started),
+        summary: report.ok
+          ? `agent-prose passed for ${report.files.length} changed file(s).`
+          : `agent-prose found ${report.findings.length} issue(s) in ${report.files.length} changed file(s).`,
+        diagnostics: report.findings.slice(0, 50).map(formatAgentProseFinding),
+      };
+    }
     case "agents":
       return await runInternalCheck(id, async () => await checkAgents(root));
     case "boundaries":

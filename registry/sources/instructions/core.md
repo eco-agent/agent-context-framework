@@ -119,6 +119,12 @@ decisions, state, topology, smallest complete slice, replacements, non-goals,
 and propagation. Give every decision one answer and one owner. Keep specialists
 within their assigned scope.
 
+Treat the work record as temporary task state. At closure, record whether the
+task completed or stopped, the final revision, and the verification result. Keep
+the record only when it still owns evidence required by policy or evidence not
+moved into a canonical decision or handoff. Otherwise remove it in the same
+task. Never remove a user-authored record or another task's record.
+
 Edit the owning representation and replace obsolete paths directly. Do not add
 compatibility layers, migrations, adapters, dual writes, fallbacks, or parallel
 representations unless the user asks. Git and previews provide recovery. Carry

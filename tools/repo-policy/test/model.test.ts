@@ -4,7 +4,7 @@ import {
   decodeActiveTaskBinding,
   decodeCapabilityRequest,
 } from "../src/model.js";
-import { profileForChanges } from "../src/profiles.js";
+import { profileForChanges, verificationProfiles } from "../src/profiles.js";
 import { matchesWritablePath } from "../src/checks/scope.js";
 
 const validRequest = {
@@ -93,4 +93,10 @@ test("changed paths select profiles without model judgment", () => {
   assert.equal(profileForChanges(["docs/README.md"]), "docs");
   assert.equal(profileForChanges(["tools/codex-workflows/src/index.ts"]), "workflow");
   assert.equal(profileForChanges(["package.json"]), "workspace-structure");
+});
+
+test("every changed-file verification profile runs agent prose", () => {
+  for (const profile of Object.values(verificationProfiles)) {
+    assert.equal(profile.checks.includes("agent-prose"), true);
+  }
 });

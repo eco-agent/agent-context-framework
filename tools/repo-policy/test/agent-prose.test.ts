@@ -4,6 +4,7 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  agentProseFilesForChanges,
   agentProseRuleIds,
   checkAgentProse,
   lintAgentProse,
@@ -29,6 +30,23 @@ test("model-facing prose reports the five exact Unslop conflicts", async () => {
     [...agentProseRuleIds].sort(),
   );
   assert.ok(findings.every((finding) => finding.line > 0 && finding.column > 0));
+});
+
+test("changed-file verification selects model-facing prose without scanning technical docs", async () => {
+  const files = await agentProseFilesForChanges(repositoryRoot, [
+    ".codex/agents/default.toml",
+    "registry/sources/instructions/core.md",
+    "tools/codex-workflows/src/codex-client.ts",
+    "docs/README.md",
+    "package.json",
+    ".codex/work/deleted-record.md",
+  ]);
+
+  assert.deepEqual(files, [
+    ".codex/agents/default.toml",
+    "registry/sources/instructions/core.md",
+    "tools/codex-workflows/src/codex-client.ts",
+  ]);
 });
 
 test("skill description length and title case are not agent prose rules", () => {

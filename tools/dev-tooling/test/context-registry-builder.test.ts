@@ -164,15 +164,17 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     path.join(frameworkRoot, "registry", "sources", "instructions", "frontend.md"),
     "utf8",
   );
+  const normalizedFrontendSource = frontendSource.replace(/\s+/gu, " ");
   for (const required of [
-    "Never fill decisions from model priors or generic familiar UI.",
+    "Do not make product decisions from model priors or a familiar generic interface.",
     "Treat schemas and the current implementation as evidence, not as the default interface.",
     "Treat desktop and mobile as projections of the same product model.",
-    "Do not use text to frame text/elements or use cards for hierarchy.",
-    "Invent no content, controls, navigation, summaries, or features.",
+    "Do not use cards to create hierarchy.",
+    "Do not add text whose only purpose is to frame other text or elements.",
+    "Do not invent content, controls, navigation, summaries, or features.",
     "Default to minimalism",
   ]) {
-    assert.match(frontendSource, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
+    assert.match(normalizedFrontendSource, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
   }
 
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-anti-dilution-"));
@@ -220,8 +222,8 @@ test("frontend-tailwind owns the Tailwind instruction and skill closure", async 
 
     const plainAgents = await readFile(path.join(plainRoot, "AGENTS.md"), "utf8");
     const tailwindAgents = await readFile(path.join(tailwindRoot, "AGENTS.md"), "utf8");
-    assert.equal(plainAgents.includes("## Frontend Tailwind"), false);
-    assert.equal(tailwindAgents.includes("## Frontend Tailwind"), true);
+    assert.equal(plainAgents.includes("## Tailwind frontend"), false);
+    assert.equal(tailwindAgents.includes("## Tailwind frontend"), true);
     assert.equal(
       await exists(path.join(plainRoot, ".codex", "skills", "tailwind-css-architect", "SKILL.md")),
       false,
@@ -308,7 +310,6 @@ test("Wave 2 bundles resolve independently and exclude frontend, runtime, and ob
     "session-quality",
   ]);
   assert.deepEqual(componentNames(registry, "skill-authoring"), [
-    "skill-write-technical-prose",
     "skill-writing-great-skills",
     "skill-authoring",
   ]);
@@ -394,14 +395,15 @@ test("optional orchestration authoring is an explicit leaf with a governed safet
     path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows", "SKILL.md"),
     "utf8",
   );
+  const normalizedInstructions = instructions.replace(/\s+/gu, " ");
   for (const protectedSemantic of [
-    "Exclude adaptive orchestrator holarchies and sibling quorum loops.",
-    "Fix the workflow topology, role registry, budgets, and authority before execution.",
-    "Do not let agents invent new agents or recursively decompose work.",
-    "Persist evidence before each state transition.",
-    "Give each role the least filesystem, network, and approval authority it needs.",
+    "This skill does not support recursive manager trees, sibling voting, or an open-ended scheduler.",
+    "Define the stages, roles, budgets, permissions, return paths, and stopping conditions in project code.",
+    "They may not create roles or recursively split the task.",
+    "Store each result before using it to choose the next stage.",
+    "Give each role only the filesystem, network, and approval access it needs.",
   ]) {
-    assert.equal(instructions.includes(protectedSemantic), true, protectedSemantic);
+    assert.equal(normalizedInstructions.includes(protectedSemantic), true, protectedSemantic);
   }
 
   const contracts = await readFile(

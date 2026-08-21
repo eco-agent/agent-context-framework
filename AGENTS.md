@@ -106,6 +106,12 @@ outcome, decisions, current state, topology, smallest complete slice,
 replacements, non-goals, and propagation paths. Give every decision one answer
 and one owner, and keep specialists within their assigned scope.
 
+Treat the work record as temporary task state. At closure, record whether the
+task completed or stopped, the final revision, and the verification result. Keep
+the record only when it still owns evidence required by policy or evidence not
+moved into a canonical decision or handoff. Otherwise remove it in the same
+task. Never remove a user-authored record or another task's record.
+
 Resolve the baseline to a full commit ID before starting a new work stream, then
 record it. One `codex/<task>` branch owns that stream. Use the current checkout
 for serial work. Create an ephemeral linked worktree only when concurrent work
@@ -305,7 +311,7 @@ unfinished task as though it were a completed workflow.
 ## Skill authoring
 
 - Use `writing-great-skills` to create or edit predictable skill instructions, invocation metadata, progressive disclosure, and completion criteria.
-- Run a repository-declared agent-prose check after pruning model-facing instructions when one exists. Use technical-prose checks only for technical documentation selected by repository policy. Do not assume either command is installed.
+- Changed-file verification must run the repository-declared agent-prose check on model-facing files. Run the same check directly on edited skill sources after pruning them. If the repository has no such check, report the gap. Use technical-prose checks only for technical documentation selected by repository policy.
 
 ## Writing check
 

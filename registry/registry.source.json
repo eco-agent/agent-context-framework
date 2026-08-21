@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.5",
-  "decisionPath": "registry/decisions/0.8.5-framework-policy-prose.md",
+  "revision": "0.8.6",
+  "decisionPath": "registry/decisions/0.8.6-context-control-repairs.md",
   "components": [
     {
       "name": "core",

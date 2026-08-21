@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.5",
-  "decisionPath": "registry/decisions/0.8.5-framework-policy-prose.md",
+  "revision": "0.8.6",
+  "decisionPath": "registry/decisions/0.8.6-context-control-repairs.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:387dc818d2c6790671081bec899976e2d36d81f5629783f5212063e526b4302e",
+      "revision": "sha256:1be55463dfa0461c5b004944e746cb409f77b3bc2495833ff695708fe3d941af",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "2be10b915372d3fdf2326ec4261fa8532bd9fb17c68b28f6696935cdb74369a0",
+          "sourceSha256": "4373d0600e1a2a258548aebda607913ae380e5239626c1b8b00dee4965605d58",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -1472,7 +1472,7 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:5483d75e1afa3cc19d01ae8147a3a37b311425c28af5ab8bd7838f9d6335656d",
+      "revision": "sha256:3919f7707c92df3bfbc8ff77503b2a4a064d2a91a85db9ea8792fad01f75f4e5",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-diagnose",
@@ -1525,7 +1525,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/templates/work-record.md",
-          "sourceSha256": "41b4bec222b9b8d51b06ee22296b04ef93fe7ba05829ee2b5202c002f2cfb49e",
+          "sourceSha256": "dc8cb16951b40d96181d14149d74a03396ce47fdd1dd09fb1a3cd32123e33735",
           "targetPath": ".codex/templates/work-record.md",
           "mediaType": "text/markdown"
         },
@@ -1623,7 +1623,7 @@
     },
     {
       "name": "skill-authoring",
-      "revision": "sha256:6deac149ebd3e7a2b32b8e13c3b70b6865cbfeb2c0269921d5074cae24a6751e",
+      "revision": "sha256:07f005213c634c2fbb077b777444cd8013047e250abb7b0fd91646406228c2a6",
       "dependencies": [
         "skill-writing-great-skills"
       ],
@@ -1647,7 +1647,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/skill-authoring.md",
-          "sourceSha256": "0cbf0ce8a6122e382ecd09ddc8c96537fb48879488e9eb0c8361672a0a084efb",
+          "sourceSha256": "5692c6624f196a44b47ee571ac4c8ce9604d6211cf911b3881c9a9469a14fa80",
           "targetPath": "AGENTS.md",
           "sectionId": "skill-authoring",
           "markerStyle": "markdown"

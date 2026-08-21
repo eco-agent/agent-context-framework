@@ -48,6 +48,22 @@ const supportedExtensions = new Set([
   ".tsx",
 ]);
 
+const modelFacingFiles = new Set([
+  "AGENTS.md",
+  "docs/AGENTS.md",
+]);
+
+const modelFacingRoots = [
+  ".codex/agents/",
+  ".codex/skills/",
+  ".codex/work/",
+  "registry/decisions/",
+  "registry/sources/codex/",
+  "registry/sources/instructions/",
+  "registry/sources/templates/",
+  "tools/codex-workflows/",
+] as const;
+
 const textRules: readonly TextRule[] = [
   {
     rule: "chatbot-phrase",
@@ -104,6 +120,22 @@ export async function checkAgentProse(
     files: checkedFiles,
     findings: findings.sort(compareFindings),
   };
+}
+
+export async function agentProseFilesForChanges(
+  root: string,
+  files: readonly string[],
+): Promise<readonly string[]> {
+  const selected: string[] = [];
+  for (const candidate of new Set(files.map((file) => file.replaceAll("\\", "/")))) {
+    if (!isModelFacingFile(candidate)) continue;
+    const absolute = path.resolve(root, candidate);
+    if (!(await resolvesInside(root, absolute))) {
+      throw new Error(`Changed agent prose target resolves outside the repository: ${candidate}`);
+    }
+    if (await pathExists(absolute)) selected.push(normalizeRelative(root, absolute));
+  }
+  return selected.sort();
 }
 
 export function lintAgentProse(
@@ -199,6 +231,11 @@ function sourceLines(file: string, content: string): readonly {
 
 function isMarkdown(file: string): boolean {
   return file.endsWith(".md") || file.endsWith(".mdx");
+}
+
+function isModelFacingFile(file: string): boolean {
+  if (!supportedExtensions.has(path.extname(file).toLowerCase())) return false;
+  return modelFacingFiles.has(file) || modelFacingRoots.some((root) => file.startsWith(root));
 }
 
 function blankDoubleQuotedExamples(text: string): string {

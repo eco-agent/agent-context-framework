@@ -7,6 +7,7 @@ export interface VerificationProfile {
 
 const fullChecks = [
   "agents",
+  "agent-prose",
   "docs",
   "dependency-adoptions",
   "typescript-projects",
@@ -17,7 +18,7 @@ const fullChecks = [
 
 export const verificationProfiles: Readonly<Record<VerificationProfileId, VerificationProfile>> = {
   docs: {
-    checks: ["agents", "docs"],
+    checks: ["agents", "agent-prose", "docs"],
     timeoutMs: 30_000,
   },
   frontend: {
@@ -41,7 +42,7 @@ export const verificationProfiles: Readonly<Record<VerificationProfileId, Verifi
     timeoutMs: 240_000,
   },
   workflow: {
-    checks: ["agents", "dependency-adoptions", "boundaries", "workflow-test"],
+    checks: ["agents", "agent-prose", "dependency-adoptions", "boundaries", "workflow-test"],
     timeoutMs: 240_000,
   },
   full: {
