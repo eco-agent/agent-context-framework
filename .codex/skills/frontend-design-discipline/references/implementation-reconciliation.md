@@ -16,6 +16,13 @@ component boundaries, DOM hierarchy, control inventory, naming, CSS, and framewo
 conventions have no authority over the approved product representation unless the
 specification explicitly retains them.
 
+Inventory the component system before assigning new presentation owners. Inspect
+dependency manifests, existing component imports, providers, theme setup, local
+wrappers, and shared component directories. A component library does not decide
+the approved topology, copy, or hierarchy. Once an approved role matches a
+library component, reuse that component's behavior and accessibility. Do not
+replace it with hand-written markup merely because custom styling looks easier.
+
 Map each approved behavior and state to its implementation owner. Preserve shared
 domain models, queries, mutations, validation, permissions, formatting, state
 machines, and business rules when they still serve the target. Replace presentation,
@@ -37,6 +44,8 @@ Before implementation, record:
 - retained product behavior and owner
 - replaced or removed UI and owner
 - shared lower-layer behavior
+- component-library behavior and wrappers retained
+- recorded library mismatches that require a replacement
 - new presentation owner
 - exact entry points and reverse actions
 - feasibility constraints that must return to the design owner

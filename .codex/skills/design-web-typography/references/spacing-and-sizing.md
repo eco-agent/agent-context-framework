@@ -29,7 +29,9 @@ There are many existing scales to pick from, or define a custom one. The Tailwin
 
 For solo projects the default names work fine as long as there are clear rules for where each size is used. On a team, give sizes semantic names: `text-sm` tells you the size but not the use; `text-body-sm` keeps sizes consistent with clear usage rules.
 
-A role-based scale pairs each size with its line-height and weight, so a role is one decision instead of three. A solid starting point for a product interface:
+A role-based scale pairs each size with its line-height and weight, so a role is
+one decision instead of three. Preserve the project's existing scale. Use the
+following restrained example only when the project has no type roles:
 
 | Role | Size | Line-height | Weight |
 | --- | --- | --- | --- |
@@ -53,48 +55,61 @@ h3 { font-size: var(--text-lg); }
 
 In Tailwind the same mapping is utility classes per level (`text-2xl`, `text-xl`, `text-lg`), typically centralized in a component or `@layer base` rather than repeated inline.
 
-When reviewing a page, compare the computed size of headings within each semantic section: a child that accidentally renders more prominently than its parent breaks the visual hierarchy. Deep levels may share a size when the scale runs out of comfortable steps, as long as weight or letter-spacing keeps them distinct. A heading should not be smaller than body text unless it is deliberately a label-style overline.
+When reviewing a page, compare the named roles and computed size of headings
+within each semantic section. A child that accidentally renders more prominently
+than its parent breaks the visual hierarchy. Deep levels may share a size when
+the scale runs out of comfortable steps, as long as weight and surrounding space
+keep them distinct. A heading should not be smaller than body text unless the
+approved type system defines it as a label-style overline.
 
 Heading semantics and outline quality belong to `better-accessibility`. Pick the element from the document structure, then use this skill to make that structure visually legible; never pick a heading element for its browser-default size.
 
 ## Kerning and letter-spacing
 
-- **Kerning** adjusts specific pairs like `AV` or `Ye`. It is built into the font and browsers apply it automatically. Only switch it off deliberately with `font-kerning: none`.
+- **Kerning** adjusts specific pairs like `AV` or `Ye`. It is built into the font
+  and browsers apply it automatically. Leave `font-kerning` at `auto` or
+  `normal` unless an approved type system requires otherwise.
 - **`letter-spacing`** adds the same space between every character:
-  - Large headings often look better slightly negative.
-  - Small uppercase labels need a little positive spacing so letters do not feel crowded.
-  - Body copy needs neither.
+  - Ordinary headings and body copy use `normal`.
+  - A named display role may use the value defined by the established type
+    system or approved source.
+  - A named uppercase-label role may use one positive tracking token.
 
 ```css
-/* Good */
-.display-heading {
-  letter-spacing: -0.02em;
-}
-
-.uppercase-label {
+/* The role owns the exception. Individual headings do not override it. */
+.type-label-uppercase {
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--type-label-tracking);
 }
 ```
 
+Do not use arbitrary values such as `tracking-[-0.023em]` or local
+`letter-spacing` declarations to tune one heading. Do not imitate kerning with
+tracking. If the hierarchy is weak, choose an established role or a loaded
+weight first.
+
 ## Line-height
 
-| Text | Value |
-| --- | --- |
-| Headings | ~`1.1` |
-| Body copy | `1.5`–`1.6` |
+Line-height belongs to the type role. Tailwind text-size utilities already pair
+a size with a line-height. Keep that pair unless rendered text clips, collides,
+or becomes hard to read at its supported widths.
 
-Prefer unitless values: they scale with the font size, fixed values like `line-height: 24px` do not. Tailwind's `leading-snug`, `leading-normal` and `leading-relaxed` are sensible defaults that rarely need overriding.
+When a role needs a correction, choose one conventional unitless value and
+change the role definition. Do not add `leading-[0.98273]` or another arbitrary
+per-element value. An exact value is acceptable only when an approved source
+specifies it or a measured rendering defect requires it.
 
-Tight line-height is for short text. Anything that wraps to three or more lines needs at least `1.4`, even in height-constrained places like list rows and cards: a tightly-leaded paragraph is harder to read than a taller row is to fit.
+Anything that wraps to three or more lines needs body-role leading, even in
+height-constrained places such as list rows and cards. Fix vertical alignment
+with layout and control sizing, not line-height.
 
 ```css
 /* Bad: card description at heading leading */
 .card-description { line-height: 1.1; }
-
-/* Good: it wraps to 3 lines, so it reads as body text */
-.card-description { line-height: 1.4; }
 ```
+
+Use the product's existing body role on the description instead of adding a
+local line-height declaration.
 
 ## Text trimming with text-box
 

@@ -7,6 +7,11 @@ description: Design web typography systems.
 
 Match the established styling and type systems. Do not introduce a second styling approach.
 
+Treat typography as a small set of named roles, not a collection of local
+adjustments. Start with the project's existing font family, role, size, weight,
+line-height, and tracking. Change the role before changing one property on one
+element.
+
 In copied references, `better-accessibility` means `design-accessible-interfaces`, `better-colors` means `design-color-systems`, and `better-layout` means `responsive-css-architect`.
 
 ## References
@@ -22,29 +27,49 @@ In copied references, `better-accessibility` means `design-accessible-interfaces
 
 Use `.woff2` (Brotli compression, broadly supported) on the web. `.woff` is a fallback only for very old browsers; `.ttf` and `.otf` are raw desktop formats with no web compression. How the files are loaded is the project's own concern, this skill does not prescribe it.
 
-### 2. Properties Over Raw Tags
+### 2. Properties over raw tags
 
-When a CSS property exists, use it. `font-weight: 650` instead of `font-variation-settings: "wght" 650`, `font-optical-sizing: auto` instead of `"opsz"`, `font-variant-numeric: tabular-nums` instead of `font-feature-settings: "tnum" 1`. Properties keep working when a non-variable fallback renders. Reserve the raw-tag properties for custom axes (`"GRAD" 80`) and niche features (`"ss01" 1`) that have no property of their own.
+When a CSS property exists, use it. `font-weight: 600` instead of
+`font-variation-settings: "wght" 600`, `font-optical-sizing: auto` instead of
+`"opsz"`, and `font-variant-numeric: tabular-nums` instead of
+`font-feature-settings: "tnum" 1`. Properties keep working when a non-variable
+fallback renders. Reserve raw tags for custom axes such as `"GRAD" 80` and niche
+features such as `"ss01" 1` that have no property of their own.
 
 ### 3. Load Intended Weights and Styles
 
 Browsers may synthesize a requested weight or style that the active family does not provide. Prefer loading the faces the design actually uses. Set `font-synthesis: none` only after verifying that every required bold, italic, small-cap, superscript, and subscript form remains visually distinct across the complete fallback stack; disabling synthesis is not a diagnostic and must not erase emphasis.
 
-### 5. Use a Type Scale with Semantic Names
+### 5. Use a type scale with semantic names
 
 Define a small set of sizes and deviate from it as little as possible. Hard-coded sizes without a system break down at scale. For solo projects, default names like `text-sm` work fine as long as the usage rules are clear. On a team, name sizes by use (`text-body-sm`), not by size, so the rules stay consistent.
 
-### 6. Heading Sizes Descend with Level
+### 6. Keep heading roles coherent
 
-Within a coherent page hierarchy, map heading levels to descending steps of the type scale: a visually subordinate heading should not accidentally overpower its parent. Adjacent levels may share a size toward the small end of the scale as long as weight or spacing keeps them distinct. Pick semantic heading elements according to `better-accessibility`; this skill controls only their visual treatment.
+Within a coherent page hierarchy, map headings to named roles. A subordinate
+heading must not accidentally overpower its parent. Adjacent levels may share a
+size when weight and surrounding space keep their roles clear. If hierarchy is
+weak, try an established role or a loaded weight before changing line-height or
+tracking. A different font family belongs in the approved type system, not on a
+single improvised heading. Pick semantic heading elements according to
+`better-accessibility`; this skill controls only their visual treatment.
 
-### 7. Line-Height by Role
+### 7. Keep line-height with the role
 
-Headings tighter, around `1.1`. Body copy `1.5` to `1.6`. Prefer unitless values so line-height scales with the font size; fixed values like `24px` do not. Tight line-height is for short text: anything that wraps to three or more lines needs at least `1.4`, even in height-constrained rows.
+Use the line-height already paired with the type role or Tailwind text-size
+utility. Do not add a local override when the text reads clearly, wraps safely,
+and does not clip. When a role needs a correction, give the role one conventional
+unitless value and apply it everywhere. Do not use arbitrary per-element values
+or line-height to position text inside a control. Exact values from an approved
+source and measured rendering defects are the only exceptions.
 
-### 8. Letter-Spacing by Size
+### 8. Leave tracking alone by default
 
-Large headings often look better with slightly negative letter-spacing. Small uppercase labels need a little positive letter-spacing so letters do not feel crowded. Body copy at reading sizes needs neither.
+Keep `letter-spacing: normal` for ordinary headings and body text. Browser
+kerning already adjusts specific letter pairs. Change tracking only when the
+established type system or an approved source defines it for a named display or
+uppercase-label role. Do not tune individual headings, imitate kerning with
+letter-spacing, or use arbitrary tracking values to make text feel tighter.
 
 ### 9. Cap the Measure
 

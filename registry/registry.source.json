@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.6",
-  "decisionPath": "registry/decisions/0.8.6-context-control-repairs.md",
+  "revision": "0.8.7",
+  "decisionPath": "registry/decisions/0.8.7-frontend-implementation-policy.md",
   "components": [
     {
       "name": "core",

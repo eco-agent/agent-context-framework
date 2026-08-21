@@ -3,18 +3,30 @@ name: tailwind-css-architect
 description: Structure Tailwind CSS v4 styling when a frontend explicitly uses Tailwind.
 ---
 
-# Tailwind CSS Architect
+# Tailwind CSS architect
 
-Use this skill when the owning project contract selects Tailwind CSS. Keep utility-class decisions near markup, keep reusable recipes in stylesheets, and preserve the neutral layout and stylesheet ownership rules supplied by `responsive-css-architect`.
+Use this skill when the owning project contract selects Tailwind CSS. Tailwind
+utilities are the normal representation for every style Tailwind can express
+cleanly. Keep those decisions near markup or in the project's established
+component recipe. Use `responsive-css-architect` to decide layout relationships
+and responsive behavior, not to move utility-expressible styling into raw CSS.
 
 Implement only the Tailwind concern recorded in the owning task contract. Do not decide product topology, visible content, state ownership, or task completion. Return control after the Tailwind concern and its applicable states are implemented.
 
-## Operating Rules
+## Operating rules
 
 1. State the Tailwind boundary before editing.
 
-   * Use utilities beside markup for local layout, spacing, sizing, typography, color, responsive variants, and simple interaction states.
-   * Use stylesheets for reusable variants, stable component recipes, design-system roles, advanced CSS mechanics, theme definitions, custom utilities, and custom variants.
+   * Use utilities beside markup for layout, spacing, sizing, typography, color,
+     responsive variants, and interaction states.
+   * Keep an existing component library's utility recipe and variant mechanism.
+     Do not replace them with a parallel stylesheet API.
+   * Use CSS files for Tailwind directives such as `@theme`, `@utility`, and
+     `@custom-variant`. Use ordinary CSS rules only for base rules, a selector,
+     property, or at-rule Tailwind cannot represent, or third-party markup that
+     cannot receive utility classes.
+   * Repetition, a long class string, or a stable component role is not enough
+     reason to move styling into raw CSS.
    * Keep every plugin class name as a complete static token. Do not construct utility names dynamically.
 
 2. Import `tw-fade` and `shadow-plugin` once after `tailwindcss` in the project entry stylesheet.
@@ -30,26 +42,26 @@ Implement only the Tailwind concern recorded in the owning task contract. Do not
    * Use `smooth-ring-{color}` and `shadow-{color}` when the ring and shadow need independent tints.
    * Keep focus visible with `focus-visible:outline-*`. Ring and shadow utilities compete for the same `box-shadow` property.
 
-## Stylesheet Ownership
+## Stylesheet ownership
 
 The root stylesheet is an index and global foundation, not a dumping ground. It may own imports, CSS-first configuration, reset/normalize rules, design tokens, base typography and element defaults, global accessibility helpers, and app-wide utilities.
 
-For Tailwind v4 projects, treat stylesheets as the home for theme tokens, custom utilities, custom variants, and semantic component classes. Before creating a stylesheet, check whether an existing stylesheet already owns the concern and edit the smallest owning file.
+For Tailwind v4 projects, stylesheets own the exceptions named above. Before
+creating a rule, confirm that Tailwind cannot express it clearly in markup or in
+the project's existing component recipe. Name the unsupported selector,
+property, at-rule, or third-party constraint, then edit the smallest owning file.
 
-| Concern                     | Destination                                                           |
-| --------------------------- | --------------------------------------------------------------------- |
-| Design values               | `styles/tokens.css` or Tailwind v4 `@theme` definitions               |
-| Reset/browser normalization | `styles/reset.css`                                                    |
-| Element defaults            | `styles/base.css`                                                     |
-| Small reusable helpers      | `styles/utilities.css`                                                |
-| Custom utilities            | `styles/utilities.css` or the Tailwind entry stylesheet                |
-| Custom variants             | the Tailwind entry stylesheet or relevant owning stylesheet            |
-| Reusable app structure      | `styles/layouts/*.css`                                                |
-| Reusable UI components      | `styles/components/*.css`                                             |
-| Route-specific composition  | `styles/pages/*.css`                                                  |
-| Domain-specific UI          | `styles/features/<feature>/*.css`                                     |
+| Raw CSS exception | Destination |
+| --- | --- |
+| Design values | `styles/tokens.css` or Tailwind v4 `@theme` definitions |
+| Reset or browser normalization | `styles/reset.css` |
+| Element defaults | `styles/base.css` |
+| A reusable low-level utility | `styles/utilities.css` or the Tailwind entry stylesheet |
+| A repeated selector condition | the Tailwind entry stylesheet or the closest owning stylesheet |
+| Third-party markup | the closest integration or component stylesheet |
+| Unsupported CSS mechanics | the closest component, feature, or layout owner |
 
-## Import Order
+## Import order
 
 In Tailwind v4 projects, preserve the native layer order:
 
@@ -65,20 +77,17 @@ In Tailwind v4 projects, preserve the native layer order:
 
 @import "./reset.css" layer(base);
 @import "./base.css" layer(base);
-
-@import "./components/button.css" layer(components);
-@import "./layouts/shell.css" layer(components);
-@import "./pages/dashboard.css" layer(components);
-@import "./features/pos/product-grid.css" layer(components);
-
 @import "./utilities.css" layer(utilities);
 ```
 
 Do not predeclare a competing layer order that omits the `theme` layer or places `utilities` before `components`. Add project CSS to the closest native layer unless the repository already has a deliberate, tested layer contract.
 
-## Tailwind Boundary Rule
+## Tailwind boundary rule
 
-Use utilities directly when the class list describes one element clearly, remains readable, is not duplicated heavily, has minimal variants, and conditional classes represent genuine runtime state.
+Use utilities when Tailwind can express the style, including repeated component
+recipes and genuine runtime variants. Keep a plain recipe beside the component.
+When the project or its component library already uses `cva`, `clsx`, `cn`, or a
+similar helper, preserve that mechanism for a finite variant and state API.
 
 ```tsx
 <button className="inline-flex min-h-11 items-center justify-center rounded-md bg-blue-600 px-4 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2">
@@ -90,11 +99,17 @@ Use utilities directly when the class list describes one element clearly, remain
 <div className={isActive ? "border-blue-500" : "border-slate-200"} />
 ```
 
-Use semantic stylesheet classes when the same long class string repeats, variants require large maps or branching logic, markup is becoming styling data, or the component has a stable design-system role such as button, card, dialog, nav item, shell, or toolbar.
+Do not create a variant abstraction merely to abbreviate one class string. Keep
+the finite choices legible and colocated with their component. If conditional
+styling becomes open-ended or mirrors arbitrary CSS properties, simplify the
+component API instead of moving the same complexity into a stylesheet.
 
-Do not hide large utility strings inside `cva`, `clsx`, `cn`, variant maps, or conditional class trees for core styling. Keep utilities visible near markup or promote the styling into semantic stylesheet classes. Do not use `@apply` as the default escape hatch; prefer normal CSS, CSS-first theme definitions, custom utilities, custom variants, or semantic component classes.
+Use raw CSS only when the boundary above permits it. Do not use `@apply` or a
+semantic class as an escape from utility markup. A component name such as
+button, dialog, navigation item, shell, or toolbar does not create a CSS
+exception by itself.
 
-## Tailwind v4 CSS-First Patterns
+## Tailwind v4 CSS-first patterns
 
 For Tailwind-heavy work, delegate documentation lookup to one bounded native subagent:
 
@@ -162,11 +177,13 @@ Then keep usage near the markup:
 
 Do not create custom utilities, custom variants, or semantic classes merely to avoid writing a short, readable utility list once.
 
-## Component Styling Policy
+## Component styling policy
 
-For reusable components, pick one styling ownership model and keep it consistent.
+Reuse the project's component library before creating a new component recipe.
+Preserve the library's markup contract, behavior, accessibility, and established
+variant helper. Add utilities through the extension points it provides.
 
-Use utility-owned markup when the component is simple and the classes are readable:
+Keep project-owned component styling in utilities:
 
 ```tsx
 export function EmptyState() {
@@ -183,19 +200,10 @@ export function EmptyState() {
 }
 ```
 
-Use CSS-owned variants when the component has a stable design-system role, and let component logic select semantic names:
-
-```tsx
-export function Button({ variant = "primary", children, ...props }) {
-  return (
-    <button className={`button button--${variant}`} {...props}>
-      {children}
-    </button>
-  );
-}
-```
-
-Avoid turning component files into styling registries or creating large JavaScript/TypeScript variant APIs that only hide styling decisions. If the variant system becomes the primary styling surface, move the styling to CSS and let logic choose semantic class names.
+For a component with a finite public variant API, use the repository's existing
+recipe helper. If the repository has none, a small colocated map is acceptable.
+Do not create a second variant system, and do not replace a library recipe with
+hand-written CSS.
 
 ## CSS invariants
 
@@ -210,10 +218,12 @@ Preserve these within the recorded concern:
 * Motion respects `prefers-reduced-motion`.
 * No ordinary layout relies on absolute positioning.
 * No new component/page/feature CSS was dumped into the root stylesheet.
-* Utility class strings are either visible near markup or promoted into semantic CSS.
-* Large styling variant maps were not introduced in JavaScript or TypeScript.
+* Styles Tailwind can express remain Tailwind utilities.
+* Repetition and class-string length did not cause a move into raw CSS.
+* Existing component-library recipes and variant helpers remain in use.
+* Every new raw CSS rule meets one named exception from this skill.
 
-## When to Read References [!important]
+## When to read references [!important]
 
 * Read `references/tailwind-doc-subagent.md` before modifying or interpreting the documentation helper.
 * Read `references/tailwind-v4-operating-model.md` when the documentation helper or cache is unavailable.

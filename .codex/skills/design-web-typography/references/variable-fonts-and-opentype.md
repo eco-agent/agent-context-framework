@@ -4,8 +4,10 @@ What a font file can do beyond drawing letters, and how to reach those abilities
 
 ## Static vs variable
 
-- **Static font:** one weight and one style per file. Regular + medium + bold = three files.
-- **Variable font:** an entire range in one file. Any value in the range works, e.g. `font-weight: 589`.
+- A static font contains one weight and one style per file. Regular, medium, and
+  bold need three files.
+- A variable font contains an entire range in one file. Intermediate weights can
+  render, but that does not make arbitrary values part of the type system.
 
 A variable font is not automatically better. One or two weights: static files can be smaller. Several weights, optical sizes or custom axes: a variable font usually makes more sense.
 
@@ -45,7 +47,7 @@ When a property exists, use it. `font-weight` keeps working when a non-variable 
 ```css
 /* Good: common axes use the properties */
 .heading {
-  font-weight: 650;
+  font-weight: 600;
   font-optical-sizing: auto;
 }
 
@@ -56,9 +58,13 @@ When a property exists, use it. `font-weight` keeps working when a non-variable 
 
 /* Bad: weight via raw tag breaks on fallback fonts */
 .heading {
-  font-variation-settings: "wght" 650;
+  font-variation-settings: "wght" 600;
 }
 ```
+
+Choose weights from the project's named roles and verify that the font or its
+fallback provides them. Do not invent values such as `589` merely because a
+variable font can render them.
 
 ## OpenType features
 
@@ -95,7 +101,8 @@ Tabular numbers matter for changing values: without them each digit has a differ
 
 ## Small caps, superscripts, subscripts
 
-- **Small capitals:** uppercase letters drawn at a smaller size. Enable real ones with `font-variant-caps`.
+- Small capitals are uppercase letters drawn at a smaller size. Enable real ones
+  with `font-variant-caps`.
 - **Superscripts** sit above the normal line (the 2 in x²), **subscripts** below it (H₂O). Enable proper glyphs with `font-variant-position`.
 
 Both require the font to include the glyphs.

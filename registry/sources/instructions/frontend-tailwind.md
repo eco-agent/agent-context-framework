@@ -4,8 +4,10 @@ Select these instructions only when the project contract names Tailwind CSS as
 the frontend styling system.
 
 Use `skill-tailwind-css-architect` for Tailwind configuration, utility
-boundaries, and component styling. Neutral layout and stylesheet ownership stay
-with `skill-responsive-css-architect`.
+boundaries, and component styling. Tailwind utilities are the normal
+representation for styles Tailwind can express. `skill-responsive-css-architect`
+decides layout relationships and responsive behavior, but it does not move
+utility-expressible styling into raw CSS.
 
 Import `tw-fade` and `shadow-plugin` once, after `tailwindcss`, in the Tailwind
 entry stylesheet. Put `tw-fade` on the element that owns scrollable overflow,

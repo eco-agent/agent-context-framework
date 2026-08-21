@@ -142,7 +142,7 @@ to available space without learning which page happened to contain it.
   background: var(--color-accent);
   color: var(--color-accent-contrast);
   font: inherit;
-  font-weight: 650;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
 }

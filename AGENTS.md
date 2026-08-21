@@ -186,6 +186,20 @@ make only the required change. If the license permits reuse, a prose description
 or an independently built look-alike does not count as adoption. Established
 repairs to CSS, accessibility, state, or interaction need no precedent search.
 
+Before creating or replacing a frontend component, inspect dependency manifests,
+component imports, providers, theme configuration, and local component
+directories. If the project has a component library for that role, use its
+component. Preserve the library's behavior and accessibility, then compose or
+style it to match the approved design. Replace it only when a recorded
+requirement cannot be met through its public API.
+
+Native elements remain the first choice for simple controls. Do not hand-write
+composite behavior such as dialogs, popovers, menus, tooltips, comboboxes,
+listboxes, tabs, accordions, toasts, date pickers, or data grids until you have
+checked the project's component system and assessed a maintained accessible
+implementation. If neither fits, record the mismatch before writing a custom
+component.
+
 Use one primary surface. Do not use cards to create hierarchy. Do not add text
 whose only purpose is to frame other text or elements. Do not invent content,
 controls, navigation, summaries, or features. Decorative eyebrows,
@@ -196,6 +210,11 @@ gives them that role.
 Preserve the evidenced role of visible copy and headings. Moving precedent text
 to a different place in the hierarchy changes the product; it is not a styling
 choice.
+
+Use the established type roles, spacing, weight, color, and elevation to express
+hierarchy. Add a border or divider only when it marks a real structural boundary,
+grouping, state, or interaction edge. A muted one-pixel separator is not default
+decoration and must not compensate for weak hierarchy.
 
 Treat visual assets as implementation inputs. Preserve required product, brand,
 and precedent assets first. Otherwise, create code-native SVG for icons,

@@ -172,6 +172,9 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     "Do not use cards to create hierarchy.",
     "Do not add text whose only purpose is to frame other text or elements.",
     "Do not invent content, controls, navigation, summaries, or features.",
+    "If the project has a component library for that role, use its component.",
+    "Do not hand-write composite behavior",
+    "A muted one-pixel separator is not default decoration",
     "Default to minimalism",
   ]) {
     assert.match(normalizedFrontendSource, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
@@ -191,6 +194,18 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
       ".codex/skills/frontend-design-discipline/references/representation-search.md",
     ]) {
       assert.equal(await exists(path.join(root, ...expected.split("/"))), true);
+    }
+
+    const typographySkill = (await readFile(
+      path.join(root, ".codex", "skills", "design-web-typography", "SKILL.md"),
+      "utf8",
+    )).replace(/\s+/gu, " ");
+    for (const required of [
+      "Do not use arbitrary per-element values or line-height to position text inside a control.",
+      "Keep `letter-spacing: normal` for ordinary headings and body text.",
+      "Do not tune individual headings",
+    ]) {
+      assert.equal(typographySkill.includes(required), true);
     }
 
     for (const component of resolveContextComponents(registry, ["frontend"])) {
@@ -236,6 +251,17 @@ test("frontend-tailwind owns the Tailwind instruction and skill closure", async 
       await exists(path.join(tailwindRoot, ".codex", "skills", "responsive-css-architect", "SKILL.md")),
       true,
     );
+    const tailwindSkill = (await readFile(
+      path.join(tailwindRoot, ".codex", "skills", "tailwind-css-architect", "SKILL.md"),
+      "utf8",
+    )).replace(/\s+/gu, " ");
+    for (const required of [
+      "utilities are the normal representation for every style Tailwind can express cleanly.",
+      "Repetition, a long class string, or a stable component role is not enough reason to move styling into raw CSS.",
+      "Existing component-library recipes and variant helpers remain in use.",
+    ]) {
+      assert.equal(tailwindSkill.includes(required), true);
+    }
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -900,12 +926,15 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
   await mkdir(targetRoot, { recursive: true });
   for (const skill of [
     "adopt-established-product",
+    "design-accessible-interfaces",
     "design-typescript-invariants",
+    "design-web-typography",
     "diagnose",
     "frontend-design-discipline",
     "optimize-codex-sessions",
     "orchestrate-codex-workflows",
     "responsive-css-architect",
+    "tailwind-css-architect",
   ]) {
     await cp(
       path.join(frameworkRoot, ".codex", "skills", skill),

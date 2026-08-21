@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.6",
-  "decisionPath": "registry/decisions/0.8.6-context-control-repairs.md",
+  "revision": "0.8.7",
+  "decisionPath": "registry/decisions/0.8.7-frontend-implementation-policy.md",
   "components": [
     {
       "name": "core",
@@ -138,7 +138,7 @@
     },
     {
       "name": "skill-design-accessible-interfaces",
-      "revision": "sha256:7de3d5b17954fc7a56495ee9df4f6e35aa19a664d4b0f7f9499e89f46128ac24",
+      "revision": "sha256:bc1e30997a34b23a289f4a1a04cc7627965e316fcf7d0a0d0dd381af0a2cbc21",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -211,7 +211,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-accessible-interfaces/SKILL.md",
-          "sourceSha256": "ce5cb1fbc625de7bebfd0d5ce7fa72e4879a074fd6676b132d5710e225ae3ad2",
+          "sourceSha256": "7160bb331052e7b72d66521d6db4ecd4cc8b885f9d2834af7f07917eb9187932",
           "targetPath": ".codex/skills/design-accessible-interfaces/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -366,7 +366,7 @@
     },
     {
       "name": "skill-design-web-typography",
-      "revision": "sha256:a9e2e0d97189091395aeaef6bb79394e32a3c480e8f1866835f9901c852026e8",
+      "revision": "sha256:cae25488640e5aa7b822c10f01352f6900d2202a846a13416183a13ec86c334a",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -404,14 +404,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-web-typography/references/spacing-and-sizing.md",
-          "sourceSha256": "df78e8fcf74953e5762340d7f793dcc9823b614f0e2ef7e67234ffb9ad3a5aba",
+          "sourceSha256": "1a41cf318c4eaea4e76e18e9e4ce9ad5463279cbf360d5a57b8de22a967e02cd",
           "targetPath": ".codex/skills/design-web-typography/references/spacing-and-sizing.md",
           "mediaType": "text/markdown"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-web-typography/references/variable-fonts-and-opentype.md",
-          "sourceSha256": "5aa349721fa1f667ce4a9515199e866d83b9fd8eb1d815e6265f092201a44dfe",
+          "sourceSha256": "d3234fd3039f9d81d2696a97dd87735810171998ad04ceb9af6c455997128a40",
           "targetPath": ".codex/skills/design-web-typography/references/variable-fonts-and-opentype.md",
           "mediaType": "text/markdown"
         },
@@ -425,7 +425,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-web-typography/SKILL.md",
-          "sourceSha256": "92c7c4c4d78532000202b097d9cb3370c9c17f496adbdcee088b8ec1ab75ca22",
+          "sourceSha256": "84b15fee487230fc9c6fb2e7d86f5bf878b4a35e2a897dd8d473cfc3bcf030c9",
           "targetPath": ".codex/skills/design-web-typography/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -440,7 +440,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:1249fa032e8487db4ac1a01a3b9b59de6339c00c062d7531978b3d3c9681cb56",
+      "revision": "sha256:2f13eec94a579b58fdd21f04aac00f749aa876180171fdc6e31784c141cdba1b",
       "dependencies": [],
       "capabilities": [
         {
@@ -490,7 +490,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
-          "sourceSha256": "7128075234d1dd2f25daefc9c33b9355e0f88947b8e41cf534ad16eae1f780b3",
+          "sourceSha256": "bb58b529419a1e886ed3f4368ced5e09ab5dda651376c5a3b8696bd5617e2d23",
           "targetPath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
           "mediaType": "text/markdown"
         },
@@ -532,7 +532,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "c3cce8d59d82a84ce2ebe23c9e3858864b2b36e8ea21def22cc3ddd355f9381e",
+          "sourceSha256": "ffcd665c1c555b237ea47a2448d6367078669ab44313bd46a5cf6fbc2d4857b1",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -540,7 +540,7 @@
     },
     {
       "name": "skill-responsive-css-architect",
-      "revision": "sha256:410e03a95482e1a7ac4dcf171c737547955371d17c1b1f8a48ca0cc2c1a7a70a",
+      "revision": "sha256:6a143d51b255b3b4a354eede1277c057acf0287b2641a2be2815b67b53337147",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -563,7 +563,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
-          "sourceSha256": "bad8d8909e4aef40bbc024435c948190d8217d3594c893332d6745de193741c7",
+          "sourceSha256": "17695395063bdaa5a5eedeeb0e2b5708a687bf4ee87a4f33cba470c5a83ed851",
           "targetPath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
           "mediaType": "text/markdown"
         },
@@ -577,7 +577,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/responsive-css-architect/references/stylesheet-architecture.md",
-          "sourceSha256": "b6336ee5eec66748c98ac2557d8db9d4205fae83647f3a723d538753c6c0938c",
+          "sourceSha256": "86c241ea61b39911cb3fc24e60df8805eff910f0a8b51d6b9edfbec3b8df6291",
           "targetPath": ".codex/skills/responsive-css-architect/references/stylesheet-architecture.md",
           "mediaType": "text/markdown"
         },
@@ -592,7 +592,7 @@
     },
     {
       "name": "skill-tailwind-css-architect",
-      "revision": "sha256:40c94db0f8763c31828b7f3ae6d1ea1fb91b51639f854ba5870d2bec4c4ee57e",
+      "revision": "sha256:cc9e1640d9b5f1d537b57a9188bf61bfdbc97432c744e07ee15c86380d0d727a",
       "dependencies": [],
       "capabilities": [
         {
@@ -673,7 +673,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
-          "sourceSha256": "e0cda5159558ce70f3a62e8af50207acb304fa31c02153765b4ca4be43f22155",
+          "sourceSha256": "2b80ae5130825c19bfb8e05da45c47ef1fbcb3ae96e33b653839056271f32dcc",
           "targetPath": ".codex/skills/tailwind-css-architect/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -681,7 +681,7 @@
     },
     {
       "name": "frontend",
-      "revision": "sha256:119f5271a6d8784d2e0708840dff4c903b0db7171614b1f929d1a5c3256829a9",
+      "revision": "sha256:bea036accf760e1d3b71298b9b733f314307f6fac05c8929345459ca6b85be0a",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -716,7 +716,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend.md",
-          "sourceSha256": "35054ac2f3dcc541913edfce4c3717192a0e76420db4f499b13eea664d4c5f49",
+          "sourceSha256": "5844b1e89610d72cc41c75518bfacbca252cc8d6377a8efb8a8afd0f73627bbe",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend",
           "markerStyle": "markdown"
@@ -725,7 +725,7 @@
     },
     {
       "name": "frontend-tailwind",
-      "revision": "sha256:c03c74c4f26a8c79dc1cf80983ac18d09317e7b1fd58807bce66eb8e46ecf581",
+      "revision": "sha256:9a74ae4fb5beead3a3b5f7be3f1607af32c754b971fa330408388795fd329b15",
       "dependencies": [
         "frontend",
         "skill-responsive-css-architect",
@@ -745,7 +745,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-          "sourceSha256": "12f7dcfbb8872b673a445550a4bb74cc8bba036147d590ef30751d8438a46212",
+          "sourceSha256": "179e3ffa8477ba66d8e19b8816d75aed031b0e4c45acb283b3384adc2a804ee2",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend-tailwind",
           "markerStyle": "markdown"

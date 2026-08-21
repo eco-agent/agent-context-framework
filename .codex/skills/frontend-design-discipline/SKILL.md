@@ -98,6 +98,13 @@ it starts, the action, state change, result, required states, and exact code
 locations. Name the owner of each code location. Implement the approved design
 only.
 
+Before naming a new presentation owner, inspect dependency manifests, component
+imports, providers, theme configuration, and local component directories. Map
+the approved roles to the project's component library where they match. The
+library does not decide product structure, copy, or hierarchy, but an adopted
+component keeps ownership of behavior and accessibility unless its public API
+cannot meet a recorded requirement.
+
 Specialists may handle settled accessibility, color, typography, interface
 details, animation, bitmap assets, and responsive CSS. They must not change the
 approved product structure, visible content, actions, or state ownership.

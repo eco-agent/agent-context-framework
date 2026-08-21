@@ -5,7 +5,10 @@ description: Implement accessible interface behavior.
 
 # Accessible interfaces
 
-Use the platform before custom behavior. Match the established styling system.
+Use the platform before custom behavior. Match the established styling and
+component systems. When the project has an accessible component primitive for a
+role, use it instead of rebuilding the behavior or bypassing the component
+system with lower-level markup. Native-first does not mean library-last.
 
 In copied references, `better-colors` means `design-color-systems`, `better-typography` means `design-web-typography`, and `better-layout` means `responsive-css-architect`.
 

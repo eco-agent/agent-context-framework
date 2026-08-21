@@ -138,7 +138,7 @@ Is this tied to one business feature?
   border: 0;
   border-radius: var(--radius-sm);
   font: inherit;
-  font-weight: 650;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
 }

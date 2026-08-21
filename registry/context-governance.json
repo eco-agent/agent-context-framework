@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "registryRevision": "0.8.6",
-  "decisionPath": "registry/decisions/0.8.6-context-control-repairs.md",
+  "registryRevision": "0.8.7",
+  "decisionPath": "registry/decisions/0.8.7-frontend-implementation-policy.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -16,12 +16,37 @@
     {
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
-      "sha256": "35054ac2f3dcc541913edfce4c3717192a0e76420db4f499b13eea664d4c5f49"
+      "sha256": "5844b1e89610d72cc41c75518bfacbca252cc8d6377a8efb8a8afd0f73627bbe"
     },
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "c3cce8d59d82a84ce2ebe23c9e3858864b2b36e8ea21def22cc3ddd355f9381e"
+      "sha256": "ffcd665c1c555b237ea47a2448d6367078669ab44313bd46a5cf6fbc2d4857b1"
+    },
+    {
+      "invariantId": "frontend-accessible-component-reuse",
+      "sourcePath": ".codex/skills/design-accessible-interfaces/SKILL.md",
+      "sha256": "7160bb331052e7b72d66521d6db4ecd4cc8b885f9d2834af7f07917eb9187932"
+    },
+    {
+      "invariantId": "frontend-typography-roles",
+      "sourcePath": ".codex/skills/design-web-typography/SKILL.md",
+      "sha256": "84b15fee487230fc9c6fb2e7d86f5bf878b4a35e2a897dd8d473cfc3bcf030c9"
+    },
+    {
+      "invariantId": "frontend-typography-spacing",
+      "sourcePath": ".codex/skills/design-web-typography/references/spacing-and-sizing.md",
+      "sha256": "1a41cf318c4eaea4e76e18e9e4ce9ad5463279cbf360d5a57b8de22a967e02cd"
+    },
+    {
+      "invariantId": "frontend-variable-font-roles",
+      "sourcePath": ".codex/skills/design-web-typography/references/variable-fonts-and-opentype.md",
+      "sha256": "d3234fd3039f9d81d2696a97dd87735810171998ad04ceb9af6c455997128a40"
+    },
+    {
+      "invariantId": "frontend-tailwind-representation",
+      "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
+      "sha256": "2b80ae5130825c19bfb8e05da45c47ef1fbcb3ae96e33b653839056271f32dcc"
     },
     {
       "invariantId": "established-product-adoption",
@@ -76,7 +101,7 @@
     {
       "invariantId": "frontend-implementation-reconciliation",
       "sourcePath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
-      "sha256": "7128075234d1dd2f25daefc9c33b9355e0f88947b8e41cf534ad16eae1f780b3"
+      "sha256": "bb58b529419a1e886ed3f4368ced5e09ab5dda651376c5a3b8696bd5617e2d23"
     },
     {
       "invariantId": "frontend-visual-review",
@@ -91,7 +116,12 @@
     {
       "invariantId": "responsive-layout-relationships",
       "sourcePath": ".codex/skills/responsive-css-architect/references/layout-patterns.md",
-      "sha256": "bad8d8909e4aef40bbc024435c948190d8217d3594c893332d6745de193741c7"
+      "sha256": "17695395063bdaa5a5eedeeb0e2b5708a687bf4ee87a4f33cba470c5a83ed851"
+    },
+    {
+      "invariantId": "responsive-stylesheet-ownership",
+      "sourcePath": ".codex/skills/responsive-css-architect/references/stylesheet-architecture.md",
+      "sha256": "86c241ea61b39911cb3fc24e60df8805eff910f0a8b51d6b9edfbec3b8df6291"
     },
     {
       "invariantId": "responsive-portability-review",
@@ -101,7 +131,7 @@
     {
       "invariantId": "frontend-tailwind-explicit",
       "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-      "sha256": "12f7dcfbb8872b673a445550a4bb74cc8bba036147d590ef30751d8438a46212"
+      "sha256": "179e3ffa8477ba66d8e19b8816d75aed031b0e4c45acb283b3384adc2a804ee2"
     },
     {
       "invariantId": "repository-work",

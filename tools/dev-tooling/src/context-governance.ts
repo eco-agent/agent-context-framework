@@ -65,6 +65,14 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Treat schemas and the current implementation as evidence, not as the default interface.",
     "Treat desktop and mobile as projections of the same product model.",
     "Preservation is not the default.",
+    "Before creating or replacing a frontend component, inspect dependency manifests, component imports, providers, theme configuration, and local component directories.",
+    "If the project has a component library for that role, use its component.",
+    "Do not hand-write composite behavior such as dialogs, popovers, menus, tooltips, comboboxes, listboxes, tabs, accordions, toasts, date pickers, or data grids until you have checked the project's component system and assessed a maintained accessible implementation.",
+    "A muted one-pixel separator is not default decoration and must not compensate for weak hierarchy.",
+  ]],
+  ["registry/sources/instructions/frontend-tailwind.md", [
+    "Tailwind utilities are the normal representation for styles Tailwind can express.",
+    "`skill-responsive-css-architect` decides layout relationships and responsive behavior, but it does not move utility-expressible styling into raw CSS.",
   ]],
   [".codex/skills/frontend-design-discipline/SKILL.md", [
     "Decide what the product should show and how it should behave before treating the schema or current component tree as the answer.",
@@ -74,6 +82,38 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "They must not change the approved product structure",
     "Before reading or changing the current component tree",
     "settle one answer and one owner",
+    "Before naming a new presentation owner, inspect dependency manifests, component imports, providers, theme configuration, and local component directories.",
+    "an adopted component keeps ownership of behavior and accessibility unless its public API cannot meet a recorded requirement.",
+  ]],
+  [".codex/skills/design-accessible-interfaces/SKILL.md", [
+    "When the project has an accessible component primitive for a role, use it instead of rebuilding the behavior or bypassing the component system with lower-level markup.",
+    "Native-first does not mean library-last.",
+  ]],
+  [".codex/skills/design-web-typography/SKILL.md", [
+    "Treat typography as a small set of named roles, not a collection of local adjustments.",
+    "Change the role before changing one property on one element.",
+    "If hierarchy is weak, try an established role or a loaded weight before changing line-height or tracking.",
+    "Do not use arbitrary per-element values or line-height to position text inside a control.",
+    "Keep `letter-spacing: normal` for ordinary headings and body text.",
+    "Do not tune individual headings, imitate kerning with letter-spacing, or use arbitrary tracking values to make text feel tighter.",
+  ]],
+  [".codex/skills/design-web-typography/references/spacing-and-sizing.md", [
+    "Preserve the project's existing scale.",
+    "Do not use arbitrary values such as `tracking-[-0.023em]` or local `letter-spacing` declarations to tune one heading.",
+    "Do not add `leading-[0.98273]` or another arbitrary per-element value.",
+    "Fix vertical alignment with layout and control sizing, not line-height.",
+  ]],
+  [".codex/skills/design-web-typography/references/variable-fonts-and-opentype.md", [
+    "Intermediate weights can render, but that does not make arbitrary values part of the type system.",
+    "Do not invent values such as `589` merely because a variable font can render them.",
+  ]],
+  [".codex/skills/tailwind-css-architect/SKILL.md", [
+    "Tailwind utilities are the normal representation for every style Tailwind can express cleanly.",
+    "Do not replace them with a parallel stylesheet API.",
+    "Repetition, a long class string, or a stable component role is not enough reason to move styling into raw CSS.",
+    "Do not use `@apply` or a semantic class as an escape from utility markup.",
+    "Existing component-library recipes and variant helpers remain in use.",
+    "Every new raw CSS rule meets one named exception from this skill.",
   ]],
   [".codex/skills/adopt-established-product/SKILL.md", [
     "mark the target as an exact copy or an adaptation",
@@ -125,6 +165,8 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "The existing implementation is evidence about behavior, integrations, and cost.",
     "Deletion is unrestricted within the approved change.",
     "Do not let implementation convenience silently revise the approved target.",
+    "Inventory the component system before assigning new presentation owners.",
+    "Do not replace it with hand-written markup merely because custom styling looks easier.",
   ]],
   [".codex/skills/frontend-design-discipline/references/visual-review.md", [
     "Review the actual result rather than inferring behavior from JSX, CSS, types, or a single screenshot.",
@@ -135,6 +177,9 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "express relationships rather than screenshot measurements",
     "Do not use a number to compensate for unresolved layout.",
     "Moving a component between its supported containers requires little or no CSS rewriting.",
+  ]],
+  [".codex/skills/responsive-css-architect/references/stylesheet-architecture.md", [
+    "Adapt names to the project, but keep the ownership model.",
   ]],
   [".codex/skills/orchestrate-codex-workflows/SKILL.md", [
     "This skill does not support recursive manager trees, sibling voting, or an open-ended scheduler.",
