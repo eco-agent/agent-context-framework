@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -47,6 +47,7 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     await writeFile(path.join(projectRoot, "pyproject.toml"), "[project]\nname = \"fixture\"\n", "utf8");
 
     await initProject(projectRoot, frameworkRoot);
+    assert.match(await readFile(path.join(projectRoot, ".gitattributes"), "utf8"), /\.agent-context\/\*\* text eol=lf/u);
     const installed = await addComponent(projectRoot, frameworkRoot, "repository-policy");
     assert.equal(installed.plan.status, "ready");
     assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
@@ -128,6 +129,31 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
       false,
     );
     assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test("Oxfmt integration owns only the framework runtime ignore", async () => {
+  const projectRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-oxfmt-"));
+  try {
+    await writeFile(
+      path.join(projectRoot, ".oxfmtrc.json"),
+      `${JSON.stringify({ ignorePatterns: ["dist/**"] }, null, 2)}\n`,
+      "utf8",
+    );
+    await initProject(projectRoot, frameworkRoot);
+    const installed = await addComponent(projectRoot, frameworkRoot, "integration-oxfmt");
+    assert.equal(installed.plan.status, "ready");
+    assert.deepEqual(
+      JSON.parse(await readFile(path.join(projectRoot, ".oxfmtrc.json"), "utf8")),
+      { ignorePatterns: ["dist/**", ".agent-context/**"] },
+    );
+    await removeComponent(projectRoot, frameworkRoot, "integration-oxfmt");
+    assert.deepEqual(
+      JSON.parse(await readFile(path.join(projectRoot, ".oxfmtrc.json"), "utf8")),
+      { ignorePatterns: ["dist/**"] },
+    );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }

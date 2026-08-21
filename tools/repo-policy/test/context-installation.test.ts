@@ -236,6 +236,6 @@ test("member and identified-array-item ownership decode as closed artifact varia
   });
   assert.deepEqual(
     registry.components[0]?.artifacts.map((artifact) => artifact.operation),
-    ["json-array-items", "json-array-values", "toml-members", "seed-file"],
+    ["json-array-values", "json-array-items", "toml-members", "seed-file"],
   );
 });

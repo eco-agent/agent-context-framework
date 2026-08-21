@@ -23,6 +23,7 @@ export interface ArtifactProjection {
 
 interface SectionLocation {
   readonly blockStart: number;
+  readonly markerStart: number;
   readonly markerEnd: number;
   readonly innerStart: number;
   readonly innerEnd: number;
@@ -705,7 +706,8 @@ function removeMarkedSection(
   const section = locateMarkedSection(target, markers);
   if (!section) throw new Error("Cannot remove a missing or malformed owned section.");
   const replacement = preserveContent ? target.slice(section.innerStart, section.innerEnd) : "";
-  const result = `${target.slice(0, section.blockStart)}${replacement}${target.slice(section.blockEnd)}`;
+  const removalStart = preserveContent ? section.markerStart : section.blockStart;
+  const result = `${target.slice(0, removalStart)}${replacement}${target.slice(section.blockEnd)}`;
   const normalized = result.replace(/^\n+/u, "").replace(/\n{3,}/gu, "\n\n");
   return normalized.length === 0 ? null : normalized;
 }
@@ -741,7 +743,7 @@ function locateMarkedSection(
     : firstStart;
   const afterEnd = firstEnd + markers.end.length;
   const blockEnd = target[afterEnd] === "\n" ? afterEnd + 1 : afterEnd;
-  return { blockStart, markerEnd, innerStart, innerEnd: firstEnd, blockEnd };
+  return { blockStart, markerStart: firstStart, markerEnd, innerStart, innerEnd: firstEnd, blockEnd };
 }
 
 interface MarkerPair {

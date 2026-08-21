@@ -38,7 +38,7 @@ test("init preserves project prose and is byte-for-byte idempotent", async () =>
     assert.deepEqual(first.writtenPaths, ["AGENTS.md", CONTEXT_CONFIG_PATH, CONTEXT_LOCK_PATH]);
     const installed = await readFile(path.join(fixture.projectRoot, "AGENTS.md"), "utf8");
     assert.match(installed, /^# Local rules\n\nKeep this text\.\n/u);
-    assert.match(installed, /<!-- agent-context:core:start -->\n# Core rules/u);
+    assert.match(installed, /<!-- agent-context:core:start -->\n\n# Core rules/u);
 
     const config = JSON.parse(await readFile(path.join(fixture.projectRoot, CONTEXT_CONFIG_PATH), "utf8")) as unknown;
     assert.deepEqual(config, { schemaVersion: 2, adapter: "codex", components: ["core"] });
