@@ -1,17 +1,17 @@
 {
   "schemaVersion": 2,
-  "registryRevision": "0.9.0",
-  "decisionPath": "registry/decisions/0.9.0-engineering-risk-skills.md",
+  "registryRevision": "0.9.1",
+  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "4373d0600e1a2a258548aebda607913ae380e5239626c1b8b00dee4965605d58"
+      "sha256": "d6ebc46cfca9efab2ec5b7a80addf4ced1fec62e3b500449ffd9e96cede1b209"
     },
     {
       "invariantId": "framework-root-prefix",
       "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
-      "sha256": "54bcac3973f82307c27cec7e08f1f08d493420f51a6c1fa39aa1a8521341e682"
+      "sha256": "3b29f7dd6b50dbdd64011259d696d84e1ce458105b5ed4c666f74dfe2b0ba32e"
     },
     {
       "invariantId": "frontend-discipline",

@@ -738,7 +738,7 @@ test("governance rejects changes outside the named root instruction sections", a
     await writeFile(
       agentsPath,
       (await readFile(agentsPath, "utf8")).replace(
-        "Preserve unrelated changes. Never push or deploy.",
+        "Preserve unrelated changes. Push only when the user explicitly requests it.",
         "Unrelated changes may be discarded.",
       ),
       "utf8",

@@ -19,6 +19,8 @@ const REQUIRED_REVIEW_PATTERNS = [
 
 const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   ["registry/sources/instructions/core.md", [
+    "Push only when the user explicitly requests it.",
+    "Never deploy without an explicit user request.",
     "Treat framework-managed instructions as maintainer-owned policy.",
     "Do not edit, remove, override, or weaken them from project work.",
     "repository.projectContracts",
@@ -33,6 +35,10 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Do not change global Git configuration.",
     "Treat the work record as temporary task state.",
     "Otherwise remove it in the same task.",
+  ]],
+  ["registry/sources/instructions/framework-root-prefix.md", [
+    "Push only when the user explicitly requests it.",
+    "Never deploy without an explicit user request.",
   ]],
   ["registry/sources/instructions/repository-work.md", [
     "Prefer a package dependency when its public API is enough.",

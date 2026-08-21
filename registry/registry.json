@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.9.0",
-  "decisionPath": "registry/decisions/0.9.0-engineering-risk-skills.md",
+  "revision": "0.9.1",
+  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:1be55463dfa0461c5b004944e746cb409f77b3bc2495833ff695708fe3d941af",
+      "revision": "sha256:bc0a5c013ce2ddac473716eb24255c3d5466d1697ccb8a38bf00029b572b88ff",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "4373d0600e1a2a258548aebda607913ae380e5239626c1b8b00dee4965605d58",
+          "sourceSha256": "d6ebc46cfca9efab2ec5b7a80addf4ced1fec62e3b500449ffd9e96cede1b209",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
