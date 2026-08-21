@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "exercises": [
+    {
+      "component": "skill-adopt-established-product",
+      "positivePrompt": "Replace this application's shell and navigation with a proven project-management product structure.",
+      "negativePrompt": "Repair the focus ring on the existing navigation button without changing the shell.",
+      "changedDecision": "Pin compatible licensed source and preserve its product topology before making the requested adaptation.",
+      "observation": "A source receipt, license, materialized files, and a mapping from the adopted topology to the requested product roles.",
+      "gracePath": "Report that no compatible licensed source was found and stop before inventing a replacement topology."
+    },
+    {
+      "component": "skill-choose-react-animation",
+      "positivePrompt": "Animate this React list so insertion, removal, and reordered state remain understandable.",
+      "negativePrompt": "Change the static label text in this React list.",
+      "changedDecision": "Choose motion from the state transition and provide a static reduced-motion result.",
+      "observation": "The implemented transition, reduced-motion behavior, and a focused state-change check or authorized rendered review.",
+      "gracePath": "Keep the interface static and report the missing motion or rendered observer."
+    },
+    {
+      "component": "skill-design-accessible-interfaces",
+      "positivePrompt": "Use $design-accessible-interfaces to implement this keyboard-operated combobox.",
+      "negativePrompt": "Rename a non-interactive paragraph in the existing page.",
+      "changedDecision": "Use an established accessible component or the correct native semantics and interaction contract.",
+      "observation": "Keyboard, focus, name, role, state, and announcement behavior checked in the authorized environment.",
+      "gracePath": "Report the unverified assistive-technology behavior and retain the established component semantics."
+    },
+    {
+      "component": "skill-design-color-systems",
+      "positivePrompt": "Use $design-color-systems to define the semantic colors for this new web theme.",
+      "negativePrompt": "Change one approved icon without altering any theme color.",
+      "changedDecision": "Derive semantic roles and state pairs from the existing palette and contrast requirements instead of choosing isolated colors.",
+      "observation": "Color tokens, role mappings, gamut treatment, and contrast results for the required states.",
+      "gracePath": "Preserve the established palette and report the role or contrast conflict that needs a design decision."
+    },
+    {
+      "component": "skill-design-interface-details",
+      "positivePrompt": "Use $design-interface-details to draw and align the approved empty-state SVG icon.",
+      "negativePrompt": "Decide what navigation and content this empty state should contain.",
+      "changedDecision": "Implement the settled asset role without changing product structure or inventing meaning.",
+      "observation": "The code-native asset, optical alignment, state behavior, and reduced-motion result when motion is present.",
+      "gracePath": "Report the unsettled product role and return it to the frontend design owner before drawing the asset."
+    },
+    {
+      "component": "skill-design-web-typography",
+      "positivePrompt": "Use $design-web-typography to define the responsive type roles for this interface.",
+      "negativePrompt": "Fix an API retry bug that does not affect rendered text.",
+      "changedDecision": "Use the established font and token system to define resilient roles, spacing, wrapping, and accessibility behavior.",
+      "observation": "Type roles and tokens checked across the required content, zoom, and responsive states.",
+      "gracePath": "Preserve the existing type system and report the missing font, token, or rendered observer."
+    },
+    {
+      "component": "skill-frontend-design-discipline",
+      "positivePrompt": "Design a novel interaction for comparing two live deployment states before implementing it.",
+      "negativePrompt": "Fix the established deployment table's horizontal overflow without changing its interaction.",
+      "changedDecision": "Materialize and compare a genuinely different representation before approving one implementation target.",
+      "observation": "A design-search record with evidence, competing representations, one approved answer, and an implementation specification.",
+      "gracePath": "Report the missing product evidence or decision owner and stop before inventing visible structure."
+    },
+    {
+      "component": "skill-responsive-css-architect",
+      "positivePrompt": "Repair this settled interface so its layout and overflow work in narrow and wide containers.",
+      "negativePrompt": "Decide whether this product should use a feed or a dashboard.",
+      "changedDecision": "Express container and layout relationships in the owning stylesheet without changing product meaning.",
+      "observation": "Focused CSS ownership, overflow, interaction-state, and container behavior in the authorized review environment.",
+      "gracePath": "Report the unverified container or rendered state and preserve the approved composition."
+    },
+    {
+      "component": "skill-tailwind-css-architect",
+      "positivePrompt": "Restructure this Tailwind CSS v4 component so container behavior and variants have one owner.",
+      "negativePrompt": "Write responsive CSS for a project that does not use Tailwind.",
+      "changedDecision": "Use the installed Tailwind v4 conventions and project theme rather than introducing a parallel styling approach.",
+      "observation": "Tailwind configuration, class ownership, variants, responsive behavior, and focused checks.",
+      "gracePath": "Route to the plain responsive CSS owner or report the missing Tailwind configuration."
+    },
+    {
+      "component": "skill-codebase-inventory",
+      "positivePrompt": "Measure this repository's package and file shape so we can compare it with the previous release.",
+      "negativePrompt": "Explain one known function whose exact path is already supplied.",
+      "changedDecision": "Run the deterministic inventory and report its JSON facts rather than estimating repository shape.",
+      "observation": "Validated inventory JSON with the selected report mode and comparison baseline.",
+      "gracePath": "Report the unsupported repository input or missing runtime without inventing counts."
+    },
+    {
+      "component": "skill-design-typescript-invariants",
+      "positivePrompt": "Redesign this persisted TypeScript job state so contradictory completion fields cannot coexist.",
+      "negativePrompt": "Rename a local TypeScript variable without changing its type or boundary.",
+      "changedDecision": "Model valid states first, derive authoritative shapes, validate external data, and strengthen types only where partial operations require it.",
+      "observation": "Representative valid and invalid states, boundary conversion, public call-site pressure, and focused invariant checks.",
+      "gracePath": "Preserve the established type convention and report the unresolved domain term, schema owner, or unavailable invariant check."
+    },
+    {
+      "component": "skill-diagnose",
+      "positivePrompt": "This regression has several plausible causes and targeted inspection did not establish which one is real.",
+      "negativePrompt": "Fix the misspelled constant whose failing line and correction are already known.",
+      "changedDecision": "Reproduce, rank plausible causes, run separating probes, and fix only the proved cause.",
+      "observation": "A reproduced failure, probe results, proved cause, focused regression check, and cleanup of instrumentation.",
+      "gracePath": "Report the missing reproducer or observer and stop before selecting a speculative cause."
+    },
+    {
+      "component": "skill-reuse-before-implementation",
+      "positivePrompt": "Implement a substantial parser for a public protocol that may already have a maintained library.",
+      "negativePrompt": "Add a two-line project-specific mapping with no reusable mechanism.",
+      "changedDecision": "Search project code, maintained packages, and compatible licensed source before writing the mechanism.",
+      "observation": "A reuse assessment naming source, revision, license, fit, costs, and the chosen adoption or justified gap.",
+      "gracePath": "Implement the project-specific gap independently and report why available reuse was incompatible or unlicensed."
+    },
+    {
+      "component": "skill-write-technical-prose",
+      "positivePrompt": "Use $write-technical-prose to clear the deterministic prose findings in this technical guide.",
+      "negativePrompt": "Draft a conversational product announcement with no repository prose check.",
+      "changedDecision": "Repair only the reported technical-prose findings while preserving the document's facts and role.",
+      "observation": "The repository-declared technical-prose check passes on the selected documentation.",
+      "gracePath": "Report the unavailable check or disputed finding without claiming compliance."
+    },
+    {
+      "component": "skill-writing-great-skills",
+      "positivePrompt": "Use $writing-great-skills to create an automatically selected skill for database migration reviews.",
+      "negativePrompt": "Write ordinary project documentation that is not an agent skill.",
+      "changedDecision": "Give the skill one discriminating trigger, one owner, progressive detail, and observable completion without repeating global policy.",
+      "observation": "Structural skill validation, agent-prose results, invocation metadata, and a representative forward-use outcome.",
+      "gracePath": "Keep the skill explicit or stop publication when the trigger, observer, or authority remains unsettled."
+    },
+    {
+      "component": "skill-maintain-agent-context-framework",
+      "positivePrompt": "Change Agent Context Framework governance and carry the decision through its registry projections.",
+      "negativePrompt": "Implement an ordinary application feature without changing framework policy.",
+      "changedDecision": "Map retained and changed behavior, assign owners, split prose from enforcement, and propagate the canonical edit.",
+      "observation": "A semantic preservation map, governance and registry agreement, focused checks, and reported grace paths.",
+      "gracePath": "Stop at the unresolved owner or conflicting retained requirement and request the missing decision."
+    },
+    {
+      "component": "skill-optimize-codex-sessions",
+      "positivePrompt": "Review this completed Codex task and exact Git range for repeated repair and misplaced context.",
+      "negativePrompt": "Judge an active task that has not reached a delivery boundary.",
+      "changedDecision": "Use measured session and Git evidence to separate necessary work, quality work, and avoidable churn.",
+      "observation": "Measured task evidence, observed and inferred claims, bounded recommendations, and a comparison for later tasks.",
+      "gracePath": "Report unavailable session or range evidence and do not turn an incomplete task into a final workflow verdict."
+    },
+    {
+      "component": "skill-orchestrate-codex-workflows",
+      "positivePrompt": "Build a resumable Codex SDK workflow with stored evidence, finite repair rounds, and enforced permissions.",
+      "negativePrompt": "Use one ordinary plan for a short serial edit that returns in this task.",
+      "changedDecision": "Choose one bounded workflow helper and encode stages, permissions, evidence, return paths, and stopping conditions in project code.",
+      "observation": "Typed workflow state, ledger evidence, mock tests, bounded counters, and task acceptance checks.",
+      "gracePath": "Use a native subagent or ordinary plan when durability is unnecessary, or report the unsupported workflow shape."
+    },
+    {
+      "component": "skill-design-operational-boundaries",
+      "positivePrompt": "Add a persistent background job that retries failed network delivery and reports its terminal outcome.",
+      "negativePrompt": "Refactor the pure function that calculates retry delays but performs no delivery, persistence, process, or reporting work.",
+      "changedDecision": "Define expected and exceptional failures, applicable timeout and cancellation behavior, retry safety, cleanup, one reporting owner, and safe event context.",
+      "observation": "A boundary contract and focused failure-path, retry, cleanup, and reporting evidence.",
+      "gracePath": "Preserve error context and report the missing logger, telemetry backend, runtime observer, or authority without installing infrastructure."
+    },
+    {
+      "component": "skill-separate-shared-state",
+      "positivePrompt": "Two concurrent workers update different fields in the same persisted state object.",
+      "negativePrompt": "One synchronous function mutates a local object that no other actor can access.",
+      "changedDecision": "Give independent facts separate write targets before considering a transaction, lock, compare-and-swap, or single writer.",
+      "observation": "An ownership map and a focused concurrency check or proof of the repository's atomic single-writer mechanism.",
+      "gracePath": "Report the exact unsafe target and missing concurrency mechanism or architecture decision."
+    },
+    {
+      "component": "skill-reduce-reader-load",
+      "positivePrompt": "Refactor this six-layer call path where three wrappers forward the same arguments and hidden module state changes the result.",
+      "negativePrompt": "Add a required validation boundary that hides a real external format change.",
+      "changedDecision": "Remove layers that own no decision, shrink mutable state scope, and retain boundaries that own a named guarantee.",
+      "observation": "The before-and-after call path, state owner, retained boundary decisions, and focused behavior checks.",
+      "gracePath": "Retain the public or authority boundary and report the remaining trace cost when cleanup is outside scope."
+    }
+  ]
+}

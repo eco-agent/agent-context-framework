@@ -19,6 +19,12 @@ state remains possible.
 Resolve overloaded domain terms before creating another type for them. If the
 request, glossary, and code disagree, report the conflict.
 
+When an authoritative schema already defines a shape, use the repository's
+generator or TypeScript derivation utilities instead of copying the fields into
+another interface. Create a separate domain type only when it makes different
+guarantees, and keep the conversion at the boundary where those guarantees
+change.
+
 For a substantial state-model change, update the existing architecture record.
 If no record owns the decision, copy [type-contract.md](assets/type-contract.md)
 to `.codex/work/types/<task-slug>.md` and record the valid states, input checks,
@@ -58,6 +64,12 @@ Use a discriminated union when one field controls which other fields exist or
 what they mean. Use separate types when lifecycle stages make different
 guarantees. Make a property optional only when its absence is valid in that
 specific state.
+
+Strengthen a type where the looser type would make an operation partial. A
+function that needs a first item may require a non-empty collection, while a
+function with a valid empty result should keep the ordinary collection type.
+Extra precision that prevents no invalid operation adds conversion work without
+adding safety.
 
 Read [modeling-procedure.md](references/modeling-procedure.md) when changing a
 domain state model.

@@ -1,6 +1,6 @@
 ---
 name: frontend-design-discipline
-description: Reframe and specify substantial frontends before implementation when product representation, mobile composition, data-driven UI, topology, interaction, or visual asset roles are unsettled.
+description: Reframe and specify substantial frontends or novel user-facing interactions before implementation when representation, composition, topology, behavior, or visual asset roles are unsettled.
 ---
 
 # Define the frontend before implementing it

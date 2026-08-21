@@ -18,6 +18,19 @@ import { checkContextGovernance } from "../src/context-governance.js";
 import { planSetupSelection } from "../src/setup-server.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+
+interface RoutingExerciseFixture {
+  readonly schemaVersion: 1;
+  exercises: Array<{
+    component: string;
+    positivePrompt: string;
+    negativePrompt: string;
+    changedDecision: string;
+    observation: string;
+    gracePath: string;
+  }>;
+}
+
 const packagedSkills = [
   "adopt-established-product",
   "choose-react-animation",
@@ -29,9 +42,12 @@ const packagedSkills = [
   "responsive-css-architect",
   "tailwind-css-architect",
   "codebase-inventory",
+  "design-operational-boundaries",
   "design-typescript-invariants",
   "diagnose",
+  "reduce-reader-load",
   "reuse-before-implementation",
+  "separate-shared-state",
   "write-technical-prose",
   "writing-great-skills",
   "maintain-agent-context-framework",
@@ -59,15 +75,18 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
   assert.equal(componentNames(first, "frontend-tailwind").includes("skill-tailwind-css-architect"), true);
   const waveTwoSkills = [
     "skill-codebase-inventory",
+    "skill-design-operational-boundaries",
     "skill-design-typescript-invariants",
     "skill-diagnose",
+    "skill-reduce-reader-load",
     "skill-reuse-before-implementation",
+    "skill-separate-shared-state",
     "skill-write-technical-prose",
     "skill-writing-great-skills",
     "skill-optimize-codex-sessions",
   ];
   assert.equal(first.components.filter((component) =>
-    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 18);
+    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 21);
   for (const component of first.components) {
     assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
   }
@@ -121,6 +140,82 @@ test("component revisions change with canonical component bytes", async () => {
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("skill routing exercises cover the exact packaged skill set", async () => {
+  const registry = await buildContextRegistry(frameworkRoot);
+  const expected = registry.components.flatMap((component) => {
+    const entrypoint = component.name.startsWith("skill-")
+      ? `.codex/skills/${component.name.slice("skill-".length)}/SKILL.md`
+      : undefined;
+    return entrypoint && component.artifacts.some((artifact) => artifact.targetPath === entrypoint)
+      ? [component.name]
+      : [];
+  });
+  const catalog = JSON.parse(await readFile(
+    path.join(frameworkRoot, "registry", "sources", "skill-routing-exercises.json"),
+    "utf8",
+  )) as { exercises: Array<{ component: string }> };
+  assert.deepEqual(
+    catalog.exercises.map((exercise) => exercise.component).sort(),
+    [...expected].sort(),
+  );
+});
+
+test("skill routing exercise validation rejects missing, stale, duplicate, and indistinguishable cases", async () => {
+  const cases = [
+    {
+      name: "missing",
+      change: (catalog: RoutingExerciseFixture) => {
+        catalog.exercises = catalog.exercises.slice(1);
+      },
+      expected: /catalog is missing/u,
+    },
+    {
+      name: "stale",
+      change: (catalog: RoutingExerciseFixture) => {
+        catalog.exercises.push({
+          ...catalog.exercises[0]!,
+          component: "skill-missing-owner",
+        });
+      },
+      expected: /names non-skill components/u,
+    },
+    {
+      name: "duplicate",
+      change: (catalog: RoutingExerciseFixture) => {
+        catalog.exercises.push({ ...catalog.exercises[0]! });
+      },
+      expected: /contain duplicate/u,
+    },
+    {
+      name: "indistinguishable",
+      change: (catalog: RoutingExerciseFixture) => {
+        catalog.exercises[0]!.negativePrompt = catalog.exercises[0]!.positivePrompt;
+      },
+      expected: /positivePrompt and negativePrompt must differ/u,
+    },
+  ] as const;
+
+  for (const item of cases) {
+    const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), `agent-context-routing-${item.name}-`));
+    try {
+      await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+      await copyPackagedSkills(temporaryRoot);
+      const catalogPath = path.join(
+        temporaryRoot,
+        "registry",
+        "sources",
+        "skill-routing-exercises.json",
+      );
+      const catalog = JSON.parse(await readFile(catalogPath, "utf8")) as RoutingExerciseFixture;
+      item.change(catalog);
+      await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+      await assert.rejects(buildContextRegistry(temporaryRoot), item.expected);
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
   }
 });
 
@@ -365,15 +460,21 @@ test("Wave 2 bundles resolve independently and exclude frontend, runtime, and ob
   const registry = await buildContextRegistry(frameworkRoot);
   assert.deepEqual(componentNames(registry, "engineering"), [
     "skill-codebase-inventory",
+    "skill-design-operational-boundaries",
     "skill-diagnose",
+    "skill-reduce-reader-load",
     "skill-reuse-before-implementation",
+    "skill-separate-shared-state",
     "skill-write-technical-prose",
     "engineering",
   ]);
   assert.deepEqual(componentNames(registry, "typescript-engineering"), [
     "skill-codebase-inventory",
+    "skill-design-operational-boundaries",
     "skill-diagnose",
+    "skill-reduce-reader-load",
     "skill-reuse-before-implementation",
+    "skill-separate-shared-state",
     "skill-write-technical-prose",
     "engineering",
     "skill-design-typescript-invariants",
@@ -781,6 +882,18 @@ test("governance rejects dilution of restored skill guards", async () => {
       remove: "2. The escape hatch is narrower than the surrounding domain.",
     },
     {
+      skill: "design-operational-boundaries",
+      remove: "Report one failure once.",
+    },
+    {
+      skill: "separate-shared-state",
+      remove: "Instructions and naming conventions are not concurrency control.",
+    },
+    {
+      skill: "reduce-reader-load",
+      remove: "automatic deletion rule.",
+    },
+    {
       skill: "optimize-codex-sessions",
       remove: "Managed workflows require a stable `objectiveId`",
     },
@@ -975,6 +1088,7 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
   for (const skill of [
     "adopt-established-product",
     "design-accessible-interfaces",
+    "design-operational-boundaries",
     "design-typescript-invariants",
     "design-web-typography",
     "diagnose",
@@ -982,7 +1096,9 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
     "maintain-agent-context-framework",
     "optimize-codex-sessions",
     "orchestrate-codex-workflows",
+    "reduce-reader-load",
     "responsive-css-architect",
+    "separate-shared-state",
     "tailwind-css-architect",
   ]) {
     await cp(

@@ -15,6 +15,7 @@ import { validateWaveFourRegistryReferences } from "./codex-interface.js";
 
 export const CONTEXT_REGISTRY_SOURCE_PATH = "registry/registry.source.json";
 export const CONTEXT_REGISTRY_OUTPUT_PATH = "registry/registry.json";
+export const SKILL_ROUTING_EXERCISES_PATH = "registry/sources/skill-routing-exercises.json";
 
 interface RegistrySourceCatalog {
   readonly schemaVersion: 1;
@@ -29,6 +30,20 @@ interface RegistrySourceComponent {
   readonly capabilities: unknown;
   readonly licenses: unknown;
   readonly artifacts: readonly RegistrySourceArtifact[];
+}
+
+interface RoutingExerciseCatalog {
+  readonly schemaVersion: 1;
+  readonly exercises: readonly RoutingExercise[];
+}
+
+interface RoutingExercise {
+  readonly component: string;
+  readonly positivePrompt: string;
+  readonly negativePrompt: string;
+  readonly changedDecision: string;
+  readonly observation: string;
+  readonly gracePath: string;
 }
 
 type RegistrySourceArtifact =
@@ -139,12 +154,88 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
     decisionPath: catalog.decisionPath,
     components,
   });
+  await validateSkillRoutingExercises(resolvedRoot, registry);
   await validateNoticeCoverage(resolvedRoot, registry);
   await validateSourceAttribution(resolvedRoot, registry);
   await validatePackagedMarkdownReferences(resolvedRoot, registry);
   await validateExternalCapabilityCoverage(resolvedRoot, registry);
   await validateWaveFourRegistryReferences(resolvedRoot, registry);
   return registry;
+}
+
+async function validateSkillRoutingExercises(
+  root: string,
+  registry: ContextRegistryV2,
+): Promise<void> {
+  const catalog = decodeRoutingExerciseCatalog(await readJson(
+    repositoryPath(root, SKILL_ROUTING_EXERCISES_PATH),
+    "Skill routing exercise catalog",
+  ));
+  const expectedComponents = registry.components.flatMap((component) => {
+    const expectedEntrypoint = component.name.startsWith("skill-")
+      ? `.codex/skills/${component.name.slice("skill-".length)}/SKILL.md`
+      : undefined;
+    if (!expectedEntrypoint) return [];
+    return component.artifacts.some((artifact) => artifact.targetPath === expectedEntrypoint)
+      ? [component.name]
+      : [];
+  });
+  const actualComponents = catalog.exercises.map((exercise) => exercise.component);
+  const missing = expectedComponents.filter((component) => !actualComponents.includes(component));
+  if (missing.length > 0) {
+    throw new Error(
+      `Skill routing exercise catalog is missing ${missing.join(", ")}. ` +
+      `Add a positive prompt, nearby negative prompt, changed decision, observation, and grace path.`,
+    );
+  }
+  const extra = actualComponents.filter((component) => !expectedComponents.includes(component));
+  if (extra.length > 0) {
+    throw new Error(
+      `Skill routing exercise catalog names non-skill components: ${extra.join(", ")}. ` +
+      `Remove stale exercises or package the matching skill entrypoint.`,
+    );
+  }
+}
+
+function decodeRoutingExerciseCatalog(value: unknown): RoutingExerciseCatalog {
+  const record = strictRecord(value, "Skill routing exercise catalog", ["schemaVersion", "exercises"]);
+  if (record.schemaVersion !== 1) {
+    throw new Error("Skill routing exercise catalog schemaVersion must be 1.");
+  }
+  const exercises = decodeArray(
+    record.exercises,
+    "Skill routing exercises",
+    decodeRoutingExercise,
+  );
+  if (exercises.length === 0) {
+    throw new Error("Skill routing exercise catalog must contain at least one exercise.");
+  }
+  requireUnique(exercises.map((exercise) => exercise.component), "Skill routing exercise components");
+  return { schemaVersion: 1, exercises };
+}
+
+function decodeRoutingExercise(value: unknown): RoutingExercise {
+  const record = strictRecord(value, "Skill routing exercise", [
+    "component",
+    "positivePrompt",
+    "negativePrompt",
+    "changedDecision",
+    "observation",
+    "gracePath",
+  ]);
+  const positivePrompt = nonBlankText(record, "positivePrompt");
+  const negativePrompt = nonBlankText(record, "negativePrompt");
+  if (normalizedText(positivePrompt) === normalizedText(negativePrompt)) {
+    throw new Error("Skill routing exercise positivePrompt and negativePrompt must differ.");
+  }
+  return {
+    component: componentName(record.component, "Skill routing exercise component"),
+    positivePrompt,
+    negativePrompt,
+    changedDecision: nonBlankText(record, "changedDecision"),
+    observation: nonBlankText(record, "observation"),
+    gracePath: nonBlankText(record, "gracePath"),
+  };
 }
 
 export async function writeContextRegistry(root: string): Promise<ContextRegistryV2> {
@@ -617,6 +708,18 @@ function requiredString(record: Readonly<Record<string, unknown>>, key: string):
   return value;
 }
 
+function nonBlankText(record: Readonly<Record<string, unknown>>, key: string): string {
+  const value = requiredString(record, key);
+  if (value.trim() !== value || value.trim().length === 0) {
+    throw new Error(`${key} must be non-blank text without surrounding whitespace.`);
+  }
+  return value;
+}
+
+function normalizedText(value: string): string {
+  return value.replace(/\s+/gu, " ").trim().toLowerCase();
+}
+
 function componentName(value: unknown, label: string): string {
   if (typeof value !== "string" || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/u.test(value)) {
     throw new Error(`${label} must be a lowercase kebab-case identifier.`);
@@ -627,4 +730,9 @@ function componentName(value: unknown, label: string): string {
 function decodeArray<T>(value: unknown, label: string, decode: (item: unknown) => T): readonly T[] {
   if (!Array.isArray(value)) throw new Error(`${label} must be an array.`);
   return value.map(decode);
+}
+
+function requireUnique(values: readonly string[], label: string): void {
+  const duplicate = values.find((value, index) => values.indexOf(value) !== index);
+  if (duplicate) throw new Error(`${label} contain duplicate ${duplicate}.`);
 }

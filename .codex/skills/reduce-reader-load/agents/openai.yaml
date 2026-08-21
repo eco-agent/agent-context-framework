@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reduce Reader Load"
+  short_description: "Reduce indirection and hidden mutable state"
+  default_prompt: "Use $reduce-reader-load to simplify the trace and state ownership in this change."

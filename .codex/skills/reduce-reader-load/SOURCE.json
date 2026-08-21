@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/cursor/plugins",
+  "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+  "license": "MIT",
+  "sourceSkill": "pstack/skills/principle-minimize-reader-load",
+  "adaptedFiles": ["SKILL.md"],
+  "localChanges": "Narrowed the trigger, removed the fixed comprehension-time test, preserved purposeful boundaries, bounded cleanup scope, and added before-and-after evidence plus an authority-aware grace path."
+}
