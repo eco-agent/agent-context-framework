@@ -195,10 +195,13 @@ test("optimization skill routes bounded repository context without --all", async
   const skill = await readFile(skillPath, "utf8");
 
   assert.match(skill, /`mcp__repo_context__repo_context`/u);
-  assert.match(skill, /batch up to four requests in one call/u);
-  assert.match(skill, /direct filesystem read and search tools/u);
+  assert.match(skill, /Batch up to four reads or\s+searches in one call/u);
+  assert.match(
+    skill,
+    /Otherwise use direct repository reads within the task's\s+permissions/u,
+  );
   assert.equal(skill.includes("dist/src/context-cli.js"), false);
-  assert.match(skill, /Follow `nextCursor` to continue/u);
+  assert.match(skill, /Follow `nextCursor` when more records are needed/u);
   assert.equal(skill.includes("pnpm --silent context"), false);
   assert.equal(skill.includes("--all"), false);
 });
