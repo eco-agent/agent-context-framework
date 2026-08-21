@@ -1,17 +1,17 @@
 {
   "schemaVersion": 2,
-  "registryRevision": "0.8.8",
-  "decisionPath": "registry/decisions/0.8.8-framework-maintainer-skill.md",
+  "registryRevision": "0.9.1",
+  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "4373d0600e1a2a258548aebda607913ae380e5239626c1b8b00dee4965605d58"
+      "sha256": "d6ebc46cfca9efab2ec5b7a80addf4ced1fec62e3b500449ffd9e96cede1b209"
     },
     {
       "invariantId": "framework-root-prefix",
       "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
-      "sha256": "54bcac3973f82307c27cec7e08f1f08d493420f51a6c1fa39aa1a8521341e682"
+      "sha256": "3b29f7dd6b50dbdd64011259d696d84e1ce458105b5ed4c666f74dfe2b0ba32e"
     },
     {
       "invariantId": "frontend-discipline",
@@ -21,7 +21,7 @@
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "ffcd665c1c555b237ea47a2448d6367078669ab44313bd46a5cf6fbc2d4857b1"
+      "sha256": "e076d9584970a6f8ea2992df3a2cd107a15cece21850a82539a59724b752184e"
     },
     {
       "invariantId": "frontend-accessible-component-reuse",
@@ -76,7 +76,27 @@
     {
       "invariantId": "typescript-invariant-design",
       "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
-      "sha256": "9462947a1b3fc779752777787060b2b9d46d77643f0eb27fd7153422377df032"
+      "sha256": "befe5a325c16c30d726d0d81d8d848efcfff2c7096965286c571e41ef67761ca"
+    },
+    {
+      "invariantId": "operational-boundary-design",
+      "sourcePath": ".codex/skills/design-operational-boundaries/SKILL.md",
+      "sha256": "35974f82496eff9bf674b2e2f02ff208940ee4c3a2ba60be67bd5d0aa900378b"
+    },
+    {
+      "invariantId": "shared-state-ownership",
+      "sourcePath": ".codex/skills/separate-shared-state/SKILL.md",
+      "sha256": "9fe375502c123f58102a51392f37a9fe56b46e91f02de161fc259e83a69d79b4"
+    },
+    {
+      "invariantId": "reader-load-boundaries",
+      "sourcePath": ".codex/skills/reduce-reader-load/SKILL.md",
+      "sha256": "aa90dc6b3a305da7793851ecd1a5ae4d88adf81fce6a5259eef66e5be2206019"
+    },
+    {
+      "invariantId": "skill-routing-exercises",
+      "sourcePath": "registry/sources/skill-routing-exercises.json",
+      "sha256": "d94eb607080cfc91702ef6e4f6eef8e950921eeb4caf9ccb9fcd86d330f96410"
     },
     {
       "invariantId": "session-optimization",

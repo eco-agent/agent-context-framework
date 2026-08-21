@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.8.8",
-  "decisionPath": "registry/decisions/0.8.8-framework-maintainer-skill.md",
+  "revision": "0.9.1",
+  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:1be55463dfa0461c5b004944e746cb409f77b3bc2495833ff695708fe3d941af",
+      "revision": "sha256:bc0a5c013ce2ddac473716eb24255c3d5466d1697ccb8a38bf00029b572b88ff",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "4373d0600e1a2a258548aebda607913ae380e5239626c1b8b00dee4965605d58",
+          "sourceSha256": "d6ebc46cfca9efab2ec5b7a80addf4ced1fec62e3b500449ffd9e96cede1b209",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -440,7 +440,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:2f13eec94a579b58fdd21f04aac00f749aa876180171fdc6e31784c141cdba1b",
+      "revision": "sha256:3ef329c0ee9127c86c5ae423737bfe56a48c9ed65011b475a3e10da9aa53eb60",
       "dependencies": [],
       "capabilities": [
         {
@@ -532,7 +532,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "ffcd665c1c555b237ea47a2448d6367078669ab44313bd46a5cf6fbc2d4857b1",
+          "sourceSha256": "e076d9584970a6f8ea2992df3a2cd107a15cece21850a82539a59724b752184e",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -867,8 +867,39 @@
       ]
     },
     {
+      "name": "skill-design-operational-boundaries",
+      "revision": "sha256:b2acb8c57fcb84e65d81e5ac40cb55ad437e9e874380958380a79e7c035985c6",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-operational-boundaries/agents/openai.yaml",
+          "sourceSha256": "e8d270df928520ef49d7c2b19c18c4b2d0a0db2e02ef65474b79cd3c72fbde8b",
+          "targetPath": ".codex/skills/design-operational-boundaries/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-operational-boundaries/SKILL.md",
+          "sourceSha256": "35974f82496eff9bf674b2e2f02ff208940ee4c3a2ba60be67bd5d0aa900378b",
+          "targetPath": ".codex/skills/design-operational-boundaries/SKILL.md",
+          "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
       "name": "skill-design-typescript-invariants",
-      "revision": "sha256:646675aa9fef7cda253daebd995db458866246999c48b01eeecc6938e3020029",
+      "revision": "sha256:89f42f7d7a8ef0e56554c883f501f1c49f7b567955439eaf8d70285c5ae8c409",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -879,6 +910,14 @@
           "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
           "noticePath": ".codex/skills/design-typescript-invariants/LICENSE.mattpocock.upstream",
           "noticeSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+          "noticePath": ".codex/skills/design-typescript-invariants/LICENSE.cursor-pstack.upstream",
+          "noticeSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
         }
       ],
       "artifacts": [
@@ -895,6 +934,13 @@
           "sourceSha256": "aac93e1f0ae7d054e33764ede9d16157eafb584f0aa8aa9449d21f33134d3d0c",
           "targetPath": ".codex/skills/design-typescript-invariants/assets/type-contract.md",
           "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/design-typescript-invariants/LICENSE.cursor-pstack.upstream",
+          "sourceSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+          "targetPath": ".codex/skills/design-typescript-invariants/LICENSE.cursor-pstack.upstream",
+          "mediaType": "text/plain"
         },
         {
           "operation": "file",
@@ -941,14 +987,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-typescript-invariants/SKILL.md",
-          "sourceSha256": "9462947a1b3fc779752777787060b2b9d46d77643f0eb27fd7153422377df032",
+          "sourceSha256": "befe5a325c16c30d726d0d81d8d848efcfff2c7096965286c571e41ef67761ca",
           "targetPath": ".codex/skills/design-typescript-invariants/SKILL.md",
           "mediaType": "text/markdown"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/design-typescript-invariants/SOURCE.json",
-          "sourceSha256": "b030986803125b0ac900108dd707f45b33202d60a620fe029c157c6ff01c3a7b",
+          "sourceSha256": "279682d2db9035f08bfcb3dacb275d43f003714fff392360ade358b10abf986f",
           "targetPath": ".codex/skills/design-typescript-invariants/SOURCE.json",
           "mediaType": "application/json"
         }
@@ -986,6 +1032,52 @@
       ]
     },
     {
+      "name": "skill-reduce-reader-load",
+      "revision": "sha256:00432b0d15fe2ac821e074ecf2cc3e095cc1448d3bb06928514a90f30eb5f90f",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+          "noticePath": ".codex/skills/reduce-reader-load/LICENSE.cursor-pstack.upstream",
+          "noticeSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/reduce-reader-load/agents/openai.yaml",
+          "sourceSha256": "bfa89549b620806056317244940f6e4cd54288fcaf86b8026e39a797be837148",
+          "targetPath": ".codex/skills/reduce-reader-load/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/reduce-reader-load/LICENSE.cursor-pstack.upstream",
+          "sourceSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+          "targetPath": ".codex/skills/reduce-reader-load/LICENSE.cursor-pstack.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/reduce-reader-load/SKILL.md",
+          "sourceSha256": "aa90dc6b3a305da7793851ecd1a5ae4d88adf81fce6a5259eef66e5be2206019",
+          "targetPath": ".codex/skills/reduce-reader-load/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/reduce-reader-load/SOURCE.json",
+          "sourceSha256": "94bdbec8534c01aabfa318e232c5a72ffcb79e25887af961fc86a983cbb1380f",
+          "targetPath": ".codex/skills/reduce-reader-load/SOURCE.json",
+          "mediaType": "application/json"
+        }
+      ]
+    },
+    {
       "name": "skill-reuse-before-implementation",
       "revision": "sha256:b5b15d8457497c0eb772cdaa2a653895c38d102eade80a0c5b09d3aef7fb623b",
       "dependencies": [],
@@ -1019,6 +1111,52 @@
           "sourceSha256": "d0a60e74f737db73acfaab6ed8e8792b06ecc67746919c8794f9a8d0d3f93ee2",
           "targetPath": ".codex/skills/reuse-before-implementation/SKILL.md",
           "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-separate-shared-state",
+      "revision": "sha256:7fe72ee69c2131cb99253bd9b6b6bff78b70b28aaf5b40c5c42605aab9764301",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+          "noticePath": ".codex/skills/separate-shared-state/LICENSE.cursor-pstack.upstream",
+          "noticeSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/separate-shared-state/agents/openai.yaml",
+          "sourceSha256": "ca6f55bdd4b241d421b5f71acd703400adff654a1863aa96c9702b784c385e6f",
+          "targetPath": ".codex/skills/separate-shared-state/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/separate-shared-state/LICENSE.cursor-pstack.upstream",
+          "sourceSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+          "targetPath": ".codex/skills/separate-shared-state/LICENSE.cursor-pstack.upstream",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/separate-shared-state/SKILL.md",
+          "sourceSha256": "9fe375502c123f58102a51392f37a9fe56b46e91f02de161fc259e83a69d79b4",
+          "targetPath": ".codex/skills/separate-shared-state/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/separate-shared-state/SOURCE.json",
+          "sourceSha256": "5cedd9f6a01df8773f9efced4826585d4c956c6110715acb88bffb59feb75ef1",
+          "targetPath": ".codex/skills/separate-shared-state/SOURCE.json",
+          "mediaType": "application/json"
         }
       ]
     },
@@ -1521,11 +1659,14 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:3919f7707c92df3bfbc8ff77503b2a4a064d2a91a85db9ea8792fad01f75f4e5",
+      "revision": "sha256:4efbf746329168f27819e1bb726a22c22d0fef8dc0a59a4c2d3907c856b7093b",
       "dependencies": [
         "skill-codebase-inventory",
+        "skill-design-operational-boundaries",
         "skill-diagnose",
+        "skill-reduce-reader-load",
         "skill-reuse-before-implementation",
+        "skill-separate-shared-state",
         "skill-write-technical-prose"
       ],
       "capabilities": [

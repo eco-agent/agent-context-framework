@@ -1,0 +1,4 @@
+interface:
+  display_name: "Separate Shared State"
+  short_description: "Remove unsafe concurrent write targets"
+  default_prompt: "Use $separate-shared-state to remove or control this shared mutable state."

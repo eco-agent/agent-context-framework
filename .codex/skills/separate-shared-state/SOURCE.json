@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/cursor/plugins",
+  "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+  "license": "MIT",
+  "sourceSkill": "pstack/skills/principle-separate-before-serializing-shared-state",
+  "adaptedFiles": ["SKILL.md"],
+  "localChanges": "Narrowed the catalog trigger, added repository-aware ownership propagation, observations, concurrency evidence, infrastructure authority, and an explicit unverified grace path."
+}

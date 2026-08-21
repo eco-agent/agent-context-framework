@@ -1,10 +1,24 @@
 {
-  "repository": "https://github.com/mattpocock/skills",
-  "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
-  "license": "MIT",
-  "adaptedFiles": [
-    "SKILL.md",
-    "references/deep-modules.md"
+  "sources": [
+    {
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
+      "license": "MIT",
+      "adaptedFiles": [
+        "SKILL.md",
+        "references/deep-modules.md"
+      ]
+    },
+    {
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+      "license": "MIT",
+      "sourceSkills": [
+        "pstack/skills/typescript-best-practices",
+        "pstack/skills/principle-type-system-discipline"
+      ],
+      "adaptedFiles": ["SKILL.md"]
+    }
   ],
-  "localChanges": "Project-authored invariant modeling, boundary, lint, review, and template guidance incorporates and adapts selected engineering concepts from the pinned source. Commands and repository-specific procedures remain local."
+  "localChanges": "Project-authored invariant modeling, boundary, lint, review, and template guidance incorporates selected engineering concepts from the pinned sources. The pstack adaptation adds authoritative-schema derivation and strengthens types only where a looser type makes an operation partial. Commands and repository-specific procedures remain local."
 }

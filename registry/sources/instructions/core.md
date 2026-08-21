@@ -1,8 +1,8 @@
 # Project agent context
 
-> Make checkpoint commits often, and never push. Give each logical work stream
-> its own branch. Create an ephemeral worktree only when concurrent work or an
-> isolated check needs another checkout.
+> Make checkpoint commits often. Push only when the user explicitly requests
+> it. Give each logical work stream its own branch. Create an ephemeral worktree
+> only when concurrent work or an isolated check needs another checkout.
 > Keep long-running task evidence in `.codex/work` Markdown. Use the `visualize`
 > skill when an in-conversation visual would materially improve understanding.
 > Create a standalone HTML response file only when the user asks for an export.
@@ -99,7 +99,8 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 ## Work
 
-Preserve unrelated changes. Never push or deploy unless the user asks.
+Preserve unrelated changes. Push only when the user explicitly requests it.
+Never deploy without an explicit user request.
 
 Resolve the intended baseline to a full commit ID before creating a branch, then
 record it. A moving branch name is not durable evidence. Use a branch for each

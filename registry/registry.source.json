@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.8.8",
-  "decisionPath": "registry/decisions/0.8.8-framework-maintainer-skill.md",
+  "revision": "0.9.1",
+  "decisionPath": "registry/decisions/0.9.1-explicit-push-authority.md",
   "components": [
     {
       "name": "core",
@@ -281,6 +281,20 @@
       ]
     },
     {
+      "name": "skill-design-operational-boundaries",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/design-operational-boundaries",
+          "targetDirectory": ".codex/skills/design-operational-boundaries",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
       "name": "skill-design-typescript-invariants",
       "dependencies": [],
       "capabilities": [],
@@ -291,6 +305,13 @@
           "source": "https://github.com/mattpocock/skills",
           "revision": "2ab958093e83e0ec752e6c1c5932da465bf23e0c",
           "noticePath": ".codex/skills/design-typescript-invariants/LICENSE.mattpocock.upstream"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+          "noticePath": ".codex/skills/design-typescript-invariants/LICENSE.cursor-pstack.upstream"
         }
       ],
       "artifacts": [
@@ -317,6 +338,28 @@
       ]
     },
     {
+      "name": "skill-reduce-reader-load",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+          "noticePath": ".codex/skills/reduce-reader-load/LICENSE.cursor-pstack.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/reduce-reader-load",
+          "targetDirectory": ".codex/skills/reduce-reader-load",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
       "name": "skill-reuse-before-implementation",
       "dependencies": [],
       "capabilities": [
@@ -328,6 +371,28 @@
           "kind": "directory",
           "sourceDirectory": ".codex/skills/reuse-before-implementation",
           "targetDirectory": ".codex/skills/reuse-before-implementation",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-separate-shared-state",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/cursor/plugins",
+          "revision": "46125561306434d8a1d7745d540d8932ab0cd2a2",
+          "noticePath": ".codex/skills/separate-shared-state/LICENSE.cursor-pstack.upstream"
+        }
+      ],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/separate-shared-state",
+          "targetDirectory": ".codex/skills/separate-shared-state",
           "excludedPrefixes": []
         }
       ]
@@ -459,8 +524,11 @@
       "name": "engineering",
       "dependencies": [
         "skill-codebase-inventory",
+        "skill-design-operational-boundaries",
         "skill-diagnose",
+        "skill-reduce-reader-load",
         "skill-reuse-before-implementation",
+        "skill-separate-shared-state",
         "skill-write-technical-prose"
       ],
       "capabilities": [

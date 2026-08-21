@@ -19,6 +19,8 @@ const REQUIRED_REVIEW_PATTERNS = [
 
 const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   ["registry/sources/instructions/core.md", [
+    "Push only when the user explicitly requests it.",
+    "Never deploy without an explicit user request.",
     "Treat framework-managed instructions as maintainer-owned policy.",
     "Do not edit, remove, override, or weaken them from project work.",
     "repository.projectContracts",
@@ -33,6 +35,10 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Do not change global Git configuration.",
     "Treat the work record as temporary task state.",
     "Otherwise remove it in the same task.",
+  ]],
+  ["registry/sources/instructions/framework-root-prefix.md", [
+    "Push only when the user explicitly requests it.",
+    "Never deploy without an explicit user request.",
   ]],
   ["registry/sources/instructions/repository-work.md", [
     "Prefer a package dependency when its public API is enough.",
@@ -75,6 +81,7 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "`skill-responsive-css-architect` decides layout relationships and responsive behavior, but it does not move utility-expressible styling into raw CSS.",
   ]],
   [".codex/skills/frontend-design-discipline/SKILL.md", [
+    "substantial frontends or novel user-facing interactions",
     "Decide what the product should show and how it should behave before treating the schema or current component tree as the answer.",
     "Read only enough material to decide that question.",
     "Keep the approved answer and the facts that support it. Leave rejected explorations behind.",
@@ -128,10 +135,28 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "State the proved cause in the checkpoint commit or pull request message.",
   ]],
   [".codex/skills/design-typescript-invariants/SKILL.md", [
+    "When an authoritative schema already defines a shape",
+    "Strengthen a type where the looser type would make an operation partial.",
     "only when all four conditions hold",
     "The escape hatch is narrower than the surrounding domain.",
     "Otherwise run the narrow typecheck and lint commands, then perform the semantic review",
     "review public call sites as well as the changed implementation.",
+  ]],
+  [".codex/skills/design-operational-boundaries/SKILL.md", [
+    "Absence is a fact to report. It is not permission to introduce infrastructure.",
+    "Report one failure once.",
+    "If the project has no logger or telemetry backend, preserve error context and report the missing observer.",
+    "Do not add an observability dependency",
+  ]],
+  [".codex/skills/separate-shared-state/SKILL.md", [
+    "Several actors updating separate fields in one object still share a mutable target.",
+    "Instructions and naming conventions are not concurrency control.",
+    "Do not invent a locking service or distributed coordinator",
+  ]],
+  [".codex/skills/reduce-reader-load/SKILL.md", [
+    "One caller or one implementation is evidence to inspect, not an automatic deletion rule.",
+    "Retain a boundary when it owns validation",
+    "Do not conceal an unsupported cleanup behind a compatibility wrapper.",
   ]],
   [".codex/skills/optimize-codex-sessions/SKILL.md", [
     "nested reads consume the ledger-backed `maxRepositoryOutputBytes` budget.",

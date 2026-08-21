@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Operational Boundaries"
+  short_description: "Define failures and reporting at runtime boundaries"
+  default_prompt: "Use $design-operational-boundaries to define failure behavior and observability for this runtime boundary."
