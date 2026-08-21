@@ -37,8 +37,9 @@ access check, view-model conversion, or telemetry writer.
 
 Read [deep-modules.md](references/deep-modules.md) before adding or extracting a
 module. Define what the new module receives, returns, changes, and reports when
-it fails. Verify discovery rules and callers before moving routes, generated
-code, public backend functions, auth code, native bridges, or secrets.
+it fails. Record its ordering requirements, authority boundary, and visible
+effect on users. Verify discovery rules and callers before moving routes,
+generated code, public backend functions, auth code, native bridges, or secrets.
 
 ## Model the state before the behavior
 
@@ -77,9 +78,13 @@ adding validation, adapters, or error handling.
 ## Limit type escape hatches
 
 Add `Partial<T>`, a type assertion, a non-null assertion, or
-`Record<string, unknown>` only when the uncertainty cannot be represented more
-precisely at that location, a nearby check proves the operation safe, and a
-short comment names the guarantee TypeScript cannot express.
+`Record<string, unknown>` only when all four conditions hold:
+
+1. The uncertainty cannot be represented more precisely at that location.
+2. The escape hatch is narrower than the surrounding domain.
+3. A boundary check or another local proof makes the operation safe.
+4. A short comment names the lost guarantee and explains why TypeScript cannot
+   express it there.
 
 Generated code and third-party declarations are exempt. Handwritten code is not
 exempt merely because generated code uses assertions.

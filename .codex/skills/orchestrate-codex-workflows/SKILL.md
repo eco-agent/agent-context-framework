@@ -87,8 +87,9 @@ Start workers with:
 ```
 
 Use `read-only` for review and interpretation when possible. Broader filesystem
-or network access requires the user's permission when the action itself would
-require it.
+or network access requires explicit user permission. Do not grant
+`danger-full-access` for convenience. Consequential external actions need their
+own permission even when a role already has broader technical access.
 
 ## Treat role output as input data
 
