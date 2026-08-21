@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:49e7ec1e0fe3f80dceb21a296cebb7625df6bfbd1c3b84bd6abf896960d65b63",
+      "revision": "sha256:387dc818d2c6790671081bec899976e2d36d81f5629783f5212063e526b4302e",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "0d95132fec9a15d527e0e5d485a6d6efa8dd908c31f9103e81bc138cdaf5da89",
+          "sourceSha256": "2be10b915372d3fdf2326ec4261fa8532bd9fb17c68b28f6696935cdb74369a0",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"

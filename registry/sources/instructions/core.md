@@ -128,9 +128,10 @@ actions, and record any remaining gap.
 Prefer a package dependency when its public API is enough. Use `git subtree` for
 repository-shaped vendored source with an upstream update lifecycle when the
 host provides it. Record the upstream URL, commit, prefix, license, and update
-procedure. A selected-file adoption remains a pinned, attributed copy. Do not
-add or mutate a submodule unless a project contract requires its separate
-repository lifecycle.
+procedure. If the host lacks subtree support, stop and report the missing
+capability instead of inventing another vendoring method. A selected-file
+adoption remains a pinned, attributed copy. Do not add or mutate a submodule
+unless a project contract requires its separate repository lifecycle.
 
 Do not change global Git configuration. Any repository or worktree
 configuration change requires an explicit project decision.

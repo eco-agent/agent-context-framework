@@ -6,7 +6,7 @@
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "0d95132fec9a15d527e0e5d485a6d6efa8dd908c31f9103e81bc138cdaf5da89"
+      "sha256": "2be10b915372d3fdf2326ec4261fa8532bd9fb17c68b28f6696935cdb74369a0"
     },
     {
       "invariantId": "framework-root-prefix",
@@ -86,7 +86,7 @@
     {
       "invariantId": "repository-work",
       "sourcePath": "registry/sources/instructions/repository-work.md",
-      "sha256": "9c4ba0f37ccccfbb405ee06aaa26fd8cfc49be3aa9a9d6dec0fcf8edf0ec5021"
+      "sha256": "0c3fc9f2522e6851cf0bd7660367c260722ab51125d08e9d0157c1a3045e6cda"
     },
     {
       "invariantId": "verification",

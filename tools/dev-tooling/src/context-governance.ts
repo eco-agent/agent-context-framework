@@ -26,7 +26,17 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Read-only review, explanation, and status work do not authorize tests.",
     "Use a branch for each logical work stream.",
     "Never use `git stash`",
+    "Prefer a package dependency when its public API is enough.",
+    "Record the upstream URL, commit, prefix, license, and update procedure.",
+    "stop and report the missing capability instead of inventing another vendoring method.",
+    "Do not add or mutate a submodule unless a project contract requires its separate repository lifecycle.",
     "Do not change global Git configuration.",
+  ]],
+  ["registry/sources/instructions/repository-work.md", [
+    "Prefer a package dependency when its public API is enough.",
+    "Record the upstream URL, commit, prefix, license, and update procedure.",
+    "stop and report the missing capability instead of inventing another vendoring method.",
+    "Do not add or mutate a submodule unless a project contract requires its separate repository lifecycle.",
   ]],
   ["registry/sources/instructions/verification.md", [
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",

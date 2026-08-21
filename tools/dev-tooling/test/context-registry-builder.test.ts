@@ -626,6 +626,34 @@ test("governance rejects semantic dilution even before protected hashes are refr
   }
 });
 
+test("governance rejects weaker vendoring and submodule rules", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-vendoring-governance-"));
+  try {
+    await copyGovernanceFixture(temporaryRoot);
+    const workPath = path.join(
+      temporaryRoot,
+      "registry",
+      "sources",
+      "instructions",
+      "repository-work.md",
+    );
+    await writeFile(
+      workPath,
+      (await readFile(workPath, "utf8")).replace(
+        "Do not add or mutate a submodule\nunless a project contract requires its separate repository lifecycle.",
+        "Avoid submodules when possible.",
+      ),
+      "utf8",
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /violates a maintainer-owned semantic requirement/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
 test("governance rejects dilution of orchestration safety semantics", async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-governance-"));
   try {
