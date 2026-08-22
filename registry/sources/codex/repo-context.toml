@@ -1,7 +1,6 @@
 [mcp_servers.repo_context]
 command = "node"
 args = [".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js", "--root", "."]
-cwd = "."
 required = true
 enabled_tools = ["repo_context"]
 startup_timeout_sec = 20

@@ -23,7 +23,6 @@ const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 interface RepoContextConfig {
   readonly command: string;
   readonly args: readonly string[];
-  readonly cwd: string;
   readonly required: boolean;
   readonly enabled_tools: readonly string[];
   readonly startup_timeout_sec: number;
@@ -54,12 +53,12 @@ test("codex-repo-context resolves the isolated bounded package and local MCP tab
   assert.deepEqual(repoContextConfig, {
     command: "node",
     args: [".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js", "--root", "."],
-    cwd: ".",
     required: true,
     enabled_tools: ["repo_context"],
     startup_timeout_sec: 20,
     tool_timeout_sec: 15,
   });
+  assert.equal(Object.hasOwn(record(record(record(config).mcp_servers).repo_context), "cwd"), false);
   const serialized = JSON.stringify(repoContextConfig);
   assert.equal(serialized.includes("tools/"), false);
   assert.equal(serialized.includes("tsx"), false);
@@ -228,7 +227,6 @@ function decodeRepoContextConfig(value: unknown): RepoContextConfig {
   if (
     typeof config.command !== "string" ||
     args.some((item) => typeof item !== "string") ||
-    typeof config.cwd !== "string" ||
     typeof config.required !== "boolean" ||
     enabledTools.some((item) => typeof item !== "string") ||
     typeof config.startup_timeout_sec !== "number" ||
@@ -239,7 +237,6 @@ function decodeRepoContextConfig(value: unknown): RepoContextConfig {
   return {
     command: config.command,
     args: args.map((item) => String(item)),
-    cwd: config.cwd,
     required: config.required,
     enabled_tools: enabledTools.map((item) => String(item)),
     startup_timeout_sec: config.startup_timeout_sec,

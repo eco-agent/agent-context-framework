@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.9.2",
-  "decisionPath": "registry/decisions/0.9.2-installation-boundaries.md",
+  "revision": "0.9.3",
+  "decisionPath": "registry/decisions/0.9.3-repository-context-resume.md",
   "components": [
     {
       "name": "core",
@@ -2274,7 +2274,7 @@
     },
     {
       "name": "codex-repo-context",
-      "revision": "sha256:671221c6fe2f40c2b824c3148459602f32285bf623215c2958757550d85cbb1b",
+      "revision": "sha256:86eec7f005a57000dbfec5a990b5363cdadf7e4820f0931ed62a19abca30409d",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2371,7 +2371,7 @@
         {
           "operation": "toml-tables",
           "sourcePath": "registry/sources/codex/repo-context.toml",
-          "sourceSha256": "d7fab50fac720634711723d68602ff9396132aa785c50d904d9f47dcbd2d3836",
+          "sourceSha256": "b16d9332509ffcd1728c3adb1d2909d04615a186e1dfcafb205657d80b3cde92",
           "targetPath": ".codex/config.toml",
           "ownedTables": [
             "mcp_servers.repo_context"

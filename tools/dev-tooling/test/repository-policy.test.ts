@@ -21,7 +21,7 @@ const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("Wave 3 resolves only runtime base and repository policy", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.9.2");
+  assert.equal(registry.revision, "0.9.3");
   assert.equal(registry.components.length, 35);
   assert.deepEqual(
     resolveContextComponents(registry, ["repository-policy"]).map((component) => component.name),

@@ -186,11 +186,11 @@ function validateInstalledRepoContext(config: Readonly<Record<string, unknown>>,
     server.command !== "node" ||
     args[0] !== ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js" ||
     args[1] !== "--root" || args[2] !== "." || args.length !== 3 ||
-    server.cwd !== "." || server.required !== true ||
+    Object.hasOwn(server, "cwd") || server.required !== true ||
     JSON.stringify(server.enabled_tools) !== JSON.stringify(["repo_context"]) ||
     typeof server.startup_timeout_sec !== "number" || typeof server.tool_timeout_sec !== "number"
   ) {
-    diagnostics.push("Repository-context MCP configuration must use the bounded project-local entrypoint and allowlist.");
+    diagnostics.push("Repository-context MCP configuration must inherit the task working directory and use the bounded project-local entrypoint and allowlist.");
   }
 }
 
