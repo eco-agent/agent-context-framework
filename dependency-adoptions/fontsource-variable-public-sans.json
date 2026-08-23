@@ -1,0 +1,18 @@
+{
+  "name": "@fontsource-variable/public-sans",
+  "version": "5.3.0",
+  "source": "https://github.com/fontsource/font-files/tree/02b28c06b126c852a5b966b44aef777ca923f6f6",
+  "license": "OFL-1.1",
+  "integrity": "sha512-AVfkmAt50BMXWpOO21FAntiJFKGX6xTc2dSL8dxtDteONe9IuRXJWGbs0EbG955vAMCq23ENeuopuW87cGWDSQ==",
+  "purpose": "Provide the interface typeface specified by the selected shadcn base-mira preset.",
+  "alternativesConsidered": [
+    "System font body text",
+    "Loading the font from a network service at setup time"
+  ],
+  "maintenanceStatus": "Pinned to Fontsource package version 5.3.0 and its published source revision.",
+  "securityEvidence": "The exact source revision, frozen registry integrity, no-dependency metadata, and packaged OFL license were inspected.",
+  "modifications": "None; font files are bundled by the setup UI build.",
+  "requiredNotices": "Retain the SIL Open Font License and copyright notice with redistributed font files.",
+  "noticeFiles": ["LICENSE"],
+  "owner": "frontend"
+}

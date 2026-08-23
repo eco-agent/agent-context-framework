@@ -1,0 +1,18 @@
+{
+  "name": "shadcn",
+  "version": "4.19.0",
+  "source": "https://registry.npmjs.org/shadcn/-/shadcn-4.19.0.tgz",
+  "license": "MIT",
+  "integrity": "sha512-EQF6R+CUXTsEP2BpyhxrUEAFesrtFD1POvVOf5jM+wkgtA4kG1EW1+1Wlmi9LqiprSL681JJXBcS0u8WkVVVyQ==",
+  "purpose": "Provide the pinned base-mira Tailwind layer and the CLI source used to generate the selected setup UI preset.",
+  "alternativesConsidered": [
+    "Copying the package Tailwind layer into project-owned CSS",
+    "Maintaining a look-alike component system"
+  ],
+  "maintenanceStatus": "Pinned to CLI version 4.19.0; the adopted source revision and update procedure are recorded in tools/setup-ui/SHADCN_UPSTREAM.md.",
+  "securityEvidence": "The immutable registry archive, frozen integrity, Node requirement, dependency list, packaged MIT license, and generated preset output were inspected.",
+  "modifications": "Generated component recipes and theme are adapted in the setup UI; the installed package is not modified.",
+  "requiredNotices": "Retain the packaged MIT license and tools/setup-ui/SHADCN_UPSTREAM.md with redistributed source.",
+  "noticeFiles": ["LICENSE.md"],
+  "owner": "frontend"
+}
