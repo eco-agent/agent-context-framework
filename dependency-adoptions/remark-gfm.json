@@ -1,0 +1,18 @@
+{
+  "name": "remark-gfm",
+  "version": "4.0.1",
+  "source": "https://registry.npmjs.org/remark-gfm/-/remark-gfm-4.0.1.tgz",
+  "license": "MIT",
+  "integrity": "sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==",
+  "purpose": "Add GitHub Flavored Markdown tables, task lists, strikethrough, and autolinks to setup previews.",
+  "alternativesConsidered": [
+    "Render CommonMark without the syntax used by repository files",
+    "Implement individual GFM extensions in project code"
+  ],
+  "maintenanceStatus": "Pinned to release 4.0.1 and used only through react-markdown in the setup UI.",
+  "securityEvidence": "The immutable npm archive, frozen integrity, MIT license, unified plugin entry point, and dependency list were inspected.",
+  "modifications": "None; package dependency.",
+  "requiredNotices": "Retain the packaged MIT license when redistributing the setup application.",
+  "noticeFiles": ["license"],
+  "owner": "frontend"
+}
