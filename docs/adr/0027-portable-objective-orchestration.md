@@ -168,10 +168,10 @@ Implementation is accepted only when:
 
 ## Related decisions
 
-- [ADR-0011 — Effect as the TypeScript application runtime](0011-effect-application-runtime.md)
-- [ADR-0016 — Package ownership and dependency boundaries](0016-package-ownership-and-dependency-boundaries.md)
-- [ADR-0019 — PostgreSQL-backed durable data orchestration](0019-postgresql-backed-durable-data-orchestration.md)
-- [ADR-0024 — Dependency-first runtime adoption](0024-dependency-first-runtime-adoption.md)
+- ADR-0011, Effect as the TypeScript application runtime
+- ADR-0016, Package ownership and dependency boundaries
+- ADR-0019, PostgreSQL-backed durable data orchestration
+- ADR-0024, Dependency-first runtime adoption
 
 ## 2026-08-03 launcher integration
 
