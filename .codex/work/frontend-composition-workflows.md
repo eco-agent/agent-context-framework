@@ -84,6 +84,11 @@ density, containment, omission, responsive behavior, and state legibility. Every
 finding cites render evidence. A source reference is optional and may be added
 only after a visual finding needs implementation evidence.
 
+Every JSON schema must encode the exact IDs, task-owned evidence kind, and enum
+limits that its runtime decoder later enforces. The decoder remains the final
+trust boundary. It must not be the first place a live role discovers a narrower
+contract than the schema and prompt supplied to that role.
+
 The human owner approves the representation and the final rendered result.
 Repository policy owns deterministic code verification. The controller owns
 schema validation, hashes, transition limits, role permissions, and stopping.
@@ -134,6 +139,7 @@ No existing behavior is removed or weakened.
 | --- | --- | --- | --- |
 | No product code before representation approval | Representation controller | Approved specification hash is required by the compose decoder | Return `awaiting_representation_approval` |
 | Model output cannot choose commands | Controller and adapters | Commands come from typed project configuration, never role output | Stop with an invalid configuration result |
+| Structured output and runtime decoding must agree | Workflow contract owner | Mock tests inspect dynamic schema enums and prompts; live validation records rejected mismatches | Correct the schema and prompt, retain the failed ledger, then start a new one-attempt run |
 | Evidence-only roles must not inherit target repository context | Run input builder | Copy the decoded request and allowlisted evidence into an owned temporary directory outside the target Git checkout | Stop before session creation if the evidence packet cannot be copied exactly |
 | Reviewer sees rendered evidence before source | Review input builder | Ledger records the initial evidence references and excluded source | Add a narrow source reference only for a cited visual finding |
 | Only the primary implementer writes product code | Role registry and Git transaction | Thread permissions, branch identity, and commits in the ledger | Stop on an unexpected writer or dirty index |
@@ -164,6 +170,14 @@ No existing behavior is removed or weakened.
 - The isolated live run then stopped on the account usage limit before Candidate
   A returned. The fixture retains both JSONL failure records. No composition was
   produced or approved.
+- After the usage reset, two one-attempt runs exposed schema-to-decoder gaps for
+  evidence references and evidence kinds. Both failed closed. The fixture now
+  encodes the allowlisted evidence IDs and task-owned kinds in the service schema,
+  prompt, decoder, and mock test.
+- Live run `acfd0f62-2a11-4200-9425-743b84b968d0` then completed all three
+  tasks with 12 ordered ledger events and three content-addressed artifacts. The
+  fresh reviewer recommends Candidate A, `Quiet operational flow`. The terminal
+  state is `awaiting_human_approval`; no product source changed.
 
 ## Smallest complete slice
 
@@ -252,6 +266,9 @@ queue dependencies with the frontend workflow.
 - One bounded live compose run, declared fixture checks, rendered evidence review,
   and human acceptance.
 
-The downstream browser capture and installed mock workflow have run. A live Codex
-session started from the isolated evidence packet, but the account usage limit
-stopped Candidate A. The three-turn live representation result remains unverified.
+The downstream browser capture, installed mock workflow, and three-turn live
+representation workflow have run. All 37 runtime and workflow tests pass. The
+successful ledger has one accepted transition for Candidate A, Candidate B, and
+the independent comparison. Artifact hashes match their stored bytes, and no
+source path appears in the role evidence. Candidate A still needs human approval;
+rendered implementation and the compose-and-refine workflow remain unverified.
