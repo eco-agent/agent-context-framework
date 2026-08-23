@@ -1,0 +1,41 @@
+{
+  "name": "@agent-context/codex-workflow-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "agentContext": {
+    "category": "tooling",
+    "owner": "framework"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "test": "pnpm build && node --test dist/test/loops.test.js",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "0.145.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "tsx": "4.22.4",
+    "typescript": "7.0.2"
+  },
+  "agentContext": {
+    "category": "tooling",
+    "owner": "framework"
+  }
+}

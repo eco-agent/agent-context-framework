@@ -2,6 +2,9 @@
   "files": [],
   "references": [
     {
+      "path": "./packages/codex-workflow-runtime"
+    },
+    {
       "path": "./packages/objective-test-fixtures"
     },
     {

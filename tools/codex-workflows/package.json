@@ -23,6 +23,7 @@
     "test": "pnpm build && node --test \"dist/test/*.test.js\""
   },
   "dependencies": {
+    "@agent-context/codex-workflow-runtime": "workspace:*",
     "@agent-context/objective-kernel": "workspace:*",
     "@agent-context/objective-runtime": "workspace:*",
     "@agent-context/repo-policy": "workspace:*",

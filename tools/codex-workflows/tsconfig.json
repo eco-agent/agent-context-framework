@@ -8,6 +8,9 @@
   "include": ["examples/**/*.ts", "src/**/*.ts", "test/**/*.ts"],
   "references": [
     {
+      "path": "../../packages/codex-workflow-runtime"
+    },
+    {
       "path": "../../packages/objective-kernel"
     },
     {
