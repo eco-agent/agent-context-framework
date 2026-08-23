@@ -10,6 +10,7 @@ import {
   MemoryLedger,
   PlanCodexClient,
   assertConfidence,
+  isolatedCodexEnvironment,
   runAuthorityLadder,
   runAutonomousEnvironment,
   runRelayChain,
@@ -26,6 +27,20 @@ import {
   type WorkflowCodex,
   type WorkflowPlan,
 } from "../src/index.js";
+
+test("SDK child environment does not inherit desktop task identity", () => {
+  const env = isolatedCodexEnvironment(
+    {
+      PATH: "C:\\tools",
+      CODEX_INTERNAL_ORIGINATOR_OVERRIDE: "Codex Desktop",
+      CODEX_PERMISSION_PROFILE: "desktop-profile",
+      CODEX_SESSION_ID: "session",
+      CODEX_THREAD_ID: "thread",
+    },
+    { CODEX_THREAD_ID: "override-thread", TASK_INPUT: "kept" },
+  );
+  assert.deepEqual(env, { PATH: "C:\\tools", TASK_INPUT: "kept" });
+});
 
 const evidence: readonly Evidence[] = [
   { kind: "test", summary: "Observed by test", references: ["test"] },
@@ -382,6 +397,37 @@ test("static plan rejects ambient thread defaults and excessive sandbox authorit
         ],
       }),
     /danger-full-access/u,
+  );
+
+  const unrestrictedPlan = validateWorkflowPlan(
+    {
+      ...plan,
+      roles: [
+        {
+          ...role,
+          thread: { ...role.thread, sandboxMode: "danger-full-access" },
+        },
+      ],
+    },
+    {
+      owner: "fixture-controller",
+      justification: "The fixture validates the task-owned Git diff before commit",
+      dangerFullAccessRoleIds: [role.identity],
+    },
+  );
+  assert.equal(unrestrictedPlan.roles[0]?.thread.sandboxMode, "danger-full-access");
+  assert.equal(unrestrictedPlan.authorityContract?.owner, "fixture-controller");
+  assert(Object.isFrozen(unrestrictedPlan.authorityContract));
+  assert(Object.isFrozen(unrestrictedPlan.authorityContract?.dangerFullAccessRoleIds));
+
+  assert.throws(
+    () =>
+      validateWorkflowPlan(plan, {
+        owner: "fixture-controller",
+        justification: "The fixture validates the task-owned Git diff before commit",
+        dangerFullAccessRoleIds: ["unknown-role"],
+      }),
+    /unknown roles/u,
   );
 });
 

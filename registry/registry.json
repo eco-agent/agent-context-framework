@@ -1430,7 +1430,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:ce658ea16a97950ede05a92cb6fe8c8197b4c3518db5e305a1e79cecf9ce5b4f",
+      "revision": "sha256:a27a2cec15081c0fa47d2f282a83890665a981ff1a373e7059dd8d1fafaad4d8",
       "dependencies": [],
       "capabilities": [
         {
@@ -1552,7 +1552,7 @@
         {
           "operation": "file",
           "sourcePath": "packages/codex-workflow-runtime/src/codex-turn-transport.ts",
-          "sourceSha256": "5dadd435767d1b13b686036d0c43f4f7454913fa9b4b7b263de92e9a77ce99b0",
+          "sourceSha256": "0a247ae2446537e2237a25973585d366183b19ef263ad8576923cedff5d94f4d",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/codex-turn-transport.ts",
           "mediaType": "text/plain"
         },
@@ -1643,14 +1643,14 @@
         {
           "operation": "file",
           "sourcePath": "packages/codex-workflow-runtime/src/plan-codex-client.ts",
-          "sourceSha256": "1c0a2f0b3a9472c5c533d0a44c8a38b2f559c45bdcf3bcc70483c60522bd07fb",
+          "sourceSha256": "ce9d978f07d97ce5e9b1781fb9c398b98a225f1e3e0a1f44cf8ba8b8f00fa529",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan-codex-client.ts",
           "mediaType": "text/plain"
         },
         {
           "operation": "file",
           "sourcePath": "packages/codex-workflow-runtime/src/plan.ts",
-          "sourceSha256": "d0ca3e51ee4ace438d242c07e5bea8bf5c102cc887ddb493a14ed4ca088f0761",
+          "sourceSha256": "6a3658eb65385c3656399d2a84c40551bc0b47b0833991d95c55786e65c0fac9",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan.ts",
           "mediaType": "text/plain"
         },
@@ -1664,7 +1664,7 @@
         {
           "operation": "file",
           "sourcePath": "packages/codex-workflow-runtime/test/loops.test.ts",
-          "sourceSha256": "a4fcf60f2caf3ba6df82e5de1167c5a11aed7d355ceb05e7e11ddcd4c08ce03a",
+          "sourceSha256": "5a4399ec0c539fa48137679678977d429e905822958c73611995806e9a7d08b1",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test/loops.test.ts",
           "mediaType": "text/plain"
         }

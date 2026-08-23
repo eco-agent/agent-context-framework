@@ -33,16 +33,26 @@ export interface WorkflowPlan {
   readonly tasks: readonly PlannedTask[];
 }
 
+export interface WorkflowAuthorityContract {
+  readonly owner: string;
+  readonly justification: string;
+  readonly dangerFullAccessRoleIds: readonly string[];
+}
+
 const validatedWorkflowPlanBrand: unique symbol = Symbol(
   "ValidatedWorkflowPlan",
 );
 
 export interface ValidatedWorkflowPlan extends WorkflowPlan {
   readonly topologicalOrder: readonly string[];
+  readonly authorityContract?: WorkflowAuthorityContract;
   readonly [validatedWorkflowPlanBrand]: true;
 }
 
-export function validateWorkflowPlan(plan: WorkflowPlan): ValidatedWorkflowPlan {
+export function validateWorkflowPlan(
+  plan: WorkflowPlan,
+  authorityContract?: WorkflowAuthorityContract,
+): ValidatedWorkflowPlan {
   if (plan.objective.trim().length === 0) {
     throw new Error("Workflow objective is required");
   }
@@ -54,7 +64,11 @@ export function validateWorkflowPlan(plan: WorkflowPlan): ValidatedWorkflowPlan 
     "Workflow acceptance criteria",
   );
 
-  const roleList = validateRoleRegistry(plan.roles);
+  const contract = snapshotAuthorityContract(authorityContract, plan.roles);
+  const roleList = validateRoleRegistry(
+    plan.roles,
+    new Set(contract?.dangerFullAccessRoleIds ?? []),
+  );
   const roles = uniqueMap(roleList, (role) => role.identity, "role");
   const taskList = Object.freeze(plan.tasks.map((task) => snapshotTask(task)));
   const tasks = uniqueMap(taskList, (task) => task.id, "task");
@@ -186,6 +200,7 @@ export function validateWorkflowPlan(plan: WorkflowPlan): ValidatedWorkflowPlan 
     roles: roleList,
     tasks: taskList,
     topologicalOrder: Object.freeze(topologicalOrder),
+    ...(contract === undefined ? {} : { authorityContract: contract }),
   };
   return Object.freeze(validated);
 }
@@ -205,11 +220,12 @@ export function assertValidatedWorkflowPlan(
 
 export function validateRoleRegistry(
   input: readonly CodexRole[],
+  dangerFullAccessRoleIds: ReadonlySet<string> = new Set(),
 ): readonly CodexRole[] {
   const roleList = Object.freeze(input.map((role) => snapshotCodexRole(role)));
   const roles = uniqueMap(roleList, (role) => role.identity, "role");
   for (const role of roleList) {
-    validateCodexRole(role);
+    validateCodexRole(role, dangerFullAccessRoleIds.has(role.identity));
     if (role.supraHolon !== undefined) {
       if (!roles.has(role.supraHolon)) {
         throw new Error(
@@ -225,7 +241,10 @@ export function validateRoleRegistry(
   return roleList;
 }
 
-export function validateCodexRole(role: CodexRole): CodexRole {
+export function validateCodexRole(
+  role: CodexRole,
+  dangerFullAccessAuthorized = false,
+): CodexRole {
   if (role.identity.trim().length === 0) {
     throw new Error("Role identity is required");
   }
@@ -273,7 +292,7 @@ export function validateCodexRole(role: CodexRole): CodexRole {
       `Role ${role.identity} needs write authority for workspace-write sandbox`,
     );
   }
-  if (thread.sandboxMode === "danger-full-access") {
+  if (thread.sandboxMode === "danger-full-access" && !dangerFullAccessAuthorized) {
     throw new Error(
       `Role ${role.identity} cannot use danger-full-access without a consumer-owned authority contract`,
     );
@@ -288,6 +307,37 @@ export function validateCodexRole(role: CodexRole): CodexRole {
     );
   }
   return role;
+}
+
+function snapshotAuthorityContract(
+  input: WorkflowAuthorityContract | undefined,
+  roles: readonly CodexRole[],
+): WorkflowAuthorityContract | undefined {
+  if (input === undefined) return undefined;
+  if (input.owner.trim().length === 0) {
+    throw new Error("Workflow authority contract owner is required");
+  }
+  if (input.justification.trim().length === 0) {
+    throw new Error("Workflow authority contract justification is required");
+  }
+  assertNonEmptyUniqueStrings(
+    input.dangerFullAccessRoleIds,
+    "Workflow authority contract dangerFullAccessRoleIds",
+  );
+  const knownRoleIds = new Set(roles.map((role) => role.identity));
+  const unknownRoleIds = input.dangerFullAccessRoleIds.filter(
+    (roleId) => !knownRoleIds.has(roleId),
+  );
+  if (unknownRoleIds.length > 0) {
+    throw new Error(
+      `Workflow authority contract references unknown roles: ${unknownRoleIds.join(", ")}`,
+    );
+  }
+  return Object.freeze({
+    owner: input.owner,
+    justification: input.justification,
+    dangerFullAccessRoleIds: Object.freeze([...input.dangerFullAccessRoleIds]),
+  });
 }
 
 function assertAcyclicRoleHierarchy(

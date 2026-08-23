@@ -140,7 +140,10 @@ export class PlanCodexClient {
     codex?: WorkflowCodex,
   ) {
     assertValidatedWorkflowPlan(plan);
-    this.#plan = validateWorkflowPlan(plan);
+    // validateWorkflowPlan already snapshots and freezes the complete plan,
+    // including any consumer-owned authority contract. Revalidating without
+    // that separate contract would discard its explicit authorization.
+    this.#plan = plan;
     this.#roles = new Map(
       this.#plan.roles.map((role) => [role.identity, role]),
     );

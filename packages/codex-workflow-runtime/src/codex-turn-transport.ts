@@ -55,7 +55,10 @@ export class CodexTurnTransport {
   readonly #codex: WorkflowCodex;
 
   public constructor(options?: CodexOptions, codex?: WorkflowCodex) {
-    this.#codex = codex ?? new Codex(options);
+    this.#codex = codex ?? new Codex({
+      ...options,
+      env: isolatedCodexEnvironment(process.env, options?.env),
+    });
   }
 
   public startThread(options: ThreadOptions): WorkflowThread {
@@ -93,6 +96,27 @@ export class CodexTurnTransport {
       usage: turn.usage,
     };
   }
+}
+
+const desktopContextVariables = new Set([
+  "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+  "CODEX_PERMISSION_PROFILE",
+  "CODEX_SESSION_ID",
+  "CODEX_THREAD_ID",
+]);
+
+export function isolatedCodexEnvironment(
+  inheritedEnvironment: Readonly<Record<string, string | undefined>>,
+  overrides: Readonly<Record<string, string>> = {},
+): Record<string, string> {
+  const inherited = Object.fromEntries(
+    Object.entries(inheritedEnvironment).filter(
+      (entry): entry is [string, string] => entry[1] !== undefined,
+    ),
+  );
+  const env = { ...inherited, ...overrides };
+  for (const name of desktopContextVariables) delete env[name];
+  return env;
 }
 
 function turnSignal(options: CodexTurnRunOptions): AbortSignal | undefined {
