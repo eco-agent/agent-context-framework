@@ -134,11 +134,13 @@ No existing behavior is removed or weakened.
 | --- | --- | --- | --- |
 | No product code before representation approval | Representation controller | Approved specification hash is required by the compose decoder | Return `awaiting_representation_approval` |
 | Model output cannot choose commands | Controller and adapters | Commands come from typed project configuration, never role output | Stop with an invalid configuration result |
+| Evidence-only roles must not inherit target repository context | Run input builder | Copy the decoded request and allowlisted evidence into an owned temporary directory outside the target Git checkout | Stop before session creation if the evidence packet cannot be copied exactly |
 | Reviewer sees rendered evidence before source | Review input builder | Ledger records the initial evidence references and excluded source | Add a narrow source reference only for a cited visual finding |
 | Only the primary implementer writes product code | Role registry and Git transaction | Thread permissions, branch identity, and commits in the ledger | Stop on an unexpected writer or dirty index |
 | Automated layout facts do not judge quality | Evidence schema | Facts and review decisions are separate records | Wait for the visual reviewer or human owner |
 | Rendering is mandatory | Compose controller | Every reviewed revision has complete `RenderEvidenceV1` coverage | Stop or wait when capture is unavailable; TSX is not a substitute |
 | Repairs are finite | Compose controller | Shared repair count and transition count in the ledger | Return exhausted with the latest usable evidence |
+| Cleanup must not hide the workflow result | CLI | Retry removal of the exact owned temporary directory and report a remaining cleanup failure separately | Preserve the original model, transport, or controller error in the ledger and process result |
 | Visual acceptance remains human | Controller | External acceptance names the selected render hashes and Git revision | Return `ready_for_human_review` |
 | Live execution is optional | Registry selection | Component closure and activation disclosure | Keep ordinary frontend verification unchanged |
 
@@ -151,10 +153,17 @@ No existing behavior is removed or weakened.
 - Frontend guidance already owns representation search, a lossy approved
   specification, rendered review, and human judgment.
 - The ordinary `frontend` profile does not render UI and should remain that way.
-- The installed fixture contains `codex-runtime` and `repository-policy`, but no
-  workflow package.
+- The fixture has a copied representation workflow test package built from the
+  distributable runtime. Its 37 runtime and workflow tests pass.
 - The fixture's `qa:ui` Playwright script already provides deterministic states,
-  viewport facts, console errors, and screenshots. It is the first render adapter.
+  viewport facts, console errors, and screenshots. Its full capture matrix passes
+  after adding the missing `iisCompanionSites` field to the test adapter.
+- A repository-subdirectory working directory inherited the fixture's required
+  project MCP server and failed before model startup. Moving the allowlisted
+  evidence packet outside the Git checkout allowed Codex session creation.
+- The isolated live run then stopped on the account usage limit before Candidate
+  A returned. The fixture retains both JSONL failure records. No composition was
+  produced or approved.
 
 ## Smallest complete slice
 
@@ -243,4 +252,6 @@ queue dependencies with the frontend workflow.
 - One bounded live compose run, declared fixture checks, rendered evidence review,
   and human acceptance.
 
-No browser or live Codex execution has run in this planning stage.
+The downstream browser capture and installed mock workflow have run. A live Codex
+session started from the isolated evidence packet, but the account usage limit
+stopped Candidate A. The three-turn live representation result remains unverified.
