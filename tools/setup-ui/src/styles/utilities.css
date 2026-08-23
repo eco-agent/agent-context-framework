@@ -1,0 +1,62 @@
+::view-transition-old(setup-pane),
+::view-transition-new(setup-pane),
+::view-transition-old(selection-plan),
+::view-transition-new(selection-plan),
+::view-transition-old(result-notice),
+::view-transition-new(result-notice) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(setup-pane) {
+  animation-name: setup-pane-out;
+}
+
+::view-transition-new(setup-pane) {
+  animation-name: setup-pane-in;
+}
+
+::view-transition-old(selection-plan) {
+  animation-name: selection-plan-out;
+}
+
+::view-transition-new(selection-plan) {
+  animation-name: selection-plan-in;
+}
+
+@keyframes setup-pane-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+}
+
+@keyframes setup-pane-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+}
+
+@keyframes selection-plan-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes selection-plan-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(setup-pane),
+  ::view-transition-new(setup-pane),
+  ::view-transition-old(selection-plan),
+  ::view-transition-new(selection-plan),
+  ::view-transition-old(result-notice),
+  ::view-transition-new(result-notice) {
+    animation: none;
+  }
+}
