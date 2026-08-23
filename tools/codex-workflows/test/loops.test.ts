@@ -5,13 +5,13 @@ import { join } from "node:path";
 import test from "node:test";
 
 import {
+  createObjectiveLoopContext,
   decodeObjectiveId,
-  JsonlLedger,
-  MemoryLedger,
+  ObjectiveJsonlLedger,
+  ObjectiveMemoryLedger,
   runAuthorityLadder,
   runAutonomousEnvironment,
   runRelayChain,
-  validateWorkflowPlan,
   type Decision,
   type Evidence,
 } from "../src/index.js";
@@ -26,7 +26,7 @@ test("JSONL ledger resumes sequence from durable evidence", async () => {
   const root = await mkdtemp(join(tmpdir(), "codex-ledger-test-"));
   const file = join(root, "run.jsonl");
   try {
-    const first = await JsonlLedger.open(file, "durable-test");
+    const first = await ObjectiveJsonlLedger.open(file, "durable-test");
     await first.append({
       objectiveId: testObjectiveId,
       type: "loop.started",
@@ -35,7 +35,7 @@ test("JSONL ledger resumes sequence from durable evidence", async () => {
       evidence,
     });
 
-    const resumed = await JsonlLedger.open(file, "durable-test");
+    const resumed = await ObjectiveJsonlLedger.open(file, "durable-test");
     const second = await resumed.append({
       objectiveId: testObjectiveId,
       type: "loop.completed",
@@ -55,7 +55,7 @@ test("JSONL ledger serializes concurrent appends and recovers an interrupted tai
   const root = await mkdtemp(join(tmpdir(), "codex-ledger-crash-test-"));
   const file = join(root, "run.jsonl");
   try {
-    const ledger = await JsonlLedger.open(file, "crash-test");
+    const ledger = await ObjectiveJsonlLedger.open(file, "crash-test");
     await Promise.all(
       Array.from({ length: 10 }, (_, index) =>
         ledger.append({
@@ -68,7 +68,7 @@ test("JSONL ledger serializes concurrent appends and recovers an interrupted tai
       ),
     );
     await appendFile(file, "{\"interrupted\":", "utf8");
-    const resumed = await JsonlLedger.open(file, "crash-test");
+    const resumed = await ObjectiveJsonlLedger.open(file, "crash-test");
     const events = await resumed.list();
     assert.deepEqual(events.map((event) => event.sequence), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   } finally {
@@ -77,7 +77,7 @@ test("JSONL ledger serializes concurrent appends and recovers an interrupted tai
 });
 
 test("relay sends repair to the previous stage", async () => {
-  const ledger = new MemoryLedger("relay-test");
+  const ledger = new ObjectiveMemoryLedger("relay-test");
   const calls: string[] = [];
   let verificationAttempts = 0;
 
@@ -113,7 +113,7 @@ test("relay sends repair to the previous stage", async () => {
       },
     ],
     { maxTransitions: 5, maxRepairs: 1 },
-    { ledger, objectiveId: testObjectiveId },
+    createObjectiveLoopContext(testObjectiveId, ledger),
   );
 
   assert.equal(result.status, "completed");
@@ -125,58 +125,8 @@ test("relay sends repair to the previous stage", async () => {
   ]);
 });
 
-test("static plan rejects recursive task cycles", () => {
-  assert.throws(
-    () =>
-      validateWorkflowPlan({
-        objectiveId: testObjectiveId,
-        objective: "Implement and verify",
-        acceptanceCriteria: ["tests pass"],
-        primaryRoleId: "primary",
-        loop: "relay-chain",
-        roles: [
-          {
-            identity: "primary",
-            role: "implementer",
-            scope: ["repository"],
-            capabilities: ["write"],
-            authority: ["read", "write"],
-            thread: { sandboxMode: "workspace-write" },
-          },
-        ],
-        tasks: [
-          {
-            objectiveId: testObjectiveId,
-            id: "implement",
-            roleId: "primary",
-            purpose: "implement",
-            scope: ["repository"],
-            grantedAuthority: ["write"],
-            dependencies: ["verify"],
-            acceptanceCriteria: ["change exists"],
-            expectedEvidence: ["diff"],
-            maxAttempts: 1,
-          },
-          {
-            objectiveId: testObjectiveId,
-            id: "verify",
-            roleId: "primary",
-            purpose: "verify",
-            scope: ["repository"],
-            grantedAuthority: ["read"],
-            dependencies: ["implement"],
-            acceptanceCriteria: ["tests pass"],
-            expectedEvidence: ["test output"],
-            maxAttempts: 1,
-          },
-        ],
-      }),
-    /contains a cycle/u,
-  );
-});
-
 test("autonomous loop escalates after measured stagnation", async () => {
-  const ledger = new MemoryLedger("environment-test");
+  const ledger = new ObjectiveMemoryLedger("environment-test");
   let state = 0;
 
   const result = await runAutonomousEnvironment(
@@ -213,7 +163,7 @@ test("autonomous loop escalates after measured stagnation", async () => {
       maxConsecutiveStagnantSteps: 2,
       retainedHistory: 2,
     },
-    { ledger, objectiveId: testObjectiveId },
+    createObjectiveLoopContext(testObjectiveId, ledger),
   );
 
   assert.equal(result.status, "escalated");
@@ -223,7 +173,7 @@ test("autonomous loop escalates after measured stagnation", async () => {
 });
 
 test("authority ladder permits only backward returns", async () => {
-  const ledger = new MemoryLedger("ladder-test");
+  const ledger = new ObjectiveMemoryLedger("ladder-test");
   let qualityAttempts = 0;
 
   const result = await runAuthorityLadder(
@@ -263,7 +213,7 @@ test("authority ladder permits only backward returns", async () => {
       },
     ],
     5,
-    { ledger, objectiveId: testObjectiveId },
+    createObjectiveLoopContext(testObjectiveId, ledger),
   );
 
   assert.deepEqual(result, {

@@ -1,22 +1,24 @@
 import {
-  Codex,
   type CodexOptions,
-  type ThreadOptions,
-  type TurnOptions,
   type Usage,
 } from "@openai/codex-sdk";
+import {
+  CodexTurnTransport,
+  type Authority,
+  type CodexRole,
+  type JsonValue,
+  type WorkflowCodex,
+  type WorkflowThread,
+} from "@agent-context/codex-workflow-runtime";
 import {
   decodeObjectiveId,
   type ObjectiveId,
 } from "@agent-context/repo-policy";
 
 import type {
-  Authority,
-  CodexRole,
-  Delegation,
-  EvidenceLedger,
-  JsonValue,
-} from "./contracts.js";
+  ObjectiveDelegation,
+  ObjectiveEvidenceLedger,
+} from "./objective-contracts.js";
 
 export interface WorkflowObjective {
   readonly objectiveId: ObjectiveId;
@@ -37,14 +39,19 @@ export interface WorkflowObjective {
 export interface StructuredInvocation<T> {
   readonly objective: WorkflowObjective;
   readonly role: CodexRole;
-  readonly delegation: Delegation;
+  readonly delegation: ObjectiveDelegation;
   readonly input: JsonValue;
   readonly outputSchema: JsonValue;
   readonly decode: (value: unknown) => T;
   readonly initialContext?: string;
   readonly ledgerState?: (value: T) => JsonValue;
-  readonly resumeThreadId?: string;
+  readonly continuation?: ObjectiveThreadContinuation;
   readonly signal?: AbortSignal;
+}
+
+export interface ObjectiveThreadContinuation {
+  readonly objectiveId: ObjectiveId;
+  readonly threadId: string;
 }
 
 export interface StructuredInvocationResult<T> {
@@ -64,34 +71,18 @@ export class PromptBudgetExceededError extends Error {
   }
 }
 
-export interface WorkflowThread {
-  readonly id: string | null;
-  run(
-    input: string,
-    options: TurnOptions,
-  ): Promise<{
-    readonly finalResponse: string;
-    readonly usage: Usage | null;
-  }>;
-}
-
-export interface WorkflowCodex {
-  startThread(options: ThreadOptions): WorkflowThread;
-  resumeThread(id: string, options: ThreadOptions): WorkflowThread;
-}
-
-export class CodexWorkflowClient {
-  readonly #codex: WorkflowCodex;
+export class ObjectiveCodexClient {
+  readonly #transport: CodexTurnTransport;
   readonly #threads = new Map<string, WorkflowThread>();
   readonly #activeObjectiveByRole = new Map<string, string>();
   readonly #consumedResumeKeys = new Set<string>();
 
   public constructor(
-    private readonly ledger: EvidenceLedger,
+    private readonly ledger: ObjectiveEvidenceLedger,
     options?: CodexOptions,
     codex?: WorkflowCodex,
   ) {
-    this.#codex = codex ?? new Codex(options);
+    this.#transport = new CodexTurnTransport(options, codex);
   }
 
   public async invoke<T>(
@@ -104,7 +95,7 @@ export class CodexWorkflowClient {
     const thread = this.resolveThread(
       invocation.role,
       invocation.objective,
-      invocation.resumeThreadId,
+      invocation.continuation,
     );
 
     await this.ledger.append({
@@ -128,6 +119,7 @@ export class CodexWorkflowClient {
           to: invocation.delegation.to,
           purpose: invocation.delegation.purpose,
           scope: invocation.delegation.scope,
+          requiredCapabilities: invocation.delegation.requiredCapabilities,
           grantedAuthority: invocation.delegation.grantedAuthority,
           expectedEvidence: invocation.delegation.expectedEvidence,
           returnContract: invocation.delegation.returnContract,
@@ -137,20 +129,13 @@ export class CodexWorkflowClient {
     });
 
     try {
-      const turnOptions: TurnOptions = {
-        outputSchema: invocation.outputSchema,
-        ...(invocation.signal === undefined
-          ? {}
-          : { signal: invocation.signal }),
-      };
-      const turn = await thread.run(
+      const turn = await this.#transport.run(
+        thread,
         prompt,
-        turnOptions,
+        invocation.outputSchema,
+        invocation.signal === undefined ? {} : { signal: invocation.signal },
       );
-      const threadId = thread.id;
-      if (threadId === null) {
-        throw new Error("Codex completed without assigning a thread ID");
-      }
+      const threadId = turn.threadId;
 
       const parsed = JSON.parse(turn.finalResponse) as unknown;
       const value = invocation.decode(parsed);
@@ -206,8 +191,18 @@ export class CodexWorkflowClient {
   private resolveThread(
     role: CodexRole,
     objective: WorkflowObjective,
-    resumeThreadId?: string,
+    continuation?: ObjectiveThreadContinuation,
   ): WorkflowThread {
+    if (
+      continuation !== undefined &&
+      continuation.objectiveId !== objective.objectiveId
+    ) {
+      throw new Error("Durable continuation belongs to a different objective.");
+    }
+    if (objective.threadPolicy === "fresh" && continuation !== undefined) {
+      throw new Error("A fresh thread policy cannot resume a durable thread.");
+    }
+
     const previousObjective = this.#activeObjectiveByRole.get(role.identity);
     if (
       previousObjective !== undefined &&
@@ -219,10 +214,7 @@ export class CodexWorkflowClient {
     }
 
     if (objective.threadPolicy === "fresh") {
-      if (resumeThreadId !== undefined) {
-        throw new Error("A fresh thread policy cannot resume a durable thread.");
-      }
-      return this.#codex.startThread(role.thread);
+      return this.#transport.startThread(role.thread);
     }
 
     this.#activeObjectiveByRole.set(role.identity, objective.objectiveId);
@@ -233,15 +225,11 @@ export class CodexWorkflowClient {
       return existing;
     }
 
-    const durableResumeThreadId =
-      resumeThreadId ??
-      (role.resume?.objectiveId === objective.objectiveId
-        ? role.resume.threadId
-        : undefined);
+    const durableResumeThreadId = continuation?.threadId;
     const thread =
       durableResumeThreadId !== undefined && !this.#consumedResumeKeys.has(key)
         ? this.resumeThreadId(role, key, durableResumeThreadId)
-        : this.#codex.startThread(role.thread);
+        : this.#transport.startThread(role.thread);
 
     this.#threads.set(key, thread);
     return thread;
@@ -252,11 +240,8 @@ export class CodexWorkflowClient {
     key: string,
     threadId: string,
   ): WorkflowThread {
-    if (threadId.trim().length === 0) {
-      throw new Error("Durable resume thread ID cannot be empty.");
-    }
     this.#consumedResumeKeys.add(key);
-    return this.#codex.resumeThread(threadId, role.thread);
+    return this.#transport.resumeThread(threadId, role.thread);
   }
 
   private releaseThread(
@@ -275,7 +260,10 @@ export class CodexWorkflowClient {
     }
   }
 
-  private assertDelegation(role: CodexRole, delegation: Delegation): void {
+  private assertDelegation(
+    role: CodexRole,
+    delegation: ObjectiveDelegation,
+  ): void {
     if (delegation.to !== role.identity) {
       throw new Error(
         `Delegation target ${delegation.to} does not match role ${role.identity}`,
@@ -289,6 +277,26 @@ export class CodexWorkflowClient {
     if (excess.length > 0) {
       throw new Error(
         `Delegation exceeds ${role.identity} authority: ${excess.join(", ")}`,
+      );
+    }
+
+    const roleScope = new Set(role.scope);
+    const excessScope = delegation.scope.filter(
+      (scope) => !roleScope.has(scope),
+    );
+    if (excessScope.length > 0) {
+      throw new Error(
+        `Delegation exceeds ${role.identity} scope: ${excessScope.join(", ")}`,
+      );
+    }
+
+    const roleCapabilities = new Set(role.capabilities);
+    const excessCapabilities = delegation.requiredCapabilities.filter(
+      (capability) => !roleCapabilities.has(capability),
+    );
+    if (excessCapabilities.length > 0) {
+      throw new Error(
+        `Delegation exceeds ${role.identity} capabilities: ${excessCapabilities.join(", ")}`,
       );
     }
   }

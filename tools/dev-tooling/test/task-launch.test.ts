@@ -20,8 +20,8 @@ import {
 } from "@agent-context/objective-runtime";
 import {
   CodexObjectiveRunner,
-  CodexWorkflowClient,
-  MemoryLedger,
+  ObjectiveCodexClient,
+  ObjectiveMemoryLedger,
   type CodexRole,
   type WorkflowCodex,
   type WorkflowThread,
@@ -48,9 +48,9 @@ test("leased launcher uses authoritative artifacts and resumes after cache loss"
     const artifacts = new FilesystemArtifactStore(path.join(stateRoot, "artifacts"));
     await createObjective(store, fixture.definition);
     const fake = new FakeCodex();
-    const ledger = new MemoryLedger("durable-launcher-test");
+    const ledger = new ObjectiveMemoryLedger("durable-launcher-test");
     const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-      clientFor: () => new CodexWorkflowClient(ledger, undefined, fake),
+      clientFor: () => new ObjectiveCodexClient(ledger, undefined, fake),
       launchFor: async (context) => {
         const prepared = await prepareTaskLaunch(context, {
           executionDirectory: fixture.root,
@@ -137,7 +137,7 @@ test("source drift after projection fails before a Codex thread starts", async (
     await createObjective(store, fixture.definition);
     const fake = new FakeCodex();
     const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-      clientFor: () => new CodexWorkflowClient(new MemoryLedger("source-drift"), undefined, fake),
+      clientFor: () => new ObjectiveCodexClient(new ObjectiveMemoryLedger("source-drift"), undefined, fake),
       launchFor: async (context) => {
         const prepared = await prepareTaskLaunch(context, {
           executionDirectory: fixture.root,
@@ -189,7 +189,7 @@ test("concurrent leased objectives keep envelopes and active bindings isolated",
     const byId = new Map(fixtures.map((fixture) => [fixture.definition.objectiveId, fixture]));
     const fake = new BarrierCodex(2);
     const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-      clientFor: () => new CodexWorkflowClient(new MemoryLedger("concurrent-launch"), undefined, fake),
+      clientFor: () => new ObjectiveCodexClient(new ObjectiveMemoryLedger("concurrent-launch"), undefined, fake),
       launchFor: async (context) => {
         const fixture = byId.get(context.snapshot.definition.objectiveId);
         if (fixture === undefined) throw new Error("missing concurrent fixture");
@@ -268,6 +268,7 @@ function invocationFor(
       to: worker.actorId,
       purpose: "perform bounded fixture work",
       scope: ["owner.ts"],
+      requiredCapabilities: ["structured-output"],
       context: null,
       constraints: ["stay in scope"],
       grantedAuthority: ["read", "write", "verify"] as const,

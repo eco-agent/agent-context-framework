@@ -19,7 +19,7 @@ import {
 import type { ObjectiveAttemptContext } from "@agent-context/objective-runtime";
 import * as z from "zod/v4";
 
-import type { JsonValue } from "./contracts.js";
+import type { JsonValue } from "@agent-context/codex-workflow-runtime";
 import {
   publishVerifiedPrecedentEvidence,
   readPinnedGitFile,

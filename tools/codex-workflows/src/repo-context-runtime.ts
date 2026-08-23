@@ -18,7 +18,7 @@ import {
   type ObjectiveId,
 } from "@agent-context/repo-policy";
 
-import { JsonlLedger } from "./ledger.js";
+import { ObjectiveJsonlLedger } from "./ledger.js";
 import {
   ObjectiveRepositoryContext,
   RepositoryContextTool,
@@ -135,7 +135,7 @@ export class RepoContextRuntime {
     const objective = await this.resolveObjective();
     await mkdir(path.dirname(objective.lockPath), { recursive: true });
     return await withFileLock(objective.lockPath, async () => {
-      const ledger = await JsonlLedger.open(
+      const ledger = await ObjectiveJsonlLedger.open(
         objective.ledgerPath,
         `repository-context:${objective.id}`,
       );

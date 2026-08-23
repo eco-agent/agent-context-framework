@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { PolicyResult } from "@agent-context/repo-policy";
 import {
+  createObjectiveLoopContext,
   decodeObjectiveId,
-  MemoryLedger,
+  ObjectiveMemoryLedger,
   runCapabilityWorkflow,
   type CapabilityArtifact,
   type Evidence,
@@ -37,7 +38,7 @@ const evidence: readonly Evidence[] = [
 ];
 
 test("capability workflow gives repair only compact policy failures", async () => {
-  const ledger = new MemoryLedger("capability-repair");
+  const ledger = new ObjectiveMemoryLedger("capability-repair");
   const repairInputs: RepairInput[] = [];
   let verificationAttempt = 0;
 
@@ -71,7 +72,7 @@ test("capability workflow gives repair only compact policy failures", async () =
         },
       },
     },
-    { ledger, objectiveId: request.objectiveId },
+    createObjectiveLoopContext(request.objectiveId, ledger),
   );
 
   assert.equal(result.status, "completed");
@@ -87,7 +88,7 @@ test("capability workflow gives repair only compact policy failures", async () =
 });
 
 test("zero repair budget stops before changing the artifact again", async () => {
-  const ledger = new MemoryLedger("capability-no-repair");
+  const ledger = new ObjectiveMemoryLedger("capability-no-repair");
   let repairs = 0;
   const result = await runCapabilityWorkflow(
     { ...request, repairBudget: 0 },
@@ -114,7 +115,7 @@ test("zero repair budget stops before changing the artifact again", async () => 
         },
       },
     },
-    { ledger, objectiveId: request.objectiveId },
+    createObjectiveLoopContext(request.objectiveId, ledger),
   );
 
   assert.equal(result.status, "budget_exhausted");

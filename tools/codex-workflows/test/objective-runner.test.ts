@@ -26,8 +26,8 @@ import {
   CodexObjectiveRunner,
   type CodexObjectiveInvocation,
   type CodexObjectiveLaunch,
-  CodexWorkflowClient,
-  MemoryLedger,
+  ObjectiveCodexClient,
+  ObjectiveMemoryLedger,
   publishTaskEnvelope,
   type CodexRole,
   type WorkflowCodex,
@@ -57,9 +57,9 @@ test("Codex objective runner persists a thread checkpoint and resumes it on retr
   const id = objectiveId("72000000-0000-4000-8000-000000000001");
   await createObjective(store, definition(id));
   const fake = new FakeCodex();
-  const ledger = new MemoryLedger("codex-objective-runner");
+  const ledger = new ObjectiveMemoryLedger("codex-objective-runner");
   const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-    clientFor: () => new CodexWorkflowClient(ledger, undefined, fake),
+    clientFor: () => new ObjectiveCodexClient(ledger, undefined, fake),
     launchFor: (context) => testLaunch(context, {
       role,
       delegation: {
@@ -68,6 +68,7 @@ test("Codex objective runner persists a thread checkpoint and resumes it on retr
         to: "codex-worker",
         purpose: "produce bounded structured work",
         scope: ["temporary repository"],
+        requiredCapabilities: ["structured-output"],
         context: null,
         constraints: ["return structured output"],
         grantedAuthority: ["read", "write", "verify"],
@@ -124,7 +125,7 @@ test("rendered prompt overflow becomes durable budget exhaustion without retry c
   await createObjective(store, definition(id, 100));
   const fake = new FakeCodex();
   const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-    clientFor: () => new CodexWorkflowClient(new MemoryLedger("prompt-exhaustion"), undefined, fake),
+    clientFor: () => new ObjectiveCodexClient(new ObjectiveMemoryLedger("prompt-exhaustion"), undefined, fake),
     launchFor: (context) => testLaunch(context, {
       role,
       delegation: {
@@ -133,6 +134,7 @@ test("rendered prompt overflow becomes durable budget exhaustion without retry c
         to: "codex-worker",
         purpose: "prove prompt limit",
         scope: ["temporary repository"],
+        requiredCapabilities: ["structured-output"],
         context: null,
         constraints: [],
         grantedAuthority: ["read"],
@@ -168,7 +170,7 @@ test("runner rejects a missing authoritative envelope before model execution", a
   const fake = new FakeCodex();
   const artifacts = new MemoryArtifactStore();
   const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-    clientFor: () => new CodexWorkflowClient(new MemoryLedger("missing-envelope"), undefined, fake),
+    clientFor: () => new ObjectiveCodexClient(new ObjectiveMemoryLedger("missing-envelope"), undefined, fake),
     launchFor: async (context) => {
       const launch = await testLaunch(context, {
         role,
@@ -178,6 +180,7 @@ test("runner rejects a missing authoritative envelope before model execution", a
           to: "codex-worker",
           purpose: "reject missing envelope",
           scope: ["temporary repository"],
+          requiredCapabilities: ["structured-output"],
           context: null,
           constraints: [],
           grantedAuthority: ["read"],
@@ -219,7 +222,7 @@ test("reported agent tokens are durably metered and terminalize on overflow", as
     reasoning_output_tokens: 1,
   };
   const runner = new CodexObjectiveRunner<{ readonly result: string }>({
-    clientFor: () => new CodexWorkflowClient(new MemoryLedger("token-exhaustion"), undefined, fake),
+    clientFor: () => new ObjectiveCodexClient(new ObjectiveMemoryLedger("token-exhaustion"), undefined, fake),
     launchFor: (context) => testLaunch(context, {
       role,
       delegation: {
@@ -228,6 +231,7 @@ test("reported agent tokens are durably metered and terminalize on overflow", as
         to: "codex-worker",
         purpose: "prove token metering",
         scope: ["temporary repository"],
+        requiredCapabilities: ["structured-output"],
         context: null,
         constraints: [],
         grantedAuthority: ["read"],

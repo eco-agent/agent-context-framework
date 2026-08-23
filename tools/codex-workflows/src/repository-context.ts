@@ -7,7 +7,8 @@ import {
   type ObjectiveId,
 } from "@agent-context/repo-policy";
 
-import type { EvidenceLedger, JsonValue } from "./contracts.js";
+import type { JsonValue } from "@agent-context/codex-workflow-runtime";
+import type { ObjectiveEvidenceLedger } from "./objective-contracts.js";
 
 const DEFAULT_READ_LINES = 200;
 const DEFAULT_SEARCH_MATCHES = 50;
@@ -16,7 +17,7 @@ const HARD_OUTPUT_BYTES = 1_000_000;
 const HARD_SOURCE_BYTES = 32 * 1024 * 1024;
 const HARD_SEARCH_PROCESS_BYTES = 32 * 1024 * 1024;
 const objectiveQueues = new WeakMap<
-  EvidenceLedger,
+  ObjectiveEvidenceLedger,
   Map<string, Promise<void>>
 >();
 
@@ -353,7 +354,7 @@ export class RepositoryContextTool {
 export class ObjectiveRepositoryContext {
   public constructor(
     private readonly tool: RepositoryContextTool,
-    private readonly ledger: EvidenceLedger,
+    private readonly ledger: ObjectiveEvidenceLedger,
     private readonly objective: RepositoryContextObjective,
   ) {
     decodeObjectiveId(objective.objectiveId);
@@ -1018,7 +1019,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function objectiveQueue(
-  ledger: EvidenceLedger,
+  ledger: ObjectiveEvidenceLedger,
 ): Map<string, Promise<void>> {
   const existing = objectiveQueues.get(ledger);
   if (existing !== undefined) {

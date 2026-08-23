@@ -11,12 +11,17 @@ import type {
   ObjectiveAttemptRunner,
 } from "@agent-context/objective-runtime";
 import {
-  CodexWorkflowClient,
+  ObjectiveCodexClient,
   PromptBudgetExceededError,
   type StructuredInvocation,
   type WorkflowObjective,
-} from "./codex-client.js";
-import type { Authority, CodexRole, Delegation, JsonValue } from "./contracts.js";
+} from "./objective-codex-client.js";
+import type {
+  Authority,
+  CodexRole,
+  JsonValue,
+} from "@agent-context/codex-workflow-runtime";
+import type { ObjectiveDelegation } from "./objective-contracts.js";
 import {
   assertEnvelopeArtifact,
   decodeTaskEnvelope,
@@ -30,7 +35,7 @@ import {
 
 export interface CodexObjectiveInvocation<T> {
   readonly role: CodexRole;
-  readonly delegation: Delegation;
+  readonly delegation: ObjectiveDelegation;
   readonly repository: WorkflowObjective["repository"];
   readonly authority: readonly Authority[];
   readonly input: JsonValue;
@@ -48,7 +53,7 @@ export interface CodexObjectiveLaunch<T> {
 }
 
 export interface CodexObjectiveRunnerOptions<T> {
-  readonly clientFor: (snapshot: LeasedObjective) => CodexWorkflowClient;
+  readonly clientFor: (snapshot: LeasedObjective) => ObjectiveCodexClient;
   readonly launchFor: (
     context: ObjectiveAttemptContext,
   ) => CodexObjectiveLaunch<T> | Promise<CodexObjectiveLaunch<T>>;
@@ -160,7 +165,12 @@ export class CodexObjectiveRunner<T> implements ObjectiveAttemptRunner {
         signal: context.signal,
         ...(snapshot.latestCheckpoint?.resumeToken === undefined
           ? {}
-          : { resumeThreadId: snapshot.latestCheckpoint.resumeToken }),
+          : {
+              continuation: {
+                objectiveId: snapshot.definition.objectiveId,
+                threadId: snapshot.latestCheckpoint.resumeToken,
+              },
+            }),
       };
 
       let result;

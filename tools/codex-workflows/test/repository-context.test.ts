@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   decodeObjectiveId,
-  MemoryLedger,
+  ObjectiveMemoryLedger,
   ObjectiveRepositoryContext,
   RepositoryContextTool,
 } from "../src/index.js";
@@ -211,7 +211,7 @@ test("objective budget is inherited from ledger evidence across instances", asyn
   try {
     await writeFile(join(root, "source.txt"), "abcdefghijklmnopqrstuvwxyz", "utf8");
     const tool = await RepositoryContextTool.open(root);
-    const ledger = new MemoryLedger("budget-test");
+    const ledger = new ObjectiveMemoryLedger("budget-test");
     const objective = {
       objectiveId: decodeObjectiveId("70000000-0000-4000-8000-000000000003"),
       maxRepositoryOutputBytes: 20,
@@ -257,7 +257,7 @@ test("concurrent nested readers share one aggregate objective budget", async () 
   try {
     await writeFile(join(root, "source.txt"), "abcdefghijklmnopqrstuvwxyz", "utf8");
     const tool = await RepositoryContextTool.open(root);
-    const ledger = new MemoryLedger("concurrent-budget");
+    const ledger = new ObjectiveMemoryLedger("concurrent-budget");
     const objective = {
       objectiveId: decodeObjectiveId("70000000-0000-4000-8000-000000000003"),
       maxRepositoryOutputBytes: 10,

@@ -28,8 +28,8 @@ import {
 } from "@agent-context/objective-runtime";
 import {
   CodexObjectiveRunner,
-  CodexWorkflowClient,
-  JsonlLedger,
+  ObjectiveCodexClient,
+  ObjectiveJsonlLedger,
   publishTaskEnvelope,
   type CodexRole,
   type JsonValue,
@@ -152,7 +152,7 @@ try {
     }
   }
 
-  const ledger = await JsonlLedger.open(
+  const ledger = await ObjectiveJsonlLedger.open(
     join(stateRoot, "codex-evidence.jsonl"),
     `demo-${durableObjectiveId}`,
   );
@@ -168,7 +168,7 @@ try {
     },
   };
   const runner = new CodexObjectiveRunner<DemoResult>({
-    clientFor: () => new CodexWorkflowClient(ledger),
+    clientFor: () => new ObjectiveCodexClient(ledger),
     launchFor: async (context) => {
       const published = await publishTaskEnvelope(context, {
         root: repository,
@@ -193,6 +193,7 @@ try {
             to: worker.actorId,
             purpose: configuration.purpose,
             scope: [...role.scope],
+            requiredCapabilities: [...role.capabilities],
             context: { revision, demoKind },
             constraints: [...configuration.constraints],
             grantedAuthority: [...role.authority],

@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  CodexWorkflowClient,
+  ObjectiveCodexClient,
   decodeObjectiveId,
-  MemoryLedger,
+  ObjectiveMemoryLedger,
   type CodexRole,
-  type Delegation,
+  type ObjectiveDelegation,
   type StructuredInvocation,
   type WorkflowCodex,
   type WorkflowObjective,
@@ -32,14 +32,15 @@ const delegation = {
   grantedAuthority: ["read", "write"],
   expectedEvidence: ["tests"],
   returnContract: "structured result",
-} satisfies Omit<Delegation, "objectiveId">;
+  requiredCapabilities: ["write"],
+} satisfies Omit<ObjectiveDelegation, "objectiveId">;
 
 const objectiveIds = new Map<string, ReturnType<typeof decodeObjectiveId>>();
 
 test("reuses only the role and objective pair and evicts the prior objective", async () => {
   const fake = new FakeCodex();
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("objective-cache"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("objective-cache"),
     undefined,
     fake,
   );
@@ -57,8 +58,8 @@ test("reuses only the role and objective pair and evicts the prior objective", a
 
 test("fresh policy never reuses a reviewer thread", async () => {
   const fake = new FakeCodex();
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("fresh-review"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("fresh-review"),
     undefined,
     fake,
   );
@@ -75,8 +76,8 @@ test("fresh policy never reuses a reviewer thread", async () => {
 
 test("fresh policy also evicts a reusable thread held by the same role", async () => {
   const fake = new FakeCodex();
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("fresh-transition"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("fresh-transition"),
     undefined,
     fake,
   );
@@ -95,8 +96,8 @@ test("fresh policy also evicts a reusable thread held by the same role", async (
 
 test("terminal success releases the objective thread", async () => {
   const fake = new FakeCodex();
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("terminal-success"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("terminal-success"),
     undefined,
     fake,
   );
@@ -114,8 +115,8 @@ test("terminal success releases the objective thread", async () => {
 test("transport failure does not falsely terminalize an objective", async () => {
   const fake = new FakeCodex();
   fake.failNext = true;
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("terminal-transport"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("terminal-transport"),
     undefined,
     fake,
   );
@@ -132,34 +133,37 @@ test("transport failure does not falsely terminalize an objective", async () => 
 
 test("resume identifiers are bound to the same objective", async () => {
   const fake = new FakeCodex();
-  const resumableRole: CodexRole = {
-    ...role,
-    resume: {
-      threadId: "durable-thread",
-      objectiveId: objective("objective-a").objectiveId,
-    },
+  const firstObjective = objective("objective-a");
+  const continuation = {
+    threadId: "durable-thread",
+    objectiveId: firstObjective.objectiveId,
   };
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("resume-objective"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("resume-objective"),
     undefined,
     fake,
   );
 
-  await client.invoke(invocation(objective("objective-a"), resumableRole));
+  await client.invoke({ ...invocation(firstObjective), continuation });
   assert.deepEqual(fake.resumed, ["durable-thread"]);
 
-  await client.invoke(invocation(objective("objective-b"), resumableRole));
+  const secondObjective = objective("objective-b");
+  await assert.rejects(
+    client.invoke({ ...invocation(secondObjective), continuation }),
+    /different objective/u,
+  );
+  await client.invoke(invocation(secondObjective));
   assert.equal(fake.starts, 1);
 
-  await client.invoke(invocation(objective("objective-a"), resumableRole));
+  await client.invoke(invocation(firstObjective));
   assert.equal(fake.starts, 2);
   assert.deepEqual(fake.resumed, ["durable-thread"]);
 });
 
 test("objective envelope is required and included in every invocation", async () => {
   const fake = new FakeCodex();
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("objective-envelope"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("objective-envelope"),
     undefined,
     fake,
   );
@@ -184,8 +188,8 @@ test("objective envelope is required and included in every invocation", async ()
 
 test("rejects an oversized rendered prompt before starting a thread", async () => {
   const fake = new FakeCodex();
-  const client = new CodexWorkflowClient(
-    new MemoryLedger("prompt-budget"),
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("prompt-budget"),
     undefined,
     fake,
   );

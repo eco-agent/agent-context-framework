@@ -11,14 +11,14 @@
     ".": {
       "types": "./dist/src/index.d.ts",
       "import": "./dist/src/index.js"
+    },
+    "./bounded-workflow": {
+      "types": "./dist/src/bounded-workflow.d.ts",
+      "import": "./dist/src/bounded-workflow.js"
     }
   },
   "engines": {
     "node": ">=22"
-  },
-  "agentContext": {
-    "category": "tooling",
-    "owner": "framework"
   },
   "scripts": {
     "build": "tsc -b",

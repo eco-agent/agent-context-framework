@@ -1,12 +1,13 @@
 import {
-  CodexWorkflowClient,
+  ObjectiveCodexClient,
+  createObjectiveLoopContext,
   decodeObjectiveId,
-  JsonlLedger,
+  ObjectiveJsonlLedger,
   runRelayChain,
   type CodexRole,
   type Decision,
-  type Delegation,
   type JsonValue,
+  type ObjectiveDelegation,
 } from "../src/index.js";
 import { execFileSync } from "node:child_process";
 
@@ -74,11 +75,11 @@ function decodeAcceptedString(value: unknown): Decision<string> {
 
 async function main(): Promise<void> {
   const objectiveId = decodeObjectiveId(crypto.randomUUID());
-  const ledger = await JsonlLedger.open(
+  const ledger = await ObjectiveJsonlLedger.open(
     ".codex-runs/example-relay.jsonl",
     crypto.randomUUID(),
   );
-  const client = new CodexWorkflowClient(ledger);
+  const client = new ObjectiveCodexClient(ledger);
   const branch = execFileSync("git", ["branch", "--show-current"], {
     encoding: "utf8",
   }).trim();
@@ -127,12 +128,13 @@ async function main(): Promise<void> {
     roles.map((role) => ({
       id: role.identity,
       async run(artifact: string): Promise<Decision<string>> {
-        const delegation: Delegation = {
+        const delegation: ObjectiveDelegation = {
           objectiveId,
           from: "workflow-primary",
           to: role.identity,
           purpose: role.role,
           scope: role.scope,
+          requiredCapabilities: role.capabilities,
           context: { artifact },
           constraints: ["Preserve task ownership in the primary role"],
           grantedAuthority: role.authority,
@@ -168,7 +170,7 @@ async function main(): Promise<void> {
       },
     })),
     { maxTransitions: 4, maxRepairs: 1 },
-    { ledger, objectiveId },
+    createObjectiveLoopContext(objectiveId, ledger),
   );
 
   console.log(result);
