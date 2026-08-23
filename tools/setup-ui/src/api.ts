@@ -1,9 +1,12 @@
 import {
+  decodeSetupComponentDetail,
   decodeSetupSelectionPreview,
   decodeSetupInstallOutcome,
   decodeSetupSnapshot,
+  type SetupComponentDetail,
   type SetupInstallOutcome,
   type SetupSelectionPreview,
+  type SetupSourceOverride,
   type SetupSnapshot,
 } from "@agent-context/dev-tooling/setup-contract";
 
@@ -26,14 +29,27 @@ export async function fetchSetupSnapshot(token: string): Promise<SetupSnapshot> 
   return decodeSetupSnapshot(await response.json());
 }
 
+export async function fetchSetupComponentDetail(
+  token: string,
+  componentName: string,
+): Promise<SetupComponentDetail> {
+  const response = await setupFetch(
+    token,
+    `/api/components/${encodeURIComponent(componentName)}`,
+    { method: "GET" },
+  );
+  return decodeSetupComponentDetail(await response.json());
+}
+
 export async function fetchSetupPlan(
   token: string,
   components: readonly string[],
+  overrides: readonly SetupSourceOverride[],
 ): Promise<SetupSelectionPreview> {
   const response = await setupFetch(token, "/api/plan", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ components }),
+    body: JSON.stringify({ components, overrides }),
   });
   return decodeSetupSelectionPreview(await response.json());
 }
@@ -41,11 +57,12 @@ export async function fetchSetupPlan(
 export async function installSetupComponents(
   token: string,
   components: readonly string[],
+  overrides: readonly SetupSourceOverride[],
 ): Promise<SetupInstallOutcome> {
   const response = await setupFetch(token, "/api/install", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ components }),
+    body: JSON.stringify({ components, overrides }),
   });
   return decodeSetupInstallOutcome(await response.json());
 }

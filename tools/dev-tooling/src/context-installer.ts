@@ -52,6 +52,10 @@ export const CONTEXT_LOCK_PATH = ".agent-context/lock.json";
 export const CONTEXT_REGISTRY_PATH = "registry/registry.json";
 export const DEFAULT_CONTEXT_COMPONENT = "core";
 
+export type ContextSourceOverrides = ReadonlyMap<string, string>;
+
+const NO_SOURCE_OVERRIDES: ContextSourceOverrides = new Map();
+
 export type ContextUpdateMode = "preserve-local" | "overwrite-selected";
 
 export type ArtifactAssessmentStatus =
@@ -229,6 +233,7 @@ interface DesiredArtifact {
 export async function initProject(
   projectRoot: string,
   frameworkRoot: string,
+  sourceOverrides: ContextSourceOverrides = NO_SOURCE_OVERRIDES,
 ): Promise<ContextOperationResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const existingConfig = await readOptionalConfig(resolvedProjectRoot);
@@ -240,6 +245,8 @@ export async function initProject(
     config,
     existingConfig === null,
     { kind: "install" },
+    undefined,
+    sourceOverrides,
   );
 }
 
@@ -247,6 +254,7 @@ export async function addComponent(
   projectRoot: string,
   frameworkRoot: string,
   componentName: string,
+  sourceOverrides: ContextSourceOverrides = NO_SOURCE_OVERRIDES,
 ): Promise<ContextOperationResult> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const currentConfig = await requireConfig(resolvedProjectRoot);
@@ -261,6 +269,8 @@ export async function addComponent(
     config,
     selected !== currentConfig.components,
     { kind: "install" },
+    undefined,
+    sourceOverrides,
   );
 }
 
@@ -339,6 +349,7 @@ export async function planProjectSelection(
   projectRoot: string,
   frameworkRoot: string,
   requestedComponents: readonly string[],
+  sourceOverrides: ContextSourceOverrides = NO_SOURCE_OVERRIDES,
 ): Promise<ContextSelectionPreview> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const registry = await loadContextRegistry(frameworkRoot);
@@ -359,6 +370,7 @@ export async function planProjectSelection(
     config,
     previousLock,
     configChangeRequired ? { kind: "install" } : { kind: "observe" },
+    sourceOverrides,
   );
   const components = resolveContextComponents(registry, directComponents);
   const resolvedComponents = components.map((component) => component.name);
@@ -676,11 +688,16 @@ export async function planContextInstallation(
   config: ContextProjectConfigV2,
   previousLock: ContextInstallationLockV2 | null,
   intent: PlanningIntent,
+  sourceOverrides: ContextSourceOverrides = NO_SOURCE_OVERRIDES,
 ): Promise<ContextInstallationPlan> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const resolvedFrameworkRoot = await realpath(frameworkRoot);
   const components = resolveContextComponents(registry, config.components);
-  const desiredArtifacts = await loadDesiredArtifacts(resolvedFrameworkRoot, components);
+  const desiredArtifacts = await loadDesiredArtifacts(
+    resolvedFrameworkRoot,
+    components,
+    sourceOverrides,
+  );
   validateTargetOwnership(desiredArtifacts.map((desired) => desired.artifact));
 
   const lockedByIdentity = new Map(
@@ -825,6 +842,7 @@ async function applyDesiredState(
   configChanged: boolean,
   intent: PlanningIntent,
   loadedRegistry?: ContextRegistryV2,
+  sourceOverrides: ContextSourceOverrides = NO_SOURCE_OVERRIDES,
 ): Promise<ContextOperationResult> {
   if ((await inspectContextTransaction(projectRoot)).status !== "none") {
     throw new Error("An incomplete context transaction exists. Run agent-context doctor before writing.");
@@ -838,6 +856,7 @@ async function applyDesiredState(
     config,
     previousLock,
     intent,
+    sourceOverrides,
   );
   if (plan.status === "blocked") {
     return { command, projectRoot, plan, writtenPaths: [] };
@@ -920,7 +939,10 @@ function assessDesired(
   }
 
   const projectMatchesPrevious = current.state === "present" && current.sha256 === locked.installedSha256;
-  const upstreamMatchesPrevious = desired.projection.sourceSha256 === locked.installedSha256;
+  const legacyProjectionBaseline = locked.installedSha256 === locked.sourceSha256 &&
+    desired.projection.sourceSha256 !== locked.installedSha256;
+  const upstreamMatchesPrevious = desired.artifact.sourceSha256 === locked.sourceSha256 &&
+    !legacyProjectionBaseline;
   const projectMatchesNext = current.state === "present" && current.sha256 === desired.projection.sourceSha256;
   if (projectMatchesPrevious && upstreamMatchesPrevious) {
     return {
@@ -986,6 +1008,7 @@ function assessDesired(
 async function loadDesiredArtifacts(
   frameworkRoot: string,
   components: readonly ContextRegistryComponent[],
+  sourceOverrides: ContextSourceOverrides,
 ): Promise<readonly DesiredArtifact[]> {
   const desired: DesiredArtifact[] = [];
   for (const component of components) {
@@ -995,13 +1018,14 @@ async function loadDesiredArtifacts(
         artifact.sourcePath,
         `Registry source ${artifact.sourcePath}`,
       );
-      const source = await readStrictUtf8(sourcePath, `Registry source ${artifact.sourcePath}`);
-      const rawHash = contentHash(source);
+      const registrySource = await readStrictUtf8(sourcePath, `Registry source ${artifact.sourcePath}`);
+      const rawHash = contentHash(registrySource);
       if (rawHash !== artifact.sourceSha256) {
         throw new Error(
           `Registry source hash mismatch for ${artifact.sourcePath}: expected ${artifact.sourceSha256}, got ${rawHash}.`,
         );
       }
+      const source = sourceOverrides.get(artifact.sourcePath) ?? registrySource;
       desired.push({
         component: component.name,
         artifact,

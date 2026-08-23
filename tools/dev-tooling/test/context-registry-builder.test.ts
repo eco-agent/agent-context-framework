@@ -622,7 +622,10 @@ test("orchestration authoring install and setup planning preserve the consumer p
     assert.equal(preview.activations.some((activation) =>
       activation.id === "codex-authenticated-execution" && activation.status === "dormant"), true);
 
-    const setupPreview = await planSetupSelection(root, frameworkRoot, { components: [componentName] });
+    const setupPreview = await planSetupSelection(root, frameworkRoot, {
+      components: [componentName],
+      overrides: [],
+    });
     assert.deepEqual(setupPreview.requestedComponents, preview.requestedComponents);
     assert.deepEqual(setupPreview.resolvedComponents, preview.resolvedComponents);
     assert.deepEqual(setupPreview.footprint, preview.footprint);

@@ -6,6 +6,7 @@ export interface SetupCapabilitySummary {
 
 export interface SetupComponentSummary {
   readonly name: string;
+  readonly displayName: string;
   readonly kind: "component" | "bundle";
   readonly dependencies: readonly string[];
   readonly capabilities: readonly SetupCapabilitySummary[];
@@ -20,7 +21,66 @@ export interface SetupSnapshot {
   readonly registryRevision: string;
   readonly installedDirectComponents: readonly string[];
   readonly installedResolvedComponents: readonly string[];
+  readonly recommendedComponents: readonly string[];
   readonly components: readonly SetupComponentSummary[];
+}
+
+export type SetupArtifactOperation =
+  | "file"
+  | "seed-file"
+  | "text-section"
+  | "json-members"
+  | "json-array-items"
+  | "json-array-values"
+  | "toml-tables"
+  | "toml-members"
+  | "runtime-workspace";
+
+export interface SetupComponentReference {
+  readonly name: string;
+  readonly displayName: string;
+}
+
+export interface SetupComponentArtifact {
+  readonly sourcePath: string;
+  readonly targetPath: string;
+  readonly operation: SetupArtifactOperation;
+  readonly mediaType: string;
+  readonly editable: boolean;
+  readonly content: string;
+}
+
+export interface SetupToolArgumentSummary {
+  readonly name: string;
+  readonly type: string;
+  readonly required: boolean;
+  readonly description: string;
+  readonly constraints: readonly string[];
+}
+
+export interface SetupToolModeSummary {
+  readonly name: string;
+  readonly description: string;
+  readonly arguments: readonly SetupToolArgumentSummary[];
+}
+
+export interface SetupToolSummary {
+  readonly name: string;
+  readonly description: string;
+  readonly sourcePath: string;
+  readonly modes: readonly SetupToolModeSummary[];
+}
+
+export interface SetupComponentDetail {
+  readonly status: "ready";
+  readonly name: string;
+  readonly displayName: string;
+  readonly kind: "component" | "bundle";
+  readonly description: string;
+  readonly dependencies: readonly SetupComponentReference[];
+  readonly capabilities: readonly SetupCapabilitySummary[];
+  readonly artifacts: readonly SetupComponentArtifact[];
+  readonly tools: readonly SetupToolSummary[];
 }
 
 export interface SetupLicenseSummary {
@@ -95,11 +155,21 @@ export interface SetupSelectionPreview {
 
 export interface SetupPlanCommand {
   readonly components: readonly string[];
+  readonly overrides: readonly SetupSourceOverride[];
 }
 
 export interface SetupInstallCommand {
   readonly components: readonly string[];
+  readonly overrides: readonly SetupSourceOverride[];
 }
+
+export interface SetupSourceOverride {
+  readonly sourcePath: string;
+  readonly content: string;
+}
+
+export const MAX_SETUP_OVERRIDE_FILE_BYTES = 128 * 1024;
+export const MAX_SETUP_OVERRIDE_TOTAL_BYTES = 1024 * 1024;
 
 export interface SetupConflict {
   readonly targetPath: string;
@@ -124,10 +194,7 @@ export function parseSetupInstallCommand(
   availableComponents: ReadonlySet<string>,
 ): SetupInstallCommand {
   const record = requiredObject(value, "Setup install request");
-  const keys = Object.keys(record);
-  if (keys.length !== 1 || keys[0] !== "components") {
-    throw new Error("Setup install request must contain only components.");
-  }
+  requireExactKeys(record, ["components", "overrides"], "Setup install request");
   const valueComponents = Reflect.get(record, "components");
   if (
     !Array.isArray(valueComponents) ||
@@ -144,7 +211,7 @@ export function parseSetupInstallCommand(
   if (unknown !== undefined) {
     throw new Error(`Unknown setup component ${unknown}.`);
   }
-  return { components };
+  return { components, overrides: decodeSourceOverrides(record, "Setup install request") };
 }
 
 export function parseSetupPlanCommand(
@@ -152,10 +219,7 @@ export function parseSetupPlanCommand(
   availableComponents: ReadonlySet<string>,
 ): SetupPlanCommand {
   const record = requiredObject(value, "Setup plan request");
-  const keys = Object.keys(record);
-  if (keys.length !== 1 || keys[0] !== "components") {
-    throw new Error("Setup plan request must contain only components.");
-  }
+  requireExactKeys(record, ["components", "overrides"], "Setup plan request");
   const valueComponents = Reflect.get(record, "components");
   if (
     !Array.isArray(valueComponents) ||
@@ -171,14 +235,14 @@ export function parseSetupPlanCommand(
   if (unknown !== undefined) {
     throw new Error(`Unknown setup component ${unknown}.`);
   }
-  return { components };
+  return { components, overrides: decodeSourceOverrides(record, "Setup plan request") };
 }
 
 export function decodeSetupSnapshot(value: unknown): SetupSnapshot {
   const record = requiredObject(value, "Setup snapshot");
   requireExactKeys(record, [
     "status", "projectRoot", "initialized", "registryRevision",
-    "installedDirectComponents", "installedResolvedComponents", "components",
+    "installedDirectComponents", "installedResolvedComponents", "recommendedComponents", "components",
   ], "Setup snapshot");
   if (requiredString(record, "status") !== "ready") {
     throw new Error("Setup snapshot status must be ready.");
@@ -190,7 +254,34 @@ export function decodeSetupSnapshot(value: unknown): SetupSnapshot {
     registryRevision: requiredString(record, "registryRevision"),
     installedDirectComponents: requiredStringArray(record, "installedDirectComponents"),
     installedResolvedComponents: requiredStringArray(record, "installedResolvedComponents"),
+    recommendedComponents: requiredStringArray(record, "recommendedComponents"),
     components: requiredArray(record, "components").map(decodeComponentSummary),
+  };
+}
+
+export function decodeSetupComponentDetail(value: unknown): SetupComponentDetail {
+  const record = requiredObject(value, "Setup component detail");
+  requireExactKeys(record, [
+    "status", "name", "displayName", "kind", "description", "dependencies",
+    "capabilities", "artifacts", "tools",
+  ], "Setup component detail");
+  if (requiredString(record, "status") !== "ready") {
+    throw new Error("Setup component detail status must be ready.");
+  }
+  const kind = requiredString(record, "kind");
+  if (kind !== "component" && kind !== "bundle") {
+    throw new Error("Setup component detail kind is invalid.");
+  }
+  return {
+    status: "ready",
+    name: requiredString(record, "name"),
+    displayName: requiredString(record, "displayName"),
+    kind,
+    description: requiredString(record, "description"),
+    dependencies: requiredArray(record, "dependencies").map(decodeComponentReference),
+    capabilities: requiredArray(record, "capabilities").map(decodeCapabilitySummary),
+    artifacts: requiredArray(record, "artifacts").map(decodeComponentArtifact),
+    tools: requiredArray(record, "tools").map(decodeToolSummary),
   };
 }
 
@@ -263,17 +354,108 @@ export function decodeSetupInstallOutcome(value: unknown): SetupInstallOutcome {
 
 function decodeComponentSummary(value: unknown): SetupComponentSummary {
   const record = requiredObject(value, "Setup component");
-  requireExactKeys(record, ["name", "kind", "dependencies", "capabilities", "licenseCount", "artifactCount"], "Setup component");
+  requireExactKeys(record, ["name", "displayName", "kind", "dependencies", "capabilities", "licenseCount", "artifactCount"], "Setup component");
   const kind = requiredString(record, "kind");
   if (kind !== "component" && kind !== "bundle") throw new Error("Setup component kind is invalid.");
   return {
     name: requiredString(record, "name"),
+    displayName: requiredString(record, "displayName"),
     kind,
     dependencies: requiredStringArray(record, "dependencies"),
     capabilities: requiredArray(record, "capabilities").map(decodeCapabilitySummary),
     licenseCount: requiredNonNegativeInteger(record, "licenseCount"),
     artifactCount: requiredNonNegativeInteger(record, "artifactCount"),
   };
+}
+
+function decodeComponentReference(value: unknown): SetupComponentReference {
+  const record = requiredObject(value, "Setup component reference");
+  requireExactKeys(record, ["name", "displayName"], "Setup component reference");
+  return {
+    name: requiredString(record, "name"),
+    displayName: requiredString(record, "displayName"),
+  };
+}
+
+function decodeComponentArtifact(value: unknown): SetupComponentArtifact {
+  const record = requiredObject(value, "Setup component artifact");
+  requireExactKeys(record, [
+    "sourcePath", "targetPath", "operation", "mediaType", "editable", "content",
+  ], "Setup component artifact");
+  const operation = requiredString(record, "operation");
+  if (!SETUP_ARTIFACT_OPERATIONS.has(operation as SetupArtifactOperation)) {
+    throw new Error("Setup component artifact operation is invalid.");
+  }
+  return {
+    sourcePath: requiredString(record, "sourcePath"),
+    targetPath: requiredString(record, "targetPath"),
+    operation: operation as SetupArtifactOperation,
+    mediaType: requiredString(record, "mediaType"),
+    editable: requiredBoolean(record, "editable"),
+    content: requiredText(record, "content"),
+  };
+}
+
+function decodeToolSummary(value: unknown): SetupToolSummary {
+  const record = requiredObject(value, "Setup tool");
+  requireExactKeys(record, ["name", "description", "sourcePath", "modes"], "Setup tool");
+  return {
+    name: requiredString(record, "name"),
+    description: requiredString(record, "description"),
+    sourcePath: requiredString(record, "sourcePath"),
+    modes: requiredArray(record, "modes").map(decodeToolModeSummary),
+  };
+}
+
+function decodeToolModeSummary(value: unknown): SetupToolModeSummary {
+  const record = requiredObject(value, "Setup tool mode");
+  requireExactKeys(record, ["name", "description", "arguments"], "Setup tool mode");
+  return {
+    name: requiredString(record, "name"),
+    description: requiredString(record, "description"),
+    arguments: requiredArray(record, "arguments").map(decodeToolArgumentSummary),
+  };
+}
+
+function decodeToolArgumentSummary(value: unknown): SetupToolArgumentSummary {
+  const record = requiredObject(value, "Setup tool argument");
+  requireExactKeys(record, [
+    "name", "type", "required", "description", "constraints",
+  ], "Setup tool argument");
+  return {
+    name: requiredString(record, "name"),
+    type: requiredString(record, "type"),
+    required: requiredBoolean(record, "required"),
+    description: requiredString(record, "description"),
+    constraints: requiredStringArray(record, "constraints"),
+  };
+}
+
+function decodeSourceOverrides(record: object, label: string): readonly SetupSourceOverride[] {
+  const overrides = requiredArray(record, "overrides").map((value) => {
+    const override = requiredObject(value, `${label} source override`);
+    requireExactKeys(override, ["sourcePath", "content"], `${label} source override`);
+    const sourcePath = requiredString(override, "sourcePath");
+    const content = requiredText(override, "content");
+    const bytes = utf8Bytes(content);
+    if (bytes > MAX_SETUP_OVERRIDE_FILE_BYTES) {
+      throw new Error(
+        `Setup source override ${sourcePath} exceeds ${MAX_SETUP_OVERRIDE_FILE_BYTES} UTF-8 bytes.`,
+      );
+    }
+    return { sourcePath, content };
+  });
+  const uniquePaths = new Set(overrides.map((override) => override.sourcePath));
+  if (uniquePaths.size !== overrides.length) {
+    throw new Error("Setup source overrides must not contain duplicate source paths.");
+  }
+  const totalBytes = overrides.reduce((total, override) => total + utf8Bytes(override.content), 0);
+  if (totalBytes > MAX_SETUP_OVERRIDE_TOTAL_BYTES) {
+    throw new Error(
+      `Setup source overrides exceed ${MAX_SETUP_OVERRIDE_TOTAL_BYTES} UTF-8 bytes.`,
+    );
+  }
+  return overrides;
 }
 
 function decodeCapabilitySummary(value: unknown): SetupCapabilitySummary {
@@ -397,6 +579,12 @@ function requiredString(value: object, key: string): string {
   return candidate;
 }
 
+function requiredText(value: object, key: string): string {
+  const candidate: unknown = Reflect.get(value, key);
+  if (typeof candidate !== "string") throw new Error(`${key} must be a string.`);
+  return candidate;
+}
+
 function requiredBoolean(value: object, key: string): boolean {
   const candidate: unknown = Reflect.get(value, key);
   if (typeof candidate !== "boolean") throw new Error(`${key} must be a boolean.`);
@@ -429,3 +617,12 @@ const ASSESSMENT_STATUSES = new Set<SetupAssessmentCount["status"]>([
   "uninstalled", "unchanged", "locally-modified", "upstream-changed", "diverged",
   "untracked-conflict", "obsolete-unchanged", "obsolete-modified",
 ]);
+
+const SETUP_ARTIFACT_OPERATIONS = new Set<SetupArtifactOperation>([
+  "file", "seed-file", "text-section", "json-members", "json-array-items",
+  "json-array-values", "toml-tables", "toml-members", "runtime-workspace",
+]);
+
+function utf8Bytes(value: string): number {
+  return new TextEncoder().encode(value).byteLength;
+}

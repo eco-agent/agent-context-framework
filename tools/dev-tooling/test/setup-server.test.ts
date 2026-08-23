@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  decodeSetupComponentDetail,
   decodeSetupInstallOutcome,
   decodeSetupSelectionPreview,
   decodeSetupSnapshot,
@@ -17,28 +18,32 @@ const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("setup contract excludes empty duplicate and unknown component requests", () => {
   const available = new Set(["core", "codex-runtime"]);
-  assert.deepEqual(parseSetupPlanCommand({ components: [] }, available), { components: [] });
-  assert.deepEqual(parseSetupPlanCommand({ components: ["codex-runtime"] }, available), {
-    components: ["codex-runtime"],
+  assert.deepEqual(parseSetupPlanCommand({ components: [], overrides: [] }, available), {
+    components: [], overrides: [],
   });
-  assert.deepEqual(parseSetupInstallCommand({ components: ["codex-runtime"] }, available), {
+  assert.deepEqual(parseSetupPlanCommand({ components: ["codex-runtime"], overrides: [] }, available), {
     components: ["codex-runtime"],
+    overrides: [],
   });
-  assert.throws(() => parseSetupInstallCommand({ components: [] }, available), /non-empty/u);
+  assert.deepEqual(parseSetupInstallCommand({ components: ["codex-runtime"], overrides: [] }, available), {
+    components: ["codex-runtime"],
+    overrides: [],
+  });
+  assert.throws(() => parseSetupInstallCommand({ components: [], overrides: [] }, available), /non-empty/u);
   assert.throws(
-    () => parseSetupInstallCommand({ components: ["core", "core"] }, available),
+    () => parseSetupInstallCommand({ components: ["core", "core"], overrides: [] }, available),
     /duplicates/u,
   );
   assert.throws(
-    () => parseSetupInstallCommand({ components: ["objective-kernel"] }, available),
+    () => parseSetupInstallCommand({ components: ["objective-kernel"], overrides: [] }, available),
     /Unknown setup component/u,
   );
   assert.throws(
-    () => parseSetupPlanCommand({ components: ["core", "core"] }, available),
+    () => parseSetupPlanCommand({ components: ["core", "core"], overrides: [] }, available),
     /duplicates/u,
   );
   assert.throws(
-    () => parseSetupPlanCommand({ components: ["objective-kernel"] }, available),
+    () => parseSetupPlanCommand({ components: ["objective-kernel"], overrides: [] }, available),
     /Unknown setup component/u,
   );
 });
@@ -76,9 +81,42 @@ test("loopback setup server requires its token and installs through the real mat
     const runtime = initial.components.find((component) => component.name === "codex-runtime");
     assert.ok(runtime);
     assert.equal(runtime.kind, "bundle");
+    assert.equal(runtime.displayName, "Codex runtime");
     assert.equal(runtime.artifactCount, 0);
     assert.deepEqual(initial.installedDirectComponents, []);
     assert.deepEqual(initial.installedResolvedComponents, []);
+    assert.deepEqual(initial.recommendedComponents, ["engineering"]);
+
+    const skillDetailResponse = await fetch(
+      `${origin}/api/components/skill-choose-react-animation`,
+      { headers: { "x-agent-context-token": "fixture-token" } },
+    );
+    assert.equal(skillDetailResponse.status, 200);
+    const skillDetail = decodeSetupComponentDetail(await skillDetailResponse.json());
+    assert.equal(skillDetail.displayName, "Choose React animation");
+    assert.match(skillDetail.description, /Animate React interfaces/u);
+    assert.ok(skillDetail.artifacts.some((artifact) =>
+      artifact.sourcePath.endsWith("/SKILL.md") && artifact.editable));
+
+    const toolDetailResponse = await fetch(
+      `${origin}/api/components/codex-repo-context`,
+      { headers: { "x-agent-context-token": "fixture-token" } },
+    );
+    const toolDetail = decodeSetupComponentDetail(await toolDetailResponse.json());
+    assert.deepEqual(toolDetail.tools.map((tool) => tool.name), ["repo_context"]);
+    assert.deepEqual(toolDetail.tools[0]?.modes.map((mode) => mode.name), ["read", "search"]);
+    assert.ok(toolDetail.tools[0]?.modes.some((mode) =>
+      mode.arguments.some((argument) => argument.name === "maxMatches" && !argument.required)));
+    const toolSource = await readFile(
+      path.join(frameworkRoot, toolDetail.tools[0]?.sourcePath ?? "missing"),
+      "utf8",
+    );
+    for (const argument of toolDetail.tools[0]?.modes.flatMap((mode) => mode.arguments) ?? []) {
+      assert.match(toolSource, new RegExp(`\\b${argument.name}\\b`, "u"));
+    }
+    assert.match(toolSource, /lines:.*\.max\(200\)/u);
+    assert.match(toolSource, /maxMatches:.*\.max\(50\)/u);
+    assert.match(toolSource, /contextLines:.*\.max\(10\)/u);
 
     const emptyPlanResponse = await fetch(`${origin}/api/plan`, {
       method: "POST",
@@ -86,7 +124,7 @@ test("loopback setup server requires its token and installs through the real mat
         "content-type": "application/json",
         "x-agent-context-token": "fixture-token",
       },
-      body: JSON.stringify({ components: [] }),
+      body: JSON.stringify({ components: [], overrides: [] }),
     });
     assert.equal(emptyPlanResponse.status, 200);
     const emptyPlan = decodeSetupSelectionPreview(await emptyPlanResponse.json());
@@ -103,7 +141,7 @@ test("loopback setup server requires its token and installs through the real mat
         "content-type": "application/json",
         "x-agent-context-token": "fixture-token",
       },
-      body: JSON.stringify({ components: ["codex-runtime"] }),
+      body: JSON.stringify({ components: ["codex-runtime"], overrides: [] }),
     });
     assert.equal(runtimePlanResponse.status, 200);
     const runtimePlan = decodeSetupSelectionPreview(await runtimePlanResponse.json());
@@ -119,7 +157,7 @@ test("loopback setup server requires its token and installs through the real mat
         "content-type": "application/json",
         "x-agent-context-token": "fixture-token",
       },
-      body: JSON.stringify({ components: ["skill-orchestrate-codex-workflows"] }),
+      body: JSON.stringify({ components: ["skill-orchestrate-codex-workflows"], overrides: [] }),
     });
     assert.equal(authoringPlanResponse.status, 200);
     const authoringPlan = decodeSetupSelectionPreview(await authoringPlanResponse.json());
@@ -141,7 +179,7 @@ test("loopback setup server requires its token and installs through the real mat
         "content-type": "application/json",
         "x-agent-context-token": "fixture-token",
       },
-      body: JSON.stringify({ components: ["objective-kernel"] }),
+      body: JSON.stringify({ components: ["objective-kernel"], overrides: [] }),
     });
     assert.equal(rejected.status, 400);
 
@@ -161,7 +199,13 @@ test("loopback setup server requires its token and installs through the real mat
         "content-type": "application/json",
         "x-agent-context-token": "fixture-token",
       },
-      body: JSON.stringify({ components: ["core"] }),
+      body: JSON.stringify({
+        components: ["core"],
+        overrides: [{
+          sourcePath: "registry/sources/instructions/core.md",
+          content: "# Custom core instructions\n\nUse the reviewed setup source.\n",
+        }],
+      }),
     });
     assert.equal(installResponse.status, 200);
     const outcome = decodeSetupInstallOutcome(await installResponse.json());
@@ -169,7 +213,20 @@ test("loopback setup server requires its token and installs through the real mat
     await running.applied;
     assert.deepEqual(outcome.snapshot.installedDirectComponents, ["core"]);
     assert.deepEqual(outcome.snapshot.installedResolvedComponents, ["core"]);
-    assert.match(await readFile(path.join(projectRoot, "AGENTS.md"), "utf8"), /agent-context:core/u);
+    const agents = await readFile(path.join(projectRoot, "AGENTS.md"), "utf8");
+    assert.match(agents, /agent-context:core/u);
+    assert.match(agents, /Custom core instructions/u);
+
+    const currentPlanResponse = await fetch(`${origin}/api/plan`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-agent-context-token": "fixture-token",
+      },
+      body: JSON.stringify({ components: [], overrides: [] }),
+    });
+    const currentPlan = decodeSetupSelectionPreview(await currentPlanResponse.json());
+    assert.equal(currentPlan.status, "current");
   } finally {
     await running.close();
     await rm(root, { recursive: true, force: true });
@@ -201,7 +258,7 @@ test("setup plan is token-protected and a blocked preview performs zero writes",
     const unauthorized = await fetch(`${origin}/api/plan`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ components: [] }),
+      body: JSON.stringify({ components: [], overrides: [] }),
     });
     assert.equal(unauthorized.status, 403);
 
@@ -212,7 +269,7 @@ test("setup plan is token-protected and a blocked preview performs zero writes",
         "content-type": "application/json",
         "x-agent-context-token": "fixture-token",
       },
-      body: JSON.stringify({ components: ["codex-runtime"] }),
+      body: JSON.stringify({ components: ["codex-runtime"], overrides: [] }),
     });
     assert.equal(blockedResponse.status, 409);
     const blocked = decodeSetupSelectionPreview(await blockedResponse.json());

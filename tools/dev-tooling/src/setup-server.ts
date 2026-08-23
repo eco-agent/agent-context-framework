@@ -6,6 +6,7 @@ import path from "node:path";
 
 import {
   addComponent,
+  DEFAULT_CONTEXT_COMPONENT,
   initProject,
   inspectProject,
   loadContextRegistry,
@@ -15,6 +16,14 @@ import {
 } from "./context-installer.js";
 import { checkContextRegistry } from "./context-registry-builder.js";
 import {
+  componentKind,
+  readSetupComponentDetail as readComponentDetail,
+  recommendSetupComponents,
+  setupComponentDisplayName,
+  validateSetupSourceOverrides,
+} from "./setup-component-preview.js";
+import {
+  MAX_SETUP_OVERRIDE_TOTAL_BYTES,
   parseSetupPlanCommand,
   parseSetupInstallCommand,
   type SetupSelectionPreview,
@@ -24,7 +33,7 @@ import {
 } from "./setup-contract.js";
 
 const LOOPBACK_HOST = "127.0.0.1";
-const MAX_REQUEST_BYTES = 64 * 1024;
+const MAX_REQUEST_BYTES = MAX_SETUP_OVERRIDE_TOTAL_BYTES + 256 * 1024;
 
 export interface SetupServerOptions {
   readonly projectRoot: string;
@@ -52,7 +61,8 @@ export async function readSetupSnapshot(
   ]);
   const components: readonly SetupComponentSummary[] = registry.components.map((component) => ({
     name: component.name,
-    kind: component.dependencies.length > 0 && component.artifacts.length === 0 ? "bundle" : "component",
+    displayName: setupComponentDisplayName(component.name),
+    kind: componentKind(component),
     dependencies: component.dependencies,
     capabilities: component.capabilities,
     licenseCount: component.licenses.length,
@@ -64,6 +74,10 @@ export async function readSetupSnapshot(
   const installedResolvedComponents = inspection.initialized
     ? inspection.selection.resolvedComponents
     : [];
+  const recommendedComponents = (await recommendSetupComponents(
+    inspection.projectRoot,
+    new Set(components.map((component) => component.name)),
+  )).filter((component) => !installedResolvedComponents.includes(component));
   return {
     status: "ready",
     projectRoot: inspection.projectRoot,
@@ -71,6 +85,7 @@ export async function readSetupSnapshot(
     registryRevision: inspection.registryRevision,
     installedDirectComponents,
     installedResolvedComponents,
+    recommendedComponents,
     components,
   };
 }
@@ -82,15 +97,27 @@ export async function planSetupSelection(
 ): Promise<SetupSelectionPreview> {
   await checkContextRegistry(frameworkRoot);
   const snapshot = await readSetupSnapshot(projectRoot, frameworkRoot);
+  const registry = await loadContextRegistry(frameworkRoot);
   const command = parseSetupPlanCommand(
     input,
     new Set(snapshot.components.map((component) => component.name)),
   );
-  return projectSelectionToSetupPreview(await planProjectSelection(
-    projectRoot,
-    frameworkRoot,
-    command.components,
-  ));
+  const overrides = validateSetupSourceOverrides(
+    registry,
+    selectedDirectComponents(snapshot, command.components),
+    command.overrides,
+  );
+  try {
+    return projectSelectionToSetupPreview(await planProjectSelection(
+      projectRoot,
+      frameworkRoot,
+      command.components,
+      overrides,
+    ));
+  } catch (error) {
+    if (overrides.size === 0) throw error;
+    throw new Error(`Setup source override is invalid: ${errorMessage(error)}`, { cause: error });
+  }
 }
 
 export async function installSetupComponents(
@@ -100,18 +127,35 @@ export async function installSetupComponents(
 ): Promise<SetupInstallOutcome> {
   await checkContextRegistry(frameworkRoot);
   let snapshot = await readSetupSnapshot(projectRoot, frameworkRoot);
+  const registry = await loadContextRegistry(frameworkRoot);
   const command = parseSetupInstallCommand(
     input,
     new Set(snapshot.components.map((component) => component.name)),
   );
-  const preview = await planProjectSelection(projectRoot, frameworkRoot, command.components);
+  const overrides = validateSetupSourceOverrides(
+    registry,
+    selectedDirectComponents(snapshot, command.components),
+    command.overrides,
+  );
+  let preview: ContextSelectionPreview;
+  try {
+    preview = await planProjectSelection(
+      projectRoot,
+      frameworkRoot,
+      command.components,
+      overrides,
+    );
+  } catch (error) {
+    if (overrides.size === 0) throw error;
+    throw new Error(`Setup source override is invalid: ${errorMessage(error)}`, { cause: error });
+  }
   if (preview.status === "blocked") {
     return blockedSelectionOutcome(snapshot, preview);
   }
   const writtenPaths = new Set<string>();
 
   if (!snapshot.initialized) {
-    const initialized = await initProject(projectRoot, frameworkRoot);
+    const initialized = await initProject(projectRoot, frameworkRoot, overrides);
     const blocked = await blockedOutcome(initialized, projectRoot, frameworkRoot);
     if (blocked !== null) return blocked;
     for (const writtenPath of initialized.writtenPaths) writtenPaths.add(writtenPath);
@@ -120,7 +164,7 @@ export async function installSetupComponents(
 
   for (const component of command.components) {
     if (snapshot.installedDirectComponents.includes(component)) continue;
-    const result = await addComponent(projectRoot, frameworkRoot, component);
+    const result = await addComponent(projectRoot, frameworkRoot, component, overrides);
     const blocked = await blockedOutcome(result, projectRoot, frameworkRoot);
     if (blocked !== null) return blocked;
     for (const writtenPath of result.writtenPaths) writtenPaths.add(writtenPath);
@@ -208,6 +252,22 @@ async function handleRequest(
       await sendJson(response, 200, await readSetupSnapshot(context.projectRoot, context.frameworkRoot));
       return;
     }
+    if (requestUrl.pathname.startsWith("/api/components/") && request.method === "GET") {
+      requireApiToken(request, context.token);
+      const componentName = decodeURIComponent(requestUrl.pathname.slice("/api/components/".length));
+      const registry = await loadContextRegistry(context.frameworkRoot);
+      const component = registry.components.find((candidate) => candidate.name === componentName);
+      if (component === undefined) {
+        sendText(response, 404, `Unknown setup component ${componentName}.`);
+        return;
+      }
+      await sendJson(
+        response,
+        200,
+        await readComponentDetail(context.frameworkRoot, registry, component.name),
+      );
+      return;
+    }
     if (requestUrl.pathname === "/api/plan" && request.method === "POST") {
       requireApiToken(request, context.token);
       const preview = await planSetupSelection(
@@ -251,10 +311,23 @@ async function handleRequest(
     const message = error instanceof Error ? error.message : String(error);
     const status = message.startsWith("Invalid setup") ? 403 :
       message.startsWith("Setup plan request") || message.startsWith("Setup install request") ||
-        message.startsWith("Unknown setup") ? 400 :
+        message.startsWith("Setup source override") || message.startsWith("Unknown setup") ? 400 :
       message === "Request body is too large." ? 413 : 500;
     sendText(response, status, message);
   }
+}
+
+function selectedDirectComponents(
+  snapshot: SetupSnapshot,
+  requestedComponents: readonly string[],
+): readonly string[] {
+  return [...new Set(snapshot.initialized
+    ? [...snapshot.installedDirectComponents, ...requestedComponents]
+    : [DEFAULT_CONTEXT_COMPONENT, ...requestedComponents])];
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 async function blockedOutcome(
