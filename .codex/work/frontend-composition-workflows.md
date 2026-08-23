@@ -125,7 +125,7 @@ repair, invalid model output, cancellation, or deadline.
 | Existing component library keeps behavior and accessibility | Retain | Frontend skill and product implementation |
 | Human judgment owns visual quality | Retain and enforce as a wait result | Human acceptance stage |
 | Primary agent owns implementation | Retain | Compose workflow role registry |
-| Independent review is fresh and read-only | Retain | Compose workflow role registry |
+| Independent review is fresh and evidence-only | Retain | Compose workflow role registry |
 | Repository profiles own deterministic verification | Retain | Repository policy adapter |
 | Installed orchestration authoring source remains inert | Retain | Existing skill component |
 | Live frontend workflow is separately selected | Add | New registry leaf |
@@ -178,6 +178,21 @@ No existing behavior is removed or weakened.
   tasks with 12 ordered ledger events and three content-addressed artifacts. The
   fresh reviewer recommends Candidate A, `Quiet operational flow`. The terminal
   state is `awaiting_human_approval`; no product source changed.
+- The human owner approved Candidate A. Compose run
+  `9e4d8588-03d8-49b6-87d2-2b429cceb1a6` then implemented it as fixture
+  revision `e6578e27cc431bf07c6798dfa3599f0974e8ab80`. Typecheck, 19 product
+  tests, build, browser capture, console checks, and horizontal-overflow checks
+  passed. A fresh evidence-only reviewer accepted the first revision with no
+  repair findings. The workflow returned `ready_for_human_review`.
+- The live runs exposed two reusable runtime requirements. SDK child processes
+  must not inherit Codex Desktop task identity, and a consumer must be able to
+  grant `danger-full-access` to named roles through a separate owned authority
+  contract. The canonical runtime now enforces both rules. Its generated
+  TypeScript distribution contains the same code and tests.
+- Repeated rendered bytes also proved that content-addressed workflow evidence
+  must reuse an existing matching file and reject conflicting bytes. The fixture
+  runner owns that fix and its regression tests. This rule belongs to a later
+  generic artifact-store extraction, not the core plan runtime.
 
 ## Smallest complete slice
 
@@ -266,9 +281,26 @@ queue dependencies with the frontend workflow.
 - One bounded live compose run, declared fixture checks, rendered evidence review,
   and human acceptance.
 
-The downstream browser capture, installed mock workflow, and three-turn live
-representation workflow have run. All 37 runtime and workflow tests pass. The
-successful ledger has one accepted transition for Candidate A, Candidate B, and
-the independent comparison. Artifact hashes match their stored bytes, and no
-source path appears in the role evidence. Candidate A still needs human approval;
-rendered implementation and the compose-and-refine workflow remain unverified.
+The downstream browser capture, installed mock workflows, live representation
+run, and live compose-and-refine run have completed. The installed package has 45
+passing tests. The compose run reached `ready_for_human_review` at fixture
+revision `e6578e27cc431bf07c6798dfa3599f0974e8ab80`, and its screenshot hashes
+match the stored files. Human judgment still owns final visual acceptance.
+
+## Closure
+
+This task stopped at the intended human visual gate on 2026-08-23. The final
+fixture product revision is `e6578e27cc431bf07c6798dfa3599f0974e8ab80`.
+The final tested ACF runtime revision is
+`ef053425dfcdd171d62de84b7fe387c6b9019750`.
+
+`pnpm --silent verify:profile workflow` passed at that ACF revision. It ran the
+agent instruction, dependency adoption, package boundary, workflow test, and
+cleanliness checks. The fixture workflow package also passed all 45 tests. The
+live compose controller passed the fixture's `typecheck`, `test`, and `build`
+checks, recorded no browser console errors, found no horizontal overflow, and
+matched all stored screenshot hashes. The work-record update after the tested
+revision changes documentation only, so the executable checks were not repeated.
+
+Final human visual acceptance remains unverified. No branch was pushed or
+merged.
