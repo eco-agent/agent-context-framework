@@ -11,7 +11,10 @@ import type {
   ObjectiveAttemptRunner,
 } from "@agent-context/objective-runtime";
 import {
+  decodeObjectiveThreadContinuation,
+  encodeObjectiveThreadContinuation,
   ObjectiveCodexClient,
+  ObjectiveCodexPostTurnError,
   PromptBudgetExceededError,
   type StructuredInvocation,
   type WorkflowObjective,
@@ -151,6 +154,13 @@ export class CodexObjectiveRunner<T> implements ObjectiveAttemptRunner {
         threadPolicy: invocation.threadPolicy ?? "reuse_within_objective",
         terminalAfterTurn: false,
       };
+      const continuation =
+        objective.threadPolicy === "fresh" ||
+        snapshot.latestCheckpoint?.resumeToken === undefined
+          ? undefined
+          : decodeObjectiveThreadContinuation(
+              snapshot.latestCheckpoint.resumeToken,
+            );
       const structured: StructuredInvocation<T> = {
         objective,
         role: invocation.role,
@@ -163,14 +173,7 @@ export class CodexObjectiveRunner<T> implements ObjectiveAttemptRunner {
         outputSchema: invocation.outputSchema,
         decode: invocation.decode,
         signal: context.signal,
-        ...(snapshot.latestCheckpoint?.resumeToken === undefined
-          ? {}
-          : {
-              continuation: {
-                objectiveId: snapshot.definition.objectiveId,
-                threadId: snapshot.latestCheckpoint.resumeToken,
-              },
-            }),
+        ...(continuation === undefined ? {} : { continuation }),
       };
 
       let result;
@@ -186,6 +189,28 @@ export class CodexObjectiveRunner<T> implements ObjectiveAttemptRunner {
               launch.envelopeArtifact,
             ),
             promptBytesDelta: remainingPrompt + 1,
+          });
+        } else if (error instanceof ObjectiveCodexPostTurnError) {
+          await context.checkpoint({
+            summary: `Codex thread ${error.threadId} returned output that failed post-turn processing.`,
+            progressPercent: snapshot.latestCheckpoint?.progressPercent ?? 0,
+            artifacts: mergeArtifacts(
+              context.snapshot.latestCheckpoint?.artifacts ?? [],
+              launch.envelopeArtifact,
+            ),
+            contextBytesDelta: inputBytes,
+            promptBytesDelta: error.renderedPromptBytes,
+            agentInputTokensDelta: error.usage?.input_tokens ?? 0,
+            agentOutputTokensDelta:
+              (error.usage?.output_tokens ?? 0) +
+              (error.usage?.reasoning_output_tokens ?? 0),
+            ...(error.continuation === null
+              ? {}
+              : {
+                  resumeToken: encodeObjectiveThreadContinuation(
+                    error.continuation,
+                  ),
+                }),
           });
         }
         throw error;
@@ -204,7 +229,13 @@ export class CodexObjectiveRunner<T> implements ObjectiveAttemptRunner {
         agentOutputTokensDelta:
           (result.usage?.output_tokens ?? 0) +
           (result.usage?.reasoning_output_tokens ?? 0),
-        resumeToken: result.threadId,
+        ...(result.continuation === null
+          ? {}
+          : {
+              resumeToken: encodeObjectiveThreadContinuation(
+                result.continuation,
+              ),
+            }),
       });
       const outcome = await this.#options.outcomeFor(result.value, context.snapshot);
       const envelopeEvidence: ObjectiveEvidence = {

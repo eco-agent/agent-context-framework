@@ -45,7 +45,7 @@
     "check:boundaries": "pnpm policy:build && pnpm policy check-boundaries",
     "check:dependency-adoptions": "pnpm policy:build && pnpm policy check-dependency-adoptions",
     "check:agents": "pnpm policy:build && pnpm policy check-agents",
-    "workflow:test": "pnpm --filter @agent-context/codex-workflows test"
+    "workflow:test": "pnpm --filter @agent-context/codex-workflow-runtime test && pnpm --filter @agent-context/codex-workflows test"
   },
   "devDependencies": {
     "@agent-context/objective-test-fixtures": "workspace:*",

@@ -8,7 +8,7 @@ limit and must record its stage changes.
 | --- | --- | --- |
 | Move one result through fixed stages | `runRelayChain` | stages and repairs |
 | Send varied requests to fixed roles | `runMembraneRouting` | routes and confidence threshold |
-| Alternate implementation and independent review | `runReviewerRepair` | review passes |
+| Alternate implementation and independent review | `runReviewerRepair` | review passes and repairs |
 | Act on observed system changes | `runAutonomousEnvironment` | steps and unchanged observations |
 | Move through a known scope tree | `runScopeReconciliation` | hops and cycle detection |
 | Ask a broader role only after a local role fails | `runSubsidiarityEscalation` | ascents and cycle detection |
@@ -31,7 +31,8 @@ models, or retry without a limit.
 
 Let an implementer produce the result and a separate reviewer inspect it. Give
 the reviewer repair permission only when the workflow says it may edit. Otherwise
-return the findings to the implementer.
+return the findings to the implementer. Set `maxReviewPasses` and `maxRepairs`
+separately. A zero repair budget permits inspection without any edit.
 
 ## `runAutonomousEnvironment`
 

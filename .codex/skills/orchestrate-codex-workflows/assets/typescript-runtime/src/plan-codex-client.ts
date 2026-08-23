@@ -1,9 +1,5 @@
 import {
-  Codex,
   type CodexOptions,
-  type ThreadOptions,
-  type TurnOptions,
-  type Usage,
 } from "@openai/codex-sdk";
 
 import type {
@@ -14,15 +10,19 @@ import type {
   JsonValue,
   WorkflowEvent,
 } from "./contracts.js";
-import { assertPositiveSafeInteger, toJson } from "./contracts.js";
+import { toJson } from "./contracts.js";
+import {
+  CodexTurnTransport,
+  validateCodexTurnRunOptions,
+  type WorkflowCodex,
+  type WorkflowThread,
+} from "./codex-turn-transport.js";
 import {
   assertValidatedWorkflowPlan,
   validateWorkflowPlan,
   type PlannedTask,
   type ValidatedWorkflowPlan,
 } from "./plan.js";
-
-export const MAX_TURN_TIMEOUT_MS = 2_147_483_647;
 
 export interface StructuredInvocation<T> {
   readonly taskId: string;
@@ -111,29 +111,13 @@ export function validateTaskAcceptanceEvaluation(
   return Object.freeze(validated);
 }
 
-export interface WorkflowThread {
-  readonly id: string | null;
-  run(
-    input: string,
-    options: TurnOptions,
-  ): Promise<{
-    readonly finalResponse: string;
-    readonly usage: Usage | null;
-  }>;
-}
-
-export interface WorkflowCodex {
-  startThread(options: ThreadOptions): WorkflowThread;
-  resumeThread(id: string, options: ThreadOptions): WorkflowThread;
-}
-
 interface CachedThread {
   readonly envelope: JsonValue;
   readonly thread: WorkflowThread;
 }
 
-export class CodexWorkflowClient {
-  readonly #codex: WorkflowCodex;
+export class PlanCodexClient {
+  readonly #transport: CodexTurnTransport;
   readonly #plan: ValidatedWorkflowPlan;
   readonly #roles: ReadonlyMap<string, CodexRole>;
   readonly #tasks: ReadonlyMap<string, PlannedTask>;
@@ -163,7 +147,7 @@ export class CodexWorkflowClient {
     this.#tasks = new Map(
       this.#plan.tasks.map((task) => [task.id, task]),
     );
-    this.#codex = codex ?? new Codex(options);
+    this.#transport = new CodexTurnTransport(options, codex);
   }
 
   public async invoke<T>(
@@ -273,22 +257,18 @@ export class CodexWorkflowClient {
         invocation.freshThread,
         invocation.resumeThreadId,
       );
-      const timeoutSignal = AbortSignal.timeout(invocation.timeoutMs);
-      const signal = invocation.signal === undefined
-        ? timeoutSignal
-        : AbortSignal.any([timeoutSignal, invocation.signal]);
-      const turnOptions: TurnOptions = {
-        outputSchema: invocation.outputSchema,
-        signal,
-      };
-      const turn = await thread.run(
+      const turn = await this.#transport.run(
+        thread,
         this.renderPrompt(invocation, role),
-        turnOptions,
+        invocation.outputSchema,
+        {
+          timeoutMs: invocation.timeoutMs,
+          ...(invocation.signal === undefined
+            ? {}
+            : { signal: invocation.signal }),
+        },
       );
-      const threadId = thread.id;
-      if (threadId === null) {
-        throw new Error("Codex completed without assigning a thread ID");
-      }
+      const threadId = turn.threadId;
 
       const envelope = roleEnvelope(role);
       await this.assertThreadIdAvailable(threadId, role, envelope);
@@ -343,7 +323,9 @@ export class CodexWorkflowClient {
         actor: role.identity,
         taskId: task.id,
         attempt,
-        ...(thread?.id === null || thread?.id === undefined
+        ...(thread?.id === null ||
+        thread?.id === undefined ||
+        thread.id.trim().length === 0
           ? {}
           : { threadId: thread.id }),
         state: {
@@ -401,8 +383,8 @@ export class CodexWorkflowClient {
     }
     const thread =
       !freshThread && resumeThreadId !== undefined
-        ? this.#codex.resumeThread(resumeThreadId, role.thread)
-        : this.#codex.startThread(role.thread);
+        ? this.#transport.resumeThread(resumeThreadId, role.thread)
+        : this.#transport.startThread(role.thread);
 
     if (!freshThread) {
       this.#threads.set(role.identity, { envelope, thread });
@@ -501,12 +483,10 @@ export class CodexWorkflowClient {
       throw new Error(`Task ${task.id} references an unavailable role`);
     }
     this.assertDelegation(registered, task, invocation.delegation);
-    assertPositiveSafeInteger(invocation.timeoutMs, "Codex turn timeoutMs");
-    if (invocation.timeoutMs > MAX_TURN_TIMEOUT_MS) {
-      throw new Error(
-        `Codex turn timeoutMs must not exceed ${MAX_TURN_TIMEOUT_MS}`,
-      );
-    }
+    validateCodexTurnRunOptions({
+      timeoutMs: invocation.timeoutMs,
+      ...(invocation.signal === undefined ? {} : { signal: invocation.signal }),
+    });
     if (typeof invocation.extractEvidence !== "function") {
       throw new Error("Codex invocation requires output evidence extraction");
     }

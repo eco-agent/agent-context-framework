@@ -56,7 +56,7 @@ recursive manager trees, sibling voting, or an open-ended scheduler.
    the project workflow passes them.
 4. Define the objective, acceptance criteria, fixed tasks, role registry,
    budgets, and required results in project code.
-5. Construct `CodexWorkflowClient` with the validated plan. Call `invoke()` with
+5. Construct `PlanCodexClient` with the validated plan. Call `invoke()` with
    named task IDs, a per-turn timeout, a structured-output decoder, and an
    extractor for every value used by later code.
 6. Check each task criterion in project code. Decode the complete result with
@@ -110,8 +110,9 @@ writes idempotent or address them by content.
 
 ## Know what the copied runtime does
 
-The template provides `CodexWorkflowClient`, `JsonlLedger`, `MemoryLedger`, eight
-bounded loop helpers, and mock tests for repairs, stalled state, and return paths.
+The template provides `PlanCodexClient`, `CodexTurnTransport`, `JsonlLedger`,
+`MemoryLedger`, eight bounded loop helpers, and mock tests for repairs, stalled
+state, and return paths.
 
 The JSONL file records events. It is not a process checkpoint, queue, scheduler,
 or multi-process database. A new process does not rebuild in-memory attempts and
@@ -124,6 +125,10 @@ criteria.
 Loop counters limit attempts, stages, routes, rounds, and concurrent role calls.
 They do not limit arbitrary project callbacks. Add project-owned deadlines when
 wall-clock completion matters.
+
+Reviewer repair has two limits. `maxReviewPasses` bounds inspections and must be
+positive. `maxRepairs` bounds edits and may be zero when review must remain
+read-only.
 
 The template is checked against `@openai/codex-sdk` 0.145.0 and Node.js 22 or
 newer. Read the official SDK types before changing the pinned version.

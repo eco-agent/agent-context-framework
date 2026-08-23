@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstat, readdir, readFile, realpath, writeFile } from "node:fs/promises";
+import { lstat, mkdir, readdir, readFile, realpath, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import {
@@ -49,6 +49,7 @@ interface RoutingExercise {
 type RegistrySourceArtifact =
   | RegistryDirectArtifact
   | RegistryDirectoryArtifact
+  | RegistryProjectedDirectoryArtifact
   | RegistryRuntimeDirectoryArtifact;
 
 interface RegistryDirectArtifact {
@@ -58,6 +59,14 @@ interface RegistryDirectArtifact {
 
 interface RegistryDirectoryArtifact {
   readonly kind: "directory";
+  readonly sourceDirectory: string;
+  readonly targetDirectory: string;
+  readonly excludedPrefixes: readonly string[];
+  readonly excludedPaths: readonly string[];
+}
+
+interface RegistryProjectedDirectoryArtifact {
+  readonly kind: "projected-directory";
   readonly sourceDirectory: string;
   readonly targetDirectory: string;
   readonly excludedPrefixes: readonly string[];
@@ -94,16 +103,9 @@ export async function buildContextRegistry(root: string): Promise<ContextRegistr
         });
         continue;
       }
-      const sourceDirectory = repositoryPath(resolvedRoot, declaration.sourceDirectory);
-      const files = await listFiles(sourceDirectory, declaration.excludedPrefixes);
+      const files = await listDeclarationFiles(resolvedRoot, declaration);
       for (const relativeFile of files) {
         const portableRelativeFile = portablePath(relativeFile);
-        if (
-          declaration.excludedPaths.includes(portableRelativeFile) ||
-          declaration.excludedPrefixes.some((prefix) => portableRelativeFile.startsWith(prefix))
-        ) {
-          continue;
-        }
         const sourcePathValue = joinPortable(declaration.sourceDirectory, portableRelativeFile);
         const targetPath = joinPortable(declaration.targetDirectory, portableRelativeFile);
         const bytes = await readSourceBytes(resolvedRoot, sourcePathValue);
@@ -239,21 +241,31 @@ function decodeRoutingExercise(value: unknown): RoutingExercise {
 }
 
 export async function writeContextRegistry(root: string): Promise<ContextRegistryV2> {
+  const resolvedRoot = await realpath(root);
   const registry = await buildContextRegistry(root);
-  const outputPath = repositoryPath(await realpath(root), CONTEXT_REGISTRY_OUTPUT_PATH);
+  const catalog = await readRegistrySourceCatalog(resolvedRoot);
+  await synchronizeProjectedDirectories(resolvedRoot, catalog);
+  const outputPath = repositoryPath(resolvedRoot, CONTEXT_REGISTRY_OUTPUT_PATH);
   await writeFile(outputPath, serializeRegistry(registry), "utf8");
   return registry;
 }
 
 export async function checkContextRegistry(root: string): Promise<ContextRegistryV2> {
+  const resolvedRoot = await realpath(root);
   const registry = await buildContextRegistry(root);
-  const outputPath = repositoryPath(await realpath(root), CONTEXT_REGISTRY_OUTPUT_PATH);
+  await checkProjectedDirectories(resolvedRoot, await readRegistrySourceCatalog(resolvedRoot));
+  const outputPath = repositoryPath(resolvedRoot, CONTEXT_REGISTRY_OUTPUT_PATH);
   const current = await readStrictUtf8(outputPath, "Built context registry");
   if (current !== serializeRegistry(registry)) {
     throw new Error(`Built context registry is stale. Run pnpm registry:build.`);
   }
-  await checkContextGovernance(await realpath(root), registry);
+  await checkContextGovernance(resolvedRoot, registry);
   return registry;
+}
+
+async function readRegistrySourceCatalog(root: string): Promise<RegistrySourceCatalog> {
+  const sourcePath = repositoryPath(root, CONTEXT_REGISTRY_SOURCE_PATH);
+  return decodeRegistrySourceCatalog(await readJson(sourcePath, "Registry source catalog"));
 }
 
 function decodeRegistrySourceCatalog(value: unknown): RegistrySourceCatalog {
@@ -265,12 +277,14 @@ function decodeRegistrySourceCatalog(value: unknown): RegistrySourceCatalog {
   ]);
   if (record.schemaVersion !== 1) throw new Error("Registry source catalog schemaVersion must be 1.");
   const components = decodeArray(record.components, "Registry source components", decodeSourceComponent);
-  return {
+  const catalog: RegistrySourceCatalog = {
     schemaVersion: 1,
     revision: requiredString(record, "revision"),
     decisionPath: portableRelativePath(record, "decisionPath"),
     components,
   };
+  validateProjectedDirectoryOwnership(catalog);
+  return catalog;
 }
 
 function decodeSourceComponent(value: unknown): RegistrySourceComponent {
@@ -292,7 +306,11 @@ function decodeSourceComponent(value: unknown): RegistrySourceComponent {
 
 function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
   if (!isRecord(value)) throw new Error("Registry source artifact must be an object.");
-  if (value.kind === "directory" || value.kind === "runtime-directory") {
+  if (
+    value.kind === "directory" ||
+    value.kind === "projected-directory" ||
+    value.kind === "runtime-directory"
+  ) {
     const record = strictRecord(value, "Registry directory artifact", [
       "kind",
       "sourceDirectory",
@@ -325,11 +343,11 @@ function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
           ...directory,
           workspaceId: componentName(record.workspaceId, "Registry runtime workspaceId"),
         }
-      : { kind: "directory", ...directory };
+      : { kind: value.kind, ...directory };
   }
   if (value.kind !== "artifact") {
     throw new Error(
-      "Registry source artifact kind must be artifact, directory, or runtime-directory.",
+      "Registry source artifact kind must be artifact, directory, projected-directory, or runtime-directory.",
     );
   }
   const fields = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "kind"));
@@ -338,6 +356,226 @@ function decodeSourceArtifact(value: unknown): RegistrySourceArtifact {
     throw new Error("Registry source artifacts cannot declare sourceSha256; the builder derives it.");
   }
   return { kind: "artifact", fields };
+}
+
+async function synchronizeProjectedDirectories(
+  root: string,
+  catalog: RegistrySourceCatalog,
+): Promise<void> {
+  for (const projection of projectedDirectories(catalog)) {
+    assertDisjointProjection(projection);
+    const sourceFiles = await listDeclarationFiles(root, projection);
+    const targetDirectory = repositoryPath(root, projection.targetDirectory);
+    await assertUnredirectedRepositoryPath(root, projection.targetDirectory);
+    if (await exists(targetDirectory)) {
+      const state = await lstat(targetDirectory);
+      if (state.isSymbolicLink() || !state.isDirectory()) {
+        throw new Error(`Projected target must be a regular directory: ${projection.targetDirectory}.`);
+      }
+    } else {
+      await mkdir(targetDirectory, { recursive: true });
+      await assertUnredirectedRepositoryPath(root, projection.targetDirectory);
+    }
+
+    const expectedTargets = new Set(sourceFiles.map((relativeFile) => portablePath(relativeFile)));
+    for (const relativeFile of await listFiles(targetDirectory, [])) {
+      const portableRelativeFile = portablePath(relativeFile);
+      if (!expectedTargets.has(portableRelativeFile)) {
+        const staleTargetPath = joinPortable(projection.targetDirectory, portableRelativeFile);
+        await assertUnredirectedRepositoryPath(root, path.posix.dirname(staleTargetPath));
+        await assertRegularProjectionTarget(root, staleTargetPath);
+        await unlink(repositoryPath(root, staleTargetPath));
+      }
+    }
+
+    for (const relativeFile of sourceFiles) {
+      const portableRelativeFile = portablePath(relativeFile);
+      const sourcePath = joinPortable(projection.sourceDirectory, portableRelativeFile);
+      const targetPath = joinPortable(projection.targetDirectory, portableRelativeFile);
+      const target = repositoryPath(root, targetPath);
+      const targetParent = path.posix.dirname(targetPath);
+      await assertUnredirectedRepositoryPath(root, targetParent);
+      await mkdir(path.dirname(target), { recursive: true });
+      await assertUnredirectedRepositoryPath(root, targetParent);
+      const sourceBytes = await readSourceBytes(root, sourcePath);
+      const currentBytes = await readRegularFileIfPresent(root, targetPath);
+      if (!currentBytes || !equalBytes(sourceBytes, currentBytes)) {
+        await writeFile(target, sourceBytes);
+      }
+    }
+  }
+}
+
+async function checkProjectedDirectories(
+  root: string,
+  catalog: RegistrySourceCatalog,
+): Promise<void> {
+  for (const projection of projectedDirectories(catalog)) {
+    assertDisjointProjection(projection);
+    const sourceFiles = await listDeclarationFiles(root, projection);
+    const targetDirectory = repositoryPath(root, projection.targetDirectory);
+    await assertUnredirectedRepositoryPath(root, projection.targetDirectory);
+    if (!(await exists(targetDirectory))) throw staleProjectionError(projection.targetDirectory);
+    const state = await lstat(targetDirectory);
+    if (state.isSymbolicLink() || !state.isDirectory()) {
+      throw staleProjectionError(projection.targetDirectory);
+    }
+    const actualFiles = (await listFiles(targetDirectory, [])).map(portablePath);
+    const expectedFiles = sourceFiles.map(portablePath);
+    if (
+      actualFiles.length !== expectedFiles.length ||
+      actualFiles.some((candidate, index) => candidate !== expectedFiles[index])
+    ) {
+      throw staleProjectionError(projection.targetDirectory);
+    }
+    for (const relativeFile of sourceFiles) {
+      const portableRelativeFile = portablePath(relativeFile);
+      const sourceBytes = await readSourceBytes(
+        root,
+        joinPortable(projection.sourceDirectory, portableRelativeFile),
+      );
+      const targetBytes = await readRegularFileIfPresent(
+        root,
+        joinPortable(projection.targetDirectory, portableRelativeFile),
+      );
+      if (!targetBytes || !equalBytes(sourceBytes, targetBytes)) {
+        throw staleProjectionError(projection.targetDirectory);
+      }
+    }
+  }
+}
+
+function projectedDirectories(catalog: RegistrySourceCatalog): readonly RegistryProjectedDirectoryArtifact[] {
+  return catalog.components.flatMap((component) =>
+    component.artifacts.filter(
+      (artifact): artifact is RegistryProjectedDirectoryArtifact => artifact.kind === "projected-directory",
+    ));
+}
+
+async function listDeclarationFiles(
+  root: string,
+  declaration: RegistryDirectoryArtifact | RegistryProjectedDirectoryArtifact | RegistryRuntimeDirectoryArtifact,
+): Promise<readonly string[]> {
+  await assertUnredirectedRepositoryPath(root, declaration.sourceDirectory);
+  const files = await listFiles(
+    repositoryPath(root, declaration.sourceDirectory),
+    declaration.excludedPrefixes,
+  );
+  return files.filter((relativeFile) => {
+    const portableRelativeFile = portablePath(relativeFile);
+    return !declaration.excludedPaths.includes(portableRelativeFile) &&
+      !declaration.excludedPrefixes.some((prefix) => portableRelativeFile.startsWith(prefix));
+  });
+}
+
+function assertDisjointProjection(projection: RegistryProjectedDirectoryArtifact): void {
+  if (directoriesOverlap(projection.sourceDirectory, projection.targetDirectory)) {
+    throw new Error(
+      `Projected source and target directories must not overlap: ${projection.sourceDirectory} and ${projection.targetDirectory}.`,
+    );
+  }
+}
+
+function validateProjectedDirectoryOwnership(catalog: RegistrySourceCatalog): void {
+  const projections = projectedDirectories(catalog);
+  for (const projection of projections) assertDisjointProjection(projection);
+  for (let leftIndex = 0; leftIndex < projections.length; leftIndex += 1) {
+    const left = projections[leftIndex]!;
+    for (let rightIndex = leftIndex + 1; rightIndex < projections.length; rightIndex += 1) {
+      const right = projections[rightIndex]!;
+      if (directoriesOverlap(left.targetDirectory, right.targetDirectory)) {
+        throw new Error(
+          `Projected target directories must not overlap: ${left.targetDirectory} and ${right.targetDirectory}.`,
+        );
+      }
+    }
+    for (const sourceOwner of projections) {
+      if (directoriesOverlap(left.targetDirectory, sourceOwner.sourceDirectory)) {
+        throw new Error(
+          `Projected target ${left.targetDirectory} overlaps projected source ${sourceOwner.sourceDirectory}.`,
+        );
+      }
+    }
+  }
+}
+
+function directoriesOverlap(left: string, right: string): boolean {
+  const leftPrefix = `${portableDirectoryKey(left)}/`;
+  const rightPrefix = `${portableDirectoryKey(right)}/`;
+  return leftPrefix.startsWith(rightPrefix) || rightPrefix.startsWith(leftPrefix);
+}
+
+function portableDirectoryKey(value: string): string {
+  return value.normalize("NFC").toLowerCase();
+}
+
+async function assertUnredirectedRepositoryPath(
+  root: string,
+  relativePath: string,
+): Promise<void> {
+  const rootPath = path.resolve(root);
+  let current = rootPath;
+  for (const segment of relativePath.split("/")) {
+    current = path.join(current, segment);
+    let state: Awaited<ReturnType<typeof lstat>>;
+    try {
+      state = await lstat(current);
+    } catch (error) {
+      if (error instanceof Error && "code" in error && error.code === "ENOENT") return;
+      throw error;
+    }
+    if (state.isSymbolicLink()) {
+      throw new Error(
+        `Projected path has a symbolic-link or junction ancestor: ${relativePath}. ` +
+        "Remove the redirect before running pnpm registry:build.",
+      );
+    }
+    const resolved = await realpath(current);
+    const relative = path.relative(rootPath, resolved);
+    if (
+      relative === ".." ||
+      relative.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(relative)
+    ) {
+      throw new Error(
+        `Projected path resolves outside the repository: ${relativePath}. ` +
+        "Remove the redirect before running pnpm registry:build.",
+      );
+    }
+  }
+}
+
+async function assertRegularProjectionTarget(root: string, relativePath: string): Promise<void> {
+  const state = await lstat(repositoryPath(root, relativePath));
+  if (state.isSymbolicLink() || !state.isFile()) {
+    throw new Error(`Projected target must be a regular file: ${relativePath}.`);
+  }
+}
+
+async function readRegularFileIfPresent(
+  root: string,
+  relativePath: string,
+): Promise<Uint8Array | undefined> {
+  const absolute = repositoryPath(root, relativePath);
+  let state: Awaited<ReturnType<typeof lstat>>;
+  try {
+    state = await lstat(absolute);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return undefined;
+    throw error;
+  }
+  if (state.isSymbolicLink() || !state.isFile()) {
+    throw new Error(`Projected target must be a regular file: ${relativePath}.`);
+  }
+  return await readFile(absolute);
+}
+
+function equalBytes(left: Uint8Array, right: Uint8Array): boolean {
+  return left.byteLength === right.byteLength && left.every((value, index) => value === right[index]);
+}
+
+function staleProjectionError(targetDirectory: string): Error {
+  return new Error(`Projected directory is stale: ${targetDirectory}. Run pnpm registry:build.`);
 }
 
 async function materializeLicenses(
@@ -573,6 +811,7 @@ async function listFiles(
 }
 
 async function readSourceBytes(root: string, relativePath: string): Promise<Uint8Array> {
+  await assertUnredirectedRepositoryPath(root, path.posix.dirname(relativePath));
   const absolute = repositoryPath(root, relativePath);
   const state = await lstat(absolute);
   if (state.isSymbolicLink() || !state.isFile()) {

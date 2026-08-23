@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import type { Usage } from "@openai/codex-sdk";
 
 import {
+  decodeObjectiveThreadContinuation,
+  encodeObjectiveThreadContinuation,
   ObjectiveCodexClient,
+  ObjectiveCodexPostTurnError,
   decodeObjectiveId,
   ObjectiveMemoryLedger,
   type CodexRole,
@@ -131,33 +135,207 @@ test("transport failure does not falsely terminalize an objective", async () => 
   assert.equal(fake.starts, 1);
 });
 
-test("resume identifiers are bound to the same objective", async () => {
+test("durable continuations remain usable after eviction and stay objective-bound", async () => {
   const fake = new FakeCodex();
   const firstObjective = objective("objective-a");
-  const continuation = {
-    threadId: "durable-thread",
-    objectiveId: firstObjective.objectiveId,
-  };
   const client = new ObjectiveCodexClient(
     new ObjectiveMemoryLedger("resume-objective"),
     undefined,
     fake,
   );
 
-  await client.invoke({ ...invocation(firstObjective), continuation });
-  assert.deepEqual(fake.resumed, ["durable-thread"]);
+  const first = await client.invoke(invocation(firstObjective));
+  assert.ok(first.continuation);
+  assert.deepEqual(
+    decodeObjectiveThreadContinuation(
+      encodeObjectiveThreadContinuation(first.continuation),
+    ),
+    first.continuation,
+  );
 
   const secondObjective = objective("objective-b");
   await assert.rejects(
-    client.invoke({ ...invocation(secondObjective), continuation }),
+    client.invoke({
+      ...invocation(secondObjective),
+      continuation: first.continuation,
+    }),
     /different objective/u,
   );
   await client.invoke(invocation(secondObjective));
-  assert.equal(fake.starts, 1);
-
-  await client.invoke(invocation(firstObjective));
   assert.equal(fake.starts, 2);
-  assert.deepEqual(fake.resumed, ["durable-thread"]);
+
+  await client.invoke({
+    ...invocation(firstObjective),
+    continuation: first.continuation,
+  });
+  assert.equal(fake.starts, 2);
+  assert.deepEqual(fake.resumed, [first.threadId]);
+});
+
+test("a durable continuation cannot conflict with a cached thread", async () => {
+  const fake = new FakeCodex();
+  const value = objective("cached-conflict");
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("cached-conflict"),
+    undefined,
+    fake,
+  );
+  const first = await client.invoke(invocation(value));
+  assert.ok(first.continuation);
+
+  await assert.rejects(
+    client.invoke({
+      ...invocation(value),
+      continuation: {
+        ...first.continuation,
+        threadId: "different-thread",
+      },
+    }),
+    /differs from the cached thread/u,
+  );
+  assert.equal(fake.starts, 1);
+  assert.deepEqual(fake.resumed, []);
+});
+
+test("durable continuation tokens reject legacy and widened shapes", () => {
+  assert.throws(
+    () => decodeObjectiveThreadContinuation("thread-1"),
+    /not valid JSON/u,
+  );
+  assert.throws(
+    () => decodeObjectiveThreadContinuation(JSON.stringify({
+      schemaVersion: 1,
+      objectiveId: objective("token-shape").objectiveId,
+      threadId: "thread-1",
+      envelopeSha256: "a".repeat(64),
+      extra: true,
+    })),
+    /unknown: extra/u,
+  );
+  assert.throws(
+    () => decodeObjectiveThreadContinuation(JSON.stringify({
+      schemaVersion: 1,
+      objectiveId: objective("token-shape").objectiveId,
+      threadId: "thread-1",
+      envelopeSha256: "A".repeat(64),
+    })),
+    /lowercase SHA-256 digest/u,
+  );
+});
+
+test("role envelope changes reject old continuations and start a new thread", async () => {
+  const fake = new FakeCodex();
+  const value = objective("role-envelope");
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("role-envelope"),
+    undefined,
+    fake,
+  );
+  const first = await client.invoke(invocation(value));
+  assert.ok(first.continuation);
+  const changedRole: CodexRole = {
+    ...role,
+    thread: {
+      ...role.thread,
+      workingDirectory: `${process.cwd()}-different`,
+    },
+  };
+
+  await assert.rejects(
+    client.invoke({
+      ...invocation(value, changedRole),
+      continuation: first.continuation,
+    }),
+    /different role or objective envelope/u,
+  );
+  await client.invoke(invocation(value, changedRole));
+  assert.equal(fake.starts, 2);
+  assert.deepEqual(fake.resumed, []);
+});
+
+test("post-turn failures retain usage and a bound continuation", async () => {
+  const fake = new FakeCodex();
+  fake.finalResponses.push("not-json");
+  fake.usage = {
+    input_tokens: 7,
+    cached_input_tokens: 0,
+    cache_write_input_tokens: 0,
+    output_tokens: 2,
+    reasoning_output_tokens: 1,
+  };
+  const ledger = new ObjectiveMemoryLedger("post-turn-failure");
+  const client = new ObjectiveCodexClient(ledger, undefined, fake);
+  let failure: ObjectiveCodexPostTurnError | undefined;
+
+  await assert.rejects(
+    client.invoke(invocation(objective("post-turn-failure"))),
+    (error: unknown) => {
+      assert.ok(error instanceof ObjectiveCodexPostTurnError);
+      failure = error;
+      assert.equal(error.threadId, "thread-1");
+      assert.deepEqual(error.usage, fake.usage);
+      assert.ok(error.renderedPromptBytes > 0);
+      assert.ok(error.continuation);
+      return true;
+    },
+  );
+
+  assert.ok(failure?.continuation);
+  const failed = (await ledger.list()).find(
+    (event) => event.type === "codex.failed",
+  );
+  assert.equal(failed?.threadId, "thread-1");
+  assert.deepEqual(failed?.usage, fake.usage);
+  assert.deepEqual(failed?.state, {
+    objectiveId: objective("post-turn-failure").objectiveId,
+    errorType: "SyntaxError",
+    postTurn: true,
+    envelopeSha256: failure.continuation.envelopeSha256,
+  });
+});
+
+test("Objective Codex client fails concurrent same-role turns closed", async () => {
+  let enteredResolve: (() => void) | undefined;
+  const entered = new Promise<void>((resolve) => {
+    enteredResolve = resolve;
+  });
+  let releaseResolve: (() => void) | undefined;
+  const release = new Promise<void>((resolve) => {
+    releaseResolve = resolve;
+  });
+  const codex: WorkflowCodex = {
+    startThread() {
+      return {
+        id: "single-flight",
+        async run() {
+          enteredResolve?.();
+          await release;
+          return {
+            finalResponse: JSON.stringify({ result: "ok" }),
+            usage: null,
+          };
+        },
+      };
+    },
+    resumeThread() {
+      throw new Error("resume must not be called");
+    },
+  };
+  const ledger = new ObjectiveMemoryLedger("single-flight");
+  const client = new ObjectiveCodexClient(ledger, undefined, codex);
+  const first = client.invoke(invocation(objective("single-flight")));
+  await entered;
+  await assert.rejects(
+    client.invoke(invocation(objective("other-objective"))),
+    /already has an active Codex turn/u,
+  );
+  releaseResolve?.();
+  await first;
+  assert.equal(
+    (await ledger.list()).filter((event) => event.type === "codex.started")
+      .length,
+    1,
+  );
 });
 
 test("objective envelope is required and included in every invocation", async () => {
@@ -184,6 +362,41 @@ test("objective envelope is required and included in every invocation", async ()
     fake.prompts[0] ?? "",
     /Follow the repository's communication rules when writing prose values\.[^]*machine-readable syntax unchanged\.$/u,
   );
+});
+
+test("delegation scope and capabilities are rejected before thread mutation", async () => {
+  const fake = new FakeCodex();
+  const client = new ObjectiveCodexClient(
+    new ObjectiveMemoryLedger("delegation-envelope"),
+    undefined,
+    fake,
+  );
+  const value = objective("objective-a");
+
+  await assert.rejects(
+    client.invoke({
+      ...invocation(value),
+      delegation: {
+        ...delegation,
+        objectiveId: value.objectiveId,
+        scope: ["outside-repository"],
+      },
+    }),
+    /exceeds primary scope/u,
+  );
+  await assert.rejects(
+    client.invoke({
+      ...invocation(value),
+      delegation: {
+        ...delegation,
+        objectiveId: value.objectiveId,
+        requiredCapabilities: ["network"],
+      },
+    }),
+    /exceeds primary capabilities/u,
+  );
+  assert.equal(fake.starts, 0);
+  assert.deepEqual(fake.resumed, []);
 });
 
 test("rejects an oversized rendered prompt before starting a thread", async () => {
@@ -265,6 +478,8 @@ class FakeCodex implements WorkflowCodex {
   public starts = 0;
   public readonly resumed: string[] = [];
   public readonly prompts: string[] = [];
+  public readonly finalResponses: string[] = [];
+  public usage: Usage | null = null;
   public failNext = false;
 
   public startThread(): WorkflowThread {
@@ -286,7 +501,7 @@ class FakeThread implements WorkflowThread {
 
   public async run(input: string): Promise<{
     readonly finalResponse: string;
-    readonly usage: null;
+    readonly usage: Usage | null;
   }> {
     this.owner.prompts.push(input);
     if (this.owner.failNext) {
@@ -294,8 +509,10 @@ class FakeThread implements WorkflowThread {
       throw new Error("stream disconnected");
     }
     return {
-      finalResponse: JSON.stringify({ result: "ok" }),
-      usage: null,
+      finalResponse:
+        this.owner.finalResponses.shift() ??
+        JSON.stringify({ result: "ok" }),
+      usage: this.owner.usage,
     };
   }
 }

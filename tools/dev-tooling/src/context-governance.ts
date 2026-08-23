@@ -12,6 +12,7 @@ const REQUIRED_REVIEW_PATTERNS = [
   "/.codex/skills/",
   "/.agent-context/runtime/",
   "/.github/CODEOWNERS",
+  "/packages/codex-workflow-runtime/",
   "/registry/",
   "/tools/dev-tooling/",
   "/tools/repo-policy/",
@@ -255,11 +256,18 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
 ]);
 
 interface ContextGovernanceManifest {
-  readonly schemaVersion: 2;
+  readonly schemaVersion: 3;
   readonly registryRevision: string;
   readonly decisionPath: string;
   readonly protectedSources: readonly ProtectedSource[];
   readonly projections: readonly ProtectedProjection[];
+  readonly completeFileProjectionScopes: readonly CompleteFileProjectionScope[];
+}
+
+interface CompleteFileProjectionScope {
+  readonly component: string;
+  readonly sourcePrefix: string;
+  readonly targetPrefix: string;
 }
 
 interface ProtectedSource {
@@ -350,11 +358,67 @@ export async function checkContextGovernance(
     }
   }
 
+  checkCompleteFileProjectionScopes(manifest, registry, protectedByPath);
+
   const protectedPaths = new Set(manifest.protectedSources.map((source) => source.sourcePath));
   for (const component of registry.components) {
     for (const artifact of component.artifacts) {
       if (artifact.operation === "text-section" && !protectedPaths.has(artifact.sourcePath)) {
         throw new Error(`Text instruction artifact is not protected by governance: ${artifact.sourcePath}.`);
+      }
+    }
+  }
+}
+
+function checkCompleteFileProjectionScopes(
+  manifest: ContextGovernanceManifest,
+  registry: ContextRegistryV2,
+  protectedByPath: ReadonlyMap<string, ProtectedSource>,
+): void {
+  const fileProjections = manifest.projections.filter(
+    (projection): projection is FileProjection => projection.kind === "file",
+  );
+  for (const scope of manifest.completeFileProjectionScopes) {
+    const component = registry.components.find((candidate) => candidate.name === scope.component);
+    if (component === undefined) {
+      throw new Error(`Complete file projection scope names missing component ${scope.component}.`);
+    }
+    const artifacts = component.artifacts.filter((artifact) =>
+      artifact.sourcePath.startsWith(scope.sourcePrefix));
+    if (artifacts.length === 0) {
+      throw new Error(`Complete file projection scope ${scope.sourcePrefix} contains no artifacts.`);
+    }
+    const registryPairs = new Set<string>();
+    for (const artifact of artifacts) {
+      const relativePath = artifact.sourcePath.slice(scope.sourcePrefix.length);
+      const expectedTarget = `${scope.targetPrefix}${relativePath}`;
+      if (artifact.targetPath !== expectedTarget) {
+        throw new Error(
+          `Complete file projection maps ${artifact.sourcePath} to ${artifact.targetPath}; ` +
+          `expected ${expectedTarget}.`,
+        );
+      }
+      const protectedSource = protectedByPath.get(artifact.sourcePath);
+      const projection = fileProjections.find((candidate) =>
+        candidate.sourcePath === artifact.sourcePath && candidate.targetPath === artifact.targetPath);
+      if (
+        protectedSource === undefined ||
+        projection === undefined ||
+        projection.invariantId !== protectedSource.invariantId
+      ) {
+        throw new Error(
+          `Complete file projection artifact lacks governed source and target coverage: ${artifact.sourcePath}.`,
+        );
+      }
+      registryPairs.add(`${artifact.sourcePath}\n${artifact.targetPath}`);
+    }
+    for (const projection of fileProjections.filter((candidate) =>
+      candidate.sourcePath.startsWith(scope.sourcePrefix) &&
+      candidate.targetPath.startsWith(scope.targetPrefix))) {
+      if (!registryPairs.has(`${projection.sourcePath}\n${projection.targetPath}`)) {
+        throw new Error(
+          `Governed file projection is absent from component ${scope.component}: ${projection.sourcePath}.`,
+        );
       }
     }
   }
@@ -415,18 +479,41 @@ function markdownPrefixRegion(document: string, beforeHeading: string, targetPat
 function decodeManifest(value: unknown): ContextGovernanceManifest {
   const record = strictRecord(value, "Context governance manifest", [
     "schemaVersion", "registryRevision", "decisionPath", "protectedSources", "projections",
+    "completeFileProjectionScopes",
   ]);
-  if (record.schemaVersion !== 2) throw new Error("Context governance schemaVersion must be 2.");
+  if (record.schemaVersion !== 3) throw new Error("Context governance schemaVersion must be 3.");
   const protectedSources = decodeArray(record.protectedSources, "protectedSources", decodeProtectedSource);
   const projections = decodeArray(record.projections, "projections", decodeProjection);
+  const completeFileProjectionScopes = decodeArray(
+    record.completeFileProjectionScopes,
+    "completeFileProjectionScopes",
+    decodeCompleteFileProjectionScope,
+  );
   requireUnique(protectedSources.map((item) => item.invariantId), "protected invariant IDs");
   requireUnique(protectedSources.map((item) => item.sourcePath), "protected source paths");
+  requireUnique(
+    completeFileProjectionScopes.map((scope) =>
+      `${scope.component}\n${scope.sourcePrefix}\n${scope.targetPrefix}`),
+    "complete file projection scopes",
+  );
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     registryRevision: requiredString(record, "registryRevision"),
     decisionPath: portableRelativePath(record, "decisionPath"),
     protectedSources,
     projections,
+    completeFileProjectionScopes,
+  };
+}
+
+function decodeCompleteFileProjectionScope(value: unknown): CompleteFileProjectionScope {
+  const record = strictRecord(value, "Complete file projection scope", [
+    "component", "sourcePrefix", "targetPrefix",
+  ]);
+  return {
+    component: identifier(record, "component"),
+    sourcePrefix: portableRelativePrefix(record, "sourcePrefix"),
+    targetPrefix: portableRelativePrefix(record, "targetPrefix"),
   };
 }
 
@@ -502,6 +589,13 @@ function portableRelativePath(record: Readonly<Record<string, unknown>>, key: st
   if (value.includes("\\") || value.startsWith("/") || value.split("/").some((part) => part === "" || part === "." || part === "..")) {
     throw new Error(`${key} must be a normalized repository-relative path.`);
   }
+  return value;
+}
+
+function portableRelativePrefix(record: Readonly<Record<string, unknown>>, key: string): string {
+  const value = requiredString(record, key);
+  if (!value.endsWith("/")) throw new Error(`${key} must end with a slash.`);
+  portableRelativePath({ [key]: value.slice(0, -1) }, key);
   return value;
 }
 

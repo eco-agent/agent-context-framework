@@ -52,7 +52,7 @@ export function createObjectiveLoopContext(
 ): LoopContext {
   return {
     ledger: {
-      runId: ledger.runId,
+      runId: `${ledger.runId}:${objectiveId}`,
       async append(event: NewLoopEvent): Promise<unknown> {
         return await ledger.append({ ...event, objectiveId });
       },

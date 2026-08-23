@@ -2,7 +2,7 @@
 
 ## Outcome
 
-The distributable TypeScript template accepts only a fixed workflow topology
+The canonical TypeScript package and its distributable projection accept only a fixed workflow topology
 with finite budgets, least-authority delegation, ledger-bound Codex thread
 continuation, and evidence recorded before a state transition or external
 effect. The JSONL ledger is an audit record. It is not advertised as a complete
@@ -10,15 +10,21 @@ process checkpoint or a multi-process database.
 
 ## Owner
 
-`.codex/skills/orchestrate-codex-workflows/assets/typescript-runtime`
+`packages/codex-workflow-runtime`
+
+The registry projects the canonical `src`, `examples`, and `test` directories
+byte for byte into
+`.codex/skills/orchestrate-codex-workflows/assets/typescript-runtime`. The
+standalone manifest and TypeScript configuration remain owned by the skill.
 
 ## Domain concepts
 
 - **Workflow plan**: the complete, immutable role and task graph selected before
   execution. Runtime code may traverse this graph but may not create roles.
-- **Budget**: a positive safe integer bounding attempts, rounds, hops, retries,
-  or concurrent work. `NaN`, infinities, fractions, zero, and negative values
-  are invalid.
+- **Budget**: a safe integer bounding attempts, rounds, hops, retries, or
+  concurrent work. Scalar execution budgets are positive. Reviewer
+  `maxRepairs` may be zero so a workflow can permit inspection and forbid edits.
+  `NaN`, infinities, fractions, and negative values are invalid.
 - **Delegation**: a task request whose scope, capabilities, and authority are
   subsets of the target role's declared envelope.
 - **Task acceptance**: a project-controller evaluation that covers every
@@ -38,8 +44,9 @@ process checkpoint or a multi-process database.
 - A plan has a non-empty objective and acceptance contract, unique roles and
   tasks, a registered primary role, an acyclic task graph, and no authority or
   scope expansion.
-- Every scalar budget is a positive safe integer and every confidence value is
-  finite and within `[0, 1]`.
+- Every scalar execution budget is a positive safe integer. Reviewer
+  `maxRepairs` is a nonnegative safe integer. Every confidence value is finite
+  and within `[0, 1]`.
 - Every loaded ledger entry decodes as a workflow event for the requested run
   and has the next contiguous sequence number.
 - A Codex continuation uses a thread binding already present in the same run's
@@ -92,7 +99,7 @@ append leaves the prior state current and stops the operation.
 - Treat Codex SDK output and structured control data as untrusted until decoded.
 - Record terminal Codex and environment failures, then rethrow or return the
   loop's explicit escalated/budget-exhausted result.
-- Keep the template single-process. Cross-process coordination, fsync-backed
+- Keep the portable package single-process. Cross-process coordination, fsync-backed
   durability, workflow checkpoint restoration, queues, databases, schedulers,
   and objective kernels remain outside this component.
 
@@ -103,7 +110,7 @@ append leaves the prior state current and stops the operation.
 - Ledger tests reject malformed or discontinuous history and preserve in-memory
   state when a backing append fails. They also reject event metadata that does
   not match the event type.
-- Codex-client tests reject an unbound or mismatched resume thread, conflicting
+- `PlanCodexClient` tests reject an unbound or mismatched resume thread, conflicting
   returned thread IDs, task-contract expansion, acceptance races, incomplete
   dependencies, exhausted attempts, and incomplete acceptance declarations.
 - Autonomous-loop tests prove intent precedes the external action and failure is

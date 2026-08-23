@@ -36,7 +36,8 @@ test("changed-file verification selects model-facing prose without scanning tech
   const files = await agentProseFilesForChanges(repositoryRoot, [
     ".codex/agents/default.toml",
     "registry/sources/instructions/core.md",
-    "tools/codex-workflows/src/codex-client.ts",
+    "tools/codex-workflows/src/objective-codex-client.ts",
+    "packages/codex-workflow-runtime/src/plan-codex-client.ts",
     "docs/README.md",
     "package.json",
     ".codex/work/deleted-record.md",
@@ -44,8 +45,9 @@ test("changed-file verification selects model-facing prose without scanning tech
 
   assert.deepEqual(files, [
     ".codex/agents/default.toml",
+    "packages/codex-workflow-runtime/src/plan-codex-client.ts",
     "registry/sources/instructions/core.md",
-    "tools/codex-workflows/src/codex-client.ts",
+    "tools/codex-workflows/src/objective-codex-client.ts",
   ]);
 });
 
@@ -138,7 +140,8 @@ test("the repository command rejects dense agent prose and accepts its revision"
 test("the repository command accepts selected role and prompt sources", async () => {
   const files = [
     ".codex/agents/default.toml",
-    "tools/codex-workflows/src/codex-client.ts",
+    "packages/codex-workflow-runtime/src/plan-codex-client.ts",
+    "tools/codex-workflows/src/objective-codex-client.ts",
   ];
 
   assert.equal((await checkAgentProse(repositoryRoot, files)).ok, true);

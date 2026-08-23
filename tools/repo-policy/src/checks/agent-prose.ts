@@ -61,6 +61,7 @@ const modelFacingRoots = [
   "registry/sources/codex/",
   "registry/sources/instructions/",
   "registry/sources/templates/",
+  "packages/codex-workflow-runtime/",
   "tools/codex-workflows/",
 ] as const;
 

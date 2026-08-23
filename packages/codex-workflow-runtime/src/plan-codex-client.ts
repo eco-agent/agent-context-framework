@@ -323,7 +323,9 @@ export class PlanCodexClient {
         actor: role.identity,
         taskId: task.id,
         attempt,
-        ...(thread?.id === null || thread?.id === undefined
+        ...(thread?.id === null ||
+        thread?.id === undefined ||
+        thread.id.trim().length === 0
           ? {}
           : { threadId: thread.id }),
         state: {

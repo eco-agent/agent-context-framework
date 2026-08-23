@@ -39,8 +39,11 @@ Bounded Codex SDK workflow authoring is available only through the explicitly
 selected `skill-orchestrate-codex-workflows` component. It installs inert skill
 and template source. It does not install SDK dependencies, create or execute a
 workflow, produce hook bindings, or edit the consumer's manifests or lockfiles.
-No existing
-bundle selects it transitively. Its plan and setup disclosures report required
+The reusable implementation, example, and mock contract tests live in
+`packages/codex-workflow-runtime`. Registry build projects those bytes into the
+standalone skill template. `tools/codex-workflows` consumes the same package and
+adds Objective identity, durable continuation, and repository-context policy.
+No existing bundle selects the skill transitively. Its plan and setup disclosures report required
 Node.js, network, and Codex-authentication capabilities. Those declarations do
 not activate or test a live Codex session. Its bundled JSONL ledger is a
 single-process audit record, not a crash-restorable workflow checkpoint.

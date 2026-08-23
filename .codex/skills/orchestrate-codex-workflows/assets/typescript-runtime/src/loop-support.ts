@@ -2,14 +2,14 @@ import type {
   Evidence,
   JsonValue,
   LoopContext,
+  LoopEventType,
   LoopResult,
-  WorkflowEventType,
 } from "./contracts.js";
 import { assertPositiveSafeInteger } from "./contracts.js";
 
 export async function record(
   context: LoopContext,
-  type: WorkflowEventType,
+  type: LoopEventType,
   loop: string,
   state: JsonValue,
   evidence: readonly Evidence[] = [],

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -90,11 +90,12 @@ test("--no-install reports materialized runtime state without installing", async
 
 test("runtime bootstrap resolves pinned pnpm through Corepack without PNPM_HOME", async () => {
   const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+  const fixture = await createMaterializedRuntimeFixture(frameworkRoot);
   const previousPnpmHome = process.env.PNPM_HOME;
   delete process.env.PNPM_HOME;
   try {
     const result = await bootstrapRuntime({
-      projectRoot: frameworkRoot,
+      projectRoot: fixture.root,
       mode: "install-and-build",
     });
     assert.equal(result.status, "operational");
@@ -105,8 +106,32 @@ test("runtime bootstrap resolves pinned pnpm through Corepack without PNPM_HOME"
     } else {
       process.env.PNPM_HOME = previousPnpmHome;
     }
+    await fixture.remove();
   }
 });
+
+async function createMaterializedRuntimeFixture(
+  frameworkRoot: string,
+): Promise<{
+  readonly root: string;
+  readonly remove: () => Promise<void>;
+}> {
+  const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-materialized-runtime-"));
+  const sourceRoot = path.join(frameworkRoot, ".agent-context", "runtime");
+  const targetRoot = path.join(root, ".agent-context", "runtime");
+  await mkdir(path.dirname(targetRoot), { recursive: true });
+  await cp(sourceRoot, targetRoot, {
+    recursive: true,
+    filter(source) {
+      const segments = path.relative(sourceRoot, source).split(path.sep);
+      return !segments.includes("node_modules") && !segments.includes("dist");
+    },
+  });
+  return {
+    root,
+    remove: async () => await rm(root, { recursive: true, force: true }),
+  };
+}
 
 async function createRuntimeFixture(): Promise<{
   readonly root: string;

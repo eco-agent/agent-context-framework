@@ -84,8 +84,8 @@ export class CodexTurnTransport {
       ...(signal === undefined ? {} : { signal }),
     });
     const threadId = thread.id;
-    if (threadId === null) {
-      throw new Error("Codex completed without assigning a thread ID");
+    if (threadId === null || threadId.trim().length === 0) {
+      throw new Error("Codex completed without assigning a non-empty thread ID");
     }
     return {
       finalResponse: turn.finalResponse,

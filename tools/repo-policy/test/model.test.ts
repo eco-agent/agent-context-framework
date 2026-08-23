@@ -92,6 +92,11 @@ test("writable scope supports exact paths and trailing recursive scope only", ()
 test("changed paths select profiles without model judgment", () => {
   assert.equal(profileForChanges(["docs/README.md"]), "docs");
   assert.equal(profileForChanges(["tools/codex-workflows/src/index.ts"]), "workflow");
+  assert.equal(profileForChanges(["packages/codex-workflow-runtime/src/index.ts"]), "workflow");
+  assert.equal(profileForChanges([
+    "packages/codex-workflow-runtime/src/index.ts",
+    "tools/codex-workflows/src/index.ts",
+  ]), "workflow");
   assert.equal(profileForChanges(["package.json"]), "workspace-structure");
 });
 

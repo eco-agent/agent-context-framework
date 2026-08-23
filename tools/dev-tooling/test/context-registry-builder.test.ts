@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -13,7 +13,11 @@ import {
   initProject,
   planProjectSelection,
 } from "../src/context-installer.js";
-import { buildContextRegistry, checkContextRegistry } from "../src/context-registry-builder.js";
+import {
+  buildContextRegistry,
+  checkContextRegistry,
+  writeContextRegistry,
+} from "../src/context-registry-builder.js";
 import { checkContextGovernance } from "../src/context-governance.js";
 import { planSetupSelection } from "../src/setup-server.js";
 
@@ -248,6 +252,150 @@ test("orchestration authoring excludes generated runtime directories", async () 
       withGeneratedOutput.components.find((component) => component.name === componentName)?.artifacts
         .some((artifact) => /\/(?:\.codex-runs|dist|node_modules)\//u.test(artifact.targetPath)),
       false,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("registry check reports projected runtime drift and registry build repairs exact bytes and inventory", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-runtime-projection-"));
+  try {
+    await copyCompleteRegistryFixture(temporaryRoot);
+    const canonical = path.join(
+      temporaryRoot,
+      "packages",
+      "codex-workflow-runtime",
+      "src",
+      "contracts.ts",
+    );
+    const projected = path.join(
+      temporaryRoot,
+      ".codex",
+      "skills",
+      "orchestrate-codex-workflows",
+      "assets",
+      "typescript-runtime",
+      "src",
+      "contracts.ts",
+    );
+    const obsolete = path.join(path.dirname(projected), "obsolete.ts");
+    const canonicalPlan = path.join(
+      temporaryRoot,
+      "packages",
+      "codex-workflow-runtime",
+      "src",
+      "plan.ts",
+    );
+    const projectedPlan = path.join(path.dirname(projected), "plan.ts");
+    await writeFile(projected, "projection drift\n", "utf8");
+    await writeFile(obsolete, "obsolete\n", "utf8");
+    await rm(projectedPlan);
+
+    await assert.rejects(
+      checkContextRegistry(temporaryRoot),
+      /Projected directory is stale: .*typescript-runtime\/src\. Run pnpm registry:build\./u,
+    );
+    assert.equal(await readFile(projected, "utf8"), "projection drift\n");
+    assert.equal(await exists(obsolete), true);
+    assert.equal(await exists(projectedPlan), false);
+
+    await writeContextRegistry(temporaryRoot);
+    assert.equal(await readFile(projected, "utf8"), await readFile(canonical, "utf8"));
+    assert.equal(await readFile(projectedPlan, "utf8"), await readFile(canonicalPlan, "utf8"));
+    assert.equal(await exists(obsolete), false);
+    await checkContextRegistry(temporaryRoot);
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("registry build refuses a projected target beneath a redirected ancestor", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-runtime-redirect-"));
+  const outsideRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-runtime-outside-"));
+  try {
+    await copyCompleteRegistryFixture(temporaryRoot);
+    const catalogPath = path.join(temporaryRoot, "registry", "registry.source.json");
+    const catalog = JSON.parse(await readFile(catalogPath, "utf8")) as {
+      components: Array<{
+        name: string;
+        artifacts: Array<Record<string, unknown>>;
+      }>;
+    };
+    const component = catalog.components.find((candidate) =>
+      candidate.name === "skill-orchestrate-codex-workflows");
+    assert.ok(component);
+    for (const artifact of component.artifacts) {
+      if (artifact.kind !== "projected-directory") continue;
+      const sourceDirectory = String(artifact.sourceDirectory);
+      artifact.targetDirectory = `redirected-runtime/${path.posix.basename(sourceDirectory)}`;
+    }
+    await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+    await writeFile(path.join(outsideRoot, "sentinel.txt"), "outside\n", "utf8");
+    await symlink(
+      outsideRoot,
+      path.join(temporaryRoot, "redirected-runtime"),
+      process.platform === "win32" ? "junction" : "dir",
+    );
+
+    await assert.rejects(
+      writeContextRegistry(temporaryRoot),
+      /symbolic-link or junction ancestor/u,
+    );
+    assert.equal(await readFile(path.join(outsideRoot, "sentinel.txt"), "utf8"), "outside\n");
+    assert.equal(await exists(path.join(outsideRoot, "src")), false);
+    assert.equal(await exists(path.join(outsideRoot, "examples")), false);
+    assert.equal(await exists(path.join(outsideRoot, "test")), false);
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+    await rm(outsideRoot, { recursive: true, force: true });
+  }
+});
+
+test("registry rejects case-only overlap between projected source and target directories", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-runtime-overlap-"));
+  try {
+    await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+    await copyPackagedSkills(temporaryRoot);
+    const catalogPath = path.join(temporaryRoot, "registry", "registry.source.json");
+    const catalog = JSON.parse(await readFile(catalogPath, "utf8")) as {
+      components: Array<{
+        name: string;
+        artifacts: Array<Record<string, unknown>>;
+      }>;
+    };
+    const component = catalog.components.find((candidate) =>
+      candidate.name === "skill-orchestrate-codex-workflows");
+    assert.ok(component);
+    const projection = component.artifacts.find((artifact) =>
+      artifact.kind === "projected-directory" &&
+      artifact.sourceDirectory === "packages/codex-workflow-runtime/src");
+    assert.ok(projection);
+    projection.targetDirectory = "PACKAGES/CODEX-WORKFLOW-RUNTIME/SRC";
+    await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+
+    await assert.rejects(
+      buildContextRegistry(temporaryRoot),
+      /Projected source and target directories must not overlap/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance rejects a new projected runtime file without protected coverage", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-runtime-governance-"));
+  try {
+    await copyCompleteRegistryFixture(temporaryRoot);
+    await writeFile(
+      path.join(temporaryRoot, "packages", "codex-workflow-runtime", "src", "new-module.ts"),
+      "export const newModule = true;\n",
+      "utf8",
+    );
+
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(temporaryRoot)),
+      /lacks governed source and target coverage/u,
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
@@ -545,8 +693,12 @@ test("optional orchestration authoring is an explicit leaf with a governed safet
 
   assert.equal(component.artifacts.length > 0, true);
   assert.equal(component.artifacts.every((artifact) =>
-    artifact.sourcePath.startsWith(".codex/skills/orchestrate-codex-workflows/") &&
     artifact.targetPath.startsWith(".codex/skills/orchestrate-codex-workflows/")), true);
+  assert.equal(component.artifacts.every((artifact) =>
+    artifact.sourcePath.startsWith(".codex/skills/orchestrate-codex-workflows/") ||
+    artifact.sourcePath.startsWith("packages/codex-workflow-runtime/")), true);
+  assert.equal(component.artifacts.some((artifact) =>
+    artifact.sourcePath === "packages/codex-workflow-runtime/src/plan.ts"), true);
   for (const forbiddenOwner of [
     "packages/objective-",
     "tools/objective-runtime/",
@@ -582,13 +734,13 @@ test("optional orchestration authoring is an explicit leaf with a governed safet
   }
 
   const contracts = await readFile(
-    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "src", "contracts.ts"),
+    path.join(frameworkRoot, "packages", "codex-workflow-runtime", "src", "contracts.ts"),
     "utf8",
   );
   assert.match(contracts, /Number\.isSafeInteger\(value\)/u);
   assert.match(contracts, /environment\.intent/u);
   const environmentLoop = await readFile(
-    path.join(frameworkRoot, ".codex", "skills", "orchestrate-codex-workflows", "assets", "typescript-runtime", "src", "loops", "autonomous-environment.ts"),
+    path.join(frameworkRoot, "packages", "codex-workflow-runtime", "src", "loops", "autonomous-environment.ts"),
     "utf8",
   );
   const intentRecord = environmentLoop.indexOf('"environment.intent"');
@@ -1083,6 +1235,7 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
       },
     },
   );
+  await copyCanonicalWorkflowRuntime(temporaryRoot);
 }
 
 async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
@@ -1110,6 +1263,38 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
       { recursive: true },
     );
   }
+  await cp(
+    path.join(frameworkRoot, ".codex", "agents"),
+    path.join(temporaryRoot, ".codex", "agents"),
+    { recursive: true },
+  );
+  await copyCanonicalWorkflowRuntime(temporaryRoot);
+}
+
+async function copyCanonicalWorkflowRuntime(temporaryRoot: string): Promise<void> {
+  const targetRoot = path.join(temporaryRoot, "packages", "codex-workflow-runtime");
+  await mkdir(path.dirname(targetRoot), { recursive: true });
+  await cp(
+    path.join(frameworkRoot, "packages", "codex-workflow-runtime"),
+    targetRoot,
+    {
+      recursive: true,
+      filter: (source) => {
+        const portable = source.replaceAll("\\", "/");
+        return !portable.includes("/node_modules") && !portable.includes("/dist");
+      },
+    },
+  );
+}
+
+async function copyCompleteRegistryFixture(temporaryRoot: string): Promise<void> {
+  await cp(path.join(frameworkRoot, "registry"), path.join(temporaryRoot, "registry"), { recursive: true });
+  await copyPackagedSkills(temporaryRoot);
+  await mkdir(path.join(temporaryRoot, ".github"), { recursive: true });
+  await cp(path.join(frameworkRoot, ".github", "CODEOWNERS"), path.join(temporaryRoot, ".github", "CODEOWNERS"));
+  await mkdir(path.join(temporaryRoot, "docs"), { recursive: true });
+  await cp(path.join(frameworkRoot, "docs", "AGENTS.md"), path.join(temporaryRoot, "docs", "AGENTS.md"));
+  await cp(path.join(frameworkRoot, "AGENTS.md"), path.join(temporaryRoot, "AGENTS.md"));
   await cp(
     path.join(frameworkRoot, ".codex", "agents"),
     path.join(temporaryRoot, ".codex", "agents"),

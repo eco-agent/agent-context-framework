@@ -66,7 +66,11 @@ export function profileForChanges(changedFiles: readonly string[]): Verification
 
   if (
     changedFiles.length > 0 &&
-    changedFiles.every((file) => file.startsWith("tools/codex-workflows/"))
+    changedFiles.every(
+      (file) =>
+        file.startsWith("packages/codex-workflow-runtime/") ||
+        file.startsWith("tools/codex-workflows/"),
+    )
   ) {
     return "workflow";
   }

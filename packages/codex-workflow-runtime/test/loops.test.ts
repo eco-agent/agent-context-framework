@@ -1119,6 +1119,32 @@ test("Codex turns enforce the Node timer bound and combine timeout with external
   assert.equal(starts, 2);
 });
 
+test("Codex completion rejects an empty returned thread ID without corrupting failure evidence", async () => {
+  const ledger = new MemoryLedger("codex-empty-thread-test");
+  const codex: WorkflowCodex = {
+    startThread() {
+      return mockThread("");
+    },
+    resumeThread() {
+      throw new Error("resume must not be called");
+    },
+  };
+  const client = new PlanCodexClient(
+    ledger,
+    validateWorkflowPlan(validPlan()),
+    undefined,
+    codex,
+  );
+
+  await assert.rejects(
+    client.invoke(invocationFor()),
+    /without assigning a non-empty thread ID/u,
+  );
+  const failed = (await ledger.list()).find((event) => event.type === "codex.failed");
+  assert.ok(failed);
+  assert.equal(failed.threadId, undefined);
+});
+
 test("Codex client fails concurrent same-role invocations closed", async () => {
   const ledger = new MemoryLedger("codex-single-flight-test");
   const role = validRole();
@@ -1292,7 +1318,7 @@ test("reviewer repair records initial and revision evidence before reuse", async
         return { artifact, evidence };
       },
     },
-    2,
+    { maxReviewPasses: 2, maxRepairs: 1 },
     { ledger },
   );
 
@@ -1300,6 +1326,89 @@ test("reviewer repair records initial and revision evidence before reuse", async
   const events = await ledger.list();
   assert.equal(events[1]?.evidence[0]?.summary, "initial implementation");
   assert.equal(events[3]?.evidence[0]?.summary, "revision applied");
+});
+
+test("reviewer repair can allow review while forbidding all repair work", async () => {
+  const ledger = new MemoryLedger("review-without-repair-test");
+  let revisions = 0;
+  const result = await runReviewerRepair(
+    "request",
+    {
+      id: "implementer",
+      async implement() {
+        return { artifact: "draft", evidence };
+      },
+      async revise() {
+        revisions += 1;
+        return { artifact: "revised", evidence };
+      },
+    },
+    {
+      id: "reviewer",
+      async inspect() {
+        return {
+          kind: "repair" as const,
+          repairOwner: "implementer" as const,
+          findings: [{ id: "finding", summary: "repair", evidence }],
+          evidence,
+        };
+      },
+      async repair(artifact) {
+        return { artifact, evidence };
+      },
+    },
+    { maxReviewPasses: 1, maxRepairs: 0 },
+    { ledger },
+  );
+
+  assert.equal(result.status, "budget_exhausted");
+  assert.equal(revisions, 0);
+  assert.match(result.issue, /repair budget exhausted/u);
+});
+
+test("reviewer repair does not revise after the final review pass", async () => {
+  const ledger = new MemoryLedger("review-final-pass-test");
+  let revisions = 0;
+  let repairs = 0;
+  const result = await runReviewerRepair(
+    "request",
+    {
+      id: "implementer",
+      async implement() {
+        return { artifact: "draft", evidence };
+      },
+      async revise() {
+        revisions += 1;
+        return { artifact: "revised", evidence };
+      },
+    },
+    {
+      id: "reviewer",
+      async inspect() {
+        return {
+          kind: "repair" as const,
+          repairOwner: "reviewer" as const,
+          findings: [{ id: "finding", summary: "repair", evidence }],
+          evidence,
+        };
+      },
+      async repair(artifact) {
+        repairs += 1;
+        return { artifact, evidence };
+      },
+    },
+    { maxReviewPasses: 1, maxRepairs: 1 },
+    { ledger },
+  );
+
+  assert.equal(result.status, "budget_exhausted");
+  assert.match(result.issue, /pass budget exhausted/u);
+  assert.equal(revisions, 0);
+  assert.equal(repairs, 0);
+  assert.equal(
+    (await ledger.list()).filter((event) => event.type === "loop.budget_exhausted").length,
+    1,
+  );
 });
 
 test("shared artifact records all round evidence before publishing the next artifact", async () => {

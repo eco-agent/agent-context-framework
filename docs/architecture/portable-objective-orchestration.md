@@ -18,6 +18,7 @@ objective.
 | Objective kernel | Identity, states, commands, versions, authority, budgets, leases, checkpoints, evidence references | Clocks, storage, queues, agents, repositories |
 | Objective store | Atomic commands, idempotency, current state, events, ready queries | Agent execution and prompt construction |
 | Global scheduler | Discovery, reconciliation, leases, heartbeats, bounded concurrency, terminal commands | Domain work and hidden agent state |
+| Bounded Codex workflow runtime | Static plan validation, finite local loops, evidence events, structured turns | Objective identity, durable scheduling, repository policy |
 | Local attempt runner | One leased objective, local plan, environment access, structured outcome | Durable state transitions outside the store port |
 | Agent adapter | Prompt construction, structured decoding, runtime-specific resume token | Objective identity and persistence semantics |
 
@@ -97,6 +98,13 @@ the objective store. Periodic reconciliation scans ready state, expired
 leases, and satisfied waits, so a lost job cannot strand accepted work.
 
 ## Codex integration
+
+`packages/codex-workflow-runtime` owns the Objective-free plan, finite loop
+implementations, evidence ledger, and Codex turn transport. The distributable
+skill runtime is an exact source, example, and test projection of that package.
+`tools/codex-workflows` imports the bounded workflow API and adds Objective IDs,
+Objective-bound continuation, strict durable event decoding, and the leased
+attempt runner.
 
 `CodexObjectiveRunner` builds a bounded `WorkflowObjective` from a leased
 objective. Before the model starts, the Agent Context Framework launcher projects the
@@ -189,6 +197,7 @@ pnpm --filter @agent-context/objective-kernel test
 pnpm --filter @agent-context/objective-runtime test
 OBJECTIVE_POSTGRES_URL=<url> pnpm --filter @agent-context/objective-runtime test:postgres
 pnpm --filter @agent-context/repo-policy test
+pnpm --filter @agent-context/codex-workflow-runtime test
 pnpm --filter @agent-context/codex-workflows test
 ```
 

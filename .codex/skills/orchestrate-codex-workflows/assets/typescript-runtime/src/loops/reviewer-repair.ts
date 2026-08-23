@@ -3,7 +3,10 @@ import type {
   LoopContext,
   LoopResult,
 } from "../contracts.js";
-import { assertPositiveSafeInteger } from "../contracts.js";
+import {
+  assertNonNegativeSafeInteger,
+  assertPositiveSafeInteger,
+} from "../contracts.js";
 import {
   completed,
   escalated,
@@ -66,22 +69,36 @@ export interface Reviewer<Request, Artifact> {
   }>;
 }
 
+export interface ReviewerRepairBudget {
+  readonly maxReviewPasses: number;
+  readonly maxRepairs: number;
+}
+
 export async function runReviewerRepair<Request, Artifact>(
   request: Request,
   implementer: Implementer<Request, Artifact>,
   reviewer: Reviewer<Request, Artifact>,
-  maxReviewPasses: number,
+  budget: ReviewerRepairBudget,
   context: LoopContext,
 ): Promise<LoopResult<Artifact>> {
-  assertPositiveSafeInteger(maxReviewPasses, "Reviewer repair maxReviewPasses");
+  assertPositiveSafeInteger(
+    budget.maxReviewPasses,
+    "Reviewer repair maxReviewPasses",
+  );
+  assertNonNegativeSafeInteger(
+    budget.maxRepairs,
+    "Reviewer repair maxRepairs",
+  );
   const loop = "reviewer-repair";
   const evidence: Evidence[] = [];
   const priorFindings: ReviewFinding[] = [];
+  let repairs = 0;
 
   await record(context, "loop.started", loop, {
     implementer: implementer.id,
     reviewer: reviewer.id,
-    maxReviewPasses,
+    maxReviewPasses: budget.maxReviewPasses,
+    maxRepairs: budget.maxRepairs,
   });
 
   const initial = await implementer.implement(request);
@@ -96,7 +113,7 @@ export async function runReviewerRepair<Request, Artifact>(
   let artifact = initial.artifact;
   evidence.push(...initial.evidence);
 
-  for (let pass = 1; pass <= maxReviewPasses; pass += 1) {
+  for (let pass = 1; pass <= budget.maxReviewPasses; pass += 1) {
     const review = await reviewer.inspect(request, artifact, priorFindings);
 
     await record(
@@ -127,6 +144,29 @@ export async function runReviewerRepair<Request, Artifact>(
     }
 
     priorFindings.push(...review.findings);
+    if (repairs >= budget.maxRepairs) {
+      const issue = "Reviewer repair budget exhausted";
+      await record(
+        context,
+        "loop.budget_exhausted",
+        loop,
+        { issue, pass, repairs },
+        evidence,
+      );
+      return exhausted(issue, evidence);
+    }
+    if (pass >= budget.maxReviewPasses) {
+      const issue = "Reviewer pass budget exhausted";
+      await record(
+        context,
+        "loop.budget_exhausted",
+        loop,
+        { issue, pass, repairs },
+        evidence,
+      );
+      return exhausted(issue, evidence);
+    }
+    repairs += 1;
     const revision =
       review.repairOwner === "reviewer"
         ? await reviewer.repair(artifact, review.findings)
@@ -145,7 +185,7 @@ export async function runReviewerRepair<Request, Artifact>(
     evidence.push(...revision.evidence);
   }
 
-  const issue = "Reviewer–repair pass budget exhausted";
+  const issue = "Reviewer pass budget exhausted";
   await record(context, "loop.budget_exhausted", loop, { issue }, evidence);
   return exhausted(issue, evidence);
 }

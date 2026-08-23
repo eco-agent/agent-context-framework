@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { appendFile, mkdtemp, rm } from "node:fs/promises";
+import { appendFile, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -17,10 +17,21 @@ import {
 } from "../src/index.js";
 
 const testObjectiveId = decodeObjectiveId("70000000-0000-4000-8000-000000000001");
+const secondTestObjectiveId = decodeObjectiveId("70000000-0000-4000-8000-000000000002");
 
 const evidence: readonly Evidence[] = [
   { kind: "test", summary: "Observed by test", references: ["test"] },
 ];
+
+test("objective loop contexts namespace shared ledger run IDs", () => {
+  const ledger = new ObjectiveMemoryLedger("shared-ledger");
+  const first = createObjectiveLoopContext(testObjectiveId, ledger);
+  const second = createObjectiveLoopContext(secondTestObjectiveId, ledger);
+
+  assert.equal(first.ledger.runId, `${ledger.runId}:${testObjectiveId}`);
+  assert.equal(second.ledger.runId, `${ledger.runId}:${secondTestObjectiveId}`);
+  assert.notEqual(first.ledger.runId, second.ledger.runId);
+});
 
 test("JSONL ledger resumes sequence from durable evidence", async () => {
   const root = await mkdtemp(join(tmpdir(), "codex-ledger-test-"));
@@ -71,6 +82,35 @@ test("JSONL ledger serializes concurrent appends and recovers an interrupted tai
     const resumed = await ObjectiveJsonlLedger.open(file, "crash-test");
     const events = await resumed.list();
     assert.deepEqual(events.map((event) => event.sequence), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("Objective JSONL ledger rejects malformed complete records and empty interior lines", async () => {
+  const root = await mkdtemp(join(tmpdir(), "codex-ledger-invalid-test-"));
+  try {
+    const malformed = join(root, "malformed.jsonl");
+    await writeFile(malformed, "{}\n", "utf8");
+    await assert.rejects(
+      ObjectiveJsonlLedger.open(malformed, "invalid-test"),
+      /line 1 sequence must be a positive safe integer/u,
+    );
+
+    const emptyInterior = join(root, "empty-interior.jsonl");
+    const ledger = await ObjectiveJsonlLedger.open(emptyInterior, "empty-test");
+    await ledger.append({
+      objectiveId: testObjectiveId,
+      type: "loop.started",
+      loop: "test",
+      state: {},
+      evidence,
+    });
+    await appendFile(emptyInterior, "\n", "utf8");
+    await assert.rejects(
+      ObjectiveJsonlLedger.open(emptyInterior, "empty-test"),
+      /Workflow ledger line 2 is empty/u,
+    );
   } finally {
     await rm(root, { recursive: true, force: true });
   }

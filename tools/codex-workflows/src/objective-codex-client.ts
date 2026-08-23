@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import {
   type CodexOptions,
   type Usage,
@@ -5,10 +7,12 @@ import {
 import {
   CodexTurnTransport,
   type Authority,
+  type CodexTurnResult,
   type CodexRole,
   type JsonValue,
   type WorkflowCodex,
   type WorkflowThread,
+  toJson,
 } from "@agent-context/codex-workflow-runtime";
 import {
   decodeObjectiveId,
@@ -52,6 +56,7 @@ export interface StructuredInvocation<T> {
 export interface ObjectiveThreadContinuation {
   readonly objectiveId: ObjectiveId;
   readonly threadId: string;
+  readonly envelopeSha256: string;
 }
 
 export interface StructuredInvocationResult<T> {
@@ -59,6 +64,7 @@ export interface StructuredInvocationResult<T> {
   readonly threadId: string;
   readonly renderedPromptBytes: number;
   readonly usage: Usage | null;
+  readonly continuation: ObjectiveThreadContinuation | null;
 }
 
 export class PromptBudgetExceededError extends Error {
@@ -71,11 +77,30 @@ export class PromptBudgetExceededError extends Error {
   }
 }
 
+export class ObjectiveCodexPostTurnError extends Error {
+  public constructor(
+    message: string,
+    public readonly threadId: string,
+    public readonly renderedPromptBytes: number,
+    public readonly usage: Usage | null,
+    public readonly continuation: ObjectiveThreadContinuation | null,
+    options: ErrorOptions,
+  ) {
+    super(message, options);
+    this.name = "ObjectiveCodexPostTurnError";
+  }
+}
+
+interface CachedObjectiveThread {
+  readonly envelopeSha256: string;
+  readonly thread: WorkflowThread;
+}
+
 export class ObjectiveCodexClient {
   readonly #transport: CodexTurnTransport;
-  readonly #threads = new Map<string, WorkflowThread>();
+  readonly #threads = new Map<string, CachedObjectiveThread>();
   readonly #activeObjectiveByRole = new Map<string, string>();
-  readonly #consumedResumeKeys = new Set<string>();
+  readonly #activeRoles = new Set<string>();
 
   public constructor(
     private readonly ledger: ObjectiveEvidenceLedger,
@@ -90,12 +115,27 @@ export class ObjectiveCodexClient {
   ): Promise<StructuredInvocationResult<T>> {
     this.assertDelegation(invocation.role, invocation.delegation);
     this.assertObjective(invocation);
-    const prompt = this.renderPrompt(invocation);
+    if (this.#activeRoles.has(invocation.role.identity)) {
+      throw new Error(
+        `Role ${invocation.role.identity} already has an active Codex turn`,
+      );
+    }
+    this.#activeRoles.add(invocation.role.identity);
+    try {
+      return await this.invokeExclusive(invocation);
+    } finally {
+      this.#activeRoles.delete(invocation.role.identity);
+    }
+  }
 
-    const thread = this.resolveThread(
+  private async invokeExclusive<T>(
+    invocation: StructuredInvocation<T>,
+  ): Promise<StructuredInvocationResult<T>> {
+    const prompt = this.renderPrompt(invocation);
+    const renderedPromptBytes = Buffer.byteLength(prompt, "utf8");
+    const envelopeSha256 = objectiveThreadEnvelopeSha256(
       invocation.role,
       invocation.objective,
-      invocation.continuation,
     );
 
     await this.ledger.append({
@@ -106,13 +146,14 @@ export class ObjectiveCodexClient {
       state: {
         objectiveId: invocation.objective.objectiveId,
         maxPromptBytes: invocation.objective.maxPromptBytes,
-        renderedPromptBytes: Buffer.byteLength(prompt, "utf8"),
+        renderedPromptBytes,
         initialContextBytes:
           invocation.initialContext === undefined
             ? 0
             : Buffer.byteLength(invocation.initialContext, "utf8"),
         threadPolicy: invocation.objective.threadPolicy,
         terminalAfterTurn: invocation.objective.terminalAfterTurn,
+        envelopeSha256,
         delegation: {
           objectiveId: invocation.delegation.objectiveId,
           from: invocation.delegation.from,
@@ -128,14 +169,30 @@ export class ObjectiveCodexClient {
       evidence: [],
     });
 
+    let thread: WorkflowThread | undefined;
+    let turn: CodexTurnResult | undefined;
     try {
-      const turn = await this.#transport.run(
+      thread = this.resolveThread(
+        invocation.role,
+        invocation.objective,
+        envelopeSha256,
+        invocation.continuation,
+      );
+      turn = await this.#transport.run(
         thread,
         prompt,
         invocation.outputSchema,
         invocation.signal === undefined ? {} : { signal: invocation.signal },
       );
       const threadId = turn.threadId;
+      const continuation =
+        invocation.objective.threadPolicy === "fresh"
+          ? null
+          : createObjectiveThreadContinuation(
+              invocation.objective.objectiveId,
+              threadId,
+              envelopeSha256,
+            );
 
       const parsed = JSON.parse(turn.finalResponse) as unknown;
       const value = invocation.decode(parsed);
@@ -157,6 +214,7 @@ export class ObjectiveCodexClient {
           objectiveId: invocation.objective.objectiveId,
           output: ledgerOutput,
           outputBytes: ledgerOutputBytes,
+          envelopeSha256,
         },
         evidence: [],
         ...(turn.usage === null ? {} : { usage: turn.usage }),
@@ -168,38 +226,108 @@ export class ObjectiveCodexClient {
       return {
         value,
         threadId,
-        renderedPromptBytes: Buffer.byteLength(prompt, "utf8"),
+        renderedPromptBytes,
         usage: turn.usage,
+        continuation,
       };
     } catch (error) {
+      const failedAppendError = await this.appendFailureEvent(
+        invocation,
+        thread,
+        turn,
+        envelopeSha256,
+        error,
+      );
+      const cause =
+        failedAppendError === undefined
+          ? error
+          : new AggregateError(
+              [error, failedAppendError],
+              "Codex invocation and failure evidence append both failed",
+            );
+      if (turn !== undefined) {
+        const continuation =
+          invocation.objective.threadPolicy === "fresh"
+            ? null
+            : createObjectiveThreadContinuation(
+                invocation.objective.objectiveId,
+                turn.threadId,
+                envelopeSha256,
+              );
+        throw new ObjectiveCodexPostTurnError(
+          `Codex thread ${turn.threadId} returned output, but post-turn processing failed: ${errorMessage(error)}`,
+          turn.threadId,
+          renderedPromptBytes,
+          turn.usage,
+          continuation,
+          { cause },
+        );
+      }
+      if (failedAppendError !== undefined) {
+        throw cause;
+      }
+      throw error;
+    }
+  }
+
+  private async appendFailureEvent<T>(
+    invocation: StructuredInvocation<T>,
+    thread: WorkflowThread | undefined,
+    turn: CodexTurnResult | undefined,
+    envelopeSha256: string,
+    error: unknown,
+  ): Promise<unknown | undefined> {
+    const threadId = turn?.threadId ?? thread?.id;
+    try {
       await this.ledger.append({
         objectiveId: invocation.objective.objectiveId,
         type: "codex.failed",
         loop: "codex-invocation",
         actor: invocation.role.identity,
-        ...(thread.id === null ? {} : { threadId: thread.id }),
+        ...(threadId === null ||
+        threadId === undefined ||
+        threadId.trim().length === 0
+          ? {}
+          : { threadId }),
         state: {
           objectiveId: invocation.objective.objectiveId,
           errorType: error instanceof Error ? error.name : "UnknownFailure",
+          postTurn: turn !== undefined,
+          ...(turn === undefined ? {} : { envelopeSha256 }),
         },
         evidence: [],
+        ...(turn?.usage === null || turn?.usage === undefined
+          ? {}
+          : { usage: turn.usage }),
       });
-      throw error;
+      return undefined;
+    } catch (appendError) {
+      return appendError;
     }
   }
 
   private resolveThread(
     role: CodexRole,
     objective: WorkflowObjective,
+    envelopeSha256: string,
     continuation?: ObjectiveThreadContinuation,
   ): WorkflowThread {
-    if (
-      continuation !== undefined &&
-      continuation.objectiveId !== objective.objectiveId
-    ) {
+    const durable =
+      continuation === undefined
+        ? undefined
+        : decodeObjectiveThreadContinuationValue(continuation);
+    if (durable !== undefined && durable.objectiveId !== objective.objectiveId) {
       throw new Error("Durable continuation belongs to a different objective.");
     }
-    if (objective.threadPolicy === "fresh" && continuation !== undefined) {
+    if (
+      durable !== undefined &&
+      durable.envelopeSha256 !== envelopeSha256
+    ) {
+      throw new Error(
+        "Durable continuation belongs to a different role or objective envelope.",
+      );
+    }
+    if (objective.threadPolicy === "fresh" && durable !== undefined) {
       throw new Error("A fresh thread policy cannot resume a durable thread.");
     }
 
@@ -214,34 +342,42 @@ export class ObjectiveCodexClient {
     }
 
     if (objective.threadPolicy === "fresh") {
+      this.#activeObjectiveByRole.delete(role.identity);
       return this.#transport.startThread(role.thread);
     }
-
-    this.#activeObjectiveByRole.set(role.identity, objective.objectiveId);
 
     const key = threadKey(role.identity, objective.objectiveId);
     const existing = this.#threads.get(key);
     if (existing !== undefined) {
-      return existing;
+      if (existing.envelopeSha256 !== envelopeSha256) {
+        this.#threads.delete(key);
+      } else {
+        const cachedThreadId = existing.thread.id;
+        if (durable !== undefined) {
+          if (cachedThreadId === null || cachedThreadId.trim().length === 0) {
+            throw new Error(
+              `Cached thread for role ${role.identity} has no stable ID to compare with the durable continuation.`,
+            );
+          }
+          if (durable.threadId !== cachedThreadId) {
+            throw new Error(
+              `Durable continuation thread ${durable.threadId} differs from the cached thread for role ${role.identity}.`,
+            );
+          }
+        }
+        this.#activeObjectiveByRole.set(role.identity, objective.objectiveId);
+        return existing.thread;
+      }
     }
 
-    const durableResumeThreadId = continuation?.threadId;
     const thread =
-      durableResumeThreadId !== undefined && !this.#consumedResumeKeys.has(key)
-        ? this.resumeThreadId(role, key, durableResumeThreadId)
+      durable !== undefined
+        ? this.#transport.resumeThread(durable.threadId, role.thread)
         : this.#transport.startThread(role.thread);
 
-    this.#threads.set(key, thread);
+    this.#threads.set(key, { envelopeSha256, thread });
+    this.#activeObjectiveByRole.set(role.identity, objective.objectiveId);
     return thread;
-  }
-
-  private resumeThreadId(
-    role: CodexRole,
-    key: string,
-    threadId: string,
-  ): WorkflowThread {
-    this.#consumedResumeKeys.add(key);
-    return this.#transport.resumeThread(threadId, role.thread);
   }
 
   private releaseThread(
@@ -386,4 +522,182 @@ export class ObjectiveCodexClient {
 
 function threadKey(roleIdentity: string, objectiveId: string): string {
   return `${roleIdentity}\u0000${objectiveId}`;
+}
+
+const objectiveThreadContinuationKeys = new Set([
+  "objectiveId",
+  "threadId",
+  "envelopeSha256",
+]);
+
+export function encodeObjectiveThreadContinuation(
+  continuation: ObjectiveThreadContinuation,
+): string {
+  const value = decodeObjectiveThreadContinuationValue(continuation);
+  return JSON.stringify({
+    schemaVersion: 1,
+    objectiveId: value.objectiveId,
+    threadId: value.threadId,
+    envelopeSha256: value.envelopeSha256,
+  });
+}
+
+export function decodeObjectiveThreadContinuation(
+  token: string,
+): ObjectiveThreadContinuation {
+  if (token.trim().length === 0) {
+    throw new Error("Objective thread continuation token cannot be empty.");
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(token) as unknown;
+  } catch (error) {
+    throw new Error("Objective thread continuation token is not valid JSON.", {
+      cause: error,
+    });
+  }
+  const value = decodeRecord(parsed, "Objective thread continuation token");
+  assertExactKeys(
+    value,
+    ["schemaVersion", ...objectiveThreadContinuationKeys],
+    "Objective thread continuation token",
+  );
+  if (value.schemaVersion !== 1) {
+    throw new Error("Objective thread continuation schemaVersion must be 1.");
+  }
+  return decodeObjectiveThreadContinuationValue({
+    objectiveId: value.objectiveId,
+    threadId: value.threadId,
+    envelopeSha256: value.envelopeSha256,
+  });
+}
+
+function createObjectiveThreadContinuation(
+  objectiveId: ObjectiveId,
+  threadId: string,
+  envelopeSha256: string,
+): ObjectiveThreadContinuation {
+  return Object.freeze({ objectiveId, threadId, envelopeSha256 });
+}
+
+function decodeObjectiveThreadContinuationValue(
+  input: unknown,
+): ObjectiveThreadContinuation {
+  const value = decodeRecord(input, "Objective thread continuation");
+  assertExactKeys(
+    value,
+    [...objectiveThreadContinuationKeys],
+    "Objective thread continuation",
+  );
+  const objectiveId = decodeObjectiveId(value.objectiveId);
+  const threadId = decodeRequiredString(
+    value.threadId,
+    "Objective thread continuation threadId",
+  );
+  const envelopeSha256 = decodeRequiredString(
+    value.envelopeSha256,
+    "Objective thread continuation envelopeSha256",
+  );
+  if (!/^[0-9a-f]{64}$/u.test(envelopeSha256)) {
+    throw new Error(
+      "Objective thread continuation envelopeSha256 must be a lowercase SHA-256 digest.",
+    );
+  }
+  return createObjectiveThreadContinuation(
+    objectiveId,
+    threadId,
+    envelopeSha256,
+  );
+}
+
+function objectiveThreadEnvelopeSha256(
+  role: CodexRole,
+  objective: WorkflowObjective,
+): string {
+  const envelope: JsonValue = {
+    schemaVersion: 1,
+    role: {
+      identity: role.identity,
+      role: role.role,
+      supraHolon: role.supraHolon ?? null,
+      scope: [...role.scope],
+      capabilities: [...role.capabilities],
+      authority: [...role.authority],
+      thread: toJson(role.thread),
+    },
+    objective: {
+      objectiveId: objective.objectiveId,
+      repository: {
+        branch: objective.repository.branch,
+        baseRevision: objective.repository.baseRevision,
+        headRevision: objective.repository.headRevision,
+      },
+      authority: [...objective.authority],
+      acceptanceGates: [...objective.acceptanceGates],
+      threadPolicy: objective.threadPolicy,
+      terminalAfterTurn: objective.terminalAfterTurn,
+    },
+  };
+  return createHash("sha256").update(canonicalJson(envelope)).digest("hex");
+}
+
+function canonicalJson(value: JsonValue): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => canonicalJson(item)).join(",")}]`;
+  }
+  if (isJsonObject(value)) {
+    return `{${Object.keys(value)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key] ?? null)}`)
+      .join(",")}}`;
+  }
+  const encoded = JSON.stringify(value);
+  if (encoded === undefined) {
+    throw new Error("Canonical JSON cannot encode an undefined value.");
+  }
+  return encoded;
+}
+
+function isJsonObject(
+  value: JsonValue,
+): value is { readonly [key: string]: JsonValue } {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function decodeRecord(input: unknown, label: string): Record<string, unknown> {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    throw new Error(`${label} must be an object.`);
+  }
+  // type-invariant: the object, array, and null checks prove string-keyed
+  // access. Every consumed field is decoded below.
+  return input as Record<string, unknown>;
+}
+
+function decodeRequiredString(input: unknown, label: string): string {
+  if (typeof input !== "string" || input.trim().length === 0) {
+    throw new Error(`${label} must be a non-empty string.`);
+  }
+  return input;
+}
+
+function assertExactKeys(
+  value: Readonly<Record<string, unknown>>,
+  expected: Iterable<string>,
+  label: string,
+): void {
+  const expectedKeys = new Set(expected);
+  const actualKeys = Object.keys(value);
+  const missing = [...expectedKeys].filter((key) => !(key in value));
+  const unknown = actualKeys.filter((key) => !expectedKeys.has(key));
+  if (missing.length > 0 || unknown.length > 0) {
+    throw new Error(
+      `${label} fields differ from the contract` +
+        `${missing.length === 0 ? "" : `; missing: ${missing.join(", ")}`}` +
+        `${unknown.length === 0 ? "" : `; unknown: ${unknown.join(", ")}`}.`,
+    );
+  }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }

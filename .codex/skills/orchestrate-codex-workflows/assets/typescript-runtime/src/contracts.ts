@@ -97,6 +97,11 @@ export type WorkflowEventType =
   | "environment.applied"
   | "environment.failed";
 
+export type LoopEventType = Extract<
+  WorkflowEventType,
+  `loop.${string}` | `environment.${string}`
+>;
+
 export interface WorkflowEvent {
   readonly sequence: number;
   readonly runId: string;
@@ -117,14 +122,26 @@ export type NewWorkflowEvent = Omit<
   "at" | "runId" | "sequence"
 >;
 
-export interface EvidenceLedger {
+export type NewLoopEvent = Omit<
+  NewWorkflowEvent,
+  "attempt" | "taskId" | "threadId" | "type" | "usage"
+> & {
+  readonly type: LoopEventType;
+};
+
+export interface LoopEventRecorder {
+  readonly runId: string;
+  append(event: NewLoopEvent): Promise<unknown>;
+}
+
+export interface EvidenceLedger extends LoopEventRecorder {
   readonly runId: string;
   append(event: NewWorkflowEvent): Promise<WorkflowEvent>;
   list(): Promise<readonly WorkflowEvent[]>;
 }
 
 export interface LoopContext {
-  readonly ledger: EvidenceLedger;
+  readonly ledger: LoopEventRecorder;
 }
 
 export function assertConfidence(value: number): number {
@@ -140,6 +157,16 @@ export function assertPositiveSafeInteger(
 ): number {
   if (!Number.isSafeInteger(value) || value < 1) {
     throw new Error(`${label} must be a positive safe integer; received ${value}`);
+  }
+  return value;
+}
+
+export function assertNonNegativeSafeInteger(
+  value: number,
+  label: string,
+): number {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new Error(`${label} must be a non-negative safe integer; received ${value}`);
   }
   return value;
 }

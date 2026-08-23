@@ -9,7 +9,7 @@
     "Direct Codex CLI process control",
     "Native one-turn subagents"
   ],
-  "maintenanceStatus": "Pinned version verified by the orchestrate-codex-workflows runtime template.",
+  "maintenanceStatus": "Pinned version verified by the canonical codex-workflow-runtime package and its exact standalone skill projection.",
   "securityEvidence": "Registry metadata and package integrity recorded; live use remains disabled in default tests.",
   "modifications": "None; package dependency.",
   "requiredNotices": "Preserve the Apache-2.0 license terms in distributions that require notices.",

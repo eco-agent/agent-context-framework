@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 2,
-  "registryRevision": "0.9.3",
-  "decisionPath": "registry/decisions/0.9.3-repository-context-resume.md",
+  "schemaVersion": 3,
+  "registryRevision": "0.10.0",
+  "decisionPath": "registry/decisions/0.10.0-codex-workflow-runtime-convergence.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -246,7 +246,7 @@
     {
       "invariantId": "orchestration-skill-contract",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-      "sha256": "2e302d9fb7509e0aaffc7a69f97cf3caed52560bc83d5bb28e36e9e0851ed529"
+      "sha256": "2dfc54b69ca27a5f798443f28ea17b34720fc62f1bd6bcebafec118e819e8429"
     },
     {
       "invariantId": "orchestration-git-transaction",
@@ -256,7 +256,7 @@
     {
       "invariantId": "orchestration-loop-catalog",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/loop-catalog.md",
-      "sha256": "ba41e4ca961bdfd6b63646f6b996b0a1620d0891b8ccf6ff454211ca7f9861cd"
+      "sha256": "c6e7ef1205dc7564801446c95e85bb6a02dd936e586233fd0c16e40f02684194"
     },
     {
       "invariantId": "orchestration-runtime-package",
@@ -270,83 +270,100 @@
     },
     {
       "invariantId": "orchestration-runtime-example",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/examples/codex-relay.ts",
-      "sha256": "872622a5dbc5c8279164df16099b56760ff34a77ea21110598cc85aad8b37966"
+      "sourcePath": "packages/codex-workflow-runtime/examples/codex-relay.ts",
+      "sha256": "e25f7ab10b4bf6ba275207eb43db9ea763108d896f2cc8b88e0014f228fc32ae"
     },
     {
       "invariantId": "orchestration-runtime-exports",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/index.ts",
-      "sha256": "649f944eef0d46df896a2a6ca2fd21a28991e3b617b1018db10986b7567b076c"
+      "sourcePath": "packages/codex-workflow-runtime/src/index.ts",
+      "sha256": "ef3215c6bf9c58a61ba37f6c2ec28cdc9ff68083ccc49c508166caf217daf3de"
     },
     {
       "invariantId": "orchestration-runtime-contracts",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/contracts.ts",
-      "sha256": "2441097dad7cb38e7c2de4c0fc5ffdcf306be2903a3a34a81e4b75b736f3b91c"
+      "sourcePath": "packages/codex-workflow-runtime/src/contracts.ts",
+      "sha256": "089155841c99c0765262f6d3f1452bffc2e33e603f68f40c97b38f5cb7c310c7"
     },
     {
       "invariantId": "orchestration-runtime-plan",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/plan.ts",
       "sha256": "d0ca3e51ee4ace438d242c07e5bea8bf5c102cc887ddb493a14ed4ca088f0761"
     },
     {
       "invariantId": "orchestration-runtime-client",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/codex-client.ts",
-      "sha256": "832f3ac7fef1a4ce15e56148218f152db2a46c64f9fdd2fbb96a636f811dd95e"
+      "sourcePath": "packages/codex-workflow-runtime/src/plan-codex-client.ts",
+      "sha256": "1c0a2f0b3a9472c5c533d0a44c8a38b2f559c45bdcf3bcc70483c60522bd07fb"
+    },
+    {
+      "invariantId": "orchestration-runtime-transport",
+      "sourcePath": "packages/codex-workflow-runtime/src/codex-turn-transport.ts",
+      "sha256": "5dadd435767d1b13b686036d0c43f4f7454913fa9b4b7b263de92e9a77ce99b0"
+    },
+    {
+      "invariantId": "orchestration-runtime-bounded-exports",
+      "sourcePath": "packages/codex-workflow-runtime/src/bounded-workflow.ts",
+      "sha256": "4ac2c062588946e30602c26ec7af87d8931d654efe148325b4c2e1605525c151"
     },
     {
       "invariantId": "orchestration-runtime-ledger",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/ledger.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/ledger.ts",
       "sha256": "cc87a90935cf67bc3af58f7db1a94ba672ba91ca247f298c67baf553d11a53cc"
     },
     {
       "invariantId": "orchestration-runtime-loop-support",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loop-support.ts",
-      "sha256": "94652806638475625988a031eff6163fe2a85a98363833d61286636f56722ff1"
+      "sourcePath": "packages/codex-workflow-runtime/src/loop-support.ts",
+      "sha256": "579b43bc904518c05ecfd78349e6070c176f8cd484c70973e7e0f80f7fc36707"
     },
     {
       "invariantId": "orchestration-authority-ladder",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/authority-ladder.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
       "sha256": "d75a457a07df0411fcd338a10dbc03786ec2c7ba8c8d7f8fe7d84e91f897c25c"
     },
     {
       "invariantId": "orchestration-autonomous-environment",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/autonomous-environment.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
       "sha256": "10b9c6af14f963b7958302ccc1379bed2ed4911acb1d89991350e0330362f4f9"
     },
     {
       "invariantId": "orchestration-membrane-routing",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/membrane-routing.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
       "sha256": "e0a4c0e49591d2c240c4c296519368a409601e397be5f20a53bc9174ac497e35"
     },
     {
       "invariantId": "orchestration-relay-chain",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/relay-chain.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/relay-chain.ts",
       "sha256": "47afa99d5e612c72f63de18605c45df927c3c2909a930e7b2ce8042b15842216"
     },
     {
       "invariantId": "orchestration-reviewer-repair",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/reviewer-repair.ts",
-      "sha256": "cde32fdb897a821d48471ac933486cd6479b2a40c157e2852df011283179133a"
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
+      "sha256": "84cddb21353bcfbfcfdc11f84c01d4829c5f366f5ec0886ffba890672eef4ae8"
     },
     {
       "invariantId": "orchestration-scope-reconciliation",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/scope-reconciliation.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
       "sha256": "b19fa49852bf8faaee239c976ec7343f8fff7f809c3cc4791fe5e16f06217413"
     },
     {
       "invariantId": "orchestration-shared-artifact",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/shared-artifact.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
       "sha256": "ae93882828bd8594ca6ea841619354470c308c81c58c37683fd5d15ad9639136"
     },
     {
       "invariantId": "orchestration-subsidiarity-escalation",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/subsidiarity-escalation.ts",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
       "sha256": "f6f9c019a40f4b7d3d030b875447a7d88e42ea522e1476a5b8eaa3953f86b134"
     },
     {
       "invariantId": "orchestration-runtime-mock-contract",
-      "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test/loops.test.ts",
-      "sha256": "68a31c1479edb23174043de2f085e367ff4ca751633a5b55cf5610ebdece2939"
+      "sourcePath": "packages/codex-workflow-runtime/test/loops.test.ts",
+      "sha256": "a4fcf60f2caf3ba6df82e5de1167c5a11aed7d355ceb05e7e11ddcd4c08ce03a"
+    }
+  ],
+  "completeFileProjectionScopes": [
+    {
+      "component": "skill-orchestrate-codex-workflows",
+      "sourcePrefix": "packages/codex-workflow-runtime/",
+      "targetPrefix": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/"
     }
   ],
   "projections": [
@@ -465,6 +482,114 @@
       "invariantId": "codex-agent-worker-profile",
       "sourcePath": "registry/sources/codex/agents/worker.toml",
       "targetPath": ".codex/agents/worker.toml"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-example",
+      "sourcePath": "packages/codex-workflow-runtime/examples/codex-relay.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/examples/codex-relay.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-bounded-exports",
+      "sourcePath": "packages/codex-workflow-runtime/src/bounded-workflow.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/bounded-workflow.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-transport",
+      "sourcePath": "packages/codex-workflow-runtime/src/codex-turn-transport.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/codex-turn-transport.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-contracts",
+      "sourcePath": "packages/codex-workflow-runtime/src/contracts.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/contracts.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-exports",
+      "sourcePath": "packages/codex-workflow-runtime/src/index.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/index.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-ledger",
+      "sourcePath": "packages/codex-workflow-runtime/src/ledger.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/ledger.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-loop-support",
+      "sourcePath": "packages/codex-workflow-runtime/src/loop-support.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loop-support.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-authority-ladder",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/authority-ladder.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-autonomous-environment",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/autonomous-environment.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-membrane-routing",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/membrane-routing.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-relay-chain",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/relay-chain.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/relay-chain.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-reviewer-repair",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/reviewer-repair.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-scope-reconciliation",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/scope-reconciliation.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-shared-artifact",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/shared-artifact.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-subsidiarity-escalation",
+      "sourcePath": "packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/subsidiarity-escalation.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-client",
+      "sourcePath": "packages/codex-workflow-runtime/src/plan-codex-client.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan-codex-client.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-plan",
+      "sourcePath": "packages/codex-workflow-runtime/src/plan.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan.ts"
+    },
+    {
+      "kind": "file",
+      "invariantId": "orchestration-runtime-mock-contract",
+      "sourcePath": "packages/codex-workflow-runtime/test/loops.test.ts",
+      "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test/loops.test.ts"
     }
   ]
 }

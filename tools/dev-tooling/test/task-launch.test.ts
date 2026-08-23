@@ -20,6 +20,7 @@ import {
 } from "@agent-context/objective-runtime";
 import {
   CodexObjectiveRunner,
+  decodeObjectiveThreadContinuation,
   ObjectiveCodexClient,
   ObjectiveMemoryLedger,
   type CodexRole,
@@ -103,7 +104,12 @@ test("leased launcher uses authoritative artifacts and resumes after cache loss"
 
     const snapshot = await store.get(fixture.definition.objectiveId);
     assert.equal(snapshot?.state, "terminal");
-    assert.equal(snapshot?.latestCheckpoint?.resumeToken, "opaque-session-1");
+    const resumeToken = snapshot?.latestCheckpoint?.resumeToken;
+    assert.ok(resumeToken);
+    assert.equal(
+      decodeObjectiveThreadContinuation(resumeToken).threadId,
+      "opaque-session-1",
+    );
     const envelopeReference = snapshot?.latestCheckpoint?.artifacts.find(
       (artifact) => artifact.mediaType.includes("task-envelope.v2"),
     );

@@ -1,5 +1,5 @@
 import {
-  CodexWorkflowClient,
+  PlanCodexClient,
   JsonlLedger,
   assertConfidence,
   validateTaskAcceptanceEvaluation,
@@ -194,7 +194,7 @@ async function main(): Promise<void> {
       },
     ],
   });
-  const client = new CodexWorkflowClient(ledger, plan);
+  const client = new PlanCodexClient(ledger, plan);
 
   let artifact = "Implement the requested change";
   const acceptedEvidence: Evidence[] = [];

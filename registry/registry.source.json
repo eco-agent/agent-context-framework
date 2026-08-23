@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.9.3",
-  "decisionPath": "registry/decisions/0.9.3-repository-context-resume.md",
+  "revision": "0.10.0",
+  "decisionPath": "registry/decisions/0.10.0-codex-workflow-runtime-convergence.md",
   "components": [
     {
       "name": "core",
@@ -521,8 +521,29 @@
           "excludedPrefixes": [
             "assets/typescript-runtime/.codex-runs/",
             "assets/typescript-runtime/dist/",
-            "assets/typescript-runtime/node_modules/"
+            "assets/typescript-runtime/examples/",
+            "assets/typescript-runtime/node_modules/",
+            "assets/typescript-runtime/src/",
+            "assets/typescript-runtime/test/"
           ]
+        },
+        {
+          "kind": "projected-directory",
+          "sourceDirectory": "packages/codex-workflow-runtime/src",
+          "targetDirectory": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src",
+          "excludedPrefixes": []
+        },
+        {
+          "kind": "projected-directory",
+          "sourceDirectory": "packages/codex-workflow-runtime/examples",
+          "targetDirectory": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/examples",
+          "excludedPrefixes": []
+        },
+        {
+          "kind": "projected-directory",
+          "sourceDirectory": "packages/codex-workflow-runtime/test",
+          "targetDirectory": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test",
+          "excludedPrefixes": []
         }
       ]
     },

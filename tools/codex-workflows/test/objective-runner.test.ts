@@ -24,6 +24,7 @@ import {
 } from "@agent-context/objective-runtime";
 import {
   CodexObjectiveRunner,
+  decodeObjectiveThreadContinuation,
   type CodexObjectiveInvocation,
   type CodexObjectiveLaunch,
   ObjectiveCodexClient,
@@ -108,7 +109,12 @@ test("Codex objective runner persists a thread checkpoint and resumes it on retr
   assert.deepEqual(fake.resumed, ["thread-1"]);
   const snapshot = await store.get(id);
   assert.equal(snapshot?.state, "terminal");
-  assert.equal(snapshot?.latestCheckpoint?.resumeToken, "thread-1");
+  const resumeToken = snapshot?.latestCheckpoint?.resumeToken;
+  assert.ok(resumeToken);
+  assert.equal(
+    decodeObjectiveThreadContinuation(resumeToken).threadId,
+    "thread-1",
+  );
   assert.ok((snapshot?.usage.contextBytes ?? 0) > 68);
   assert.equal(snapshot?.latestCheckpoint?.artifacts.length, 1);
   assert.ok((snapshot?.usage.promptBytes ?? 0) > 0);
@@ -116,6 +122,83 @@ test("Codex objective runner persists a thread checkpoint and resumes it on retr
   assert.ok(events.length >= 4);
   assert.equal(events.every((event) => event.objectiveId === id), true);
   assert.equal(JSON.stringify(events).includes("structured work complete"), false);
+});
+
+test("post-turn failures checkpoint usage and resume the returned thread", async () => {
+  const clock = new ManualObjectiveClock(utcTimestamp("2026-01-01T00:00:00.000Z"));
+  const store = new MemoryObjectiveStore(clock);
+  const id = objectiveId("72000000-0000-4000-8000-000000000005");
+  await createObjective(store, definition(id));
+  const fake = new FakeCodex();
+  fake.finalResponses.push("not-json");
+  fake.usage = {
+    input_tokens: 5,
+    cached_input_tokens: 0,
+    cache_write_input_tokens: 0,
+    output_tokens: 2,
+    reasoning_output_tokens: 1,
+  };
+  const ledger = new ObjectiveMemoryLedger("post-turn-runner");
+  const runner = new CodexObjectiveRunner<{ readonly result: string }>({
+    clientFor: () => new ObjectiveCodexClient(ledger, undefined, fake),
+    launchFor: (context) => testLaunch(context, {
+      role,
+      delegation: {
+        objectiveId: context.snapshot.definition.objectiveId,
+        from: "codex-coordinator",
+        to: "codex-worker",
+        purpose: "resume after invalid structured output",
+        scope: ["temporary repository"],
+        requiredCapabilities: ["structured-output"],
+        context: null,
+        constraints: ["return structured output"],
+        grantedAuthority: ["read", "write", "verify"],
+        expectedEvidence: ["test"],
+        returnContract: "result object",
+      },
+      repository: { branch: "codex/test", baseRevision: "base", headRevision: "head" },
+      authority: ["read", "write", "verify"],
+      input: { request: "perform bounded work" },
+      outputSchema: {
+        type: "object",
+        additionalProperties: false,
+        required: ["result"],
+        properties: { result: { type: "string" } },
+      },
+      decode(value) {
+        if (typeof value !== "object" || value === null || !("result" in value) || typeof value.result !== "string") {
+          throw new Error("invalid Codex result");
+        }
+        return { result: value.result };
+      },
+    }),
+    outcomeFor: (value) => ({
+      type: "completed",
+      summary: value.result,
+      evidence: [{ evidenceType: "test", summary: "post-turn retry passed" }],
+    }),
+  });
+
+  const summary = await schedulerFor(store, clock, runner).runUntilIdle();
+  assert.equal(summary.acquired, 2);
+  assert.equal(summary.retried, 1);
+  assert.equal(summary.completed, 1);
+  assert.equal(fake.starts, 1);
+  assert.deepEqual(fake.resumed, ["thread-1"]);
+  const snapshot = await store.get(id);
+  assert.equal(snapshot?.usage.agentInputTokens, 10);
+  assert.equal(snapshot?.usage.agentOutputTokens, 6);
+  const resumeToken = snapshot?.latestCheckpoint?.resumeToken;
+  assert.ok(resumeToken);
+  assert.equal(
+    decodeObjectiveThreadContinuation(resumeToken).threadId,
+    "thread-1",
+  );
+  const failed = (await ledger.list()).find(
+    (event) => event.type === "codex.failed",
+  );
+  assert.equal(failed?.threadId, "thread-1");
+  assert.deepEqual(failed?.usage, fake.usage);
 });
 
 test("rendered prompt overflow becomes durable budget exhaustion without retry churn", async () => {
@@ -399,6 +482,7 @@ async function createObjective(store: MemoryObjectiveStore, value: ObjectiveDefi
 class FakeCodex implements WorkflowCodex {
   public starts = 0;
   public readonly resumed: string[] = [];
+  public readonly finalResponses: string[] = [];
   public usage: Usage | null = null;
 
   public startThread(): WorkflowThread {
@@ -416,6 +500,11 @@ class FakeThread implements WorkflowThread {
   public constructor(public readonly id: string, private readonly owner: FakeCodex) {}
 
   public async run(): Promise<{ readonly finalResponse: string; readonly usage: Usage | null }> {
-    return { finalResponse: JSON.stringify({ result: "structured work complete" }), usage: this.owner.usage };
+    return {
+      finalResponse:
+        this.owner.finalResponses.shift() ??
+        JSON.stringify({ result: "structured work complete" }),
+      usage: this.owner.usage,
+    };
   }
 }

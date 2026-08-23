@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.9.3",
-  "decisionPath": "registry/decisions/0.9.3-repository-context-resume.md",
+  "revision": "0.10.0",
+  "decisionPath": "registry/decisions/0.10.0-codex-workflow-runtime-convergence.md",
   "components": [
     {
       "name": "core",
@@ -1430,7 +1430,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:0cefe0b69ef95f8dd40300e2a55059a332d0bea50ea56948599184758861e1ba",
+      "revision": "sha256:ce658ea16a97950ede05a92cb6fe8c8197b4c3518db5e305a1e79cecf9ce5b4f",
       "dependencies": [],
       "capabilities": [
         {
@@ -1481,13 +1481,6 @@
         },
         {
           "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/examples/codex-relay.ts",
-          "sourceSha256": "872622a5dbc5c8279164df16099b56760ff34a77ea21110598cc85aad8b37966",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/examples/codex-relay.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/LICENSE",
           "sourceSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/LICENSE",
@@ -1499,111 +1492,6 @@
           "sourceSha256": "ea33452e2b9af101b94003022f545892ec49c468ccb69f9b3d345271898e2c7c",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/package.json",
           "mediaType": "application/json"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/codex-client.ts",
-          "sourceSha256": "832f3ac7fef1a4ce15e56148218f152db2a46c64f9fdd2fbb96a636f811dd95e",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/codex-client.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/contracts.ts",
-          "sourceSha256": "2441097dad7cb38e7c2de4c0fc5ffdcf306be2903a3a34a81e4b75b736f3b91c",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/contracts.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/index.ts",
-          "sourceSha256": "649f944eef0d46df896a2a6ca2fd21a28991e3b617b1018db10986b7567b076c",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/index.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/ledger.ts",
-          "sourceSha256": "cc87a90935cf67bc3af58f7db1a94ba672ba91ca247f298c67baf553d11a53cc",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/ledger.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loop-support.ts",
-          "sourceSha256": "94652806638475625988a031eff6163fe2a85a98363833d61286636f56722ff1",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loop-support.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/authority-ladder.ts",
-          "sourceSha256": "d75a457a07df0411fcd338a10dbc03786ec2c7ba8c8d7f8fe7d84e91f897c25c",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/authority-ladder.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/autonomous-environment.ts",
-          "sourceSha256": "10b9c6af14f963b7958302ccc1379bed2ed4911acb1d89991350e0330362f4f9",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/autonomous-environment.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/membrane-routing.ts",
-          "sourceSha256": "e0a4c0e49591d2c240c4c296519368a409601e397be5f20a53bc9174ac497e35",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/membrane-routing.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/relay-chain.ts",
-          "sourceSha256": "47afa99d5e612c72f63de18605c45df927c3c2909a930e7b2ce8042b15842216",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/relay-chain.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/reviewer-repair.ts",
-          "sourceSha256": "cde32fdb897a821d48471ac933486cd6479b2a40c157e2852df011283179133a",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/reviewer-repair.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/scope-reconciliation.ts",
-          "sourceSha256": "b19fa49852bf8faaee239c976ec7343f8fff7f809c3cc4791fe5e16f06217413",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/scope-reconciliation.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/shared-artifact.ts",
-          "sourceSha256": "ae93882828bd8594ca6ea841619354470c308c81c58c37683fd5d15ad9639136",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/shared-artifact.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/subsidiarity-escalation.ts",
-          "sourceSha256": "f6f9c019a40f4b7d3d030b875447a7d88e42ea522e1476a5b8eaa3953f86b134",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/subsidiarity-escalation.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan.ts",
-          "sourceSha256": "d0ca3e51ee4ace438d242c07e5bea8bf5c102cc887ddb493a14ed4ca088f0761",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan.ts",
-          "mediaType": "text/plain"
-        },
-        {
-          "operation": "file",
-          "sourcePath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test/loops.test.ts",
-          "sourceSha256": "68a31c1479edb23174043de2f085e367ff4ca751633a5b55cf5610ebdece2939",
-          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test/loops.test.ts",
-          "mediaType": "text/plain"
         },
         {
           "operation": "file",
@@ -1636,14 +1524,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/loop-catalog.md",
-          "sourceSha256": "ba41e4ca961bdfd6b63646f6b996b0a1620d0891b8ccf6ff454211ca7f9861cd",
+          "sourceSha256": "c6e7ef1205dc7564801446c95e85bb6a02dd936e586233fd0c16e40f02684194",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/references/loop-catalog.md",
           "mediaType": "text/markdown"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-          "sourceSha256": "2e302d9fb7509e0aaffc7a69f97cf3caed52560bc83d5bb28e36e9e0851ed529",
+          "sourceSha256": "2dfc54b69ca27a5f798443f28ea17b34720fc62f1bd6bcebafec118e819e8429",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -1653,6 +1541,132 @@
           "sourceSha256": "55e5b2c1c756227e3b4d39d7800b160a7b11325ab0f00141a45c66757671bf22",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/SOURCE.json",
           "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/bounded-workflow.ts",
+          "sourceSha256": "4ac2c062588946e30602c26ec7af87d8931d654efe148325b4c2e1605525c151",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/bounded-workflow.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/codex-turn-transport.ts",
+          "sourceSha256": "5dadd435767d1b13b686036d0c43f4f7454913fa9b4b7b263de92e9a77ce99b0",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/codex-turn-transport.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/contracts.ts",
+          "sourceSha256": "089155841c99c0765262f6d3f1452bffc2e33e603f68f40c97b38f5cb7c310c7",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/contracts.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/index.ts",
+          "sourceSha256": "ef3215c6bf9c58a61ba37f6c2ec28cdc9ff68083ccc49c508166caf217daf3de",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/index.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/ledger.ts",
+          "sourceSha256": "cc87a90935cf67bc3af58f7db1a94ba672ba91ca247f298c67baf553d11a53cc",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/ledger.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loop-support.ts",
+          "sourceSha256": "579b43bc904518c05ecfd78349e6070c176f8cd484c70973e7e0f80f7fc36707",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loop-support.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
+          "sourceSha256": "d75a457a07df0411fcd338a10dbc03786ec2c7ba8c8d7f8fe7d84e91f897c25c",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/authority-ladder.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
+          "sourceSha256": "10b9c6af14f963b7958302ccc1379bed2ed4911acb1d89991350e0330362f4f9",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/autonomous-environment.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
+          "sourceSha256": "e0a4c0e49591d2c240c4c296519368a409601e397be5f20a53bc9174ac497e35",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/membrane-routing.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/relay-chain.ts",
+          "sourceSha256": "47afa99d5e612c72f63de18605c45df927c3c2909a930e7b2ce8042b15842216",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/relay-chain.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
+          "sourceSha256": "84cddb21353bcfbfcfdc11f84c01d4829c5f366f5ec0886ffba890672eef4ae8",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/reviewer-repair.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
+          "sourceSha256": "b19fa49852bf8faaee239c976ec7343f8fff7f809c3cc4791fe5e16f06217413",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/scope-reconciliation.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
+          "sourceSha256": "ae93882828bd8594ca6ea841619354470c308c81c58c37683fd5d15ad9639136",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/shared-artifact.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
+          "sourceSha256": "f6f9c019a40f4b7d3d030b875447a7d88e42ea522e1476a5b8eaa3953f86b134",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/loops/subsidiarity-escalation.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/plan-codex-client.ts",
+          "sourceSha256": "1c0a2f0b3a9472c5c533d0a44c8a38b2f559c45bdcf3bcc70483c60522bd07fb",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan-codex-client.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/src/plan.ts",
+          "sourceSha256": "d0ca3e51ee4ace438d242c07e5bea8bf5c102cc887ddb493a14ed4ca088f0761",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/src/plan.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/examples/codex-relay.ts",
+          "sourceSha256": "e25f7ab10b4bf6ba275207eb43db9ea763108d896f2cc8b88e0014f228fc32ae",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/examples/codex-relay.ts",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/test/loops.test.ts",
+          "sourceSha256": "a4fcf60f2caf3ba6df82e5de1167c5a11aed7d355ceb05e7e11ddcd4c08ce03a",
+          "targetPath": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test/loops.test.ts",
+          "mediaType": "text/plain"
         }
       ]
     },

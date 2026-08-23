@@ -48,6 +48,10 @@ guarantees.
 | Repository context and product precedent | Retained | Internal tool | Existing focused tests | Return the established bounded or verification failure |
 | Hand-maintained duplicate shared files | Removed after replacement | None | Projection check and deleted duplicate imports | Regenerate the portable projection or import the canonical package |
 | Deterministic standalone projection | Added | Dev tooling and registry governance | Drift test, governed hashes, generated registry check | Regenerate, review the diff, and rerun the check |
+| Objective continuation authority | Retained and strengthened | Internal Objective controller | Versioned continuation tests and role-envelope mismatch tests | Reject stale or widened continuations before thread mutation |
+| Post-turn budget accounting | Added | Internal Objective runner | Malformed structured-output retry test | Checkpoint prompt, context, token usage, and the returned thread before retry |
+| Environment effect identity | Retained and strengthened | Objective loop adapter | Distinct Objective loop namespace test | Include Objective ID in the idempotency namespace |
+| Projection path safety | Added | Dev tooling | Redirected ancestor and case-only overlap tests | Refuse projection before any outside file changes |
 
 ## Current state
 
@@ -58,6 +62,14 @@ guarantees.
 - The internal tool has the Objective-specific execution, persistence, context,
   and product integration behavior.
 - The internal plan validator has no production caller.
+- Objective continuations now encode their schema, Objective ID, thread ID, and
+  exact role and Objective envelope digest. The client rejects conflicting,
+  stale, widened, and concurrent reuse.
+- Post-turn parsing, decoding, ledger-state, and completion-write failures carry
+  the returned thread and usage into a durable Objective checkpoint.
+- Registry projection writes reject redirected ancestors and path overlap. The
+  governance manifest requires every canonical projected file to have protected
+  source and target coverage.
 
 ## Topology
 
@@ -114,6 +126,19 @@ standalone projection
 
 ## Closure
 
-Status: in progress.
+Status: implementation complete; final acceptance awaits the required explicit
+downstream fixture path.
+
+Focused verification passed:
+
+- Canonical portable runtime, 33 tests.
+- Internal Objective-aware runtime, 43 tests.
+- Standalone copied runtime outside the workspace, 33 tests.
+- Registry 0.10.0 build and read-only drift check.
+- Direct agent-prose check for the changed orchestration skill instructions.
+- Workflow verification profile.
+- New projection safety tests passed in the full dev-tooling run. Two later
+  failures exposed a stale continuation-token assertion and a host-runtime test
+  race. Focused reruns for both repairs passed, 10 tests.
 
 Final revision and verification evidence will be recorded after acceptance.

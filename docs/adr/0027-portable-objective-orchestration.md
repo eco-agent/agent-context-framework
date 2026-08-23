@@ -131,7 +131,8 @@ terminalizes the objective when a completed invocation crosses either limit.
 | Pure identities, states, commands, transitions, and ports | `packages/objective-kernel` |
 | Adapter-neutral store conformance | `packages/objective-test-fixtures` |
 | Memory, JSONL, PostgreSQL, artifact, scheduler, and queue adapters | `tools/objective-runtime` |
-| Codex runtime and bounded local workflow composition | `tools/codex-workflows` |
+| Generic plan validation, bounded loops, evidence ledger, and Codex turn transport | `packages/codex-workflow-runtime` |
+| Objective-bound Codex adapter, durable continuation, and local attempt runner | `tools/codex-workflows` |
 | Product and data-run orchestration | Existing owning applications; not this framework |
 
 ## Alternatives rejected
