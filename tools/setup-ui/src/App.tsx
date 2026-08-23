@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { ArrowCounterClockwiseIcon as ArrowCounterClockwise } from "@phosphor-icons/react/ArrowCounterClockwise";
 import { ArrowsClockwiseIcon as ArrowsClockwise } from "@phosphor-icons/react/ArrowsClockwise";
@@ -55,9 +55,14 @@ import {
 import { Skeleton } from "./components/ui/skeleton.js";
 import { Spinner } from "./components/ui/spinner.js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs.js";
-import { Textarea } from "./components/ui/textarea.js";
 import { TooltipProvider } from "./components/ui/tooltip.js";
 import { cn } from "./lib/utils.js";
+import { MarkdownPreview } from "./markdown-preview.js";
+
+const FormattedSource = lazy(async () => {
+  const module = await import("./source-preview.js");
+  return { default: module.FormattedSource };
+});
 
 type AppState =
   | { readonly status: "loading" }
@@ -356,26 +361,34 @@ function SourceEditor({
   const content = draft?.content ?? artifact.content;
   const dirty = draft !== undefined && draft.content !== draft.original;
   const editable = artifact.editable && !installed;
+  const isMarkdown = artifact.mediaType === "text/markdown";
+  const [editorRevision, setEditorRevision] = useState(0);
+  const handleChange = useCallback((nextContent: string) => {
+    onEdit(artifact.sourcePath, { componentName, original: artifact.content, content: nextContent });
+  }, [artifact.content, artifact.sourcePath, componentName, onEdit]);
+  const handleReset = () => {
+    setEditorRevision((current) => current + 1);
+    onReset(artifact.sourcePath);
+  };
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-3 sm:p-4">
-      <div className="flex min-w-0 items-start justify-between gap-3">
-        <div className="min-w-0">
+    <Tabs defaultValue={isMarkdown ? "preview" : "source"} className="min-h-0 min-w-0 flex-1 gap-0">
+      <div className="flex min-w-0 shrink-0 flex-col items-stretch gap-2 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-4">
+        <div className="min-w-0 sm:self-center">
           <p className="truncate font-mono text-[0.6875rem]" title={artifact.sourcePath}>{artifact.sourcePath}</p>
-          <p className="truncate text-[0.6875rem] text-muted-foreground" title={artifact.targetPath}>Installs to {artifact.targetPath}</p>
+          <p className="truncate text-[0.6875rem] text-muted-foreground" title={artifact.targetPath}>{artifact.targetPath}</p>
         </div>
-        {dirty ? <Button variant="ghost" size="sm" className="shrink-0" onClick={() => onReset(artifact.sourcePath)}><ArrowCounterClockwise data-icon="inline-start" />Reset</Button> : null}
+        <div className="flex w-full items-center justify-end gap-1 sm:w-auto sm:shrink-0">
+          {isMarkdown ? <TabsList className="w-full sm:w-fit" aria-label="Content view"><TabsTrigger value="preview">Preview</TabsTrigger><TabsTrigger value="source">Source</TabsTrigger></TabsList> : null}
+          {dirty ? <Button variant="ghost" size="sm" onClick={handleReset}><ArrowCounterClockwise data-icon="inline-start" />Reset</Button> : null}
+        </div>
       </div>
-      <Textarea
-        aria-label={`Source for ${artifact.sourcePath}`}
-        value={content}
-        readOnly={!editable}
-        className={cn("min-h-0 min-w-0 flex-1 overflow-auto fade font-mono text-[0.75rem]/5 whitespace-pre field-sizing-fixed", !editable && "cursor-default bg-muted/35 opacity-80")}
-        spellCheck={false}
-        onChange={(event) => onEdit(artifact.sourcePath, { componentName, original: artifact.content, content: event.currentTarget.value })}
-      />
-      {!artifact.editable ? <p className="text-[0.6875rem] text-muted-foreground">Registry metadata is read-only.</p> : null}
-      {installed ? <p className="text-[0.6875rem] text-muted-foreground">Installed component source is read-only in setup.</p> : null}
-    </div>
+      {isMarkdown ? <TabsContent value="preview" className="min-h-0 overflow-hidden"><MarkdownPreview content={content} /></TabsContent> : null}
+      <TabsContent value="source" className="min-h-0 overflow-hidden">
+        <Suspense fallback={<div className="grid h-full place-items-center"><Spinner /></div>}>
+          <FormattedSource key={editorRevision} artifact={artifact} content={content} editable={editable} onChange={handleChange} />
+        </Suspense>
+      </TabsContent>
+    </Tabs>
   );
 }
 
@@ -445,7 +458,7 @@ function ComponentInspector({
           ) : (
             <div className="flex h-full min-h-0 min-w-0 flex-col md:flex-row">
               <FilePicker artifacts={detail.artifacts} activePath={activeArtifact.sourcePath} onChange={onSourceChange} />
-              <SourceEditor artifact={activeArtifact} componentName={detail.name} installed={installed} draft={drafts[activeArtifact.sourcePath]} onEdit={onEdit} onReset={onReset} />
+              <SourceEditor key={activeArtifact.sourcePath} artifact={activeArtifact} componentName={detail.name} installed={installed} draft={drafts[activeArtifact.sourcePath]} onEdit={onEdit} onReset={onReset} />
             </div>
           )}
         </TabsContent>
@@ -537,6 +550,16 @@ export function App() {
     return () => { stale = true; };
   }, [activeName]);
 
+  const edit = useCallback((sourcePath: string, draft: SourceDraft) => {
+    setSelected((current) => current.has(draft.componentName) ? current : new Set([...current, draft.componentName]));
+    setDrafts((current) => {
+      const next = { ...current };
+      if (draft.content === draft.original) delete next[sourcePath]; else next[sourcePath] = draft;
+      return next;
+    });
+  }, []);
+  const reset = useCallback((sourcePath: string) => setDrafts((current) => { const next = { ...current }; delete next[sourcePath]; return next; }), []);
+
   if (state.status === "loading") return <SetupLoading />;
   if (state.status === "load-error") return <SetupLoadError message={state.message} />;
 
@@ -553,16 +576,6 @@ export function App() {
     return next;
   });
   const inspect = (name: string) => updateWithTransition(() => setActiveName(name));
-  const edit = (sourcePath: string, draft: SourceDraft) => {
-    setSelected((current) => current.has(draft.componentName) ? current : new Set([...current, draft.componentName]));
-    setDrafts((current) => {
-      const next = { ...current };
-      if (draft.content === draft.original) delete next[sourcePath]; else next[sourcePath] = draft;
-      return next;
-    });
-  };
-  const reset = (sourcePath: string) => setDrafts((current) => { const next = { ...current }; delete next[sourcePath]; return next; });
-
   const apply = async () => {
     if (installDisabled) return;
     setState({ status: "applying", snapshot: state.snapshot });
