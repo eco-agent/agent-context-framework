@@ -13,6 +13,20 @@ The project adapts the generated base-mira theme, utility helper, and Button,
 Checkbox, Input, Tabs, Alert, Badge, Skeleton, and Spinner recipes. ACF retains
 its existing Vite client, setup API, and application state.
 
+The selected-file adoption lives in `src/components/ui`, `src/lib/utils.ts`,
+`src/styles`, and `components.json`. It is not a subtree or a separate package.
+
+## Update procedure
+
+1. Generate the preset in a clean temporary directory with
+   `pnpm dlx shadcn@4.19.0 init --preset byaZqBz6I --template start --pointer`.
+2. Compare the generated theme, utility helper, and adopted component recipes
+   with their owned files in this package. Keep ACF's setup state and API code.
+3. Update the pinned repository revision and package integrity only after the
+   generated sources and MIT terms have been checked.
+4. Run the setup UI typecheck and build, then review component selection, plan
+   updates, narrow-screen tabs, reduced motion, and the fixed action region.
+
 ## License
 
 MIT License
