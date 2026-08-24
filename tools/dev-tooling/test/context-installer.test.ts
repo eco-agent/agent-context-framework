@@ -146,6 +146,35 @@ test("add resolves dependencies, reports capabilities, and refuses untracked who
   }
 });
 
+test("adding a runtime package refreshes its workspace lock before bootstrap", async () => {
+  const fixture = await createFixture();
+  try {
+    const sources = path.join(fixture.frameworkRoot, "registry", "sources");
+    const runtimeLockSource = path.join(sources, "runtime-lock.yaml");
+    const runtimePackageSource = path.join(sources, "runtime-package.ts");
+    await writeFile(runtimeLockSource, "lock: v1\n");
+    await writeFile(runtimePackageSource, "export const installed = true;\n");
+    await addRuntimeComponents(fixture.frameworkRoot, "0.2.0", false);
+    await initProject(fixture.projectRoot, fixture.frameworkRoot);
+    await addComponent(fixture.projectRoot, fixture.frameworkRoot, "runtime-base");
+
+    await writeFile(runtimeLockSource, "lock: v2\n");
+    await addRuntimeComponents(fixture.frameworkRoot, "0.2.1", true);
+    const installed = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "runtime-feature");
+    assert.equal(installed.plan.status, "ready");
+    assert.equal(
+      await readFile(path.join(fixture.projectRoot, ".agent-context", "runtime", "pnpm-lock.yaml"), "utf8"),
+      "lock: v2\n",
+    );
+    assert.equal(
+      installed.writtenPaths.includes(".agent-context/runtime/pnpm-lock.yaml"),
+      true,
+    );
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("selection preview resolves direct and transitive components through the real planner without writes", async () => {
   const fixture = await createFixture();
   try {
@@ -866,6 +895,64 @@ async function writeRegistry(
     ],
   };
   await writeFile(path.join(frameworkRoot, "registry", "registry.json"), `${JSON.stringify(registry, null, 2)}\n`);
+}
+
+async function addRuntimeComponents(
+  frameworkRoot: string,
+  revision: string,
+  includeFeature: boolean,
+): Promise<void> {
+  const registryPath = path.join(frameworkRoot, "registry", "registry.json");
+  const registry = JSON.parse(await readFile(registryPath, "utf8")) as {
+    revision: string;
+    components: Array<Record<string, unknown>>;
+  };
+  registry.revision = revision;
+  const sourceRoot = path.join(frameworkRoot, "registry", "sources");
+  const lock = await readFile(path.join(sourceRoot, "runtime-lock.yaml"), "utf8");
+  const packageSource = await readFile(path.join(sourceRoot, "runtime-package.ts"), "utf8");
+  const license = [{
+    kind: "project",
+    spdx: "MIT",
+    sourcePath: "LICENSE",
+    noticePath: "LICENSE",
+    noticeSha256: "a".repeat(64),
+  }];
+  const runtimeBase = {
+    name: "runtime-base",
+    revision: componentRevision,
+    dependencies: ["core"],
+    capabilities: [],
+    licenses: license,
+    artifacts: [{
+      operation: "runtime-workspace",
+      sourcePath: "registry/sources/runtime-lock.yaml",
+      sourceSha256: sha(lock),
+      targetPath: ".agent-context/runtime/pnpm-lock.yaml",
+      workspaceId: "fixture-runtime",
+      mediaType: "application/yaml",
+    }],
+  };
+  const runtimeFeature = {
+    name: "runtime-feature",
+    revision: componentRevision,
+    dependencies: ["runtime-base"],
+    capabilities: [],
+    licenses: license,
+    artifacts: [{
+      operation: "runtime-workspace",
+      sourcePath: "registry/sources/runtime-package.ts",
+      sourceSha256: sha(packageSource),
+      targetPath: ".agent-context/runtime/packages/feature/src/index.ts",
+      workspaceId: "fixture-runtime",
+      mediaType: "text/typescript",
+    }],
+  };
+  registry.components = registry.components.filter((component) =>
+    component.name !== "runtime-base" && component.name !== "runtime-feature");
+  registry.components.push(runtimeBase);
+  if (includeFeature) registry.components.push(runtimeFeature);
+  await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
 }
 
 async function structuredRegistryArtifacts(frameworkRoot: string): Promise<readonly Record<string, unknown>[]> {

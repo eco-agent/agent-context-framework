@@ -704,6 +704,13 @@ export async function planContextInstallation(
     (previousLock?.artifacts ?? []).map((artifact) => [artifactIdentity(artifact), artifact]),
   );
   const desiredIdentities = new Set(desiredArtifacts.map(({ artifact }) => artifactIdentity(artifact)));
+  const installingRuntimeWorkspaceIds = intent.kind === "install"
+    ? new Set(desiredArtifacts
+        .filter(({ artifact }) =>
+          artifact.operation === "runtime-workspace" &&
+          !lockedByIdentity.has(artifactIdentity(artifact)))
+        .map(({ artifact }) => artifact.operation === "runtime-workspace" ? artifact.workspaceId : ""))
+    : new Set<string>();
   const assessments: ArtifactAssessment[] = [];
   const nextLockedByIdentity = new Map<string, ContextLockedArtifact>();
   const virtualTargets = new Map<string, string | null>();
@@ -726,10 +733,17 @@ export async function planContextInstallation(
     const shouldOverwrite = intent.kind === "update" &&
       intent.mode === "overwrite-selected" &&
       intent.components.has(desired.component);
+    const shouldRefreshRuntimeWorkspace = intent.kind === "install" &&
+      desired.artifact.operation === "runtime-workspace" &&
+      installingRuntimeWorkspaceIds.has(desired.artifact.workspaceId);
     if (assessment.status === "uninstalled" && (intent.kind === "install" || shouldUpdate)) {
       virtualTargets.set(desired.artifact.targetPath, desired.projection.install(target));
       nextLockedByIdentity.set(identity, lockedArtifact(desired));
-    } else if (assessment.status === "upstream-changed" && shouldUpdate && target !== null) {
+    } else if (
+      assessment.status === "upstream-changed" &&
+      (shouldUpdate || shouldRefreshRuntimeWorkspace) &&
+      target !== null
+    ) {
       virtualTargets.set(desired.artifact.targetPath, desired.projection.replace(target));
       nextLockedByIdentity.set(identity, lockedArtifact(desired));
     } else if (

@@ -122,6 +122,11 @@ changing a decision. Do not create another state record.
 - A clean installed-project test selected the component, bootstrapped the
   isolated runtime, built both packages, and passed the same zero-model
   preflight.
+- The first upgrade install in Convex Instantiator exposed an installer fault.
+  `add` materialized the new runtime package but retained an older lock owned by
+  `runtime-base`. The installer now refreshes unchanged upstream artifacts in a
+  runtime workspace whenever it installs a new package into that workspace.
+  A focused upgrade regression and the clean installed-project proof both pass.
 - The defective live repair and final repository acceptance still remain.
 
 ## Verification plan
