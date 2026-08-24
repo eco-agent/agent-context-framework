@@ -41,7 +41,7 @@ export async function checkDependencyAdoptions(root: string): Promise<readonly s
         continue;
       }
       for (const [name, rawVersion] of Object.entries(dependencies)) {
-        if (typeof rawVersion !== "string" || rawVersion.startsWith("workspace:")) {
+        if (typeof rawVersion !== "string" || isLocalDependency(rawVersion)) {
           continue;
         }
         const versions = externalDependencies.get(name) ?? new Set<string>();
@@ -61,7 +61,7 @@ export async function checkDependencyAdoptions(root: string): Promise<readonly s
       const dependencies = manifest[group];
       if (!isRecord(dependencies)) continue;
       for (const [name, rawVersion] of Object.entries(dependencies)) {
-        if (typeof rawVersion === "string" && !rawVersion.startsWith("workspace:")) {
+        if (typeof rawVersion === "string" && !isLocalDependency(rawVersion)) {
           distributableDependencies.add(name);
         }
       }
@@ -172,6 +172,10 @@ function isAdoptionRecord(value: unknown): value is AdoptionRecord {
 function isImmutableSource(value: string): boolean {
   return /^https:\/\/github\.com\/[^/]+\/[^/]+\/tree\/[a-f0-9]{40}(?:\/|$)/u.test(value) ||
     /^https:\/\/registry\.npmjs\.org\/.+\/-\/.+\.tgz$/u.test(value);
+}
+
+function isLocalDependency(value: string): boolean {
+  return value.startsWith("workspace:") || value.startsWith("link:");
 }
 
 function portableNoticeFile(value: unknown): value is string {

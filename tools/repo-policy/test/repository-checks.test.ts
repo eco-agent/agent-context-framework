@@ -55,11 +55,11 @@ test("distributable dependencies require immutable sources and packaged notices"
     await mkdir(path.join(fixture, "node_modules", "example"), { recursive: true });
     await writeFile(
       path.join(fixture, "package.json"),
-      `${JSON.stringify({ dependencies: { example: "1.0.0" } }, null, 2)}\n`,
+      `${JSON.stringify({ dependencies: { example: "1.0.0", internal: "link:../internal" } }, null, 2)}\n`,
     );
     await writeFile(
       path.join(fixture, ".agent-context", "runtime", "package.json"),
-      `${JSON.stringify({ dependencies: { example: "1.0.0" } }, null, 2)}\n`,
+      `${JSON.stringify({ dependencies: { example: "1.0.0", internal: "link:../internal" } }, null, 2)}\n`,
     );
     await writeFile(path.join(fixture, "node_modules", "example", "LICENSE"), "MIT\n");
     await writeFile(

@@ -183,4 +183,10 @@ directly if their contracts converge.
 - Artifact tests prove content identity, idempotent writes, and read verification.
 - An installed-project test proves the optional component can bootstrap, build,
   and pass the five-check zero-model preflight outside this workspace.
-- The defective fixture live run remains the final missing transition proof.
+- Installed Convex Instantiator run
+  `0604f8b5-747c-47e4-86b8-97135016574f` proves the live repair transition.
+  `implement` and `repair-1` both bound thread
+  `01a032d7-69c1-7320-a35e-0ca800086f05`. Review 1 returned one cited
+  containment finding, repair 1 produced revision
+  `124cf35e2940acd271a425c1d775e9da01725d1c`, and a fresh review 2 thread
+  accepted it after all project checks and renders passed.

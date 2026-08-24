@@ -371,7 +371,7 @@
     {
       "invariantId": "frontend-workflow-compose-controller",
       "sourcePath": "packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
-      "sha256": "ffb5e78f74053cd7b02fb6112bb8bb3a5ccc1b120608c8568e65ddd2fd8273ff"
+      "sha256": "b299bfa6afab4a505edd296a906f19f19f126713a4a4182b065dd96945594749"
     },
     {
       "invariantId": "frontend-workflow-specification-contract",

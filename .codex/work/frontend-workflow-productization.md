@@ -127,7 +127,14 @@ changing a decision. Do not create another state record.
   `runtime-base`. The installer now refreshes unchanged upstream artifacts in a
   runtime workspace whenever it installs a new package into that workspace.
   A focused upgrade regression and the clean installed-project proof both pass.
-- The defective live repair and final repository acceptance still remain.
+- Convex Instantiator run `0604f8b5-747c-47e4-86b8-97135016574f` proved the
+  installed live path. Review 1 cited the injected pair of bordered, rounded
+  Overview containers. Repair 1 resumed the original implementer thread and
+  removed them. A fresh review 2 thread accepted revision
+  `124cf35e2940acd271a425c1d775e9da01725d1c` after typecheck, tests, build, and
+  all three renders passed.
+- Human visual acceptance remains external. The controller stopped at
+  `ready_for_human_review` and did not write an acceptance decision.
 
 ## Verification plan
 
@@ -141,3 +148,16 @@ changing a decision. Do not create another state record.
 - One bounded live repair run after every mechanical preflight observation
   passes.
 - Final acceptance from a clean committed ACF revision.
+
+## Closure
+
+The requested package, grammar, preflight, optional component, human-acceptance
+transition, and live reviewer-repair proof are complete. The final successful
+live attempt had no mechanical failure after its first model turn. Earlier live
+attempts exposed and fixed four project or contract faults: request files counted
+as product edits, trimmed Git porcelain prefixes, an unstated review placeholder
+rule, and unstable fixture screenshot positioning. Their ledgers remain in the
+Convex fixture branch instead of being hidden.
+
+Final ACF revision and repository acceptance results are recorded after the last
+checkpoint commit.

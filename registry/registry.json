@@ -1679,7 +1679,7 @@
     },
     {
       "name": "workflow-frontend-composition",
-      "revision": "sha256:df30de4ebcbee1308752b85491ae88fdbc7b30d2d470674cef030008acab14ff",
+      "revision": "sha256:55669eae0daf858e9e1290fcf30aba9dfb5ad0874010269843645310b0f3c229",
       "dependencies": [
         "core",
         "runtime-base",
@@ -1887,7 +1887,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
-          "sourceSha256": "ffb5e78f74053cd7b02fb6112bb8bb3a5ccc1b120608c8568e65ddd2fd8273ff",
+          "sourceSha256": "b299bfa6afab4a505edd296a906f19f19f126713a4a4182b065dd96945594749",
           "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -1943,7 +1943,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
-          "sourceSha256": "136d4f598fa66208960cbc90d5dc5417a6f20344c9f35b6bf7b337cc6db6ec89",
+          "sourceSha256": "b71232e4bf5e0fc3ea0e80c550b7d92fc67120183964f6e458adc1ff5220c52d",
           "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
