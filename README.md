@@ -1,172 +1,139 @@
 # Agent Context Framework
 
-> The agent can type faster than you can review. That is exactly the problem.
+> I have spent more than 9.2 billion tokens working with GPT-5.6. ACF is the setup
+> that survived.
 
-Agentic coding is thrilling right up until the diff becomes too large to trust.
-A model can tear through an afternoon of work in minutes. It can also misunderstand
-the product, invent a second architecture, flatten a convention that took three
-incidents to learn, and report success because the code compiled.
+I built Agent Context Framework because I was fucking tired of correcting the
+same things.
 
-The model is not stupid. It entered the repository as a stranger.
+Tired of the little eyebrow above every heading. Tired of card grids pretending
+to be product design. Tired of prose that used 600 polished words to say nothing.
+Tired of TypeScript that compiled because every field was optional and every error
+was somebody else's problem.
 
-Every mature codebase is full of judgment that cannot be recovered by reading the
-source tree. There are reasons a module has that shape. There are tests that matter
-and tests that waste an hour. There are changes the team refuses to make, failure
-modes it has learned to fear, and standards nobody wants to explain for the
-hundredth time in chat.
+Tired of watching GPT-5.6 be brilliant and generic at exactly the same time.
 
-Agent Context Framework gives that judgment a place to live and a way to act.
+ACF is my personal Codex setup manifest. It packages the instructions, skills,
+model roles, repository facts, and checks I now want available in every serious
+codebase. It is source you can install, read, argue with, and alter to your taste.
 
-ACF does not teach an agent how to code. It teaches the agent how this codebase
-expects work to happen.
+## The difference in one paragraph
 
-## What changes in the repository
+ACF makes GPT-5.6 behave like the version of Codex I wanted after 9.2 billion
+tokens. It stops reaching for generic UI and prose priors, treats TypeScript as
+domain design instead of autocomplete, investigates before it invents, and does
+not call work finished until the repository can support the claim. Stock Codex
+does not carry that accumulated project memory. A hand-written `AGENTS.md`
+captures the reminders you thought to add, while skills made as you go remain
+individual repairs. ACF joins those corrections into one opinionated, editable
+default for how the model works inside a repository.
 
-ACF installs a working agreement for agents. It covers how they investigate,
-design, change, verify, and report work. Project facts and contract paths connect
-that agreement to the actual repository. Specialist skills add deeper judgment
-only when a task needs it. Deterministic checks observe the parts that prose cannot
-prove.
+## Why this exists
 
-Once ACF is present, these are the expectations an agent works under:
+I did not sit down and design a framework from first principles. I used Codex.
+A lot.
 
-| When the agent... | ACF requires it to... |
-| --- | --- |
-| Starts substantial work | Read the contracts the project named, establish a baseline, protect unrelated changes, and keep the work on an owned branch. |
-| Encounters an unfamiliar mechanism | Search the repository and maintained dependencies before writing a new implementation from memory. |
-| Fixes a hard bug | Reproduce it, reduce it, instrument the uncertain path, fix the cause, and leave a regression check. |
-| Changes a TypeScript boundary | Parse untrusted input at the boundary and design types that reject invalid domain states. |
-| Builds a frontend | Settle the user task and interface structure before coding, inspect the component system, decide the mobile treatment, and implement the real loading, empty, error, and interaction states. |
-| Touches a service or shared state | Define failure, recovery, ownership, and concurrent write behavior before adding another lock or retry. |
-| Says the work is done | Run the repository's declared checks, commit the result, and name every skipped check or unverified behavior. |
+Every time the model produced something I would not keep, I corrected it. When the
+same correction came back, it became an instruction. When the instruction needed
+real judgment, it became a skill. When the model could claim compliance without
+proving anything, it became a check. When a rule mattered only for one kind of
+task, I moved it out of the universal context and closer to that decision.
 
-That is the effect of ACF. The files are incidental. The agent's default behavior
-inside the repository is what matters.
+That process changed the code I got back. Frontend work stopped beginning with the
+same generic composition. Writing stopped sounding like a committee of chatbots.
+TypeScript changes started from the domain and its invalid states. Bug fixes began
+with a reproduction. New mechanisms had to justify themselves against what the
+repository and maintained packages already provided.
 
-It means the repository gets a chance to say "do not rewrite our component system,"
-"prove the bug exists first," "leave my unrelated changes alone," and "that test
-does not prove what you think it proves" before a maintainer has to type any of it.
+None of those ideas is shocking. The value is that I no longer have to remember
+which correction to paste into which chat. The repository carries the setup, and
+the relevant part is already there when GPT-5.6 reaches the decision.
 
-The aim is to give maintainers their attention back. Review should be about the
-hard product and architecture decisions, not policing the same preventable mistake
-for the fifth time that week.
+## Built for GPT-5.6
 
-## The right discipline arrives at the right moment
+ACF currently supports GPT-5.6. It is not calibrated for an abstract "AI agent"
+or promised to work equally well with every model.
 
-A giant instruction file is not the answer. Models have limited attention, and a
-rule buried among hundreds of unrelated rules may as well be absent.
+The checked-in Codex configuration uses `gpt-5.6-sol` for the default role and
+`gpt-5.6-luna` for scout and worker roles. The instructions target the strengths,
+priors, and recurring failure modes I have observed in that family. Another model
+may follow them. That is not the same as being supported.
 
-ACF keeps one set of repository-wide expectations active throughout the task.
-Detailed guidance lives in skills with narrow triggers. A difficult regression
-loads a diagnosis loop. A new network boundary loads failure and recovery design.
-A substantial frontend change loads product framing and interface discipline. The
-agent does not need the full text of all three while renaming a variable.
-
-This separation matters. Universal rules stay hard to escape. Specialist judgment
-shows up close to the decision it can change. Repository facts remain owned by the
-project rather than guessed anew in every session.
-
-## Why not just install some skills?
-
-You should use good skills. ACF is built on the belief that the best ideas should
-be adopted, attributed, tested, and improved rather than rewritten from memory.
-The registry already contains pinned, licensed adaptations of work from Matt
-Pocock and pstack.
-
-But these projects solve different problems.
-
-[`skills.sh`](https://skills.sh/) is an open discovery and distribution ecosystem.
-It helps you find reusable capabilities and make them available to many agents.
-That is valuable. It does not decide which rules must govern every task in your
-repository, how a skill relates to project contracts, or what evidence your team
-accepts before work is complete.
-
-[`mattpocock/skills`](https://github.com/mattpocock/skills) is a strong collection
-of composable engineering practices. It attacks recognizable failures such as
-misalignment, weak feedback loops, muddy domain language, and architecture decay.
-Install it when you want those practices. ACF asks the next question: how do
-selected practices become part of this repository's durable working agreement,
-with explicit authority and checks that match the project?
-
-[`pstack`](https://github.com/cursor/plugins/tree/main/pstack) is an opinionated
-engineering workflow with roles, playbooks, principles, multi-model routing, and
-long-running modes. It gives the user a powerful way to invoke rigorous work. ACF
-keeps its baseline active before any skill is invoked. The project should not
-depend on someone remembering to type a mode command before the agent protects
-local work, reads the right contract, or reports missing verification.
-
-ACF is not trying to win by having the most skills. It is trying to make a coherent
-engineering system out of the ones a project trusts.
-
-A skill can be excellent and still arrive too late. It can conflict with a project
-rule, assume a tool the repository does not have, or declare victory using a check
-that proves the wrong thing. ACF gives each kind of context an owner:
-
-- The protected baseline owns behavior that must survive every task.
-- Project contracts own local architecture and stricter rules.
-- Skills own conditional, task-specific judgment.
-- Repository policy owns facts and named verification profiles.
-- Code owns mechanical observations such as hashes, path boundaries, dependency
-  closure, and exact changed-file selection.
-
-The hierarchy is the product. The installer only puts it on disk.
+[OpenAI's GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/latest-model)
+recommends lean prompts, stating each instruction once, and retaining style guidance
+when it encodes a product requirement or corrects a measured gap. ACF follows the
+same shape. Universal rules live once in the baseline. Detailed judgment loads only
+for the work that needs it.
 
 ## What ACF believes
 
-**Code is cheap now. Judgment is not.** Generating more code is no longer the hard
-part. The hard part is preserving a system that remains understandable, operable,
-and worth changing six months later.
+**Code is cheap now. Judgment is not.** GPT-5.6 can produce more code than I can
+sensibly review. The job is no longer to maximize output. It is to preserve a
+system that remains understandable, operable, and worth changing later.
 
-**A rule that arrives after the edit is dead.** Context has to appear at the
-decision point. Repeating the same instruction in more files only creates drift
-and makes the important copy harder to find.
+**A rule that arrives after the edit is dead.** Context has to appear before the
+decision it is meant to change. Repeating the same warning in more files creates
+noise, drift, and several copies nobody can trust.
 
-**Autonomy needs memory.** A fast agent without project memory repeats old mistakes
-at machine speed. ACF stores durable decisions in the repository and uses bounded
-task evidence when work must survive a long session.
+**Generic taste is still generic.** Better model priors do not know the product I
+am building. ACF is deliberately opinionated about representation, writing,
+TypeScript, verification, and the kinds of abstractions that deserve to exist.
 
-**A boundary without evidence is a wish.** "Be careful" is not a safety system.
-The repository needs to name what the agent may change, which check observes the
-result, and what the agent can do when the normal path is blocked.
+**A boundary without evidence is a wish.** "Be careful" does not protect a
+codebase. A useful rule says who decides, what the agent may change, how the result
+is observed, and what happens when the normal path is blocked.
 
-**The project must remain in charge.** Framework policy can provide a protected
-minimum. The repository owns its facts, names its contracts, and may impose stricter
-rules. ACF reports conflicts and drift instead of quietly deciding that the
-framework knows better.
+**The repository must remain in charge.** ACF provides my defaults. The project
+owns its facts, names its contracts, and can impose stricter rules. When local truth
+and generic guidance disagree, local truth wins unless it would weaken the protected
+framework baseline.
 
-## What you can adopt
+## Why not skills.sh, Matt Pocock's skills, or pstack?
 
-Every ACF repository starts with the core working agreement. From there, a project
-can select only the disciplines it needs:
+Use them if they fit you better. [`skills.sh`](https://skills.sh/) helps people
+find and install agent skills. [`mattpocock/skills`](https://github.com/mattpocock/skills)
+and [`pstack`](https://github.com/cursor/plugins/tree/main/pstack) publish the
+engineering judgment of people whose work I respect. ACF includes pinned,
+licensed adaptations from both. It does not pretend those ideas appeared here
+first.
 
-- Engineering skills for diagnosis, reuse, operational boundaries, shared state,
-  readable code, and evidence-backed technical writing.
-- TypeScript guidance for domain types, boundary parsing, schemas, and persistence.
-- Frontend guidance for product framing, established interfaces, accessibility,
-  visual systems, responsive behavior, and motion.
-- Repository policy for explicit project facts, contract paths, and named checks.
-- Optional Codex agents, hooks, bounded repository access, and workflow authoring.
+The difference is the unit of adoption. ACF is not a directory of capabilities or
+a mode I remember to invoke. It is the complete GPT-5.6 setup I use for a
+repository, including the boring baseline rules and checks that have to apply even
+when nobody remembers them. If my taste is close to yours, ACF gives you a starting
+point shaped by 9.2 billion tokens instead of an empty folder. If it is not, take
+the parts that earned their place and replace the rest.
 
-These are not generic commandments pasted into one enormous prompt. Each layer has
-an owner, a trigger, a boundary, an observation, and a permitted next step when the
-main path cannot continue.
+## Make it yours
+
+This is a personal setup manifest, not a claim that my preferences are universal.
+You may hate some of them. Good. The source is visible because disagreement should
+end in an edit, not another layer of exceptions pasted over rules you never wanted.
+
+Fork it. Change the voice. Remove a skill. Add the contract your repository keeps
+violating. Replace my frontend taste with yours. Keep only the rules that continue
+to earn attention.
+
+The point is not to preserve ACF untouched. The point is to stop rebuilding a
+serious agent setup from zero.
 
 ## What ACF cannot promise
 
-ACF cannot turn a weak model into a strong one. It cannot guarantee that a model
-attended to every instruction, and it does not audit the model's private context.
-It cannot replace a maintainer's taste or make a bad product decision good.
+ACF cannot make GPT-5.6 smarter. It cannot guarantee that the model attended to
+every instruction, and it does not inspect the model's private context. It cannot
+replace a maintainer's taste or prove that my 9.2 billion tokens resemble your
+workload.
 
-What it can do is stop leaving project judgment to chance. It can put that judgment
-where the agent can use it, preserve it across sessions and contributors, and make
-important claims answer to evidence in the repository.
+It can make the defaults explicit. It can put hard-won corrections where the model
+can use them. It can make the agent show evidence for claims I got tired of taking
+on faith.
 
-That is a smaller promise than autonomous software engineering. I think it is also
-the promise that matters.
+That is a smaller promise than autonomous software engineering. It is the one I
+actually care about.
 
-## Try it in a repository
+## Try it
 
-ACF currently runs from a source checkout. It requires Node.js `24.14.0` and pnpm
+ACF currently runs from a source checkout and requires Node.js `24.14.0` with pnpm
 `10.22.0`.
 
 ```powershell
@@ -176,19 +143,7 @@ pnpm install --frozen-lockfile
 pnpm agent-context setup --cwd D:\path\to\your-project
 ```
 
-The setup screen shows the available layers, their source, dependencies, required
-capabilities, and the exact project changes before installation. The equivalent
-CLI preview is available with `pnpm agent-context plan`.
-
-ACF never pushes or deploys. Codex loads project configuration only after the
-repository is trusted. The isolated runtime stays under `.agent-context/runtime`
-and does not enter the application's package graph.
-
-## Source and development
-
-The component registry and pinned attribution live in [`registry`](registry).
-Maintainer decisions live in [`registry/decisions`](registry/decisions). The
-implemented objective-workflow boundary is documented in [`docs`](docs/README.md).
-
-Project-authored distributable source is MIT licensed. Adapted third-party source
-keeps its upstream revision, attribution, license, and notices.
+The source, attribution, and component registry live in [`registry`](registry).
+The architecture notes live in [`docs`](docs/README.md). Project-authored
+distributable source is MIT licensed, and adapted source keeps its upstream
+revision, attribution, license, and notices.
