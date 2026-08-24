@@ -98,6 +98,56 @@ Unspecified decorative framing is absent. This includes eyebrows, kickers,
 overlines, pills, badges, generic hero copy, fake metrics, card grids, and ornamental
 summaries.
 
+### Composition grammar
+
+| Semantic owner | Spatial group | Layout owner | Visual containment | Reason |
+| --- | --- | --- | --- | --- |
+|  |  |  | `shared`, `own surface`, or `none` |  |
+
+- Primary surface or no-surface decision:
+- Reading order:
+- Shared alignments and baselines:
+- Relationships communicated by placement:
+
+#### Surface budget
+
+| Surface | Primary or additional | Interaction reason | Relevant states |
+| --- | --- | --- | --- |
+|  |  |  |  |
+
+Every additional surface needs an interaction reason. Semantic or component
+ownership alone is not a reason.
+
+#### Density profile
+
+- Evidence source or established product default:
+- Repeated row height:
+- Related-item gap:
+- Section gap:
+- Control height:
+- Type roles:
+- Exceptions and reasons:
+
+#### Negative component decisions
+
+- Cards omitted or justified:
+- Badges omitted or justified:
+- Headings omitted or justified:
+- Tabs omitted or justified:
+- Dialogs omitted or justified:
+- Separators omitted or justified:
+- Button labels omitted or justified:
+
+#### Spatial pass
+
+- Shared alignment check:
+- Reading-order check:
+- Surface-count check:
+- Repeated-padding check:
+- Density check:
+- Placement-replaces-chrome check:
+- Render, wireframe, or sketch evidence:
+
 ### Visual assets
 
 | Required role | Evidence source | Source or creation method (`existing`, `SVG`, or `imagegen`) | Motion and reduced-motion result | Owner and code location |

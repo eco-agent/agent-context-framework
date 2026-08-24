@@ -41,7 +41,12 @@ implementation.
   [design-search.md](assets/design-search.md) to
   `.codex/work/frontend/<task>-design-search.md`.
 - For desktop and mobile composition, also read
+  [composition-grammar.md](references/composition-grammar.md) and
   [mobile-recomposition.md](references/mobile-recomposition.md).
+- When semantic regions, component boundaries, surfaces, density, or spatial
+  grouping remain unsettled, read
+  [composition-grammar.md](references/composition-grammar.md) before approving
+  the specification.
 - After the user approves one design, copy
   [frontend-spec.md](assets/frontend-spec.md) to
   `.codex/work/frontend/<task>.md`. Keep the approved answer and the facts that
@@ -79,6 +84,12 @@ content, actions, assets, states, responsive behavior, and code locations.
 Treat the first acceptable design as a draft. Replace one major choice and
 compare the result with a genuinely different solution. Keep the first choice
 only when it still serves the user's task better.
+
+Before approval, map semantic owners to spatial groups and name every visual
+surface. A code boundary does not earn a border, background, heading, or padded
+container. Record the interaction reason for each surface beyond the primary
+one. Complete the spatial pass in
+[composition-grammar.md](references/composition-grammar.md).
 
 ## Plan the visual assets
 
