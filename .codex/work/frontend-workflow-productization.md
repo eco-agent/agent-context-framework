@@ -170,5 +170,14 @@ rule, and unstable fixture screenshot positioning. Their ledgers remain in the
 Convex fixture branch instead of being hidden.
 
 The first final-acceptance attempt stopped on stale test expectations before
-isolation or the downstream fixture ran. Final ACF revision and the repaired
-repository acceptance result are recorded after the last checkpoint commit.
+isolation or the downstream fixture ran. A second attempt at implementation
+revision `ade1c158562ba661366597ca90a4383ff02f0134` passed the workspace and
+isolation stages. It then exposed a downstream fixture assertion that compared
+requested IIS ports with assigned ports. Convex Instantiator fixed that test
+without changing allocation behavior.
+
+Final acceptance passed at ACF implementation revision
+`ade1c158562ba661366597ca90a4383ff02f0134` against Convex Instantiator revision
+`daddb03216b4953d9c70ba73c4ed4461403ef00d`. The workspace, isolated runtime,
+downstream runtime, and downstream policy stages all passed. The later closure
+commit changes only this work record, so the executable gates were not repeated.
