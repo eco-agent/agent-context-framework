@@ -275,6 +275,10 @@ function mockCodex(responses: readonly JsonValue[]): WorkflowCodex {
             schema.includes("verification:typecheck"),
             true,
           );
+          if (schema.includes("after:overview-unreachable")) {
+            assert.equal(input.includes("For repair, return one or more findings and issue as an empty string"), true);
+            assert.equal(input.includes("For escalate, return findings as [] and issue as one non-empty explanation"), true);
+          }
           assert.equal(input.includes("danger-full-access"), false);
           responseIndex += 1;
           return { finalResponse: JSON.stringify(response), usage: null };
