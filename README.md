@@ -1,138 +1,218 @@
 # Agent Context Framework
 
-Agent Context Framework is a project-local, source-owned setup system for coding
-agents. A repository selects explicit components, materializes ordinary reviewable
-files, and records deterministic ownership in `.agent-context/lock.json`. It does
-not require user-global Codex configuration and never pushes or deploys.
+> Stop rebuilding the rules of your codebase in every chat.
 
-The distribution model is intentionally shadcn-like: installed files belong in
-the project and remain visible in Git, while structured ownership lets updates and
-removal preserve unrelated project content.
+Your coding agent is only as project-aware as the context it receives. Agent
+Context Framework, or ACF, turns that context from a personal prompt habit into a
+versioned part of the codebase. It installs the instructions, specialist skills,
+repository facts, checks, and Codex runtime pieces a project chooses as ordinary
+files that can be read, reviewed, and changed in Git.
 
-## Selectable layers
+ACF does not try to make the model smarter. It puts universal rules at the project
+entry point and detailed guidance near the decisions that need it. The team can
+then see and govern the setup that shaped the agent's work.
 
-- `core` requires Git and installs the protected branch-first working,
-  communication, project-contract, and focused-verification baseline into a
-  managed `AGENTS.md` section.
-- Engineering, TypeScript, session-quality, skill-authoring, and frontend
-  components install only their declared instructions, templates, and skills.
-- `frontend` routes substantial design through observed-state product reframing,
-  representation search, mobile recomposition, approved stage artifacts,
-  implementation reconciliation, and authorized rendered review. It treats schemas
-  and current components as evidence rather than default interface representations.
-- `frontend` and `skill-responsive-css-architect` are plain-CSS neutral.
-  `frontend-tailwind` explicitly adds the separate Tailwind instruction and
-  `skill-tailwind-css-architect` closure.
-- `codex-runtime` is dependency-only. It selects project agents, bounded hooks,
-  and bounded repository context without selecting repository policy.
-- `repository-policy` installs its isolated runtime and seeds
-  `.agent-context/policy.json`. The seed is project-owned immediately: framework
-  update, overwrite, and removal do not rewrite or delete it.
+## The problem is usually not the prompt
 
-Registry components declare their dependencies, artifacts, required and
-recommended capabilities, source revisions, licenses, notices, and
-content-addressed component revisions. Project-authored distributable source is
-MIT licensed. Pinned third-party source retains its packaged attribution and
-notices.
+A capable coding agent can still make poor decisions when the project's rules are
+missing, vague, or buried in the wrong place. It may not know which document owns
+the architecture, when a broad test is allowed, how the team handles local Git
+changes, or which design constraints matter on mobile.
 
-Bounded Codex SDK workflow authoring is available only through the explicitly
-selected `skill-orchestrate-codex-workflows` component. It installs inert skill
-and template source. It does not install SDK dependencies, create or execute a
-workflow, produce hook bindings, or edit the consumer's manifests or lockfiles.
-The reusable implementation, example, and mock contract tests live in
-`packages/codex-workflow-runtime`. Registry build projects those bytes into the
-standalone skill template. `tools/codex-workflows` consumes the same package and
-adds Objective identity, durable continuation, and repository-context policy.
-No existing bundle selects the skill transitively. Its plan and setup disclosures report required
-Node.js, network, and Codex-authentication capabilities. Those declarations do
-not activate or test a live Codex session. Its bundled JSONL ledger is a
-single-process audit record, not a crash-restorable workflow checkpoint.
-Objective kernels, objective runtimes,
-schedulers, queues, databases, task envelopes, binding producers, adaptive
-agent hierarchies, sibling quorums, and long-running unbounded loops remain
-outside every distributable closure.
+Most agent setup handles this with some mixture of personal configuration, a large
+`AGENTS.md`, copied skill folders, and reminders typed into chat. That can work for
+one person and one session. It is hard for a team to answer basic questions later:
 
-Progressive frontend references can reduce the context deliberately loaded for one
-design stage and pass an approved, lossy artifact forward. They do not enforce fresh
-worker isolation, restrict repository or tool access, audit actual context exposure,
-or prove minimum sufficient context. Those properties require a separately selected
-controller and empirical evaluation harness that this registry does not distribute.
+- What instructions was the project configured to give the agent?
+- Which rules belong to this project and which came from one developer's machine?
+- Which specialist guidance is available, and when should it load?
+- Can we update shared guidance without erasing local changes?
+- Will a fresh checkout behave the same way?
 
-## Protected instructions and project contracts
+ACF treats those as repository design questions. If agent behavior affects the
+codebase, the inputs to that behavior should be reviewable with the codebase.
 
-Required framework instructions are maintainer-owned canonical policy. Their
-sources, hashes, installed projections, registry decision, and CODEOWNERS paths
-move together under governance checks. Project instructions may add detail or
-stricter requirements, but they must not remove, override, or weaken the protected
-baseline. Local edits to managed instruction scopes are reported as drift.
+## When ACF earns its keep
 
-A configured repository policy declares exact project contracts in
-`repository.projectContracts`, separately from documentation roots. Agents read
-those exact files before implementation instead of guessing which document owns
-architecture. Repository-policy doctor rejects a declared documentation root or
-project contract that does not exist.
+If a short `AGENTS.md` already covers one developer's needs, ACF may be more
+machinery than the project needs. It becomes useful when several people or agents
+work in the same repository, when the rules matter enough to review, or when a
+team is tired of copying and repairing the same setup across projects.
 
-## CLI and localhost setup
+It is especially useful when the project needs specialist workflows without
+forcing every instruction into every task. A frontend redesign, a production
+failure, and a TypeScript persistence change should not consume the same context
+or follow the same procedure.
 
-Use Node.js `24.14.0` and pnpm `10.22.0`. From this source checkout:
+## Think of it as shadcn for agent context
+
+ACF distributes source rather than hiding behavior behind a service or a global
+installation. You choose components from a registry, preview the complete change,
+and materialize them into the project.
+
+A selection can produce files like these:
+
+```text
+your-project/
+|-- AGENTS.md                    project-wide operating rules
+|-- .codex/
+|   |-- config.toml              selected Codex configuration
+|   |-- hooks.json               selected hook definitions
+|   `-- skills/                  task-specific guidance
+`-- .agent-context/
+    |-- config.json              the components the project selected
+    |-- lock.json                exact ACF ownership and source revisions
+    |-- policy.json              repository facts, when selected
+    `-- runtime/                 isolated runtime packages, when selected
+```
+
+Only the selected files and scopes are installed. The files stay visible. The
+lock records which sections, configuration values, and files came from ACF so the
+installer can distinguish framework-owned content from project-owned content.
+
+This is the practical difference:
+
+| Without ACF | With ACF |
+| --- | --- |
+| Agent setup lives in personal configuration or chat history | Agent setup travels with the repository |
+| A copied rule has no clear source or update path | Installed source and its revision are recorded |
+| More guidance usually means a larger prompt | Specialist skills load for the tasks that call for them |
+| Updating shared files risks replacing local work | Ownership is tracked at the file or structured scope |
+| Repository assumptions are inferred during a run | The project declares its own facts and contract paths |
+
+## How the loop works
+
+1. **Select.** Choose the layers and individual skills that fit the repository.
+   ACF resolves their dependencies instead of treating the registry as a flat
+   folder of prompts.
+2. **Inspect.** Read the actual source, required capabilities, licenses, transitive
+   components, target paths, drift, and conflicts before anything changes.
+3. **Install.** ACF writes the approved result through a transactional installer.
+   The browser setup screen uses the same planner and installer as the CLI.
+4. **Work.** Codex reads the repository's instructions and routes matching work to
+   the installed skills when their triggers apply. Optional hooks and bounded
+   repository tools stay inside the project.
+5. **Update.** A normal update preserves locally edited managed content. An
+   overwrite must be explicit and is limited to the selected ACF-owned scopes.
+
+The result is not a magic prompt. It is a maintained contract between the project
+and the agents that work on it.
+
+## Why ACF is built this way
+
+**The repository is the unit of truth.** A project should not depend on a hidden
+user-global setup to make its agent rules reviewable. A fresh trusted checkout
+should contain the same project rules and selected configuration.
+
+**Context is selected, not piled on.** Models have limited attention. Universal
+rules belong at the entry point, while detailed procedures belong in skills that
+load for a specific kind of work. Adding more text everywhere makes important
+instructions easier to miss.
+
+**Intent and enforcement have different jobs.** Prose explains judgment,
+permissions, tradeoffs, and what to do when the main path is blocked. Deterministic
+checks own facts such as hashes, path containment, dependency closure, generated
+output, and exact configuration ownership.
+
+**The project remains an author.** ACF can seed project-owned policy, but it does
+not keep control of that file afterward. Project contracts may add detail or set
+stricter requirements. Framework-managed safety rules remain protected and drift
+is reported instead of silently accepted.
+
+**A boundary must be observable.** Instructions alone cannot prove that a rule was
+followed. ACF pairs important boundaries with a diff, artifact, check, or report,
+plus a defined next step when the boundary blocks the requested work.
+
+## What you can install
+
+ACF is composable. Start with a layer and add individual skills when the project
+needs them.
+
+| Selection | What it adds |
+| --- | --- |
+| `core` | The protected operating baseline and ACF ownership records. Every initialized project starts here. |
+| `engineering` | Focused workflows for diagnosis, reuse, operational boundaries, shared state, refactoring, and technical writing. |
+| `typescript-engineering` | The engineering layer plus TypeScript domain and persistence invariants. |
+| `frontend` | Product framing, established-product research, accessibility, typography, color, interface detail, and motion guidance. |
+| `frontend-tailwind` | The frontend layer plus responsive CSS and explicit Tailwind CSS v4 guidance. |
+| `repository-policy` | Project-owned repository facts and named verification profiles in an isolated runtime. |
+| `codex-runtime` | Project-local Codex agents, hooks, and a bounded repository-context tool. |
+| `session-quality` | Evidence-based review of completed Codex sessions. |
+| `skill-authoring` | Guidance and checks for writing predictable skills. |
+
+The setup screen also exposes individual skills. You can inspect their complete
+source before selecting them.
+
+## Try ACF
+
+ACF currently runs from a source checkout. It requires Node.js `24.14.0` and pnpm
+`10.22.0`.
 
 ```powershell
+git clone https://github.com/Lungren2/agent-context-framework.git
+cd agent-context-framework
 pnpm install --frozen-lockfile
-pnpm agent-context --help
-pnpm agent-context setup --cwd D:\path\to\project
+pnpm agent-context setup --cwd D:\path\to\your-project
 ```
 
-`setup` starts a token-protected loopback web interface and opens it locally. The
-browser client cannot write files directly. Installation goes through the same
-registry decoder, dependency resolver, ownership planner, and transactional
-materializer as the CLI. Use `--no-open` to print the local URL without launching
-a browser and `--port` to request a fixed loopback port.
+`setup` opens a token-protected local interface. Choose components, inspect their
+source and installation plan, then install. The browser cannot write to the target
+project directly. It sends the approved selection to the local server, which uses
+the same registry validation and transactional materializer as the CLI.
 
-The underlying lifecycle remains available directly:
+To preview a selection without opening the setup screen:
 
 ```powershell
-pnpm agent-context init --cwd D:\path\to\project
-pnpm agent-context inspect --cwd D:\path\to\project
-pnpm agent-context plan codex-runtime repository-policy --cwd D:\path\to\project
-pnpm agent-context diff --cwd D:\path\to\project
-pnpm agent-context add codex-runtime --cwd D:\path\to\project
-pnpm agent-context update --cwd D:\path\to\project
-pnpm agent-context doctor --cwd D:\path\to\project
-pnpm agent-context recover --cwd D:\path\to\project
+pnpm agent-context plan typescript-engineering repository-policy --cwd D:\path\to\your-project
 ```
 
-`plan` is the component-aware dry run. It resolves current selections plus all
-requested additions through the real installer planner and reports direct versus
-transitive components, dependency-only bundles, artifact and target footprint,
-capabilities, licenses/notices, trust and activation requirements, planned writes,
-drift, and conflicts without changing project state. `inspect` embeds the same
-preview for the currently configured selection. The localhost setup UI requests
-that same server-owned preview before enabling installation. The browser does not
-reimplement dependency resolution or infer whether a component is a bundle.
+To use the lifecycle directly:
 
-Normal update preserves locally modified managed content and blocks ambiguous
-ownership. `update --overwrite` is explicit and may replace only selected
-registry-owned scopes. `recover` resumes only a transaction whose staged and
-current hashes still match its journal boundary.
+```powershell
+pnpm agent-context init --cwd D:\path\to\your-project
+pnpm agent-context add engineering --cwd D:\path\to\your-project
+pnpm agent-context inspect --cwd D:\path\to\your-project
+pnpm agent-context diff --cwd D:\path\to\your-project
+pnpm agent-context update --cwd D:\path\to\your-project
+pnpm agent-context doctor --cwd D:\path\to\your-project
+```
 
-## Operational requirements
+`inspect`, `plan`, `diff`, and `doctor` are read-only. If an interrupted write is
+safe to resume, `pnpm agent-context recover` completes it. The CLI never pushes or
+deploys.
 
-- Codex loads project-scoped configuration or skills only for a trusted
-  repository.
-- `codex-hooks` installs hook definitions and entrypoints, but enforcement is
-  dormant without a valid session-scoped binding. A missing binding emits no
-  decision. A present malformed, stale, or mismatched binding remains fail-closed.
-- `codex-repo-context` requires `ripgrep` and exposes only authorized-root,
-  root-safe, bounded fixed-string read/search over MCP stdio.
-- Capability declarations are requirements, not claims that a host executable or
-  service was detected. Doctor reports them without silently inferring policy.
-- The isolated runtime is bootstrapped under `.agent-context/runtime`. Framework
-  installation does not modify the host package manifest, lockfile, or application
-  dependency graph.
+## Trust and limits
 
-## Development and evidence
+ACF is deliberately project-scoped, but installing agent configuration still
+deserves review.
 
-Useful focused commands are:
+- Codex loads project configuration and skills only after the repository is
+  trusted.
+- Capability declarations report requirements. They do not claim that a host tool
+  or service is present.
+- Hooks are dormant without a valid session-scoped binding. An invalid active
+  binding fails closed.
+- The repository-context tool allows bounded reads and fixed-string searches only
+  inside its authorized root.
+- Skill routing and progressive frontend references describe what should load.
+  They do not audit the model's actual context exposure or create isolated workers.
+- The optional workflow-authoring skill installs source and templates only. No
+  bundle selects it by default, and selecting it does not start a workflow or add
+  Codex SDK dependencies to the application.
+- The isolated runtime lives under `.agent-context/runtime`. ACF does not modify
+  the application's package manifest or lockfile to install it.
+- ACF does not infer repository policy, alter user-global Codex configuration,
+  push, publish, or deploy.
+
+## Working on ACF
+
+The registry is the source of distributable components. Registry entries record
+dependencies, artifacts, capabilities, revisions, licenses, notices, and content
+hashes. Maintainer decisions live in [`registry/decisions`](registry/decisions),
+while the implemented objective-workflow boundary is documented in
+[`docs`](docs/README.md).
+
+Use the repository's focused verification profiles while developing:
 
 ```powershell
 pnpm --filter @agent-context/dev-tooling test
@@ -141,12 +221,5 @@ pnpm registry:check
 pnpm typecheck
 ```
 
-Broad acceptance is intentionally sequenced once from a clean committed framework
-revision and controlled downstream fixture:
-
-```powershell
-pnpm --silent verify:acceptance -- --fixture D:\path\to\fixture
-```
-
-Durable phase and closure evidence lives in `.codex/work`. Governed registry
-decisions live in `registry/decisions`.
+Project-authored distributable source is MIT licensed. Pinned third-party source
+keeps its packaged attribution, license, and notices.
