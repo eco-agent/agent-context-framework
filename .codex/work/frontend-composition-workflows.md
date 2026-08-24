@@ -285,12 +285,17 @@ The downstream browser capture, installed mock workflows, live representation
 run, and live compose-and-refine run have completed. The installed package has 45
 passing tests. The compose run reached `ready_for_human_review` at fixture
 revision `e6578e27cc431bf07c6798dfa3599f0974e8ab80`, and its screenshot hashes
-match the stored files. Human judgment still owns final visual acceptance.
+match the stored files. The human owner accepted that exact product revision and
+its three recorded render states on 2026-08-24.
 
 ## Closure
 
-This task stopped at the intended human visual gate on 2026-08-23. The final
+The workflow stopped at the intended human visual gate on 2026-08-23. The human
+owner accepted the reviewed evidence on 2026-08-24, which completes this task.
+The final
 fixture product revision is `e6578e27cc431bf07c6798dfa3599f0974e8ab80`.
+Fixture commit `ad1b683bba38584fa28edd7c95eec7192a6bb1b9` records the
+external acceptance without changing the accepted product revision.
 The final tested ACF runtime revision is
 `ef053425dfcdd171d62de84b7fe387c6b9019750`.
 
@@ -302,5 +307,5 @@ checks, recorded no browser console errors, found no horizontal overflow, and
 matched all stored screenshot hashes. The work-record update after the tested
 revision changes documentation only, so the executable checks were not repeated.
 
-Final human visual acceptance remains unverified. No branch was pushed or
-merged.
+The fixture stores external acceptance separately from the immutable
+`ready_for_human_review` result. No branch was pushed or merged.
