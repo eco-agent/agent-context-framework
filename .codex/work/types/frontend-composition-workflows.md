@@ -130,10 +130,10 @@ replay of the same acceptance command.
 | JSONL events | Append-only audit observations | Never reconstructed into authoritative process state |
 | Terminal outcome JSON | Complete caller decision | CLI exit status and human handoff |
 
-The content artifact types and filesystem implementation will move from the
-Objective packages into one lightweight shared owner. Objective and frontend
-workflow code will import that owner. No forwarding wrapper or duplicated store
-will remain.
+The frontend workflow package owns its content-addressed evidence store. The
+Objective packages keep their existing store because this work does not change
+their persistence contract. A later consolidation must replace both owners
+directly if their contracts converge.
 
 ## Failure semantics
 
@@ -151,6 +151,7 @@ will remain.
 ## Public contracts affected
 
 - Content artifact identity, reference, store, and filesystem implementation.
+- Strict composition manifest and specification bundle.
 - Frontend specification template and composition manifest schema.
 - Representation and compose workflow request decoders.
 - Render adapter and repository verifier ports.
@@ -164,8 +165,8 @@ will remain.
   revision, render, review, verification, and acceptance fields.
 - Bind Markdown and structured composition data into one hashed bundle rather
   than maintain two independently editable specifications.
-- Reuse and relocate the existing filesystem artifact store rather than copy it
-  or install the full Objective runtime.
+- Keep the small frontend evidence store in the frontend package. Do not install
+  the Objective runtime to obtain a product-specific persistence contract.
 - Use one authority ladder per workflow rather than nested workflow loops.
 - Keep render execution behind one production and one mock adapter. Do not expose
   process execution as a generic model-controlled port.

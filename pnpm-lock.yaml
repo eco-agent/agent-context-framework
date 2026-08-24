@@ -37,6 +37,22 @@ importers:
         specifier: 0.2.6
         version: 0.2.6(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@7.0.2)(vite@8.1.5(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4))
 
+  packages/codex-frontend-workflows:
+    dependencies:
+      '@agent-context/codex-workflow-runtime':
+        specifier: workspace:*
+        version: link:../codex-workflow-runtime
+    devDependencies:
+      '@openai/codex-sdk':
+        specifier: 0.145.0
+        version: 0.145.0
+      '@types/node':
+        specifier: 24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
   packages/codex-workflow-runtime:
     dependencies:
       '@openai/codex-sdk':

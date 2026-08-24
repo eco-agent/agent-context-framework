@@ -53,7 +53,7 @@ No behavior is removed or weakened.
 | --- | --- | --- | --- |
 | Composition judgment is semantic | Skill reference and reviewer | Specification, render evidence, cited finding | Stop for human judgment when evidence cannot decide |
 | Model output cannot choose commands | Project adapter | Typed adapter input and decoder test | Return `invalid_request` |
-| Mechanical readiness precedes model use | Preflight controller | One structured report covers process, schema, streams, evidence, and cleanup | Stop with `preflight_failed`; do not start Codex |
+| Mechanical readiness precedes model use | Preflight controller | One structured report covers process launch, the supported local schema subset, streams, evidence, and cleanup | Stop with `preflight_failed`; do not start Codex |
 | Reviewer repair is finite | Compose controller | Review pass and repair counters in ledger | Return `exhausted` with latest evidence |
 | Only complete render evidence can be reviewed | Compose decoder | Exact state coverage and revision checks | Return `blocked` when capture is unavailable |
 | Human acceptance binds immutable evidence | Acceptance decoder | Run, revision, artifact, review, aggregate hash, and state hashes | Reject stale or conflicting replay |
@@ -75,7 +75,7 @@ changing a decision. Do not create another state record.
 2. Extract the two generic controllers and strict decoders into a workspace
    package that imports the canonical workflow runtime.
 3. Add one preflight API whose Windows implementation observes process launch,
-   structured-output schema acceptance, stdout and stderr separation,
+   structured-output schema compatibility, stdout and stderr separation,
    content-addressed evidence replay, and owned temporary cleanup without a
    model call.
 4. Add a typed, idempotent external acceptance transition.
@@ -105,13 +105,18 @@ changing a decision. Do not create another state record.
 
 ## Current state
 
-- The accepted fixture package contains proven representation and compose
-  controllers plus project-specific runners.
-- The canonical runtime already includes Desktop child isolation and explicit
-  consumer-owned authority contracts found by the live proof.
-- ACF has no `codex-frontend-workflows` package, composition grammar reference,
-  optional registry component, generic preflight, or generic acceptance command.
-- Both ACF and the accepted fixture were clean when this stream started.
+- Commit `388c4fb` adds the routed composition grammar and the specification
+  fields for spatial grouping, surface budget, density, negative component
+  decisions, and the spatial pass.
+- `packages/codex-frontend-workflows` now owns the extracted representation and
+  compose controllers. Their only mutation boundaries are artifact and revision
+  ports supplied by the host project.
+- The package also owns a strict composition manifest and bundle, an idempotent
+  content-addressed evidence store, and an exact human acceptance transition.
+- The Windows preflight passed all five checks on 2026-08-24. It started zero
+  model turns and removed its temporary directory.
+- Package typecheck and 13 focused tests pass. The optional registry component,
+  installed fixture proof, and defective live repair still remain.
 
 ## Verification plan
 

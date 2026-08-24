@@ -2,6 +2,9 @@
   "files": [],
   "references": [
     {
+      "path": "./packages/codex-frontend-workflows"
+    },
+    {
       "path": "./packages/codex-workflow-runtime"
     },
     {
