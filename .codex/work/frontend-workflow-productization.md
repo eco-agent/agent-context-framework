@@ -1,0 +1,127 @@
+# Productize frontend composition workflows
+
+## Intended outcome
+
+Turn the accepted Convex Instantiator proof into one optional ACF workflow
+package. The package will own generic representation, compose and review,
+preflight, and external acceptance contracts. Project repositories will keep
+their Git, browser, package-manager, and fixture adapters.
+
+## Git ownership
+
+- Baseline: `de95d1e1113b8a45222dae2bfe4049fcbd4ea576`.
+- Branch: `codex/frontend-workflow-productization`.
+- Checkout: `D:\dev\agent-context-framework`.
+- Writer: the primary agent owns this branch and index.
+- Project contracts: repository policy is configured and declares none.
+- Push and merge remain prohibited without a new user request.
+
+## Reuse decision
+
+Reuse the accepted fixture controllers and tests from
+`D:\dev\convex-instantiator\.codex\workflows\frontend-representation`.
+Reuse `packages/codex-workflow-runtime` for plans, role calls, evidence, and
+`runReviewerRepair`. Reuse registry directory projection instead of creating a
+second package owner. No external package matches the product-specific
+representation, rendered review, and human acceptance contract closely enough
+to replace these proven sources. New code is limited to extraction, generic
+ports, preflight observations, acceptance state, and ACF distribution.
+
+## Preservation map
+
+| Behavior | Treatment | Owner |
+| --- | --- | --- |
+| One canonical generic workflow runtime | Retain | `packages/codex-workflow-runtime` |
+| Objective-specific durability and continuation | Retain | `tools/codex-workflows` |
+| Representation before implementation | Retain and make executable | `frontend-design-discipline` and new package |
+| Semantic decomposition does not imply visual containment | Add as routed composition guidance | `composition-grammar.md` |
+| Existing frontend specification decisions | Retain and extend | `frontend-spec.md` |
+| Two materially different candidates | Retain | Representation controller |
+| Fresh evidence-first composition review | Retain | Compose controller |
+| One primary implementer across repair | Retain | Compose controller |
+| Human ownership of representation and final visual acceptance | Retain and type | Acceptance transition |
+| Git, browser, package manager, and fixture execution | Keep project-owned | Consumer adapters |
+| Ordinary `frontend` bundle stays inert | Retain | Registry selection |
+| Live orchestration needs explicit component selection | Add | `workflow-frontend-composition` |
+| Existing component-library behavior and accessibility ownership | Retain | Consumer implementation |
+
+No behavior is removed or weakened.
+
+## Boundaries
+
+| Boundary | Owner | Observation | Grace path |
+| --- | --- | --- | --- |
+| Composition judgment is semantic | Skill reference and reviewer | Specification, render evidence, cited finding | Stop for human judgment when evidence cannot decide |
+| Model output cannot choose commands | Project adapter | Typed adapter input and decoder test | Return `invalid_request` |
+| Mechanical readiness precedes model use | Preflight controller | One structured report covers process, schema, streams, evidence, and cleanup | Stop with `preflight_failed`; do not start Codex |
+| Reviewer repair is finite | Compose controller | Review pass and repair counters in ledger | Return `exhausted` with latest evidence |
+| Only complete render evidence can be reviewed | Compose decoder | Exact state coverage and revision checks | Return `blocked` when capture is unavailable |
+| Human acceptance binds immutable evidence | Acceptance decoder | Run, revision, artifact, review, aggregate hash, and state hashes | Reject stale or conflicting replay |
+| Adapters remain outside the generic package | Package exports and dependency graph | Boundary and package tests | Consumer supplies a conforming port or stops unsupported |
+| Optional workflow remains inert unless selected | Registry component | Closure and installed fixture tests | Ordinary frontend bundle remains unchanged |
+| Generated projections have one owner | Registry builder | Exact-byte and inventory check | Run `pnpm registry:build` from canonical sources |
+
+## Type model
+
+The existing
+`.codex/work/types/frontend-composition-workflows.md` owns valid states,
+transitions, trust boundaries, and failure semantics. Update that owner before
+changing a decision. Do not create another state record.
+
+## Smallest complete slice
+
+1. Add the composition grammar and fields required to record spatial groups,
+   layout owners, visual containment, surface reasons, density, and render states.
+2. Extract the two generic controllers and strict decoders into a workspace
+   package that imports the canonical workflow runtime.
+3. Add one preflight API whose Windows implementation observes process launch,
+   structured-output schema acceptance, stdout and stderr separation,
+   content-addressed evidence replay, and owned temporary cleanup without a
+   model call.
+4. Add a typed, idempotent external acceptance transition.
+5. Project the package through one optional registry component.
+6. Prove mocks and installation, then run one live defective fixture that must
+   return a cited finding to the same implementer before acceptance.
+
+## Non-goals
+
+- Do not put Git, Playwright, Vite, pnpm, or a product fixture inside the generic
+  controller package.
+- Do not add the live workflow to the ordinary frontend bundle.
+- Do not add recursive roles, voting, dynamic tasks, unlimited retries, or model
+  generated process commands.
+- Do not change the accepted Convex Instantiator product UI.
+- Do not deploy, merge, or push.
+
+## Propagation paths
+
+- Composition grammar to the frontend skill, registry artifacts, generated
+  registry data, governance, and installed skill projection.
+- Frontend specification fields to the template and workflow request decoders.
+- Package source to workspace configuration, TypeScript references, lockfile,
+  optional registry materialization, and installed package tests.
+- Preflight report to CLI outcome and the live-call gate.
+- Acceptance transition to artifact storage, terminal output, and replay tests.
+
+## Current state
+
+- The accepted fixture package contains proven representation and compose
+  controllers plus project-specific runners.
+- The canonical runtime already includes Desktop child isolation and explicit
+  consumer-owned authority contracts found by the live proof.
+- ACF has no `codex-frontend-workflows` package, composition grammar reference,
+  optional registry component, generic preflight, or generic acceptance command.
+- Both ACF and the accepted fixture were clean when this stream started.
+
+## Verification plan
+
+- Package typecheck and focused tests while changing contracts.
+- Skill quick validation and direct agent-prose check on edited model-facing
+  sources.
+- Registry build and read-only drift check.
+- Repository `workflow` profile.
+- Installed optional-component fixture test outside the workspace.
+- One zero-model preflight run on Windows.
+- One bounded live repair run after every mechanical preflight observation
+  passes.
+- Final acceptance from a clean committed ACF revision.
