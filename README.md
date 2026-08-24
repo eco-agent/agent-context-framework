@@ -13,123 +13,136 @@ was somebody else's problem.
 
 Tired of watching GPT-5.6 be brilliant and generic at exactly the same time.
 
-ACF is my personal Codex setup manifest. It packages the instructions, skills,
-model roles, repository facts, and checks I now want available in every serious
-codebase. It is source you can install, read, argue with, and alter to your taste.
+ACF is my personal Codex setup manifest. You install its source into a repository,
+then edit it until the result matches your taste.
 
 ## The difference in one paragraph
 
 ACF makes GPT-5.6 behave like the version of Codex I wanted after 9.2 billion
-tokens. It stops reaching for generic UI and prose priors, treats TypeScript as
-domain design instead of autocomplete, investigates before it invents, and does
-not call work finished until the repository can support the claim. Stock Codex
-does not carry that accumulated project memory. A hand-written `AGENTS.md`
-captures the reminders you thought to add, while skills made as you go remain
-individual repairs. ACF joins those corrections into one opinionated, editable
-default for how the model works inside a repository.
+tokens. It replaces the model's generic taste with mine and makes its claims answer
+to the repository before it calls the work done. Stock Codex does not carry that
+memory. A hand-written `AGENTS.md` captures the reminders you thought to add, while
+skills made as you go repair failures one at a time. ACF joins those corrections
+and makes them active together. Its source remains editable.
 
 ## Why this exists
 
-I did not sit down and design a framework from first principles. I used Codex.
-A lot.
+I did not sit down and design a framework from first principles. I used Codex. A
+lot.
 
-Every time the model produced something I would not keep, I corrected it. When the
-same correction came back, it became an instruction. When the instruction needed
-real judgment, it became a skill. When the model could claim compliance without
-proving anything, it became a check. When a rule mattered only for one kind of
-task, I moved it out of the universal context and closer to that decision.
+At first I pasted corrections into `AGENTS.md`. That file grew until a rule about
+debugging competed for attention during a typography change. I moved specialist
+judgment into triggered skills. When prose could not prove a rule, I wrote a
+checker. ACF is what survived 9.2 billion tokens of that cycle.
 
-That process changed the code I got back. Frontend work stopped beginning with the
-same generic composition. Writing stopped sounding like a committee of chatbots.
-TypeScript changes started from the domain and its invalid states. Bug fixes began
-with a reproduction. New mechanisms had to justify themselves against what the
-repository and maintained packages already provided.
-
-None of those ideas is shocking. The value is that I no longer have to remember
-which correction to paste into which chat. The repository carries the setup, and
-the relevant part is already there when GPT-5.6 reaches the decision.
+I now spend fewer opening turns telling the model not to reach for the same UI and
+fewer closing turns arguing that a green check proved the wrong thing. The relevant
+correction is already present before GPT-5.6 makes the decision.
 
 ## Built for GPT-5.6
 
-ACF currently supports GPT-5.6. It is not calibrated for an abstract "AI agent"
-or promised to work equally well with every model.
+ACF currently supports GPT-5.6. I have not calibrated it for other models.
 
 The checked-in Codex configuration uses `gpt-5.6-sol` for the default role and
-`gpt-5.6-luna` for scout and worker roles. The instructions target the strengths,
-priors, and recurring failure modes I have observed in that family. Another model
-may follow them. That is not the same as being supported.
+`gpt-5.6-luna` for scout and worker roles. I wrote the instructions after observing
+what that family gets right and where I keep correcting it. Another model may follow
+them. That is not the same as being supported.
 
 [OpenAI's GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/latest-model)
-recommends lean prompts, stating each instruction once, and retaining style guidance
-when it encodes a product requirement or corrects a measured gap. ACF follows the
-same shape. Universal rules live once in the baseline. Detailed judgment loads only
-for the work that needs it.
+recommends stating each instruction once and keeping style guidance when it corrects
+a measured gap. ACF follows that advice. Universal rules live once in the baseline.
+Detailed judgment loads only for the work that needs it.
 
 ## What ACF believes
 
 **Code is cheap now. Judgment is not.** GPT-5.6 can produce more code than I can
-sensibly review. The job is no longer to maximize output. It is to preserve a
-system that remains understandable, operable, and worth changing later.
+sensibly review. I want the resulting code to make the next change easier, not bury
+it under another abstraction.
 
 **A rule that arrives after the edit is dead.** Context has to appear before the
-decision it is meant to change. Repeating the same warning in more files creates
-noise, drift, and several copies nobody can trust.
+decision it is meant to change. If the same warning lives in four files, the next
+edit leaves three stale copies behind.
+
+```text
+owner       docs/AGENTS.md  -> pnpm verify:profile docs
+stale copy  README.md       -> pnpm verify
+```
+
+The stale copy now tells the agent to run the wrong check.
 
 **Generic taste is still generic.** Better model priors do not know the product I
-am building. ACF is deliberately opinionated about representation, writing,
-TypeScript, verification, and the kinds of abstractions that deserve to exist.
+am building. ACF tells the model what I consider acceptable, down to whether a
+heading gets an eyebrow and whether a TypeScript state can contradict itself.
+
+```ts
+type LooseJob = {
+  status: "queued" | "done" | "failed";
+  result?: Result;
+  error?: JobError;
+};
+
+// The type accepts a finished job with no result and an unrelated error.
+declare const timeout: JobError;
+const impossible: LooseJob = { status: "done", error: timeout };
+
+type Job =
+  | { status: "queued" }
+  | { status: "done"; result: Result }
+  | { status: "failed"; error: JobError };
+```
 
 **A boundary without evidence is a wish.** "Be careful" does not protect a
-codebase. A useful rule says who decides, what the agent may change, how the result
-is observed, and what happens when the normal path is blocked.
+codebase. A diff can show whether the agent touched user work. If ownership overlaps,
+the agent has to stop and name the conflict.
+
+```text
+task owns  src/invite.ts
+           test/invite.test.ts
+diff adds  package.json
+
+stop: package.json was already dirty
+```
 
 **The repository must remain in charge.** ACF provides my defaults. The project
-owns its facts, names its contracts, and can impose stricter rules. When local truth
-and generic guidance disagree, local truth wins unless it would weaken the protected
+policy names the contracts an agent must read. When one of those contracts disagrees
+with generic guidance, the contract wins unless it would weaken the protected
 framework baseline.
 
 ## Why not skills.sh, Matt Pocock's skills, or pstack?
 
 Use them if they fit you better. [`skills.sh`](https://skills.sh/) helps people
 find and install agent skills. [`mattpocock/skills`](https://github.com/mattpocock/skills)
-and [`pstack`](https://github.com/cursor/plugins/tree/main/pstack) publish the
-engineering judgment of people whose work I respect. ACF includes pinned,
-licensed adaptations from both. It does not pretend those ideas appeared here
-first.
+and [`pstack`](https://github.com/cursor/plugins/tree/main/pstack) publish setups
+built from how their authors work. I respect both. ACF includes pinned, licensed
+adaptations from them and does not pretend those ideas appeared here first.
 
-The difference is the unit of adoption. ACF is not a directory of capabilities or
-a mode I remember to invoke. It is the complete GPT-5.6 setup I use for a
-repository, including the boring baseline rules and checks that have to apply even
-when nobody remembers them. If my taste is close to yours, ACF gives you a starting
-point shaped by 9.2 billion tokens instead of an empty folder. If it is not, take
-the parts that earned their place and replace the rest.
+Installing one skill gives Codex one more procedure. ACF changes the default before
+any skill fires. It includes the boring rules and checks that have to apply when
+nobody remembers them. If my taste is close to yours, ACF gives you a starting
+point containing corrections from 9.2 billion tokens. You do not have to discover
+each one through your own bad runs. Otherwise, delete anything you would not defend.
 
 ## Make it yours
 
-This is a personal setup manifest, not a claim that my preferences are universal.
-You may hate some of them. Good. The source is visible because disagreement should
-end in an edit, not another layer of exceptions pasted over rules you never wanted.
+This is a personal setup manifest. My preferences are not universal. You may hate
+some of them. Good. The source is visible because disagreement should end in an
+edit, not another layer of exceptions pasted over rules you never wanted.
 
-Fork it. Change the voice. Remove a skill. Add the contract your repository keeps
-violating. Replace my frontend taste with yours. Keep only the rules that continue
-to earn attention.
-
-The point is not to preserve ACF untouched. The point is to stop rebuilding a
-serious agent setup from zero.
+Fork it and rewrite whatever annoys you. Keep only the rules you would defend in a
+code review. I want people to begin with a serious setup and edit it, instead of
+reconstructing one after every bad run.
 
 ## What ACF cannot promise
 
-ACF cannot make GPT-5.6 smarter. It cannot guarantee that the model attended to
-every instruction, and it does not inspect the model's private context. It cannot
-replace a maintainer's taste or prove that my 9.2 billion tokens resemble your
-workload.
+Instructions do not make GPT-5.6 smarter or guarantee that it noticed every rule.
+ACF cannot inspect the model's private context. My 9.2 billion tokens are experience,
+not proof that this setup fits your workload.
 
-It can make the defaults explicit. It can put hard-won corrections where the model
-can use them. It can make the agent show evidence for claims I got tired of taking
-on faith.
+ACF writes the defaults into the repository before the task starts. When a claim
+can be checked, the agent has to show the evidence.
 
-That is a smaller promise than autonomous software engineering. It is the one I
-actually care about.
+I do not need a promise of autonomous software engineering. I need Codex to stop
+repeating mistakes I already paid to learn.
 
 ## Try it
 
@@ -143,7 +156,6 @@ pnpm install --frozen-lockfile
 pnpm agent-context setup --cwd D:\path\to\your-project
 ```
 
-The source, attribution, and component registry live in [`registry`](registry).
-The architecture notes live in [`docs`](docs/README.md). Project-authored
-distributable source is MIT licensed, and adapted source keeps its upstream
-revision, attribution, license, and notices.
+[`registry`](registry) contains the components and records where adopted source came
+from. [`docs`](docs/README.md) contains the architecture notes. Original ACF source
+is MIT licensed. Adopted source keeps its upstream license and notice.
