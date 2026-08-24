@@ -13,6 +13,7 @@ const REQUIRED_REVIEW_PATTERNS = [
   "/.agent-context/runtime/",
   "/.github/CODEOWNERS",
   "/packages/codex-workflow-runtime/",
+  "/packages/codex-frontend-workflows/",
   "/registry/",
   "/tools/dev-tooling/",
   "/tools/repo-policy/",
@@ -198,6 +199,12 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Review the actual result rather than inferring behavior from JSX, CSS, types, or a single screenshot.",
     "remove or replace one major design decision and attempt a materially different solution.",
     "Human review owns whether the representation is coherent, useful, and sufficiently quiet.",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/composition-grammar.md", [
+    "A semantic owner may render directly into a shared layout.",
+    "A page has one primary surface or none.",
+    "Do not nest surfaces to create hierarchy.",
+    "Source code alone does not settle composition.",
   ]],
   [".codex/skills/responsive-css-architect/SKILL.md", [
     "express relationships rather than screenshot measurements",

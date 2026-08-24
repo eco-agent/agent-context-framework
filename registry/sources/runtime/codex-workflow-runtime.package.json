@@ -1,0 +1,26 @@
+{
+  "name": "@agent-context-runtime/codex-workflow-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./bounded-workflow": {
+      "types": "./dist/src/bounded-workflow.d.ts",
+      "import": "./dist/src/bounded-workflow.js"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "0.145.0"
+  }
+}

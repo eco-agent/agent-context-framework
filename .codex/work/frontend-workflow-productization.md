@@ -115,8 +115,14 @@ changing a decision. Do not create another state record.
   content-addressed evidence store, and an exact human acceptance transition.
 - The Windows preflight passed all five checks on 2026-08-24. It started zero
   model turns and removed its temporary directory.
-- Package typecheck and 13 focused tests pass. The optional registry component,
-  installed fixture proof, and defective live repair still remain.
+- Package typecheck and 13 focused tests pass.
+- Registry revision `0.11.0` adds the optional
+  `workflow-frontend-composition` component. It is absent from the ordinary
+  `frontend` bundle.
+- A clean installed-project test selected the component, bootstrapped the
+  isolated runtime, built both packages, and passed the same zero-model
+  preflight.
+- The defective live repair and final repository acceptance still remain.
 
 ## Verification plan
 

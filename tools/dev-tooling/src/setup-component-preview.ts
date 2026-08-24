@@ -31,6 +31,7 @@ const DISPLAY_NAMES: Readonly<Record<string, string>> = {
   "codex-repo-context": "Codex repository context",
   "codex-runtime": "Codex runtime",
   "integration-oxfmt": "Oxfmt integration",
+  "workflow-frontend-composition": "Frontend composition workflows",
 };
 
 const COMPONENT_DESCRIPTIONS: Readonly<Record<string, string>> = {
@@ -42,6 +43,7 @@ const COMPONENT_DESCRIPTIONS: Readonly<Record<string, string>> = {
   "codex-repo-context": "The repo_context MCP tool for bounded repository reads and fixed-string search.",
   "codex-runtime": "The complete Codex agent, hook, and repository-context bundle.",
   "integration-oxfmt": "ACF-owned oxfmt configuration.",
+  "workflow-frontend-composition": "Bounded frontend representation, rendered review, repair, preflight, and human acceptance controllers.",
 };
 
 const REPOSITORY_CONTEXT_TOOL: SetupToolSummary = {

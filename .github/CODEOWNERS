@@ -3,6 +3,7 @@
 /.agent-context/runtime/ @bet01
 /.github/CODEOWNERS @bet01
 /packages/codex-workflow-runtime/ @bet01
+/packages/codex-frontend-workflows/ @bet01
 /registry/ @bet01
 /tools/dev-tooling/ @bet01
 /tools/repo-policy/ @bet01

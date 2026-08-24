@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.10.0",
-  "decisionPath": "registry/decisions/0.10.0-codex-workflow-runtime-convergence.md",
+  "revision": "0.11.0",
+  "decisionPath": "registry/decisions/0.11.0-frontend-composition-workflows.md",
   "components": [
     {
       "name": "core",
@@ -544,6 +544,81 @@
           "sourceDirectory": "packages/codex-workflow-runtime/test",
           "targetDirectory": ".codex/skills/orchestrate-codex-workflows/assets/typescript-runtime/test",
           "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "workflow-frontend-composition",
+      "dependencies": [
+        "core",
+        "runtime-base",
+        "skill-frontend-design-discipline",
+        "skill-orchestrate-codex-workflows"
+      ],
+      "capabilities": [
+        { "kind": "runtime", "name": "codex-authentication", "requirement": "required" },
+        { "kind": "runtime", "name": "node", "requirement": "required" },
+        { "kind": "runtime", "name": "network", "requirement": "required" }
+      ],
+      "licenses": [
+        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }
+      ],
+      "artifacts": [
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-workflow-runtime.tsconfig.json",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/tsconfig.json",
+          "mediaType": "application/json"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-frontend-workflows.tsconfig.json",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/tsconfig.json",
+          "mediaType": "application/json"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-workflow-runtime.package.json",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/package.json",
+          "mediaType": "application/json"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/LICENSE",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/LICENSE",
+          "mediaType": "text/plain"
+        },
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": "packages/codex-workflow-runtime/src",
+          "targetDirectory": ".agent-context/runtime/packages/codex-workflow-runtime/src",
+          "excludedPrefixes": [],
+          "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-frontend-workflows.package.json",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/package.json",
+          "mediaType": "application/json"
+        },
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": "packages/codex-frontend-workflows/src",
+          "targetDirectory": ".agent-context/runtime/packages/codex-frontend-workflows/src",
+          "excludedPrefixes": [],
+          "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "runtime-directory",
+          "sourceDirectory": "packages/codex-frontend-workflows/test",
+          "targetDirectory": ".agent-context/runtime/packages/codex-frontend-workflows/test",
+          "excludedPrefixes": [],
+          "workspaceId": "agent-context-runtime"
         }
       ]
     },

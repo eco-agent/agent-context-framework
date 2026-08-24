@@ -175,13 +175,12 @@ directly if their contracts converge.
 
 ## Verification evidence
 
-- Decoder tests include representative valid inputs and every invalid state
-  listed above.
-- Transition tests cover both forward paths, both legal returns, terminal states,
-  stale evidence, shared repair exhaustion, and idempotent acceptance replay.
-- Artifact store tests continue to prove content identity, idempotent writes,
-  metadata conflicts, and read verification after relocation.
-- Installed mock tests prove the same public controllers from the downstream
-  runtime package.
-- The fixture live run records exact request, specification bundle, revisions,
-  capture hashes, role outputs, repository checks, and terminal reason.
+- Controller tests cover both forward paths, one reviewer return, repair
+  exhaustion, incomplete verification, path escape, and cosmetic candidate
+  rejection.
+- Specification and acceptance tests cover complete spatial-pass enforcement,
+  stale evidence, conflicting replay, and exact idempotent acceptance.
+- Artifact tests prove content identity, idempotent writes, and read verification.
+- An installed-project test proves the optional component can bootstrap, build,
+  and pass the five-check zero-model preflight outside this workspace.
+- The defective fixture live run remains the final missing transition proof.

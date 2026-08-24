@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.10.0",
-  "decisionPath": "registry/decisions/0.10.0-codex-workflow-runtime-convergence.md",
+  "revision": "0.11.0",
+  "decisionPath": "registry/decisions/0.11.0-frontend-composition-workflows.md",
   "components": [
     {
       "name": "core",
@@ -446,7 +446,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:3ef329c0ee9127c86c5ae423737bfe56a48c9ed65011b475a3e10da9aa53eb60",
+      "revision": "sha256:77034eb72dfa7c1f13c2e8ff4dca6acfe23592d7d44d19a58dcc78ed04e48dfb",
       "dependencies": [],
       "capabilities": [
         {
@@ -482,7 +482,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
-          "sourceSha256": "98db78ae6cddc2447d6ddfb619e6de8a3c76abfdd692040a6579c8ff0f7358dc",
+          "sourceSha256": "015dddcc8fb749f9a66d3eccc7b4333e8646f7e6bbe24bb6a871628572c52960",
           "targetPath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
           "mediaType": "text/markdown"
         },
@@ -491,6 +491,13 @@
           "sourcePath": ".codex/skills/frontend-design-discipline/references/allowed-visual-styles.md",
           "sourceSha256": "5a320b49eadbd1e7fe15c6c80d40df9d6122cdb089abe404817961dc12dbaec5",
           "targetPath": ".codex/skills/frontend-design-discipline/references/allowed-visual-styles.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/composition-grammar.md",
+          "sourceSha256": "22424a2eb6ef9b22251ac02fc13b89cdfe029b008742c93abb5fb6400519db70",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/composition-grammar.md",
           "mediaType": "text/markdown"
         },
         {
@@ -538,7 +545,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "e076d9584970a6f8ea2992df3a2cd107a15cece21850a82539a59724b752184e",
+          "sourceSha256": "a9797e724da8d828d03f5a0886548a80eeba5e8ff6a48cf5e59df1a4e3af7b89",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -1671,6 +1678,295 @@
       ]
     },
     {
+      "name": "workflow-frontend-composition",
+      "revision": "sha256:df30de4ebcbee1308752b85491ae88fdbc7b30d2d470674cef030008acab14ff",
+      "dependencies": [
+        "core",
+        "runtime-base",
+        "skill-frontend-design-discipline",
+        "skill-orchestrate-codex-workflows"
+      ],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "codex-authentication",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-workflow-runtime.tsconfig.json",
+          "sourceSha256": "539e4afc28bd6d04f4e78b9452705911fa33d8b6d7e64bbfba639b6f3e482efc",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/tsconfig.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-frontend-workflows.tsconfig.json",
+          "sourceSha256": "35a58fdf4db1c74cb634a75402b9d07b7ab13a2234d482698618e88cf8d35a3a",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/tsconfig.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-workflow-runtime.package.json",
+          "sourceSha256": "b3600f0701e895ae94c80182892594ec87807a0c62322519d3686dd3060bd398",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/package.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "packages/codex-workflow-runtime/LICENSE",
+          "sourceSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/LICENSE",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/bounded-workflow.ts",
+          "sourceSha256": "4ac2c062588946e30602c26ec7af87d8931d654efe148325b4c2e1605525c151",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/bounded-workflow.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/codex-turn-transport.ts",
+          "sourceSha256": "0a247ae2446537e2237a25973585d366183b19ef263ad8576923cedff5d94f4d",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/codex-turn-transport.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/contracts.ts",
+          "sourceSha256": "089155841c99c0765262f6d3f1452bffc2e33e603f68f40c97b38f5cb7c310c7",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/contracts.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/index.ts",
+          "sourceSha256": "ef3215c6bf9c58a61ba37f6c2ec28cdc9ff68083ccc49c508166caf217daf3de",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/index.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/ledger.ts",
+          "sourceSha256": "cc87a90935cf67bc3af58f7db1a94ba672ba91ca247f298c67baf553d11a53cc",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/ledger.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loop-support.ts",
+          "sourceSha256": "579b43bc904518c05ecfd78349e6070c176f8cd484c70973e7e0f80f7fc36707",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loop-support.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
+          "sourceSha256": "d75a457a07df0411fcd338a10dbc03786ec2c7ba8c8d7f8fe7d84e91f897c25c",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
+          "sourceSha256": "10b9c6af14f963b7958302ccc1379bed2ed4911acb1d89991350e0330362f4f9",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
+          "sourceSha256": "e0a4c0e49591d2c240c4c296519368a409601e397be5f20a53bc9174ac497e35",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/relay-chain.ts",
+          "sourceSha256": "47afa99d5e612c72f63de18605c45df927c3c2909a930e7b2ce8042b15842216",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/relay-chain.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
+          "sourceSha256": "84cddb21353bcfbfcfdc11f84c01d4829c5f366f5ec0886ffba890672eef4ae8",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
+          "sourceSha256": "b19fa49852bf8faaee239c976ec7343f8fff7f809c3cc4791fe5e16f06217413",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
+          "sourceSha256": "ae93882828bd8594ca6ea841619354470c308c81c58c37683fd5d15ad9639136",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
+          "sourceSha256": "f6f9c019a40f4b7d3d030b875447a7d88e42ea522e1476a5b8eaa3953f86b134",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/plan-codex-client.ts",
+          "sourceSha256": "ce9d978f07d97ce5e9b1781fb9c398b98a225f1e3e0a1f44cf8ba8b8f00fa529",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/plan-codex-client.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-workflow-runtime/src/plan.ts",
+          "sourceSha256": "6a3658eb65385c3656399d2a84c40551bc0b47b0833991d95c55786e65c0fac9",
+          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/plan.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/codex-frontend-workflows.package.json",
+          "sourceSha256": "8ccd2f1e3827f71f394c74579a152c266bcf5615c8a6b42d0c7695a328faa870",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/package.json",
+          "mediaType": "application/json"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/content-addressed-artifacts.ts",
+          "sourceSha256": "c186d63d99de26c06c460753633d2adab2a2c363b8f47ac6fb13d221caf59db8",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/content-addressed-artifacts.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
+          "sourceSha256": "ffb5e78f74053cd7b02fb6112bb8bb3a5ccc1b120608c8568e65ddd2fd8273ff",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/frontend-representation.ts",
+          "sourceSha256": "c1ac73f9b4cde13a233127307eebb72b5963747516395a08ddfcfe1d08d7fe9b",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-representation.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/frontend-specification.ts",
+          "sourceSha256": "0164e1772beb1a8f843b37b24e499cdee733cd448c8a0bdf79550ac6ac501fa8",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-specification.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/human-acceptance.ts",
+          "sourceSha256": "ad67afba8005a8c61ed5a0c68ead4590c1cf8d4b1a69c82eabfd67567fa21f6a",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/human-acceptance.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/index.ts",
+          "sourceSha256": "63d7d409254be5ffb84c5dbaf01797cb9638524641f9b6ece3540ea31208dcc2",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/index.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/preflight-cli.ts",
+          "sourceSha256": "4e1bf3ce3fc6727e23a58327d3cdb1ae93a7c31a101f4a43b1ba053bbc53ed45",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/preflight-cli.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/src/preflight.ts",
+          "sourceSha256": "41a07c52341689cf75cc6a9c445947045d350c104d4f552c6f1e70ae33fff329",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/preflight.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
+          "sourceSha256": "136d4f598fa66208960cbc90d5dc5417a6f20344c9f35b6bf7b337cc6db6ec89",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/test/frontend-representation.test.ts",
+          "sourceSha256": "51ef268ae2268324fb05695996964ce967d5bdd74ac338d286f3cae84db0e82c",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/frontend-representation.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "runtime-workspace",
+          "sourcePath": "packages/codex-frontend-workflows/test/workflow-infrastructure.test.ts",
+          "sourceSha256": "f677657a12638d0eb020ff8dbaf737ad9dbed87cddc1490214e99bfb4032dce1",
+          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/workflow-infrastructure.test.ts",
+          "workspaceId": "agent-context-runtime",
+          "mediaType": "text/plain"
+        }
+      ]
+    },
+    {
       "name": "engineering",
       "revision": "sha256:4efbf746329168f27819e1bb726a22c22d0fef8dc0a59a4c2d3907c856b7093b",
       "dependencies": [
@@ -1859,7 +2155,7 @@
     },
     {
       "name": "runtime-base",
-      "revision": "sha256:9a41e98531ce5f49811aaa71c94d538a555db724b45ac74f7062d31b3cfdfc16",
+      "revision": "sha256:f445f68a738fd811da3fa6cfd768081a29e2f32e1fadff464f9435e7fa30a583",
       "dependencies": [],
       "capabilities": [
         {
@@ -1902,7 +2198,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/pnpm-lock.yaml",
-          "sourceSha256": "380e8d3ef1e17643555d31ec80e7d05c8ac384e3453ffd33d71d50f1ec43b5eb",
+          "sourceSha256": "4635121173913edd5c4746a68f0b05a687fd43d4423c9a41f5391b26142c8012",
           "targetPath": ".agent-context/runtime/pnpm-lock.yaml",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/yaml"
