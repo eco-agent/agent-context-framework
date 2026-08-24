@@ -135,6 +135,16 @@ changing a decision. Do not create another state record.
   all three renders passed.
 - Human visual acceptance remains external. The controller stopped at
   `ready_for_human_review` and did not write an acceptance decision.
+- Final acceptance at ACF revision `b052e8d` reached the workspace test stage
+  and exposed stale dev-tooling assumptions about registry revision `0.10.0`,
+  the former 35-component total, the single workflow package fixture, and an
+  SDK-free aggregate runtime lock. The registry and runtime were correct. The
+  five affected tests now describe registry revision `0.11.0`, all 36
+  components, both workflow packages, the authorized optional workflow
+  consumer, and the distinction between an SDK-free runtime base and the
+  aggregate lock that installs optional workflow dependencies.
+- The focused acceptance-repair suite passes 41 of 41 tests. The complete
+  `@agent-context/dev-tooling` suite passes 103 of 103 tests.
 
 ## Verification plan
 
@@ -159,5 +169,6 @@ as product edits, trimmed Git porcelain prefixes, an unstated review placeholder
 rule, and unstable fixture screenshot positioning. Their ledgers remain in the
 Convex fixture branch instead of being hidden.
 
-Final ACF revision and repository acceptance results are recorded after the last
-checkpoint commit.
+The first final-acceptance attempt stopped on stale test expectations before
+isolation or the downstream fixture ran. Final ACF revision and the repaired
+repository acceptance result are recorded after the last checkpoint commit.

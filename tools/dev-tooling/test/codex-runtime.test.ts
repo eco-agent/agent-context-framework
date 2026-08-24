@@ -25,8 +25,8 @@ const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("codex-runtime is dependency-only with the exact Wave 4 closure", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.10.0");
-  assert.equal(registry.components.length, 35);
+  assert.equal(registry.revision, "0.11.0");
+  assert.equal(registry.components.length, 36);
   const component = registry.components.find((candidate) => candidate.name === "codex-runtime");
   assert.ok(component);
   assert.deepEqual(component.dependencies, ["codex-agents", "codex-hooks", "codex-repo-context"]);

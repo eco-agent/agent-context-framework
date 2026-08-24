@@ -48,10 +48,9 @@ test("isolated runtime owns an exact static package graph", async () => {
   }
 });
 
-test("runtime source and lock exclude host and objective orchestration dependencies", async () => {
+test("runtime base excludes host orchestration while its lock includes optional workflow dependencies", async () => {
   const files = await sourceFiles(runtimeRoot);
   const forbidden = [
-    "@openai/codex-sdk",
     "@agent-context/objective-kernel",
     "@agent-context/objective-runtime",
     "pg-boss",
@@ -68,6 +67,17 @@ test("runtime source and lock exclude host and objective orchestration dependenc
         `${path.relative(runtimeRoot, file)} contains forbidden ${token}`,
       );
     }
+  }
+  const lock = await readFile(path.join(runtimeRoot, "pnpm-lock.yaml"), "utf8");
+  assert.equal(lock.includes("packages/codex-workflow-runtime:"), true);
+  assert.equal(lock.includes("packages/codex-frontend-workflows:"), true);
+  assert.equal(lock.includes("@openai/codex-sdk@0.145.0"), true);
+  for (const file of files.filter((candidate) => !candidate.endsWith("pnpm-lock.yaml"))) {
+    assert.equal(
+      (await readFile(file, "utf8")).includes("@openai/codex-sdk"),
+      false,
+      `${path.relative(runtimeRoot, file)} contains host SDK source dependency`,
+    );
   }
   const hostWorkspace = await readFile(
     path.join(frameworkRoot, "pnpm-workspace.yaml"),

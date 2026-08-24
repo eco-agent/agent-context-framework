@@ -19,8 +19,8 @@ const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("codex-agents resolves the explicit Wave 4 model profile", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.10.0");
-  assert.equal(registry.components.length, 35);
+  assert.equal(registry.revision, "0.11.0");
+  assert.equal(registry.components.length, 36);
   assert.deepEqual(
     resolveContextComponents(registry, ["codex-agents"]).map((component) => component.name),
     ["core", "codex-agents"],

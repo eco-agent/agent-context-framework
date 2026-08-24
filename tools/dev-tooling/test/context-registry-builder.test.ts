@@ -666,7 +666,7 @@ test("Wave 2 bundles resolve independently and exclude frontend, runtime, and ob
   }
 });
 
-test("optional orchestration authoring is an explicit leaf with a governed safety contract", async () => {
+test("optional orchestration authoring has an explicit consumer and a governed safety contract", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
   const componentName = "skill-orchestrate-codex-workflows";
   const component = registry.components.find((candidate) => candidate.name === componentName);
@@ -683,13 +683,19 @@ test("optional orchestration authoring is an explicit leaf with a governed safet
     { kind: "runtime", name: "node", requirement: "required" },
   ]);
 
-  for (const existing of registry.components.filter((candidate) => candidate.name !== componentName)) {
+  const authorizedConsumers = new Set([componentName, "workflow-frontend-composition"]);
+  for (const existing of registry.components.filter((candidate) => !authorizedConsumers.has(candidate.name))) {
     assert.equal(
       resolveContextComponents(registry, [existing.name]).some((candidate) => candidate.name === componentName),
       false,
       `${existing.name} must not acquire optional orchestration authoring transitively`,
     );
   }
+  assert.equal(
+    resolveContextComponents(registry, ["workflow-frontend-composition"])
+      .some((candidate) => candidate.name === componentName),
+    true,
+  );
 
   assert.equal(component.artifacts.length > 0, true);
   assert.equal(component.artifacts.every((artifact) =>
@@ -1272,19 +1278,21 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
 }
 
 async function copyCanonicalWorkflowRuntime(temporaryRoot: string): Promise<void> {
-  const targetRoot = path.join(temporaryRoot, "packages", "codex-workflow-runtime");
-  await mkdir(path.dirname(targetRoot), { recursive: true });
-  await cp(
-    path.join(frameworkRoot, "packages", "codex-workflow-runtime"),
-    targetRoot,
-    {
-      recursive: true,
-      filter: (source) => {
-        const portable = source.replaceAll("\\", "/");
-        return !portable.includes("/node_modules") && !portable.includes("/dist");
+  const packagesRoot = path.join(temporaryRoot, "packages");
+  await mkdir(packagesRoot, { recursive: true });
+  for (const packageName of ["codex-workflow-runtime", "codex-frontend-workflows"]) {
+    await cp(
+      path.join(frameworkRoot, "packages", packageName),
+      path.join(packagesRoot, packageName),
+      {
+        recursive: true,
+        filter: (source) => {
+          const portable = source.replaceAll("\\", "/");
+          return !portable.includes("/node_modules") && !portable.includes("/dist");
+        },
       },
-    },
-  );
+    );
+  }
 }
 
 async function copyCompleteRegistryFixture(temporaryRoot: string): Promise<void> {
