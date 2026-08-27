@@ -921,7 +921,7 @@ test("governance compares canonical and installed role prompts as complete files
     await writeFile(
       scoutPath,
       (await readFile(scoutPath, "utf8")).replace(
-        "Do not edit files or turn the investigation into a redesign.",
+        "Do not edit files, make repository decisions, start other agents, or turn the investigation into a redesign.",
         "Edit files when it helps the investigation.",
       ),
       "utf8",
@@ -954,6 +954,28 @@ test("governance rejects semantic dilution even before protected hashes are refr
         "Do not edit,\n  remove, override, or weaken them from project work.",
         "Project authors may weaken this section.",
       ),
+    );
+    await assert.rejects(
+      checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),
+      /violates a maintainer-owned semantic requirement/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("governance rejects dilution of parallel scout authority", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-scout-routing-governance-"));
+  try {
+    await copyGovernanceFixture(temporaryRoot);
+    const corePath = path.join(temporaryRoot, "registry", "sources", "instructions", "core.md");
+    await writeFile(
+      corePath,
+      (await readFile(corePath, "utf8")).replace(
+        "Treat their output as evidence, not a\ndecision.",
+        "A scout may apply its preferred conclusion.",
+      ),
+      "utf8",
     );
     await assert.rejects(
       checkContextGovernance(temporaryRoot, await buildContextRegistry(frameworkRoot)),

@@ -167,12 +167,12 @@ test("TOML member ownership preserves unrelated agent settings and removes only 
   const projection = createArtifactProjection(artifact({
     operation: "toml-members",
     ownedMembers: [
-      "agents.max_concurrent_threads_per_session",
+      "agents.max_threads",
       "agents.worker",
     ],
   }), [
     "[agents]",
-    "max_concurrent_threads_per_session = 2",
+    "max_threads = 6",
     "",
     "[agents.worker]",
     'description = "Implementation worker"',
@@ -189,26 +189,26 @@ test("TOML member ownership preserves unrelated agent settings and removes only 
   ].join("\n"));
   const value = parseToml(installed) as {
     project: { name: string };
-    agents: { interrupt_message: boolean; max_concurrent_threads_per_session: number; worker: { config_file: string } };
+    agents: { interrupt_message: boolean; max_threads: number; worker: { config_file: string } };
   };
   assert.equal(value.project.name, "fixture");
   assert.equal(value.agents.interrupt_message, false);
-  assert.equal(value.agents.max_concurrent_threads_per_session, 2);
+  assert.equal(value.agents.max_threads, 6);
   assert.equal(value.agents.worker.config_file, "agents/worker.toml");
   assert.equal(projection.read(installed).state, "present");
-  assert.equal(projection.read("[agents]\nmax_concurrent_threads_per_session = 2\n").state, "malformed");
+  assert.equal(projection.read("[agents]\nmax_threads = 6\n").state, "malformed");
   assert.throws(
-    () => projection.install("[agents]\nmax_concurrent_threads_per_session = 4\n"),
+    () => projection.install("[agents]\nmax_threads = 4\n"),
     /already contains owned member/u,
   );
   const removed = parseToml(projection.remove(installed, false) ?? "") as {
     project: { name: string };
-    agents: { interrupt_message: boolean; worker?: unknown; max_concurrent_threads_per_session?: number };
+    agents: { interrupt_message: boolean; worker?: unknown; max_threads?: number };
   };
   assert.equal(removed.project.name, "fixture");
   assert.equal(removed.agents.interrupt_message, false);
   assert.equal(removed.agents.worker, undefined);
-  assert.equal(removed.agents.max_concurrent_threads_per_session, undefined);
+  assert.equal(removed.agents.max_threads, undefined);
 });
 
 test("ownership-only projections read and remove structured artifacts without source bytes", () => {

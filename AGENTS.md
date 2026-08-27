@@ -100,6 +100,30 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 30. **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number. "significantly improves" becomes the measured delta. An adverb propping up a weak verb means the verb is wrong.
 31. **Prefer the plain word.** "utilize" becomes "use", "leverage" becomes "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if". The fancier synonym is rarely clearer.
 
+## Agent routing
+
+Use native scout subagents proactively when a task contains two or more
+independent read-only investigations that can return once. Give each scout one
+question, a bounded scope, the evidence it must return, and a stopping condition.
+Start independent scouts in parallel up to the capacity Codex exposes. Do not add
+a smaller project limit. Keep doing local work that does not depend on their
+answers.
+
+Scouts use Luna in a read-only sandbox. Treat their output as evidence, not a
+decision. The primary Sol agent owns task interpretation, contradiction
+resolution, architecture judgment, and the decision about what becomes
+repository state. Sol must gather evidence directly when the search itself
+requires interpreting ambiguous contracts or deciding what counts.
+
+When the provider marks a scout failure as transient, replace that evidence lane
+once. If the replacement also fails, Sol completes the lane directly or reports
+the missing evidence. Do not wait on broken delegation after the second failure.
+
+Only Sol agents may edit repository state. The primary may delegate a write to a
+Sol worker in an isolated worktree, or it may hand the current branch and index to
+that worker until the assignment ends. One active writer owns each branch and
+index. Otherwise the primary remains the writer.
+
 ## Work
 
 Before substantial code, create `.codex/work/<task>.md`. Record the intended

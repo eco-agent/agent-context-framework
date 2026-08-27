@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.11.0",
-  "decisionPath": "registry/decisions/0.11.0-frontend-composition-workflows.md",
+  "revision": "0.12.0",
+  "decisionPath": "registry/decisions/0.12.0-agent-swarm-policy.md",
   "components": [
     {
       "name": "core",
@@ -836,11 +836,7 @@
           "targetPath": ".codex/config.toml",
           "ownedMembers": [
             "agents.default",
-            "agents.default_subagent_model",
-            "agents.default_subagent_reasoning_effort",
-            "agents.enabled",
             "agents.interrupt_message",
-            "agents.max_concurrent_threads_per_session",
             "agents.scout",
             "agents.worker"
           ]

@@ -271,12 +271,15 @@ Ordinary plans and native subagents remain cheaper when the work can return once
 The model configuration is part of the manifest because delegation changes what
 context reaches a decision. The default role uses GPT-5.6 Sol at high reasoning for
 general work. The scout uses GPT-5.6 Luna at max reasoning in a read-only sandbox.
-It answers one repository question and stops. The worker uses Luna at max reasoning
-for a bounded implementation and cannot start more agents.
+It answers one repository question and stops. Independent scouts run in parallel
+up to the capacity Codex exposes. The project does not replace that capacity with
+its own smaller thread limit.
 
-Those roles keep the primary task responsible for product and architecture
-decisions. A scout returns evidence. A worker owns one specified change. Neither is
-allowed to turn a narrow assignment into its own project.
+The worker uses Sol at high reasoning and owns one exclusive branch and index. The
+primary Sol agent remains responsible for product and architecture decisions,
+combines scout evidence, and resolves contradictions. Repeated delegation failure
+falls back to direct Sol work instead of leaving the task waiting on a broken
+scout lane.
 
 The optional Codex runtime adds hooks and a repository-context tool. Hooks remain
 dormant without a valid session binding. The repository tool reads bounded line

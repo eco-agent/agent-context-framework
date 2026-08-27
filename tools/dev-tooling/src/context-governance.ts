@@ -37,6 +37,11 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Do not change global Git configuration.",
     "Treat the work record as temporary task state.",
     "Otherwise remove it in the same task.",
+    "Use native scout subagents proactively when a task contains two or more independent read-only investigations that can return once.",
+    "Start independent scouts in parallel up to the capacity Codex exposes.",
+    "Treat their output as evidence, not a decision.",
+    "Only Sol agents may edit repository state.",
+    "Do not wait on broken delegation after the second failure.",
   ]],
   ["registry/sources/instructions/framework-root-prefix.md", [
     "Push only when the user explicitly requests it.",

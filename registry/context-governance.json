@@ -1,12 +1,12 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.11.0",
-  "decisionPath": "registry/decisions/0.11.0-frontend-composition-workflows.md",
+  "registryRevision": "0.12.0",
+  "decisionPath": "registry/decisions/0.12.0-agent-swarm-policy.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "d6ebc46cfca9efab2ec5b7a80addf4ced1fec62e3b500449ffd9e96cede1b209"
+      "sha256": "99c7088b417d4299a06f476d6bf64329ea727b262394fbf4976017446c88f481"
     },
     {
       "invariantId": "framework-root-prefix",
@@ -221,7 +221,7 @@
     {
       "invariantId": "codex-agent-selection",
       "sourcePath": "registry/sources/codex/agents.toml",
-      "sha256": "c092093d454c1fb2f463220294d78aef1612d70f25d9b18701b755141fe01822"
+      "sha256": "7cc7a331c267fac4d1a43a6f4b27787dbcf2608866034e2d9e4265e8c4226735"
     },
     {
       "invariantId": "codex-agent-default-profile",
@@ -231,12 +231,12 @@
     {
       "invariantId": "codex-agent-scout-profile",
       "sourcePath": "registry/sources/codex/agents/scout.toml",
-      "sha256": "47a2e9d1aaebe1ac3e4e8eedc42c711a5a7fd934c44b17e020cec799a9fbdde2"
+      "sha256": "4ea2dca2f8df8e1d67577a086a306cfd04b7a3401da6c1738683c213b81c6fb6"
     },
     {
       "invariantId": "codex-agent-worker-profile",
       "sourcePath": "registry/sources/codex/agents/worker.toml",
-      "sha256": "880d3a51ac1227673f468568157496cb6ca4e28cd5c808d2feb4e6a923ab69a2"
+      "sha256": "c2e2bb0e181df838c4cd2874cda5501253c5ad57907084905206d0ef4cc9bfbc"
     },
     {
       "invariantId": "codex-hooks-project-local",
@@ -410,6 +410,13 @@
       "sourcePath": "registry/sources/instructions/core.md",
       "targetPath": "AGENTS.md",
       "heading": "## Communication"
+    },
+    {
+      "kind": "markdown-section",
+      "invariantId": "portable-core",
+      "sourcePath": "registry/sources/instructions/core.md",
+      "targetPath": "AGENTS.md",
+      "heading": "## Agent routing"
     },
     {
       "kind": "markdown-section",

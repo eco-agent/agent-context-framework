@@ -15,7 +15,7 @@ decisions and mutations with Sol.
 | Concurrency | Remove the project-owned thread ceiling. Let Codex and the provider expose runtime capacity, and report when that capacity blocks another scout. | Codex runtime |
 | Investigation | Use multiple Luna Max scouts for independent read-only questions that can return once. | Primary Sol agent |
 | Evidence | A scout returns cited repository facts, uncertainty, and contradictions. It does not decide or write repository state. | Scout role |
-| Mutation | Keep the worker role, but run it on Sol High. Give each writer exclusive ownership of its files or branch. | Primary Sol agent |
+| Mutation | Keep the worker role, but run it on Sol High. Give each writer exclusive ownership of its branch and index. | Primary Sol agent |
 | Failure recovery | Replace one transiently failed evidence lane once. After the same lane fails twice, Sol continues directly or reports the missing evidence. | Primary Sol agent |
 | Registry | Advance the governed registry to `0.12.0` and record the routing policy in a durable decision. | Registry governance |
 
@@ -39,16 +39,16 @@ decisions and mutations with Sol.
 | --- | --- | --- | --- |
 | Scout role | Read-only repository investigation only. | `sandbox_mode = "read-only"`, role prompt, and agent-profile tests. | Return the missing fact or ambiguity to Sol. |
 | Primary Sol | Scout results cannot become repository decisions without synthesis. | Protected core instruction and governance projection. | Sol inspects ambiguous evidence directly. |
-| Sol worker | One assigned mutable scope and no nested delegation. | Sol model selection, role prompt, and single-writer project policy. | Stop and return an unresolved architecture decision. |
+| Sol worker | One assigned branch and index with no nested delegation. | Sol model selection, role prompt, and single-writer project policy. | Stop and return an unresolved architecture decision. |
 | Codex runtime | Project policy does not impose a thread ceiling. | Canonical TOML omits a thread-limit member and doctor rejects the obsolete field. | Report runtime capacity and continue with the available lanes. |
 | Primary Sol | One retry for a transiently failed evidence lane. | Core instruction requires the failure count in the final report when evidence remains missing. | Continue directly after the second failure. |
 
 ## State
 
-The branch is clean at the recorded baseline. Repository policy is configured and
-declares no project contract paths. Current local Codex source reports classic
-multi-agent as stable. Its `agents.max_threads` setting enforces a cap only when
-present.
+The implementation is complete on the task branch. Repository policy is
+configured and declares no project contract paths. Current local Codex source
+reports classic multi-agent as stable. Its `agents.max_threads` setting enforces
+a cap only when present.
 
 ## Topology
 
@@ -57,7 +57,7 @@ primary Sol
 |-- Luna scout, read-only evidence lane
 |-- Luna scout, read-only evidence lane
 |-- Luna scout, read-only evidence lane
-`-- Sol worker, one exclusive mutable scope when delegation helps
+`-- Sol worker, one exclusive branch and index when delegation helps
 ```
 
 ## Smallest complete slice
@@ -88,6 +88,17 @@ primary Sol
 - Canonical role TOMLs to `.codex/agents`, governance hashes, README, and model-profile tests.
 - Registry revision and decision path to generated registry, governance, and revision assertions.
 
+## Verification
+
+- `pnpm registry:build` generated registry revision `0.12.0` with 36 components.
+- `pnpm registry:check` passed.
+- `pnpm --filter @agent-context/dev-tooling typecheck` passed.
+- `pnpm check:agents` passed.
+- `pnpm check:agent-prose -- --files ...` passed for the nine changed model-facing prose files.
+- The 70 focused agent, runtime, projection, installer, registry, and policy tests passed. Two tests were rerun separately. One needed a corrected test mutation, and one first hit a Windows temporary-file rename error before passing alone.
+- `codex doctor --summary --no-color --ascii` loaded the configuration and passed authentication and MCP checks. It still exited with status 1 because this host reports `TERM=dumb` and four existing thread-state issues.
+- `git diff --check` passed.
+
 ## Closure
 
-In progress.
+Implementation is ready for its clean-commit acceptance run.

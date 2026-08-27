@@ -427,7 +427,7 @@ test("obsolete structured artifacts are removed after their registry sources are
     const installedToml = await readFile(tomlPath, "utf8");
     assert.match(installedToml, /\[mcp_servers\.context\]/u);
     assert.match(installedToml, /interrupt_message = false/u);
-    assert.match(installedToml, /max_concurrent_threads_per_session = 2/u);
+    assert.match(installedToml, /max_threads = 6/u);
     assert.match(installedToml, /\[agents\.worker\]/u);
     assert.doesNotMatch(installedToml, /not_owned/u);
     const installedHooks = JSON.parse(
@@ -446,7 +446,7 @@ test("obsolete structured artifacts are removed after their registry sources are
     assert.deepEqual(JSON.parse(await readFile(path.join(fixture.projectRoot, "settings.json"), "utf8")), {});
     const removedToml = await readFile(tomlPath, "utf8");
     assert.match(removedToml, /interrupt_message = false/u);
-    assert.doesNotMatch(removedToml, /max_concurrent_threads_per_session|agents\.worker|mcp_servers/u);
+    assert.doesNotMatch(removedToml, /max_threads|agents\.worker|mcp_servers/u);
     const removedHooks = JSON.parse(
       await readFile(path.join(fixture.projectRoot, ".codex", "hooks.json"), "utf8"),
     ) as { hooks: { PreToolUse: Array<{ matcher: string }>; SessionStart: unknown[] } };
@@ -577,7 +577,7 @@ test("structured member updates replace owned values and removal preserves local
     );
     await writeFile(
       membersSourcePath,
-      (await readFile(membersSourcePath, "utf8")).replace("max_concurrent_threads_per_session = 2", "max_concurrent_threads_per_session = 3"),
+      (await readFile(membersSourcePath, "utf8")).replace("max_threads = 6", "max_threads = 7"),
     );
     await writeRegistry(fixture.frameworkRoot, "0.2.1");
     const updated = await updateProject(
@@ -590,7 +590,7 @@ test("structured member updates replace owned values and removal preserves local
     const hooksPath = path.join(fixture.projectRoot, ".codex", "hooks.json");
     const configPath = path.join(fixture.projectRoot, ".codex", "config.toml");
     assert.match(await readFile(hooksPath, "utf8"), /owned-v2/u);
-    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 3/u);
+    assert.match(await readFile(configPath, "utf8"), /max_threads = 7/u);
 
     await writeFile(
       hooksPath,
@@ -598,7 +598,7 @@ test("structured member updates replace owned values and removal preserves local
     );
     await writeFile(
       configPath,
-      (await readFile(configPath, "utf8")).replace("max_concurrent_threads_per_session = 3", "max_concurrent_threads_per_session = 4"),
+      (await readFile(configPath, "utf8")).replace("max_threads = 7", "max_threads = 8"),
     );
     await writeFile(
       hooksSourcePath,
@@ -606,7 +606,7 @@ test("structured member updates replace owned values and removal preserves local
     );
     await writeFile(
       membersSourcePath,
-      (await readFile(membersSourcePath, "utf8")).replace("max_concurrent_threads_per_session = 3", "max_concurrent_threads_per_session = 5"),
+      (await readFile(membersSourcePath, "utf8")).replace("max_threads = 7", "max_threads = 9"),
     );
     await writeRegistry(fixture.frameworkRoot, "0.2.2");
     assert.equal(
@@ -628,7 +628,7 @@ test("structured member updates replace owned values and removal preserves local
     assert.match(await readFile(hooksPath, "utf8"), /owned-v3/u);
     assert.doesNotMatch(await readFile(hooksPath, "utf8"), /project-owned/u);
     assert.match(await readFile(hooksPath, "utf8"), /\^Bash\$/u);
-    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 5/u);
+    assert.match(await readFile(configPath, "utf8"), /max_threads = 9/u);
     assert.match(await readFile(configPath, "utf8"), /interrupt_message = false/u);
     await writeFile(
       hooksPath,
@@ -636,12 +636,12 @@ test("structured member updates replace owned values and removal preserves local
     );
     await writeFile(
       configPath,
-      (await readFile(configPath, "utf8")).replace("max_concurrent_threads_per_session = 5", "max_concurrent_threads_per_session = 6"),
+      (await readFile(configPath, "utf8")).replace("max_threads = 9", "max_threads = 10"),
     );
     const removed = await removeComponent(fixture.projectRoot, fixture.frameworkRoot, "structured");
     assert.equal(removed.plan.status, "ready");
     assert.match(await readFile(hooksPath, "utf8"), /project-owned-after-overwrite/u);
-    assert.match(await readFile(configPath, "utf8"), /max_concurrent_threads_per_session = 6/u);
+    assert.match(await readFile(configPath, "utf8"), /max_threads = 10/u);
     const lock = JSON.parse(await readFile(path.join(fixture.projectRoot, CONTEXT_LOCK_PATH), "utf8")) as {
       components: string[];
       artifacts: Array<{ component: string }>;
@@ -795,7 +795,7 @@ async function createFixture(): Promise<Fixture> {
   );
   await writeFile(
     path.join(frameworkRoot, "registry", "sources", "structured-members.toml"),
-    '[agents]\nmax_concurrent_threads_per_session = 2\n\n[agents.worker]\ndescription = "Worker"\nconfig_file = "agents/worker.toml"\n',
+    '[agents]\nmax_threads = 6\n\n[agents.worker]\ndescription = "Worker"\nconfig_file = "agents/worker.toml"\n',
   );
   await writeFile(path.join(frameworkRoot, "registry", "decisions", "0.2.0.md"), "# Decision\n");
   await writeRegistry(frameworkRoot, "0.2.0");
@@ -979,7 +979,7 @@ async function structuredRegistryArtifacts(frameworkRoot: string): Promise<reado
     {
       operation: "toml-members", sourcePath: "registry/sources/structured-members.toml", sourceSha256: sha(members),
       targetPath: ".codex/config.toml", ownedMembers: [
-        "agents.max_concurrent_threads_per_session",
+        "agents.max_threads",
         "agents.worker",
       ],
     },

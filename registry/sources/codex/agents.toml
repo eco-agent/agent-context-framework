@@ -1,8 +1,4 @@
 [agents]
-enabled = true
-max_concurrent_threads_per_session = 2
-default_subagent_model = "gpt-5.6-sol"
-default_subagent_reasoning_effort = "high"
 interrupt_message = true
 
 [agents.default]
@@ -14,5 +10,5 @@ description = "Read-only Luna Max agent for bounded investigation and research."
 config_file = "./agents/scout.toml"
 
 [agents.worker]
-description = "Luna Max worker for bounded, well-specified implementation and cleanup."
+description = "Sol High worker for one bounded, exclusively owned implementation task."
 config_file = "./agents/worker.toml"

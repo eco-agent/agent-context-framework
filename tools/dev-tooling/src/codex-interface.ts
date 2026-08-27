@@ -121,7 +121,7 @@ export async function inspectInstalledCodexInterface(
     const expected = new Map([
       ["default", ["gpt-5.6-sol", "high"]],
       ["scout", ["gpt-5.6-luna", "max"]],
-      ["worker", ["gpt-5.6-luna", "max"]],
+      ["worker", ["gpt-5.6-sol", "high"]],
     ] as const);
     for (const [name, [model, effort]] of expected) {
       try {
@@ -170,7 +170,16 @@ export function unsafeReferenceDiagnostics(source: string): readonly string[] {
 
 function validateInstalledAgents(config: Readonly<Record<string, unknown>>, diagnostics: string[]): void {
   const agents = record(config.agents);
-  if (agents.max_concurrent_threads_per_session !== 2) diagnostics.push("Codex agent concurrency must be 2.");
+  for (const obsolete of [
+    "enabled",
+    "max_concurrent_threads_per_session",
+    "default_subagent_model",
+    "default_subagent_reasoning_effort",
+  ]) {
+    if (Object.hasOwn(agents, obsolete)) {
+      diagnostics.push(`Codex agent setting agents.${obsolete} is obsolete; remove it and use explicit role files or a supported runtime capacity setting.`);
+    }
+  }
   for (const name of ["default", "scout", "worker"] as const) {
     const role = record(agents[name]);
     if (role.config_file !== `./agents/${name}.toml`) {
