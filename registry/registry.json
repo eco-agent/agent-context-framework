@@ -446,7 +446,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:df06bd4522ddb858cda2f691288f97d8ffbed92ccf0fc5fb7e632d008bf232fe",
+      "revision": "sha256:3689c95c814e69b1efa7e0aa9046fb4cca6c3be56c0fd2612391ffd507de6372",
       "dependencies": [],
       "capabilities": [
         {
@@ -517,7 +517,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
-          "sourceSha256": "0b335b0c1411a027cabefd77d2f196df99d1ee9d95147eb74b6e35c21fe86606",
+          "sourceSha256": "2696b2d480014a640a64397fd53ca12898959402a7a27c9d4781e8fe2e4c3bd6",
           "targetPath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
           "mediaType": "text/markdown"
         },
@@ -545,7 +545,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",
-          "sourceSha256": "c9747796e76c584ba121fa298ae6c2b3208de5259250d1227fc238e359c75e66",
+          "sourceSha256": "071bb8df01764d03fff25e28ead7f963647ff95a01861328738b876ea5e01320",
           "targetPath": ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",
           "mediaType": "text/markdown"
         },

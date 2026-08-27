@@ -10,7 +10,7 @@ reach a deployable user path.
 | Stage | Decisions owned here | Required output |
 | --- | --- | --- |
 | Visual thesis | Product character, visual precedent, accepted and rejected lessons | Durable visual evidence record and one approved thesis |
-| Foundations | Type roles, color roles, spacing rhythm, density, elevation, material, themes, and motion principles | Named tokens or contracts plus rendered samples where values interact |
+| Foundations | Type roles, color roles, spacing rhythm, density, elevation, material, themes, and motion principles | Named tokens or contracts plus editable specimens and rendered captures where values interact |
 | Component contract | Component roles, variants, states, accessibility, content limits, and supported placements | Component lab contract with representative fixtures |
 | Interaction recipe | Trigger, feedback, state transition, interruption, recovery, focus, keyboard behavior, motion, and reduced motion | Runnable study or settled behavior contract |
 | Application shell | Navigation, persistent regions, route families, responsive topology, and shared product chrome | Approved shell specification and representative renders |
@@ -22,6 +22,10 @@ The names describe decision ownership, not a mandatory calendar. Combine stages
 when one bounded task can complete them without hiding unresolved choices. Skip a
 stage only when the project already has an approved owner or the stage does not
 apply. Record which case applies.
+
+Honor a stage that the user or an approved program names when its required input
+exists. If a prerequisite decision is missing, return that exact gap to its owner.
+Do not silently expand the named stage or replace it with a nearby stage.
 
 ## Write the stage contract
 

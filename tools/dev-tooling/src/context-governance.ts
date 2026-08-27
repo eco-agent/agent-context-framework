@@ -235,11 +235,13 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "The current task should own one stage unless the user has approved a broader program.",
     "A stage is complete when its decisions and evidence can be trusted by the next owner.",
     "In a staged frontend program, the approved stage is the complete slice until product assembly begins.",
+    "Do not silently expand the named stage or replace it with a nearby stage.",
   ]],
   [".codex/skills/frontend-design-discipline/references/precedent-evidence.md", [
     "A phrase such as `quiet structural planes` is not evidence.",
     "A still image proves one frame.",
     "move every accepted artifact and its record to a durable project-owned path",
+    "Do not create a new documentation hierarchy as an incidental part of evidence capture.",
   ]],
   [".codex/skills/frontend-design-discipline/references/interaction-studies.md", [
     "Create a runnable study when a decision depends on behavior that prose or a still image cannot settle.",

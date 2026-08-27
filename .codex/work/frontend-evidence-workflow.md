@@ -129,6 +129,20 @@ the registry builder records exact projected files and hashes.
 - A first long installer test run was invalidated because generated policy files
   changed while the process was reading them. Its failures are not acceptance
   evidence. The affected suite must run again from stable task state.
+- Seven focused registry and governance tests passed from stable committed state.
+  They covered deterministic registry construction, routing exercises, installed
+  frontend bytes, stale projections, semantic dilution, representation and context
+  boundaries, and packaged Markdown references.
+- Ten revision and installation tests passed for Codex agents, Codex runtime, and
+  repository policy. The dev-tooling typecheck also passed.
+- The repository `docs` profile passed from clean commit `cfa95c7`.
+- A fresh worker used the revised skill in an isolated temporary repository. It
+  selected Foundations, preserved both source PNG files with hashes and exact
+  regions, generated an editable SVG and rendered PNG specimen, and excluded
+  branding, topology, navigation, workflows, components, responsive behavior,
+  and motion. It exposed one ambiguity: absent a project contract, it invented a
+  `docs/design/evidence` root. The skill now blocks that choice unless an existing
+  documentation owner or user authorization supplies the durable path.
 
 ## Closure
 

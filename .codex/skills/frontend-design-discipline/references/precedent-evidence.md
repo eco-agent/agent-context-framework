@@ -50,6 +50,12 @@ task, move every accepted artifact and its record to a durable project-owned pat
 named by the specification or a project contract. Preserve the original bytes
 when possible. Record a content hash or the Git revision that fixes those bytes.
 
+Prefer a path already owned by a project contract or an established documentation
+root. If neither exists and the user has not authorized new repository structure,
+keep the working evidence under `.codex/work/frontend` and report that promotion
+is blocked. Do not create a new documentation hierarchy as an incidental part of
+evidence capture.
+
 The durable record should contain:
 
 - raw captures, clips, or links to licensed source;
