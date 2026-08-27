@@ -434,6 +434,11 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
 
     for (const expected of [
       ".codex/skills/frontend-design-discipline/assets/design-search.md",
+      ".codex/skills/frontend-design-discipline/assets/component-lab.md",
+      ".codex/skills/frontend-design-discipline/assets/visual-evidence.md",
+      ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
+      ".codex/skills/frontend-design-discipline/references/interaction-studies.md",
+      ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",
       ".codex/skills/frontend-design-discipline/references/progressive-context.md",
       ".codex/skills/frontend-design-discipline/references/representation-search.md",
     ]) {

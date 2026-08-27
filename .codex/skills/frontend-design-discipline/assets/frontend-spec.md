@@ -16,7 +16,7 @@ into it.
 - What users perceive:
 - What remains quiet or hidden:
 - Required accessibility equivalents:
-- Evidence sources:
+- Accepted evidence IDs and durable paths:
 - Unresolved feasibility questions:
 
 ## State behavior
@@ -51,6 +51,15 @@ into it.
 - Evidence artifact or repository path:
 - Implementation mode (`reuse` or `observe`):
 - Retained license notice:
+
+## Visual calibration evidence
+
+- Evidence record:
+- Accepted examples and the exact lessons they establish:
+- Rejected examples and the explicit boundaries they establish:
+- Runnable studies or clips required for motion claims:
+- Evidence promoted to a durable project-owned path:
+- Visual decisions that remain unverified:
 
 ### Source files
 
@@ -179,8 +188,19 @@ meaning, visible content, actions, navigation, or features.
 | --- | --- | --- | --- | --- |
 |  |  |  |  |  |
 
-## First vertical slice
+## Approved delivery stage
 
+- Stage:
+- Input evidence and prior decisions:
+- Decisions owned here:
+- Decisions excluded until a later stage:
+- Output artifact:
+- Promotion gate:
+- Authority and stopping condition:
+
+### Product assembly path
+
+- Applicability:
 - Entry:
 - Action:
 - State transition:
@@ -214,4 +234,5 @@ meaning, visible content, actions, navigation, or features.
 - Materially different comparison:
 - Selected result and reason:
 - Human judgment owner:
+- Accepted evidence IDs, hashes, and Git revision:
 - Unverified behavior and risks:

@@ -6,6 +6,12 @@ settle the product representation from the user's tasks and the states you can
 observe. Treat schemas and the current implementation as evidence, not as the
 default interface.
 
+When supplied or approved captures, clips, runnable studies, and accepted or
+rejected examples decide the visual direction, preserve the exact artifacts and
+their provenance in a durable project-owned evidence path. Record the exact
+region or interaction, the lesson it establishes, and what must not be copied.
+Abstract style phrases do not replace inspectable visual evidence.
+
 Treat desktop and mobile as projections of the same product model. For each
 mobile surface, record whether the correct treatment is `preserve`, `adapt`,
 `recompose`, `split`, `replace`, or `remove`. Preservation is not the default.
@@ -69,3 +75,7 @@ Every frontend must set `-webkit-font-smoothing: antialiased` and
 `-moz-osx-font-smoothing: grayscale` on `body` in the global base stylesheet.
 Default to minimalism. Use claymorphism, glassmorphism, or neumorphism only when
 specified.
+
+Bind final visual acceptance to the exact evidence and Git revision the human
+reviewed. Automated checks may prove that evidence exists and required states
+rendered. They do not approve visual quality.

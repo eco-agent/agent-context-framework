@@ -24,9 +24,26 @@ into an early vertical slice.
 - Repository policy is configured and declares no project contracts.
 - The existing optional frontend composition workflow already owns rendered
   evidence, bounded reviewer repair, and external human acceptance.
-- The skill still says `Implement one complete path`, its template still asks
+- At the baseline, the skill said `Implement one complete path`, its template asked
   for a `First vertical slice`, and no installed template preserves annotated
   visual precedent or a component-state acceptance matrix.
+- The implementation now replaces those three gaps. Registry revision `0.13.0`
+  carries the new resources and staged-work exception.
+
+## Reuse assessment
+
+- Reuse the existing optional ACF frontend workflow for content-addressed render
+  evidence, bounded reviewer repair, and exact external human acceptance.
+- Reuse the existing registry directory projection and governance checks for
+  installation and anti-dilution proof.
+- Storybook Component Story Format is an optional adapter shape for named states,
+  args, and interaction recipes. Storybook is MIT licensed. No source or
+  dependency is adopted.
+- Playwright screenshots and traces are an optional adapter shape for ordered
+  actions and capture context. Playwright is Apache-2.0 licensed. No source or
+  dependency is adopted.
+- Keep browser commands, binary artifacts, fixtures, and capture runners
+  project-owned. ACF adds contracts and templates only.
 
 ## Topology
 
@@ -101,7 +118,17 @@ the registry builder records exact projected files and hashes.
 
 ## Verification evidence
 
-- Pending.
+- `python C:\Users\EthanO\.codex\skills\.system\skill-creator\scripts\quick_validate.py .codex\skills\frontend-design-discipline`
+  passed.
+- `pnpm --silent registry:check` passed for registry `0.13.0` with 36 components.
+- The direct agent-prose check passed for 12 changed Markdown sources.
+- The checker does not accept YAML or JSON inputs. The changed `openai.yaml` and
+  skill-routing exercise JSON received manual prose review, but no declared
+  changed-file observer can check them directly.
+- `git diff --check` passed.
+- A first long installer test run was invalidated because generated policy files
+  changed while the process was reading them. Its failures are not acceptance
+  evidence. The affected suite must run again from stable task state.
 
 ## Closure
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.12.0",
-  "decisionPath": "registry/decisions/0.12.0-agent-swarm-policy.md",
+  "registryRevision": "0.13.0",
+  "decisionPath": "registry/decisions/0.13.0-frontend-evidence-workflow.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -16,12 +16,12 @@
     {
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
-      "sha256": "5844b1e89610d72cc41c75518bfacbca252cc8d6377a8efb8a8afd0f73627bbe"
+      "sha256": "7a20113e06ad54dc20f98f105e413f14e68c117bf1561d9565cfbf11e3da15fb"
     },
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "a9797e724da8d828d03f5a0886548a80eeba5e8ff6a48cf5e59df1a4e3af7b89"
+      "sha256": "3c1a3f2cb882e60117ea447e46bd545dcfaf855bacb1f33dafc8fcdc57839fd2"
     },
     {
       "invariantId": "frontend-accessible-component-reuse",
@@ -96,7 +96,7 @@
     {
       "invariantId": "skill-routing-exercises",
       "sourcePath": "registry/sources/skill-routing-exercises.json",
-      "sha256": "d94eb607080cfc91702ef6e4f6eef8e950921eeb4caf9ccb9fcd86d330f96410"
+      "sha256": "a09258a518ba30a2a9305e4d99cab3df4e3b1ef72e98b0f31944c11334fd63dd"
     },
     {
       "invariantId": "session-optimization",
@@ -111,7 +111,17 @@
     {
       "invariantId": "frontend-approved-specification",
       "sourcePath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
-      "sha256": "015dddcc8fb749f9a66d3eccc7b4333e8646f7e6bbe24bb6a871628572c52960"
+      "sha256": "d1f1b4cb60ddb264b0730b23824e08f1b326a31b48ffb9da433550f288228766"
+    },
+    {
+      "invariantId": "frontend-visual-evidence-record",
+      "sourcePath": ".codex/skills/frontend-design-discipline/assets/visual-evidence.md",
+      "sha256": "9ebba4cf40b519956a3f7d48848913074102bd8660db521318ffbb66b3577bda"
+    },
+    {
+      "invariantId": "frontend-component-lab-contract",
+      "sourcePath": ".codex/skills/frontend-design-discipline/assets/component-lab.md",
+      "sha256": "738eaa0f865aeab5cc6196e3460c9450625dc7ea42c57ae7150fb583aa819185"
     },
     {
       "invariantId": "frontend-product-reframing",
@@ -141,7 +151,22 @@
     {
       "invariantId": "frontend-visual-review",
       "sourcePath": ".codex/skills/frontend-design-discipline/references/visual-review.md",
-      "sha256": "40b4c88f96f2447d4d5e23b4a37c3ed0920b28c2f1d0c9b15f0d882757db5238"
+      "sha256": "35f2c49a4664390b56650d01a02564b98ae9db1900618de03ced00d0f9aca575"
+    },
+    {
+      "invariantId": "frontend-stage-contract",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
+      "sha256": "0b335b0c1411a027cabefd77d2f196df99d1ee9d95147eb74b6e35c21fe86606"
+    },
+    {
+      "invariantId": "frontend-precedent-evidence",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",
+      "sha256": "c9747796e76c584ba121fa298ae6c2b3208de5259250d1227fc238e359c75e66"
+    },
+    {
+      "invariantId": "frontend-interaction-studies",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/interaction-studies.md",
+      "sha256": "8ace441f31a4d775fb17b56502fcfed6439dbc1af4b8035fe7cd431aa3d309a9"
     },
     {
       "invariantId": "frontend-composition-grammar",
@@ -176,7 +201,7 @@
     {
       "invariantId": "repository-work",
       "sourcePath": "registry/sources/instructions/repository-work.md",
-      "sha256": "93fa72918fa74a4460f23d00fb4bc98ae84efe40879ffdf3fe5b124783062ef5"
+      "sha256": "fafe8eb62c53d652e60e45e515f28fb9d8d8229f68cb95841dc0f5624a516339"
     },
     {
       "invariantId": "verification",
@@ -211,7 +236,7 @@
     {
       "invariantId": "work-record-lifecycle",
       "sourcePath": "registry/sources/templates/work-record.md",
-      "sha256": "dc8cb16951b40d96181d14149d74a03396ce47fdd1dd09fb1a3cd32123e33735"
+      "sha256": "90f232b3f65db8088d14b0a90345f71190eef46f4c0738003748656953d3ae32"
     },
     {
       "invariantId": "repository-policy-explicit",

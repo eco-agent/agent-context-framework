@@ -40,3 +40,9 @@ Record screenshots or frames, inspected states, the destructive comparison, the
 selected result, and unresolved risks. Automated checks can prove that states were
 rendered and evidence exists. Human review owns whether the representation is
 coherent, useful, and sufficiently quiet.
+
+Bind acceptance to the exact evidence IDs, content hashes, and Git revision that
+the human reviewed. A later render is new evidence even when its route and viewport
+match. If the accepted evidence does not live at a durable project-owned path,
+promote it before closing the design task or report that the visual decision has
+no durable owner.

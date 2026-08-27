@@ -153,6 +153,11 @@ Complete one cross-layer slice. Where the product has these states, include
 loading, empty, error, populated, hover, focus-visible, active, and disabled
 behavior.
 
+For an approved staged frontend program, complete the current design stage
+instead of forcing foundations, component contracts, interaction studies, or
+visual acceptance into premature product assembly. The cross-layer slice rule
+applies when the work reaches product assembly.
+
 Edit the owning representation, consolidate there, and replace obsolete paths
 directly. Do not add compatibility layers, migrations, deprecations, adapters,
 dual writes, fallbacks, or parallel representations unless the user asks for
@@ -199,6 +204,12 @@ Before substantial frontend implementation, use `frontend-design-discipline` to
 settle the product representation from the user's tasks and the states you can
 observe. Treat schemas and the current implementation as evidence, not as the
 default interface.
+
+When supplied or approved captures, clips, runnable studies, and accepted or
+rejected examples decide the visual direction, preserve the exact artifacts and
+their provenance in a durable project-owned evidence path. Record the exact
+region or interaction, the lesson it establishes, and what must not be copied.
+Abstract style phrases do not replace inspectable visual evidence.
 
 Treat desktop and mobile as projections of the same product model. For each
 mobile surface, record whether the correct treatment is `preserve`, `adapt`,
@@ -263,6 +274,10 @@ Every frontend must set `-webkit-font-smoothing: antialiased` and
 `-moz-osx-font-smoothing: grayscale` on `body` in the global base stylesheet.
 Default to minimalism. Use claymorphism, glassmorphism, or neumorphism only when
 specified.
+
+Bind final visual acceptance to the exact evidence and Git revision the human
+reviewed. Automated checks may prove that evidence exists and required states
+rendered. They do not approve visual quality.
 
 ## Verification
 

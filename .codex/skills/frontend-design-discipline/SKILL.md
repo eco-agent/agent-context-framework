@@ -50,7 +50,21 @@ implementation.
 - After the user approves one design, copy
   [frontend-spec.md](assets/frontend-spec.md) to
   `.codex/work/frontend/<task>.md`. Keep the approved answer and the facts that
-  support it. Leave rejected explorations behind.
+  support it. Preserve a rejected example only when it defines an explicit
+  design boundary.
+- When supplied captures, clips, HTML studies, or accepted and rejected examples
+  calibrate the design, read [precedent-evidence.md](references/precedent-evidence.md)
+  and copy [visual-evidence.md](assets/visual-evidence.md) to
+  `.codex/work/frontend/<task>-visual-evidence.md`.
+- Before deciding what the current task must deliver, read
+  [frontend-stages.md](references/frontend-stages.md). Do not force foundations,
+  component contracts, interaction recipes, shells, failure systems, or visual
+  acceptance into an early product slice.
+- For a component system or reusable interaction language, copy
+  [component-lab.md](assets/component-lab.md) to
+  `.codex/work/frontend/<task>-component-lab.md`.
+- When the design depends on behavior that a still image cannot show, read
+  [interaction-studies.md](references/interaction-studies.md).
 - Before reading or changing the current component tree, read
   [implementation-reconciliation.md](references/implementation-reconciliation.md).
 - After composition is settled, use `responsive-css-architect` for layout,
@@ -102,12 +116,18 @@ A new asset may fill an approved visual role. It may not add product meaning,
 content, actions, navigation, or features. Record the static result for people
 who prefer reduced motion.
 
-## Implement one complete path
+## Deliver the approved stage
 
-Choose the smallest user path that exercises the main interaction. Record where
-it starts, the action, state change, result, required states, and exact code
-locations. Name the owner of each code location. Implement the approved design
-only.
+Name the current stage, its input evidence, decisions, output artifact, authority,
+and stopping condition. Complete that stage without pulling later-stage decisions
+forward. A foundation, component contract, interaction recipe, shell, failure
+system, product assembly, or rendered acceptance package can be the complete
+result.
+
+When the approved stage is product assembly, choose the smallest user path that
+exercises the main interaction. Record where it starts, the action, state change,
+result, required states, and exact code locations. Name the owner of each code
+location. Implement the approved design only.
 
 Before naming a new presentation owner, inspect dependency manifests, component
 imports, providers, theme configuration, and local component directories. Map

@@ -20,7 +20,9 @@ Describe the owners and flow affected by the task.
 
 ## Slice
 
-1. Name the smallest cross-layer slice that proves the outcome.
+1. Name the smallest complete slice that proves the outcome.
+2. For staged frontend work, name the current design stage and its promotion
+   gate. The slice becomes cross-layer when the work reaches product assembly.
 
 ## Replacements
 

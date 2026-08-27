@@ -53,8 +53,8 @@
       "component": "skill-frontend-design-discipline",
       "positivePrompt": "Design a novel interaction for comparing two live deployment states before implementing it.",
       "negativePrompt": "Fix the established deployment table's horizontal overflow without changing its interaction.",
-      "changedDecision": "Materialize and compare a genuinely different representation before approving one implementation target.",
-      "observation": "A design-search record with evidence, competing representations, one approved answer, and an implementation specification.",
+      "changedDecision": "Materialize and compare a genuinely different representation, preserve the visual evidence that defines the decision, and complete only the approved frontend stage.",
+      "observation": "A design-search record, durable visual evidence, one approved answer, and a stage contract with an explicit promotion gate.",
       "gracePath": "Report the missing product evidence or decision owner and stop before inventing visible structure."
     },
     {

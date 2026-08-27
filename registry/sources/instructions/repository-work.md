@@ -27,6 +27,11 @@ Complete one cross-layer slice. Where the product has these states, include
 loading, empty, error, populated, hover, focus-visible, active, and disabled
 behavior.
 
+For an approved staged frontend program, complete the current design stage
+instead of forcing foundations, component contracts, interaction studies, or
+visual acceptance into premature product assembly. The cross-layer slice rule
+applies when the work reaches product assembly.
+
 Edit the owning representation, consolidate there, and replace obsolete paths
 directly. Do not add compatibility layers, migrations, deprecations, adapters,
 dual writes, fallbacks, or parallel representations unless the user asks for

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.12.0",
-  "decisionPath": "registry/decisions/0.12.0-agent-swarm-policy.md",
+  "revision": "0.13.0",
+  "decisionPath": "registry/decisions/0.13.0-frontend-evidence-workflow.md",
   "components": [
     {
       "name": "core",
@@ -446,7 +446,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:77034eb72dfa7c1f13c2e8ff4dca6acfe23592d7d44d19a58dcc78ed04e48dfb",
+      "revision": "sha256:df06bd4522ddb858cda2f691288f97d8ffbed92ccf0fc5fb7e632d008bf232fe",
       "dependencies": [],
       "capabilities": [
         {
@@ -468,9 +468,16 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
-          "sourceSha256": "743ce40efe80f66aa923368794acfe8b1bf8374125ed1d41e4f4df9b7a78a854",
+          "sourceSha256": "7754108adccb9ed2375bdcd3130a7f56fe7bf1c0e5fd10382075a23d3c23a790",
           "targetPath": ".codex/skills/frontend-design-discipline/agents/openai.yaml",
           "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/assets/component-lab.md",
+          "sourceSha256": "738eaa0f865aeab5cc6196e3460c9450625dc7ea42c57ae7150fb583aa819185",
+          "targetPath": ".codex/skills/frontend-design-discipline/assets/component-lab.md",
+          "mediaType": "text/markdown"
         },
         {
           "operation": "file",
@@ -482,8 +489,15 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
-          "sourceSha256": "015dddcc8fb749f9a66d3eccc7b4333e8646f7e6bbe24bb6a871628572c52960",
+          "sourceSha256": "d1f1b4cb60ddb264b0730b23824e08f1b326a31b48ffb9da433550f288228766",
           "targetPath": ".codex/skills/frontend-design-discipline/assets/frontend-spec.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/assets/visual-evidence.md",
+          "sourceSha256": "9ebba4cf40b519956a3f7d48848913074102bd8660db521318ffbb66b3577bda",
+          "targetPath": ".codex/skills/frontend-design-discipline/assets/visual-evidence.md",
           "mediaType": "text/markdown"
         },
         {
@@ -502,6 +516,13 @@
         },
         {
           "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
+          "sourceSha256": "0b335b0c1411a027cabefd77d2f196df99d1ee9d95147eb74b6e35c21fe86606",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
           "sourceSha256": "bb58b529419a1e886ed3f4368ced5e09ab5dda651376c5a3b8696bd5617e2d23",
           "targetPath": ".codex/skills/frontend-design-discipline/references/implementation-reconciliation.md",
@@ -509,9 +530,23 @@
         },
         {
           "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/interaction-studies.md",
+          "sourceSha256": "8ace441f31a4d775fb17b56502fcfed6439dbc1af4b8035fe7cd431aa3d309a9",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/interaction-studies.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/mobile-recomposition.md",
           "sourceSha256": "1266f281a3ecbdf4290b5e914b5d2622b1b7bcc42987cc028e9b163babb78ea8",
           "targetPath": ".codex/skills/frontend-design-discipline/references/mobile-recomposition.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",
+          "sourceSha256": "c9747796e76c584ba121fa298ae6c2b3208de5259250d1227fc238e359c75e66",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",
           "mediaType": "text/markdown"
         },
         {
@@ -538,14 +573,14 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/visual-review.md",
-          "sourceSha256": "40b4c88f96f2447d4d5e23b4a37c3ed0920b28c2f1d0c9b15f0d882757db5238",
+          "sourceSha256": "35f2c49a4664390b56650d01a02564b98ae9db1900618de03ced00d0f9aca575",
           "targetPath": ".codex/skills/frontend-design-discipline/references/visual-review.md",
           "mediaType": "text/markdown"
         },
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "a9797e724da8d828d03f5a0886548a80eeba5e8ff6a48cf5e59df1a4e3af7b89",
+          "sourceSha256": "3c1a3f2cb882e60117ea447e46bd545dcfaf855bacb1f33dafc8fcdc57839fd2",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -694,7 +729,7 @@
     },
     {
       "name": "frontend",
-      "revision": "sha256:bea036accf760e1d3b71298b9b733f314307f6fac05c8929345459ca6b85be0a",
+      "revision": "sha256:07f85a6715327a0bc200462445c980d151cf8e055402b149e5f3d8d1c26a7740",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -729,7 +764,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend.md",
-          "sourceSha256": "5844b1e89610d72cc41c75518bfacbca252cc8d6377a8efb8a8afd0f73627bbe",
+          "sourceSha256": "7a20113e06ad54dc20f98f105e413f14e68c117bf1561d9565cfbf11e3da15fb",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend",
           "markerStyle": "markdown"
@@ -1968,7 +2003,7 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:4efbf746329168f27819e1bb726a22c22d0fef8dc0a59a4c2d3907c856b7093b",
+      "revision": "sha256:d1103ac3b8f1e569ab7adedd4323671fecbdaabf2943d288068cff1f1087d390",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-design-operational-boundaries",
@@ -2024,7 +2059,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/templates/work-record.md",
-          "sourceSha256": "dc8cb16951b40d96181d14149d74a03396ce47fdd1dd09fb1a3cd32123e33735",
+          "sourceSha256": "90f232b3f65db8088d14b0a90345f71190eef46f4c0738003748656953d3ae32",
           "targetPath": ".codex/templates/work-record.md",
           "mediaType": "text/markdown"
         },

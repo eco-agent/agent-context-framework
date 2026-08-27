@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.12.0",
-  "decisionPath": "registry/decisions/0.12.0-agent-swarm-policy.md",
+  "revision": "0.13.0",
+  "decisionPath": "registry/decisions/0.13.0-frontend-evidence-workflow.md",
   "components": [
     {
       "name": "core",
