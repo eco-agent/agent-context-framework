@@ -14,11 +14,11 @@ remains authoritative until that proof passes.
 - Task branch: `codex/acf-capsule-v1`
 - Generated application: `D:/dev/acf-fixture-command-check`
 - Generated application baseline: `7d5ff44a46eeb1541b507601c77509f4b0bfccd8`
-- Generated application revision: `c72d6e92421c9127ae609dc6530448fb61f49ab0`
+- Generated application revision: `ed49d45a201c4ec43a7d59d1b11e4c11a47c264f`
 - Generated capsule SHA-256:
-  `26aec0c14bb9bb6c31cdd130fae4012780fc0f2cf547d79dd017ce7bede1dd19`
+  `8162937b07f836b33f28b64087142329eb3f1ef86faba83bf3db8b9f5a2485f4`
 - Generated capsule framework revision:
-  `332ad3b6069a71817aa3af27f900626b1ccae0dd`
+  `9315c38f9b2674f7eb638e09822bdb276816149f`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
@@ -205,12 +205,16 @@ active slice.
   `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.
 - Receipt ownership safety revision:
   `332ad3b6069a71817aa3af27f900626b1ccae0dd`.
+- Standalone bootstrap and lock-v3 ownership revision:
+  `9315c38f9b2674f7eb638e09822bdb276816149f`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
 - Combined policy, capsule, bootstrap, materialization, transaction, and fixture
   tests: 33 passed.
 - Reproducible bundle and plain-Node fresh-clone bootstrap tests: 2 passed.
+- Committed bootstrap bundle: 40,289 bytes. The generated fixture marks both the
+  bootstrap and capsule as binary Git paths.
 - Different-capsule proof retains the exact prior materialized skill and reports
   that lock v3 must establish tracked ownership before replacement.
 - Existing installer, installer CLI, and transaction tests: 25 passed.
@@ -222,5 +226,5 @@ active slice.
 - Documentation profile: passed.
 - Workflow profile: passed, including workflow tests, dependency adoption,
   boundaries, and verification cleanliness.
-- Latest documentation and workflow profiles passed after the bootstrap and
-  lock-v3 ownership changes.
+- Latest documentation and workflow profiles passed at standalone bootstrap
+  revision `9315c38f9b2674f7eb638e09822bdb276816149f`.
