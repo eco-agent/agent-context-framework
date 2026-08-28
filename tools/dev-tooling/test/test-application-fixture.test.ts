@@ -160,7 +160,7 @@ test("materialized fixture writes ignored repository skills beside tracked expan
     );
     assert.equal(
       receipt.files.every((file) =>
-        /^\.agents\/skills\/diagnose@[a-f0-9]{64}\//u.test(file.targetPath)),
+        /^\.agents\/skills\/acf--diagnose--[a-f0-9]{64}\//u.test(file.targetPath)),
       true,
     );
     for (const file of receipt.files) {

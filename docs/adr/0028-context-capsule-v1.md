@@ -119,29 +119,31 @@ capsule as binary.
 ### Initial skill materialization
 
 Codex scans `.agents/skills` in repository directories. ACF maps each selected
-whole-file skill artifact to a content-addressed direct child named
-`<skill>@<component-digest>` below `.agents/skills`. The file's path inside that
-child stays the same. The capsule keeps its original source and artifact paths,
-so the receipt records both the source path and the mapped target path.
+whole-file skill artifact to an ACF-owned content-addressed direct child named
+`acf--<skill>--<component-digest>` below `.agents/skills`. The file's path inside
+that child stays the same. The capsule keeps its original source and artifact
+paths, so the receipt records the component revision, skill name, owned root,
+source path, and mapped target path.
 
 The ignored receipt at `.agent-context/materialization.json` records the capsule
 and tree digests, registry revision, artifact identity, component, source path,
 target path, installed digest, and byte count for every generated file. It omits
 timestamps, absolute paths, process identifiers, and host data.
 
-Materialization may create an absent projection, reuse an exact projection, or
-replace a valid receipt-owned projection. It blocks when the receipt is missing
-or malformed, a generated file was changed, an unexpected path exists inside a
-generated skill, or a path traverses a symbolic link. The tracked expanded skill
-remains the installation oracle during this side-by-side checkpoint.
+Materialization may create an absent projection or reuse an exact projection. It
+blocks when the receipt is missing or malformed, a generated file was changed,
+an unexpected path exists inside a generated skill, a path traverses a symbolic
+link, or the requested capsule differs. The ignored receipt cannot authorize
+deletion by itself. Replacement waits until lock v3 or retained tracked capsule
+state proves the old ownership. The tracked expanded skill remains the
+installation oracle during this side-by-side checkpoint.
 
-The context transaction claims its staging directory exclusively. Replacement
-writes every new content-addressed file, publishes the new receipt, then removes
-files owned only by the previous receipt. A process failure before the receipt
-leaves the previous projection intact. A failure after the receipt may leave the
-old complete skill beside the new one until transaction recovery finishes. Codex
-must start only after materialization or recovery completes. Empty old
-directories may remain, but without `SKILL.md` they are not skill projections.
+The context transaction claims its staging directory exclusively. Initial
+materialization writes verified files and publishes the receipt last. A process
+failure can leave a partial new directory until transaction recovery finishes.
+The generated fixture invokes materialization synchronously and never starts
+Codex during that interval. A future bootstrap must inspect and recover the
+transaction before Codex discovers repository skills.
 
 ### Reserved lock v3
 
@@ -205,12 +207,14 @@ After side-by-side equivalence and initial skill materialization pass, later
 checkpoints may:
 
 1. Publish capsule and lock v3 through one transaction.
-2. Introduce the stable built-in bootstrap and packaged startup runtime.
-3. Move runtime source to ignored immutable output.
-4. Retain startup files and project controls as tracked files.
-5. Migrate existing lock-v2 projects only when every managed file matches its
+2. Bind the old receipt to tracked ownership and replace valid materialization
+   without exposing a partial skill to Codex discovery.
+3. Introduce the stable built-in bootstrap and packaged startup runtime.
+4. Move runtime source to ignored immutable output.
+5. Retain startup files and project controls as tracked files.
+6. Migrate existing lock-v2 projects only when every managed file matches its
    recorded provenance.
-6. Connect capsule updates to a multi-repository manager.
+7. Connect capsule updates to a multi-repository manager.
 
 No later checkpoint may infer permission to discard locally modified managed
 files. A blocked migration reports the exact files and leaves the repository
@@ -245,11 +249,10 @@ Capsule v1 is not accepted until all of these conditions hold:
    from the capsule and remains at the same clean Git revision.
 6. The generated skill fixture writes exact ignored `.agents/skills` bytes,
    retains tracked expanded bytes, and stays Git-clean.
-7. An exact materialization rerun writes nothing. A different capsule publishes
-   complete content-addressed output before removing the prior receipt-owned
-   files. Interrupted replacement remains recoverable.
-8. A modified file, unexpected path, malformed receipt, or symbolic link blocks
-   replacement.
+7. An exact materialization rerun writes nothing. A different capsule blocks
+   without deleting the valid prior output.
+8. A modified file, unexpected path, malformed receipt, forged root mapping, or
+   symbolic link blocks materialization.
 9. The existing installer and transaction suites still pass.
 
 ## Implementation references

@@ -103,14 +103,16 @@ repository discovery path, `.agents/skills`. It keeps the tracked
 selects `skill-diagnose`, builds its capsule, writes the ignored copy and
 receipt, and proves that Git remains clean.
 
-The first checkpoint supported an absent destination and an exact repeat. The
-replacement checkpoint gives each generated skill directory the component's
-full content digest. A transaction writes complete new skill files, publishes
-the new receipt, then removes files owned only by the previous receipt. A crash
-before the receipt leaves the old projection intact. A crash after the receipt
-can expose both complete versions until recovery, but it never overwrites the
-old bytes. Modified generated files, malformed receipts, and unexplained target
-paths still block replacement.
+Each generated skill directory carries an explicit ACF prefix, skill name, and
+the component's full content digest. The receipt re-states those fields and must
+preserve the skill-relative source mapping. Materialization supports an absent
+destination and an exact repeat. Modified generated files, malformed receipts,
+unexplained target paths, and a different capsule block replacement.
+
+The ignored receipt does not prove prior ownership strongly enough to authorize
+deletion. Replacement now waits for lock v3 or retained tracked capsule evidence.
+Initial publication remains a flat recoverable transaction, so the stable
+bootstrap must recover it before Codex discovers repository skills.
 
 The existing context transaction becomes the project-local concurrency owner by
 claiming its stage directory exclusively. A losing process must not remove the
@@ -136,7 +138,7 @@ Reuse assessment:
 | --- | --- | --- | --- |
 | Capsule skill mapper | Only whole-file artifacts already owned below `.codex/skills` may map to `.agents/skills`. | Receipt decoder and mapping tests | Reject unsupported operations or escaping paths without writing. |
 | Materialization receipt | Record the capsule and every generated target with its source and installed digest. | Exact receipt and file verification | Report missing, malformed, or modified output and retain it for inspection. |
-| Skill materializer | Publish content-addressed new files and the receipt before deleting prior receipt-owned files. | Clean, repeat, replacement interruption, unexplained-target, and dirty-output tests | Recover the transaction before starting Codex, or continue using the expanded tracked installation. |
+| Skill materializer | Create an absent ACF-owned content-addressed root or reuse an exact receipt. Never delete from the ignored receipt alone. | Clean, repeat, different-capsule, unexplained-target, and dirty-output tests | Recover before starting Codex, or continue using the expanded tracked installation. |
 | Context transaction | One process owns staging and publication. | Concurrent stage-claim test and recovery suite | The losing process stops; doctor resumes or discards the winning transaction. |
 | Generated fixture | Ignore materialized files while keeping capsule, config, lock v2, and expanded projections tracked. | Git status and `check-ignore` assertions | Fail fixture generation when an expected generated path is not ignored. |
 
@@ -181,14 +183,14 @@ active slice.
 - Capsule v1 checkpoint revision: `74d1db1ee0733f6659a98d16750d1fdacb698890`.
 - Initial receipt-backed materialization revision:
   `d83f0e82986015d28feb35980bb4f821f27ac138`.
-- Content-addressed replacement revision:
+- Content-addressed materialization revision:
   `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
 - Combined capsule, materialization, transaction, and fixture tests: 24 passed.
-- Replacement failure injection proves the old complete skill remains readable
-  after the new receipt publishes, then transaction recovery removes it.
+- Different-capsule proof retains the exact prior materialized skill and reports
+  that lock v3 must establish tracked ownership before replacement.
 - Existing installer, installer CLI, and transaction tests: 25 passed.
 - Dev-tooling TypeScript build: passed.
 - Agent prose check: passed for the ADR.
@@ -196,5 +198,5 @@ active slice.
 - Documentation profile: passed.
 - Workflow profile: passed, including workflow tests, dependency adoption,
   boundaries, and verification cleanliness.
-- Latest documentation and workflow profiles passed at replacement revision
+- Latest documentation and workflow profiles passed at materialization revision
   `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.

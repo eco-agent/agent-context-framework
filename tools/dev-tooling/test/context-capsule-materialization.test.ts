@@ -16,11 +16,7 @@ import {
   materializeContextCapsuleSkills,
   planContextCapsuleSkillMaterialization,
 } from "../src/context-capsule-materialization.js";
-import { addComponent, removeComponent } from "../src/context-installer.js";
-import {
-  inspectContextTransaction,
-  resumeContextTransaction,
-} from "../src/context-transaction.js";
+import { addComponent } from "../src/context-installer.js";
 import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -35,7 +31,7 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
     assert.equal(first.receipt.files.length, 2);
     assert.equal(
       first.receipt.files.every((file) =>
-        /^\.agents\/skills\/diagnose@[a-f0-9]{64}\//u.test(file.targetPath)),
+        /^\.agents\/skills\/acf--diagnose--[a-f0-9]{64}\//u.test(file.targetPath)),
       true,
     );
     for (const file of first.receipt.files) {
@@ -52,6 +48,15 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
     assert.deepEqual(
       decodeContextMaterializationReceipt(JSON.parse(receiptBefore.toString("utf8")) as unknown),
       first.receipt,
+    );
+    const forgedReceipt = JSON.parse(receiptBefore.toString("utf8")) as {
+      files: Array<{ skillRoot: string }>;
+    };
+    forgedReceipt.files[0]!.skillRoot =
+      `.agents/skills/acf--diagnose--${"0".repeat(64)}`;
+    assert.throws(
+      () => decodeContextMaterializationReceipt(forgedReceipt),
+      /skillRoot does not match its skill and component revision/u,
     );
 
     const second = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
@@ -111,19 +116,32 @@ test("materialization blocks modified and unexpected generated output", async ()
     const skillRoot = path.join(unexplained.projectRoot, skillRootRelative!);
     await mkdir(skillRoot, { recursive: true });
     await writeFile(path.join(skillRoot, "other.txt"), "unreceipted\n", "utf8");
+    const staleSkillRootRelative =
+      `.agents/skills/acf--stale-skill--${"0".repeat(64)}`;
+    const staleSkillRoot = path.join(unexplained.projectRoot, staleSkillRootRelative);
+    await mkdir(staleSkillRoot, { recursive: true });
+    await writeFile(path.join(staleSkillRoot, "SKILL.md"), "# Stale\n", "utf8");
     const plan = await planContextCapsuleSkillMaterialization(
       unexplained.capsule,
       unexplained.projectRoot,
     );
     assert.equal(plan.status, "blocked");
-    assert.equal(plan.conflicts[0]?.targetPath, skillRootRelative);
-    assert.match(plan.conflicts[0]?.detail ?? "", /without an ACF receipt/u);
+    assert.equal(
+      plan.conflicts.some((conflict) =>
+        conflict.targetPath === skillRootRelative && /without an ACF receipt/u.test(conflict.detail)),
+      true,
+    );
+    assert.equal(
+      plan.conflicts.some((conflict) =>
+        conflict.targetPath === staleSkillRootRelative && /contains SKILL\.md/u.test(conflict.detail)),
+      true,
+    );
   } finally {
     await unexplained.remove();
   }
 });
 
-test("materialization publishes a new content-addressed skill before removing the old one", async () => {
+test("materialization keeps a valid prior capsule until lock v3 can prove ownership", async () => {
   const fixture = await createCapsuleFixture("different");
   try {
     const installed = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
@@ -133,8 +151,6 @@ test("materialization publishes a new content-addressed skill before removing th
       installed.receipt.files,
       "SKILL.md",
     );
-    const removed = await removeComponent(fixture.projectRoot, frameworkRoot, "skill-diagnose");
-    assert.equal(removed.plan.status, "ready");
     const added = await addComponent(
       fixture.projectRoot,
       frameworkRoot,
@@ -146,32 +162,13 @@ test("materialization publishes a new content-addressed skill before removing th
       fixture.projectRoot,
       frameworkRevision,
     );
-    await assert.rejects(
-      materializeContextCapsuleSkills(nextCapsule, fixture.projectRoot, {
-        afterMutation: (boundary) => {
-          if (boundary.kind === "target-written" &&
-            boundary.targetPath === CONTEXT_MATERIALIZATION_PATH) {
-            throw new Error("Injected failure after replacement receipt.");
-          }
-        },
-      }),
-      /Injected failure after replacement receipt/u,
-    );
+    const blocked = await materializeContextCapsuleSkills(nextCapsule, fixture.projectRoot);
+    assert.equal(blocked.status, "blocked");
+    assert.equal(blocked.conflicts[0]?.targetPath, CONTEXT_MATERIALIZATION_PATH);
+    assert.match(blocked.conflicts[0]?.detail ?? "", /requires tracked ownership from lock v3/u);
     assert.equal(
       await readFile(path.join(fixture.projectRoot, oldSkillPath), "utf8"),
       contextCapsuleEntryBytes(fixture.capsule, ".codex/skills/diagnose/SKILL.md").toString("utf8"),
-    );
-    assert.equal((await inspectContextTransaction(fixture.projectRoot)).status, "resumable");
-    await resumeContextTransaction(fixture.projectRoot);
-    const current = await planContextCapsuleSkillMaterialization(
-      nextCapsule,
-      fixture.projectRoot,
-    );
-    assert.equal(current.status, "current");
-    await assert.rejects(readFile(path.join(fixture.projectRoot, oldSkillPath)), /ENOENT/u);
-    assert.equal(
-      current.receipt.files.some((file) => file.targetPath.includes("codebase-inventory@")),
-      true,
     );
   } finally {
     await fixture.remove();
