@@ -1,4 +1,10 @@
 export {
+  classifyContextCapsuleRestart,
+  type ContextCapsuleRestartClassification,
+  type ContextCapsuleRestartReason,
+  type ContextCapsuleRestartReasonKind,
+} from "./context-capsule-restart.js";
+export {
   activateTaskAttempt,
   activeTaskBindingPath,
   activeTaskCurrentPath,
@@ -195,6 +201,7 @@ export {
   type ContextMaterializationConflict,
   type ContextMaterializationAuthorityVerification,
   type ContextMaterializationPlan,
+  type ContextMaterializationOptions,
   type ContextMaterializationReceiptV2,
   type ContextMaterializationResult,
   type ContextMaterializedFileV2,

@@ -6,7 +6,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
+import { decodeContextCapsuleLock } from "@agent-context/repo-policy";
+
+import { buildContextCapsule } from "../src/context-capsule.js";
+import { createContextCapsuleLock } from "../src/context-capsule-lock.js";
 import { CONTEXT_MATERIALIZATION_PATH } from "../src/context-capsule-materialization.js";
+import { contextCapsuleMaterializationActivation } from "../src/context-capsule-materialization.js";
 import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -117,6 +122,76 @@ test("plain Node bootstrap materializes a fresh clone and fails closed on drift"
     assert.match(
       blocked.result.materialization.conflicts.map((conflict) => conflict.detail).join("\n"),
       /was modified/u,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("plain Node bootstrap replaces an exact prior projection after a tracked capsule change", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "acf-bootstrap-switch-"));
+  const projectRoot = path.join(temporaryRoot, "application");
+  try {
+    await generateTestApplicationFixture({
+      frameworkRoot,
+      outputRoot: projectRoot,
+      gitState: "clean",
+      acfState: "runtime-migrated",
+      replace: false,
+    });
+    const previousReceipt = JSON.parse(
+      await readFile(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+    ) as { files: readonly { sourcePath: string; targetPath: string }[] };
+    const previousSkill = previousReceipt.files.find((file) =>
+      file.sourcePath === ".codex/skills/diagnose/SKILL.md")?.targetPath;
+    const previousRuntime = previousReceipt.files.find((file) =>
+      file.sourcePath === "registry/sources/runtime/repo-context/mcp-cli.mjs")?.targetPath;
+    assert.notEqual(previousSkill, undefined);
+    assert.notEqual(previousRuntime, undefined);
+
+    const revision = (await runProcess("git", ["rev-parse", "HEAD"], frameworkRoot)).stdout.trim();
+    const nextCapsule = await buildContextCapsule({
+      frameworkRoot,
+      frameworkRevision: revision,
+      directComponents: ["core", "codex-runtime", "skill-codebase-inventory"],
+    });
+    const oldLock = decodeContextCapsuleLock(JSON.parse(
+      await readFile(path.join(projectRoot, ".agent-context/lock.json"), "utf8"),
+    ) as unknown);
+    const nextLock = createContextCapsuleLock(
+      nextCapsule,
+      oldLock.activation,
+      contextCapsuleMaterializationActivation(nextCapsule),
+    );
+    await writeFile(path.join(projectRoot, ".agent-context/capsule.acf"), nextCapsule.bytes);
+    await writeFile(
+      path.join(projectRoot, ".agent-context/lock.json"),
+      `${JSON.stringify(nextLock, null, 2)}\n`,
+      "utf8",
+    );
+    await writeFile(
+      path.join(projectRoot, ".agent-context/config.json"),
+      `${JSON.stringify({
+        schemaVersion: 2,
+        adapter: "codex",
+        components: ["core", "codex-runtime", "skill-codebase-inventory"],
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const replacedProcess = await runBootstrapProcess(
+      path.join(projectRoot, ".agent-context/bootstrap.mjs"),
+      projectRoot,
+    );
+    assert.equal(replacedProcess.code, 0, replacedProcess.stderr);
+    const replaced = JSON.parse(replacedProcess.stdout) as BootstrapOutput;
+    assert.equal(replaced.materialization.status, "materialized");
+    await assert.rejects(access(path.join(projectRoot, previousSkill!)), /ENOENT/u);
+    await assert.rejects(access(path.join(projectRoot, previousRuntime!)), /ENOENT/u);
+    assert.equal(
+      replaced.materialization.receipt.files.some((file) =>
+        file.targetPath.includes("/acf--codebase-inventory--")),
+      true,
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });

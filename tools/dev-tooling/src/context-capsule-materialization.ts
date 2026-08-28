@@ -101,6 +101,10 @@ export interface ContextMaterializationResult {
   readonly writtenPaths: readonly string[];
 }
 
+export interface ContextMaterializationOptions extends ContextTransactionOptions {
+  readonly authority?: ContextCapsuleLockV3;
+}
+
 export interface ContextMaterializationAuthorityVerification {
   readonly ok: boolean;
   readonly mismatches: readonly string[];
@@ -114,6 +118,7 @@ interface DesiredMaterializedFile {
 export async function planContextCapsuleMaterialization(
   capsule: BuiltContextCapsule,
   projectRoot: string,
+  authority?: ContextCapsuleLockV3,
 ): Promise<ContextMaterializationPlan> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const desiredFiles = desiredMaterializedFiles(capsule);
@@ -198,16 +203,42 @@ export async function planContextCapsuleMaterialization(
     };
   }
   if (serializeReceipt(storedReceipt.receipt) !== serializeReceipt(desiredReceipt)) {
+    if (authority === undefined) {
+      return {
+        status: "blocked",
+        projectRoot: resolvedProjectRoot,
+        receipt: desiredReceipt,
+        previousReceipt: storedReceipt.receipt,
+        conflicts: [{
+          targetPath: CONTEXT_MATERIALIZATION_PATH,
+          detail:
+            "The existing generated files are valid for a different capsule. Replacement requires tracked ownership from lock v3.",
+        }],
+      };
+    }
+    const authorityVerification = verifyContextMaterializationAuthority(
+      authority,
+      capsule,
+      desiredReceipt,
+    );
+    if (!authorityVerification.ok) {
+      return {
+        status: "blocked",
+        projectRoot: resolvedProjectRoot,
+        receipt: desiredReceipt,
+        previousReceipt: storedReceipt.receipt,
+        conflicts: [{
+          targetPath: ".agent-context/lock.json",
+          detail: `Lock v3 does not authorize generated replacement: ${authorityVerification.mismatches.join(" ")}`,
+        }],
+      };
+    }
     return {
-      status: "blocked",
+      status: "ready",
       projectRoot: resolvedProjectRoot,
       receipt: desiredReceipt,
       previousReceipt: storedReceipt.receipt,
-      conflicts: [{
-        targetPath: CONTEXT_MATERIALIZATION_PATH,
-        detail:
-          "The existing generated files are valid for a different capsule. Replacement requires tracked ownership from lock v3.",
-      }],
+      conflicts: [],
     };
   }
   return {
@@ -222,9 +253,13 @@ export async function planContextCapsuleMaterialization(
 export async function materializeContextCapsule(
   capsule: BuiltContextCapsule,
   projectRoot: string,
-  options: ContextTransactionOptions = {},
+  options: ContextMaterializationOptions = {},
 ): Promise<ContextMaterializationResult> {
-  const plan = await planContextCapsuleMaterialization(capsule, projectRoot);
+  const plan = await planContextCapsuleMaterialization(
+    capsule,
+    projectRoot,
+    options.authority,
+  );
   if (plan.status === "blocked") {
     return {
       status: "blocked",
@@ -245,6 +280,13 @@ export async function materializeContextCapsule(
   }
 
   const desiredFiles = desiredMaterializedFiles(capsule);
+  const desiredTargets = new Set(desiredFiles.map((file) => file.receipt.targetPath));
+  const obsoleteTargets = plan.previousReceipt === null
+    ? []
+    : plan.previousReceipt.files
+      .map((file) => file.targetPath)
+      .filter((targetPath) => !desiredTargets.has(targetPath))
+      .sort(compareStrings);
   const mutations: ContextMutation[] = [
     ...desiredFiles.map((file) => ({
       operation: "write" as const,
@@ -256,15 +298,25 @@ export async function materializeContextCapsule(
       targetPath: CONTEXT_MATERIALIZATION_PATH,
       content: serializeReceipt(plan.receipt),
     },
+    ...obsoleteTargets.map((targetPath) => ({
+      operation: "delete" as const,
+      targetPath,
+    })),
   ];
   const writtenPaths = await applyContextTransaction(
     plan.projectRoot,
     "capsule",
     capsule.payload.registry.revision,
     mutations,
-    options,
+    options.afterMutation === undefined
+      ? {}
+      : { afterMutation: options.afterMutation },
   );
-  const verified = await planContextCapsuleMaterialization(capsule, plan.projectRoot);
+  const verified = await planContextCapsuleMaterialization(
+    capsule,
+    plan.projectRoot,
+    options.authority,
+  );
   if (verified.status !== "current") {
     throw new Error("Context capsule materialization did not verify after publication.");
   }

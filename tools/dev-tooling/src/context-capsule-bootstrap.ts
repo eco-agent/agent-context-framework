@@ -1,10 +1,14 @@
 import { realpath } from "node:fs/promises";
 import path from "node:path";
 
-import { CONTEXT_CAPSULE_PATH } from "@agent-context/repo-policy";
+import {
+  CONTEXT_CAPSULE_PATH,
+  decodeContextCapsuleLock,
+} from "@agent-context/repo-policy";
 
 import { readContextCapsuleFile } from "./context-capsule.js";
 import {
+  readContextCapsuleProjectFiles,
   verifyContextCapsuleV3Installation,
   type ContextCapsuleV3InstallationVerification,
 } from "./context-capsule-installation.js";
@@ -42,7 +46,13 @@ export async function bootstrapContextCapsule(
       `Context capsule bootstrap verification failed: ${verification.mismatches.map((mismatch) => `${mismatch.targetPath ?? mismatch.identity}: ${mismatch.detail}`).join(" ")}`,
     );
   }
-  const materialization = await materializeContextCapsule(capsule, resolvedProjectRoot);
+  const projectFiles = await readContextCapsuleProjectFiles(resolvedProjectRoot);
+  const authority = decodeContextCapsuleLock(projectFiles.lock);
+  const materialization = await materializeContextCapsule(
+    capsule,
+    resolvedProjectRoot,
+    { authority },
+  );
   return {
     command: "bootstrap-capsule",
     projectRoot: resolvedProjectRoot,

@@ -150,6 +150,13 @@ deletion by itself. Replacement waits until lock v3 or retained tracked capsule
 state proves the old ownership. The tracked expanded installation remains the
 oracle until migration starts.
 
+After migration, a committed lock-v3 change authorizes reconciliation to its
+capsule. Materialization first verifies every prior receipt-owned file. It then
+writes the new content-addressed files, publishes the new receipt, and deletes
+only exact old files absent from the desired projection. A missing or modified
+old file blocks before writing. Transaction recovery completes an interrupted
+replacement before another bootstrap attempt.
+
 The context transaction claims its staging directory exclusively. Initial
 materialization writes verified files and publishes the receipt last. A process
 failure can leave a partial new directory until transaction recovery finishes.
@@ -303,7 +310,8 @@ Capsule v1 is not accepted until all of these conditions hold:
 6. The generated skill fixture writes exact ignored `.agents/skills` bytes,
    retains tracked expanded bytes, and stays Git-clean.
 7. An exact materialization rerun writes nothing. A different capsule blocks
-   without deleting the valid prior output.
+   without lock-v3 authority. A matching current lock replaces exact prior output
+   and removes obsolete receipt-owned files.
 8. A modified file, unexpected path, malformed receipt, forged root mapping, or
    symbolic link blocks materialization.
 9. The existing installer and transaction suites still pass.
@@ -313,6 +321,8 @@ Capsule v1 is not accepted until all of these conditions hold:
 11. The committed repo-context and hook bundles rebuild byte for byte. A migrated
     fresh clone recreates each ignored bundle through bootstrap before the MCP or
     hook protocol begins, with no tracked runtime files or package install.
+12. Semantic diff reports whether changed startup activation, skills, or runtime
+    require a Codex restart. Inspectable source-only changes do not invent one.
 
 ## Implementation references
 

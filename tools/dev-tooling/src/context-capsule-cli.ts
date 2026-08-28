@@ -24,6 +24,7 @@ import {
   type ContextMaterializationResult,
 } from "./context-capsule-materialization.js";
 import { migrateContextCapsuleV2 } from "./context-capsule-migration.js";
+import { classifyContextCapsuleRestart } from "./context-capsule-restart.js";
 
 export type ContextCapsuleCliArguments =
   | {
@@ -279,10 +280,13 @@ export async function runContextCapsuleCli(
     };
   }
   if (request.command === "diff") {
+    const before = await readContextCapsuleFile(request.beforePath);
+    const after = await readContextCapsuleFile(request.afterPath);
     const difference = diffContextCapsules(
-      await readContextCapsuleFile(request.beforePath),
-      await readContextCapsuleFile(request.afterPath),
+      before,
+      after,
     );
+    const restart = classifyContextCapsuleRestart(before, after);
     return {
       exitCode: difference.equal ? 0 : 1,
       output: request.json
@@ -291,8 +295,9 @@ export async function runContextCapsuleCli(
             beforePath: request.beforePath,
             afterPath: request.afterPath,
             ...difference,
+            restart,
           }, null, 2)
-        : formatDifference(request.beforePath, request.afterPath, difference),
+        : formatDifference(request.beforePath, request.afterPath, difference, restart),
     };
   }
   if (request.command !== "extract") {
@@ -361,11 +366,15 @@ function formatDifference(
   beforePath: string,
   afterPath: string,
   difference: ContextCapsuleDiff,
+  restart: ReturnType<typeof classifyContextCapsuleRestart>,
 ): string {
   return [
     `before: ${beforePath}`,
     `after: ${afterPath}`,
     `status: ${difference.equal ? "equal" : "different"}`,
+    `restart required: ${restart.required ? "yes" : "no"}`,
+    ...restart.reasons.map((reason) =>
+      `restart ${reason.kind}: ${reason.targetPaths.join(", ")}`),
     ...(difference.directSelectionChanged
       ? [`direct: ${difference.beforeDirectComponents.join(", ")} -> ${difference.afterDirectComponents.join(", ")}`]
       : []),

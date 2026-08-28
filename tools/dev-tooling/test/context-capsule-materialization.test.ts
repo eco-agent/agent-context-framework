@@ -12,6 +12,7 @@ import {
 } from "../src/context-capsule.js";
 import {
   CONTEXT_MATERIALIZATION_PATH,
+  contextCapsuleMaterializationActivation,
   contextCapsuleSkillActivation,
   decodeContextMaterializationReceipt,
   materializeContextCapsule,
@@ -19,7 +20,8 @@ import {
   verifyContextMaterializationAuthority,
 } from "../src/context-capsule-materialization.js";
 import { createContextCapsuleLock } from "../src/context-capsule-lock.js";
-import { addComponent } from "../src/context-installer.js";
+import { addComponent, removeComponent } from "../src/context-installer.js";
+import { resumeContextTransaction } from "../src/context-transaction.js";
 import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -202,6 +204,12 @@ test("materialization keeps a valid prior capsule until lock v3 can prove owners
       "skill-codebase-inventory",
     );
     assert.equal(added.plan.status, "ready");
+    const removed = await removeComponent(
+      fixture.projectRoot,
+      frameworkRoot,
+      "skill-diagnose",
+    );
+    assert.equal(removed.plan.status, "ready");
     const nextCapsule = await buildContextCapsuleForProject(
       frameworkRoot,
       fixture.projectRoot,
@@ -214,6 +222,61 @@ test("materialization keeps a valid prior capsule until lock v3 can prove owners
     assert.equal(
       await readFile(path.join(fixture.projectRoot, oldSkillPath), "utf8"),
       contextCapsuleEntryBytes(fixture.capsule, ".codex/skills/diagnose/SKILL.md").toString("utf8"),
+    );
+
+    const authority = createContextCapsuleLock(
+      nextCapsule,
+      [],
+      contextCapsuleMaterializationActivation(nextCapsule),
+    );
+    const oldGeneratedBytes = await readFile(path.join(fixture.projectRoot, oldSkillPath));
+    await writeFile(
+      path.join(fixture.projectRoot, oldSkillPath),
+      "modified old generated output\n",
+      "utf8",
+    );
+    const modifiedOld = await materializeContextCapsule(
+      nextCapsule,
+      fixture.projectRoot,
+      { authority },
+    );
+    assert.equal(modifiedOld.status, "blocked");
+    assert.match(
+      modifiedOld.conflicts.map((conflict) => conflict.detail).join("\n"),
+      /was modified/u,
+    );
+    await writeFile(path.join(fixture.projectRoot, oldSkillPath), oldGeneratedBytes);
+    await assert.rejects(
+      materializeContextCapsule(
+        nextCapsule,
+        fixture.projectRoot,
+        {
+          authority,
+          afterMutation: (boundary) => {
+            if (
+              boundary.kind === "target-written" &&
+              boundary.targetPath === CONTEXT_MATERIALIZATION_PATH
+            ) {
+              throw new Error("injected materialization replacement interruption");
+            }
+          },
+        },
+      ),
+      /injected materialization replacement interruption/u,
+    );
+    const recovery = await resumeContextTransaction(fixture.projectRoot);
+    assert.equal(recovery.status, "resumed");
+    const replaced = await materializeContextCapsule(
+      nextCapsule,
+      fixture.projectRoot,
+      { authority },
+    );
+    assert.equal(replaced.status, "current");
+    await assert.rejects(readFile(path.join(fixture.projectRoot, oldSkillPath)), /ENOENT/u);
+    assert.equal(
+      replaced.receipt.files.some((file) =>
+        file.sourcePath === ".codex/skills/codebase-inventory/SKILL.md"),
+      true,
     );
   } finally {
     await fixture.remove();

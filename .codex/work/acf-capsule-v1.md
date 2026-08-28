@@ -151,7 +151,8 @@ Each generated skill directory carries an explicit ACF prefix, skill name, and
 the component's full content digest. The receipt re-states those fields and must
 preserve the skill-relative source mapping. Materialization supports an absent
 destination and an exact repeat. Modified generated files, malformed receipts,
-unexplained target paths, and a different capsule block replacement.
+and unexplained target paths block replacement. A different capsule also blocks
+unless the current tracked lock v3 authorizes it.
 
 The ignored receipt does not authorize deletion. The migration proves ownership
 from lock v2 and current projections before constructing lock v3. It publishes
@@ -207,8 +208,8 @@ remains in place for projects that have not migrated.
 - No optional host launcher automates the explicit pre-Codex bootstrap command.
 - The current migration requires capsule and materialization prerequisites.
   It does not yet convert an ordinary v2 project in one command.
-- Capsule and lock update planning does not yet classify restart requirements or
-  publish both files through one transaction.
+- Capsule and lock update planning does not yet publish both tracked files through
+  one transaction.
 - No fleet manager yet.
 
 ## Completed repo-context runtime slice
@@ -243,6 +244,28 @@ the bundle.
 - Dev-tooling exports and CLI to package and root commands.
 - Format tests to generated application equivalence.
 - Capsule decision to lock, bootstrap, materialization, and fleet stages.
+
+## Active semantic update slice
+
+The current tracked lock is the authority for the desired capsule after a branch
+switch or committed update. A valid prior receipt identifies the old generated
+paths, but it cannot authorize deletion alone. Replacement requires both the
+current lock-v3 binding to the desired capsule and exact verification of every
+file in the prior receipt. A modified or missing prior file blocks before any
+write.
+
+The replacement transaction writes the new content-addressed files first,
+publishes the new receipt, then deletes old receipt-owned files that are not part
+of the desired projection. Before receipt publication, the old projection and
+receipt remain valid. After publication, the new projection is authoritative.
+Transaction recovery completes either interrupted phase before another
+materialization attempt.
+
+Restart classification belongs to semantic capsule comparison, not raw Git
+diffs. Changes to startup activation, repository skills, or packaged runtime
+require a Codex restart when applied to an active session. Licence, attribution,
+tests, and other inspectable source changes remain visible in semantic diff but
+do not claim a restart by themselves.
 
 ## Closure
 
