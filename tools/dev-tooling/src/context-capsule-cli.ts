@@ -73,9 +73,9 @@ Usage:
 
 build writes a new capsule and refuses replacement. verify compares a capsule
 with the current expanded installation without writing. materialize writes an
-absent repository skill projection and receipt, reuses an exact projection, and
-blocks replacement. extract writes verified registry source paths to a new
-directory outside the framework worktree.`;
+repository skill projection and receipt, reuses an exact projection, and
+replaces a valid receipt-owned projection. extract writes verified registry
+source paths to a new directory outside the framework worktree.`;
 
 export function parseContextCapsuleArguments(
   arguments_: readonly string[],

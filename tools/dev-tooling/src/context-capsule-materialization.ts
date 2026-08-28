@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstat, readFile, readdir, realpath } from "node:fs/promises";
+import { lstat, readFile, readdir, realpath, rmdir } from "node:fs/promises";
 import path from "node:path";
 
 import { artifactIdentity } from "@agent-context/repo-policy";
@@ -10,7 +10,9 @@ import {
 } from "./context-capsule.js";
 import {
   applyContextTransaction,
+  inspectContextTransaction,
   type ContextMutation,
+  type ContextTransactionOptions,
 } from "./context-transaction.js";
 
 export const CONTEXT_MATERIALIZATION_PATH = ".agent-context/materialization.json";
@@ -48,18 +50,21 @@ export type ContextMaterializationPlan =
       readonly status: "ready";
       readonly projectRoot: string;
       readonly receipt: ContextMaterializationReceiptV1;
+      readonly previousReceipt: ContextMaterializationReceiptV1 | null;
       readonly conflicts: readonly [];
     }
   | {
       readonly status: "current";
       readonly projectRoot: string;
       readonly receipt: ContextMaterializationReceiptV1;
+      readonly previousReceipt: ContextMaterializationReceiptV1;
       readonly conflicts: readonly [];
     }
   | {
       readonly status: "blocked";
       readonly projectRoot: string;
       readonly receipt: ContextMaterializationReceiptV1;
+      readonly previousReceipt: ContextMaterializationReceiptV1 | null;
       readonly conflicts: readonly ContextMaterializationConflict[];
     };
 
@@ -83,6 +88,19 @@ export async function planContextCapsuleSkillMaterialization(
   const resolvedProjectRoot = await realpath(projectRoot);
   const desiredFiles = desiredSkillFiles(capsule);
   const desiredReceipt = createReceipt(capsule, desiredFiles.map((file) => file.receipt));
+  const transaction = await inspectContextTransaction(resolvedProjectRoot);
+  if (transaction.status !== "none") {
+    return {
+      status: "blocked",
+      projectRoot: resolvedProjectRoot,
+      receipt: desiredReceipt,
+      previousReceipt: null,
+      conflicts: [{
+        targetPath: ".agent-context/transaction.json",
+        detail: `Context transaction recovery is required before materialization: ${transaction.detail}`,
+      }],
+    };
+  }
   const storedReceipt = await readStoredReceipt(resolvedProjectRoot);
 
   if (storedReceipt.status === "invalid") {
@@ -90,6 +108,7 @@ export async function planContextCapsuleSkillMaterialization(
       status: "blocked",
       projectRoot: resolvedProjectRoot,
       receipt: desiredReceipt,
+      previousReceipt: null,
       conflicts: [{ targetPath: CONTEXT_MATERIALIZATION_PATH, detail: storedReceipt.detail }],
     };
   }
@@ -101,12 +120,14 @@ export async function planContextCapsuleSkillMaterialization(
           status: "ready",
           projectRoot: resolvedProjectRoot,
           receipt: desiredReceipt,
+          previousReceipt: null,
           conflicts: [],
         }
       : {
           status: "blocked",
           projectRoot: resolvedProjectRoot,
           receipt: desiredReceipt,
+          previousReceipt: null,
           conflicts,
         };
   }
@@ -117,25 +138,38 @@ export async function planContextCapsuleSkillMaterialization(
       status: "blocked",
       projectRoot: resolvedProjectRoot,
       receipt: desiredReceipt,
+      previousReceipt: storedReceipt.receipt,
       conflicts: storedConflicts,
     };
   }
   if (serializeReceipt(storedReceipt.receipt) !== serializeReceipt(desiredReceipt)) {
+    const desiredConflicts = await findReplacementTargetConflicts(
+      resolvedProjectRoot,
+      desiredReceipt.files,
+      storedReceipt.receipt,
+    );
+    if (desiredConflicts.length === 0) {
+      return {
+        status: "ready",
+        projectRoot: resolvedProjectRoot,
+        receipt: desiredReceipt,
+        previousReceipt: storedReceipt.receipt,
+        conflicts: [],
+      };
+    }
     return {
       status: "blocked",
       projectRoot: resolvedProjectRoot,
       receipt: desiredReceipt,
-      conflicts: [{
-        targetPath: CONTEXT_MATERIALIZATION_PATH,
-        detail:
-          "The existing generated files are valid for a different capsule. This checkpoint does not replace a valid materialization.",
-      }],
+      previousReceipt: storedReceipt.receipt,
+      conflicts: desiredConflicts,
     };
   }
   return {
     status: "current",
     projectRoot: resolvedProjectRoot,
     receipt: desiredReceipt,
+    previousReceipt: storedReceipt.receipt,
     conflicts: [],
   };
 }
@@ -143,18 +177,35 @@ export async function planContextCapsuleSkillMaterialization(
 export async function materializeContextCapsuleSkills(
   capsule: BuiltContextCapsule,
   projectRoot: string,
+  options: ContextTransactionOptions = {},
 ): Promise<ContextMaterializationResult> {
   const plan = await planContextCapsuleSkillMaterialization(capsule, projectRoot);
   if (plan.status === "blocked") {
-    return { ...plan, status: "blocked", writtenPaths: [] };
+    return {
+      status: "blocked",
+      projectRoot: plan.projectRoot,
+      receipt: plan.receipt,
+      conflicts: plan.conflicts,
+      writtenPaths: [],
+    };
   }
   if (plan.status === "current") {
-    return { ...plan, status: "current", writtenPaths: [] };
+    return {
+      status: "current",
+      projectRoot: plan.projectRoot,
+      receipt: plan.receipt,
+      conflicts: [],
+      writtenPaths: [],
+    };
   }
 
   const desiredFiles = desiredSkillFiles(capsule);
+  const previousPaths = new Set(
+    plan.previousReceipt?.files.map((file) => file.targetPath) ?? [],
+  );
+  const desiredPaths = new Set(desiredFiles.map((file) => file.receipt.targetPath));
   const mutations: ContextMutation[] = [
-    ...desiredFiles.map((file) => ({
+    ...desiredFiles.filter((file) => !previousPaths.has(file.receipt.targetPath)).map((file) => ({
       operation: "write" as const,
       targetPath: file.receipt.targetPath,
       content: file.content,
@@ -164,17 +215,27 @@ export async function materializeContextCapsuleSkills(
       targetPath: CONTEXT_MATERIALIZATION_PATH,
       content: serializeReceipt(plan.receipt),
     },
+    ...(plan.previousReceipt?.files ?? [])
+      .filter((file) => !desiredPaths.has(file.targetPath))
+      .map((file) => ({ operation: "delete" as const, targetPath: file.targetPath })),
   ];
   const writtenPaths = await applyContextTransaction(
     plan.projectRoot,
     "capsule",
     capsule.payload.registry.revision,
     mutations,
+    options,
   );
   const verified = await planContextCapsuleSkillMaterialization(capsule, plan.projectRoot);
   if (verified.status !== "current") {
     throw new Error("Context capsule materialization did not verify after publication.");
   }
+  await removeObsoleteEmptyDirectories(
+    plan.projectRoot,
+    (plan.previousReceipt?.files ?? [])
+      .filter((file) => !desiredPaths.has(file.targetPath))
+      .map((file) => file.targetPath),
+  );
   return {
     status: "materialized",
     projectRoot: plan.projectRoot,
@@ -237,7 +298,12 @@ function desiredSkillFiles(capsule: BuiltContextCapsule): readonly DesiredMateri
         );
       }
       const suffix = artifact.targetPath.slice(EXPANDED_SKILL_PREFIX.length);
-      const targetPath = `${MATERIALIZED_SKILL_PREFIX}${suffix}`;
+      const [skillName, ...skillPath] = suffix.split("/");
+      if (skillName === undefined || skillPath.length === 0) {
+        throw new Error(`Context capsule skill artifact has no skill-relative file: ${artifact.targetPath}.`);
+      }
+      const componentDigest = componentRevisionDigest(component.revision);
+      const targetPath = `${MATERIALIZED_SKILL_PREFIX}${skillName}@${componentDigest}/${skillPath.join("/")}`;
       requireMaterializedTargetPath(targetPath);
       if (targets.has(targetPath)) {
         throw new Error(`Context capsule resolves duplicate materialized target ${targetPath}.`);
@@ -324,6 +390,16 @@ async function findUnexpectedDesiredTargets(
     }
   }
   return conflicts;
+}
+
+async function findReplacementTargetConflicts(
+  projectRoot: string,
+  desiredFiles: readonly ContextMaterializedFileV1[],
+  previousReceipt: ContextMaterializationReceiptV1,
+): Promise<readonly ContextMaterializationConflict[]> {
+  const previousPaths = new Set(previousReceipt.files.map((file) => file.targetPath));
+  const newFiles = desiredFiles.filter((file) => !previousPaths.has(file.targetPath));
+  return await findUnexpectedDesiredTargets(projectRoot, newFiles);
 }
 
 async function verifyReceiptFiles(
@@ -435,6 +511,31 @@ function materializedSkillRoots(
     .sort(compareStrings);
 }
 
+async function removeObsoleteEmptyDirectories(
+  projectRoot: string,
+  obsoleteFiles: readonly string[],
+): Promise<void> {
+  const directories = new Set<string>();
+  for (const targetPath of obsoleteFiles) {
+    let directory = path.posix.dirname(targetPath);
+    while (directory.startsWith(MATERIALIZED_SKILL_PREFIX) &&
+      directory !== MATERIALIZED_SKILL_PREFIX.slice(0, -1)) {
+      directories.add(directory);
+      directory = path.posix.dirname(directory);
+    }
+  }
+  const deepestFirst = [...directories].sort((left, right) =>
+    right.split("/").length - left.split("/").length || compareStrings(right, left));
+  for (const directory of deepestFirst) {
+    try {
+      await rmdir(path.resolve(projectRoot, directory));
+    } catch (error) {
+      if (isMissingPathError(error) || isDirectoryNotEmptyError(error)) continue;
+      throw error;
+    }
+  }
+}
+
 async function readOptionalProjectFile(projectRoot: string, relativePath: string): Promise<Buffer | null> {
   portableRelativePath(relativePath, "Materialized project path");
   const absolutePath = path.resolve(projectRoot, relativePath);
@@ -483,6 +584,14 @@ function requireMaterializedTargetPath(targetPath: string): void {
   if (!targetPath.startsWith(MATERIALIZED_SKILL_PREFIX) || targetPath === MATERIALIZED_SKILL_PREFIX) {
     throw new Error(`Materialized skill target must be below ${MATERIALIZED_SKILL_PREFIX}.`);
   }
+}
+
+function componentRevisionDigest(revision: string): string {
+  const match = /^sha256:([a-f0-9]{64})$/u.exec(revision);
+  if (match?.[1] === undefined) {
+    throw new Error("Materialized skill component revision must be a SHA-256 identity.");
+  }
+  return match[1];
 }
 
 function serializeReceipt(receipt: ContextMaterializationReceiptV1): string {
@@ -556,6 +665,11 @@ function compareStrings(left: string, right: string): number {
 
 function isMissingPathError(error: unknown): boolean {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
+}
+
+function isDirectoryNotEmptyError(error: unknown): boolean {
+  return error instanceof Error && "code" in error &&
+    (error.code === "ENOTEMPTY" || error.code === "EEXIST");
 }
 
 function errorMessage(error: unknown): string {

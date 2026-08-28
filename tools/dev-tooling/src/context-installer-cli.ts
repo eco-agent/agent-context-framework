@@ -118,7 +118,7 @@ Usage:
   pnpm agent-context recover [--cwd PROJECT]
   pnpm agent-context bootstrap-runtime [--no-install] [--cwd PROJECT]
   pnpm agent-context setup [--port PORT] [--no-open] [--exit-after-install] [--cwd PROJECT]
-  pnpm agent-context capsule <build|list|inspect|verify|diff|extract> [OPTIONS]
+  pnpm agent-context capsule <build|list|inspect|verify|materialize|diff|extract> [OPTIONS]
   pnpm agent-context help
 
 Behavior:

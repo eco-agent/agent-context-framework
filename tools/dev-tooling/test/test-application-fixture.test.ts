@@ -158,17 +158,15 @@ test("materialized fixture writes ignored repository skills beside tracked expan
         await readFile(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
       ) as unknown,
     );
-    assert.deepEqual(
-      receipt.files.map((file) => file.targetPath),
-      [
-        ".agents/skills/diagnose/SKILL.md",
-        ".agents/skills/diagnose/scripts/hitl-loop.template.sh",
-      ],
+    assert.equal(
+      receipt.files.every((file) =>
+        /^\.agents\/skills\/diagnose@[a-f0-9]{64}\//u.test(file.targetPath)),
+      true,
     );
     for (const file of receipt.files) {
       assert.equal(
         (await readFile(path.join(outputRoot, file.targetPath))).equals(
-          await readFile(path.join(outputRoot, file.targetPath.replace(".agents/", ".codex/"))),
+          await readFile(path.join(outputRoot, file.sourcePath)),
         ),
         true,
       );

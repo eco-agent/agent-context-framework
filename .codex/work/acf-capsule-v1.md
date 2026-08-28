@@ -97,11 +97,14 @@ repository discovery path, `.agents/skills`. It keeps the tracked
 selects `skill-diagnose`, builds its capsule, writes the ignored copy and
 receipt, and proves that Git remains clean.
 
-This checkpoint supports an absent destination and an exact repeat. It blocks a
-modified generated file, a malformed receipt, an unexplained existing target,
-or a different capsule. Replacement remains a later slice because the current
-file transaction can recover a partial update, but it cannot leave the previous
-directory projection active throughout a crash.
+The first checkpoint supported an absent destination and an exact repeat. The
+replacement checkpoint gives each generated skill directory the component's
+full content digest. A transaction writes complete new skill files, publishes
+the new receipt, then removes files owned only by the previous receipt. A crash
+before the receipt leaves the old projection intact. A crash after the receipt
+can expose both complete versions until recovery, but it never overwrites the
+old bytes. Modified generated files, malformed receipts, and unexplained target
+paths still block replacement.
 
 The existing context transaction becomes the project-local concurrency owner by
 claiming its stage directory exclusively. A losing process must not remove the
@@ -127,7 +130,7 @@ Reuse assessment:
 | --- | --- | --- | --- |
 | Capsule skill mapper | Only whole-file artifacts already owned below `.codex/skills` may map to `.agents/skills`. | Receipt decoder and mapping tests | Reject unsupported operations or escaping paths without writing. |
 | Materialization receipt | Record the capsule and every generated target with its source and installed digest. | Exact receipt and file verification | Report missing, malformed, or modified output and retain it for inspection. |
-| Initial materializer | Write only when every desired target and the receipt are absent. | Clean, repeat, unexplained-target, and dirty-output tests | Continue using the expanded tracked installation until replacement ships. |
+| Skill materializer | Publish content-addressed new files and the receipt before deleting prior receipt-owned files. | Clean, repeat, replacement interruption, unexplained-target, and dirty-output tests | Recover the transaction before starting Codex, or continue using the expanded tracked installation. |
 | Context transaction | One process owns staging and publication. | Concurrent stage-claim test and recovery suite | The losing process stops; doctor resumes or discards the winning transaction. |
 | Generated fixture | Ignore materialized files while keeping capsule, config, lock v2, and expanded projections tracked. | Git status and `check-ignore` assertions | Fail fixture generation when an expected generated path is not ignored. |
 
