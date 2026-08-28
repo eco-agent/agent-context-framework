@@ -19,6 +19,13 @@ remains authoritative until that proof passes.
   `eb788c0187ac42e866754c54c72010c757aca77d7a493acac87018c4b7b0fcfd`
 - Generated capsule framework revision:
   `055407057c0bf1aa89a072e24023e93e1fdb87f6`
+- Runtime generated application: `D:/dev/acf-fixture-runtime-capsule`
+- Runtime application baseline: `b9cee5f525206f39339452cf8c54945f277cc471`
+- Runtime application revision: `89da6216a12769067a68bab53f266f193c2d96d7`
+- Runtime capsule SHA-256:
+  `f580e6d935f3840982a83ed7a818789167828973bff76013530bdcacc1fe5943`
+- Runtime capsule tree SHA-256:
+  `1a6c3ec88c034c5e91f383c52a63204d17606c3b3b0b820062caf4ef8789953c`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
@@ -289,3 +296,28 @@ active slice.
   boundaries, and verification cleanliness.
 - Latest documentation and workflow profiles passed at standalone bootstrap
   revision `9315c38f9b2674f7eb638e09822bdb276816149f`.
+- Packaged runtime checkpoint revision:
+  `e1c587dc06babb07a0812ca9067e9091cede0170`.
+- Deterministic bundle-normalization revision and tested revision:
+  `4b194863a485e47ab234aaf007583a96f2f40092`.
+- The tracked bootstrap, hook, and repo-context bundles are 97,596 bytes, 5,903
+  bytes, and 381,939 bytes. All three rebuilt byte for byte after normalization.
+- The configured lock-v2 hook and repo-context launch paths passed through the
+  tracked bootstrap. Lock v2 kept using its tracked runtime. Lock v3 recreated
+  deleted ignored runtime files before starting the same protocols.
+- The runtime-specific repository-context suite passed 4 tests. The hook suite
+  passed 4 tests. Modified generated repo-context bytes blocked bootstrap.
+- The migration, bootstrap, materialization, and lock decoder suites passed 13
+  tests. Migration preserved custom `.gitattributes` content, added
+  `*.acf binary`, published lock v3 first, and recovered the remaining writes and
+  deletions after an injected interruption.
+- The clean and dirty `runtime-migrated` fixture test passed with 35 ignored
+  materialized files and no tracked skill or runtime paths. The durable clean
+  fixture remained Git-clean, reported the capsule as binary, and returned
+  `current` with no writes from plain-Node bootstrap.
+- Direct agent-prose checks passed for the ADR, registry decision, and work
+  record. Direct technical-prose checks passed for the ADR and registry decision.
+- The documentation profile passed after the runtime evidence update. The
+  workflow profile passed at `4b194863a485e47ab234aaf007583a96f2f40092`, including
+  workflow tests, dependency adoption, boundary checks, and verification
+  cleanliness.
