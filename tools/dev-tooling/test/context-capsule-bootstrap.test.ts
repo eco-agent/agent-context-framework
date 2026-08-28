@@ -36,6 +36,11 @@ test("tracked capsule bootstrap bundle is reproducible", async () => {
       "--minify",
     ], frameworkRoot);
     assert.equal(build.code, 0, build.stderr);
+    const normalized = await runProcess(process.execPath, [
+      path.join(frameworkRoot, "tools/dev-tooling/scripts/normalize-generated-bundle.mjs"),
+      path.join(outputRoot, "context-capsule-bootstrap-entry.mjs"),
+    ], frameworkRoot);
+    assert.equal(normalized.code, 0, normalized.stderr);
     assert.equal(
       (await readFile(path.join(outputRoot, "context-capsule-bootstrap-entry.mjs"))).equals(
         await readFile(bundleSource),

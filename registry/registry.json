@@ -2629,7 +2629,7 @@
     },
     {
       "name": "codex-repo-context",
-      "revision": "sha256:9e0947765ae3df3c9d67ff29f1f1fb0c5e070409db78f382d5fe70e97845fdfa",
+      "revision": "sha256:3e2b1145900755d575a8b5c8ded61dd335c0a6f23f537117f5f9be5d040d4d29",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2742,7 +2742,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/runtime/repo-context/mcp-cli.mjs",
-          "sourceSha256": "53cf2ebe00d5c5202cb0e770cf6f42553ad2df08a2504bdd3c9d09061f20462c",
+          "sourceSha256": "1359fcb14cb6b6379787aa893cffa72cac53e497ba3c32ff757a5a365bc1aaa7",
           "targetPath": ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js",
           "mediaType": "text/javascript"
         },

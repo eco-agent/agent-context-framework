@@ -10,7 +10,7 @@ import e,{default as t}from"node:process";import{createHash as n}from"node:crypt
             })));
           }
         }
-        
+
         if (${n}.value === undefined) {
           if (${o} in input) {
             newResult[${o}] = undefined;
@@ -18,7 +18,7 @@ import e,{default as t}from"node:process";import{createHash as n}from"node:crypt
         } else {
           newResult[${o}] = ${n}.value;
         }
-        
+
       `):c?t.write(`
         if (${n}.issues.length) {
           payload.issues = payload.issues.concat(${n}.issues.map(iss => ({
@@ -26,7 +26,7 @@ import e,{default as t}from"node:process";import{createHash as n}from"node:crypt
             path: iss.path ? [${o}, ...iss.path] : [${o}]
           })));
         }
-        
+
         if (${n}.value === undefined) {
           if (${o} in input) {
             newResult[${o}] = undefined;
@@ -34,7 +34,7 @@ import e,{default as t}from"node:process";import{createHash as n}from"node:crypt
         } else {
           newResult[${o}] = ${n}.value;
         }
-        
+
       `):t.write(`
         const ${n}_present = ${o} in input;
         if (${n}.issues.length) {

@@ -54,6 +54,10 @@ test("tracked repo-context bundle is reproducible", async () => {
       "--clean",
       "--minify",
     ], { cwd: frameworkRoot, windowsHide: true });
+    await executeFile(process.execPath, [
+      path.join(frameworkRoot, "tools/dev-tooling/scripts/normalize-generated-bundle.mjs"),
+      path.join(temporaryRoot, "mcp-cli.mjs"),
+    ], { cwd: frameworkRoot, windowsHide: true });
     assert.equal(
       (await readFile(path.join(temporaryRoot, "mcp-cli.mjs"))).equals(
         await readFile(repoContextBundle),
