@@ -14,11 +14,11 @@ remains authoritative until that proof passes.
 - Task branch: `codex/acf-capsule-v1`
 - Generated application: `D:/dev/acf-fixture-command-check`
 - Generated application baseline: `7d5ff44a46eeb1541b507601c77509f4b0bfccd8`
-- Generated application revision: `ed49d45a201c4ec43a7d59d1b11e4c11a47c264f`
+- Generated application revision: `492415f9dcecf7648150d14a0e09f2e436077076`
 - Generated capsule SHA-256:
-  `8162937b07f836b33f28b64087142329eb3f1ef86faba83bf3db8b9f5a2485f4`
+  `eb788c0187ac42e866754c54c72010c757aca77d7a493acac87018c4b7b0fcfd`
 - Generated capsule framework revision:
-  `9315c38f9b2674f7eb638e09822bdb276816149f`
+  `0554070f8760e1065597752c99bc0c1d2ec76b4c`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
@@ -208,6 +208,8 @@ active slice.
   `332ad3b6069a71817aa3af27f900626b1ccae0dd`.
 - Standalone bootstrap and lock-v3 ownership revision:
   `9315c38f9b2674f7eb638e09822bdb276816149f`.
+- Explicit materialization command revision:
+  `0554070f8760e1065597752c99bc0c1d2ec76b4c`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
