@@ -52,6 +52,13 @@
         {
           "kind": "artifact",
           "operation": "file",
+          "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
+          "targetPath": ".agent-context/bootstrap.mjs",
+          "mediaType": "text/javascript"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
           "sourcePath": "registry/sources/attributions/core/SOURCE.json",
           "targetPath": ".agent-context/sources/core/SOURCE.json",
           "mediaType": "application/json"

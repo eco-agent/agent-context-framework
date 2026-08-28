@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:de34e795bd4e87ef0499c60e62d301b0e7d69e9d4acb1c97b9f23c6f3d21795a",
+      "revision": "sha256:b321454cad53060d0ccde8a93374d24c29aa39b19519e25f69384fc7f9087f1f",
       "dependencies": [],
       "capabilities": [
         {
@@ -48,7 +48,7 @@
         {
           "operation": "seed-file",
           "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
-          "sourceSha256": "3a7574ad82d3e0273e1ab153b39fb7b0a766241aa01121c95650a5f775359844",
+          "sourceSha256": "b7b7c0c0bb467e5ef7e4fe289cb1d4e612ca366516952e24aa5c71503059d91b",
           "targetPath": ".gitattributes"
         },
         {
@@ -64,6 +64,13 @@
           "sourceSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
           "targetPath": ".agent-context/LICENSE.cursor-unslop.upstream",
           "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
+          "sourceSha256": "a5a9aa6d15271e8cbc076ae3c89017bca873caff3507d623f3d329e712e38004",
+          "targetPath": ".agent-context/bootstrap.mjs",
+          "mediaType": "text/javascript"
         },
         {
           "operation": "file",

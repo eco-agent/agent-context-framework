@@ -161,6 +161,15 @@ test("capsule lock v3 is separate from registry, config, and installation lock v
       { identity: "git-attributes", targetPath: ".gitattributes", installedSha256: hash },
       { identity: "instructions", targetPath: "AGENTS.md", installedSha256: "b".repeat(64) },
     ],
+    materialization: {
+      capsuleSha256: hash,
+      treeSha256: "b".repeat(64),
+      files: [{
+        identity: "file:.codex/skills/tools/SKILL.md",
+        targetPath: `.agents/skills/acf--tools--${"c".repeat(64)}/SKILL.md`,
+        installedSha256: "c".repeat(64),
+      }],
+    },
   } as const;
   assert.deepEqual(decodeContextCapsuleLock(lock), lock);
   assert.throws(
@@ -206,6 +215,29 @@ test("capsule lock v3 is separate from registry, config, and installation lock v
       components: { ...lock.components, direct: ["missing"] },
     }),
     /direct component missing is absent from the resolved closure/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({
+      ...lock,
+      materialization: {
+        ...lock.materialization,
+        files: [{ ...lock.materialization.files[0], targetPath: "project-owned.txt" }],
+      },
+    }),
+    /target must be below .agents\/skills/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({
+      ...lock,
+      materialization: {
+        ...lock.materialization,
+        files: [
+          lock.materialization.files[0],
+          { ...lock.materialization.files[0], identity: "later-identity" },
+        ],
+      },
+    }),
+    /duplicate .agents\/skills/u,
   );
 });
 

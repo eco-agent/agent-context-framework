@@ -141,9 +141,17 @@ installation oracle during this side-by-side checkpoint.
 The context transaction claims its staging directory exclusively. Initial
 materialization writes verified files and publishes the receipt last. A process
 failure can leave a partial new directory until transaction recovery finishes.
-The generated fixture invokes materialization synchronously and never starts
-Codex during that interval. A future bootstrap must inspect and recover the
-transaction before Codex discovers repository skills.
+The tracked `.agent-context/bootstrap.mjs` bundle resumes or discards a safe
+transaction before it reads the capsule. A blocked transaction fails the process.
+The bundle also requires Git to ignore every generated skill file and the
+receipt before it writes. A missing ignore rule returns exact conflicts.
+
+The bundle is reproducible from a dedicated TypeScript entry with the pinned
+`vite-plus` packer. It uses Node and Git, with no package install in the project.
+The generated fixture invokes it synchronously and never starts Codex during
+that interval. A launcher integration must still run the bootstrap before Codex
+discovers repository skills. A `SessionStart` hook is not accepted as proof of
+that ordering.
 
 ### Reserved lock v3
 
@@ -179,7 +187,18 @@ metadata:
       "targetPath": "AGENTS.md",
       "installedSha256": "<64 hexadecimal characters>"
     }
-  ]
+  ],
+  "materialization": {
+    "capsuleSha256": "<64 hexadecimal characters>",
+    "treeSha256": "<64 hexadecimal characters>",
+    "files": [
+      {
+        "identity": "file:.codex/skills/diagnose/SKILL.md",
+        "targetPath": ".agents/skills/acf--diagnose--<component digest>/SKILL.md",
+        "installedSha256": "<64 hexadecimal characters>"
+      }
+    ]
+  }
 }
 ```
 
@@ -189,6 +208,10 @@ lock v3.
 `compressedBytes` counts the complete capsule file, including the eight-byte
 header. `expandedBytes` counts the decoded source-entry bytes, not the canonical
 JSON payload. These names remain stable when compression settings change.
+`activation` records tracked expanded projections. `materialization` records
+ignored generated ownership separately. Replacement must derive the expected
+materialization records from the verified capsule. It must not compare a lock's
+records with themselves.
 
 ## Ownership and recovery
 
@@ -207,9 +230,10 @@ After side-by-side equivalence and initial skill materialization pass, later
 checkpoints may:
 
 1. Publish capsule and lock v3 through one transaction.
-2. Bind the old receipt to tracked ownership and replace valid materialization
+2. Bind the old generated files to lock-v3 materialization ownership and replace
+   valid materialization
    without exposing a partial skill to Codex discovery.
-3. Introduce the stable built-in bootstrap and packaged startup runtime.
+3. Invoke the tracked bootstrap before Codex skill discovery.
 4. Move runtime source to ignored immutable output.
 5. Retain startup files and project controls as tracked files.
 6. Migrate existing lock-v2 projects only when every managed file matches its
@@ -254,6 +278,9 @@ Capsule v1 is not accepted until all of these conditions hold:
 8. A modified file, unexpected path, malformed receipt, forged root mapping, or
    symbolic link blocks materialization.
 9. The existing installer and transaction suites still pass.
+10. The committed bootstrap bundle rebuilds byte for byte, runs with plain Node
+    in a fresh fixture, recovers discardable staging, writes nothing on repeat,
+    and fails closed on modified generated output or missing Git ignore rules.
 
 ## Implementation references
 

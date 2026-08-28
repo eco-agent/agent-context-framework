@@ -54,7 +54,7 @@ test("capsule builds deterministic canonical bytes for the selected closure", as
   assert.equal(first.bytes.equals(second.bytes), true);
   assert.equal(first.capsuleSha256, second.capsuleSha256);
   assert.equal(first.treeSha256, second.treeSha256);
-  assert.equal(first.entryCount, 5);
+  assert.equal(first.entryCount, 6);
   assert.equal(first.bytes.subarray(0, CONTEXT_CAPSULE_MAGIC.length).equals(CONTEXT_CAPSULE_MAGIC), true);
 
   const decoded = readContextCapsule(first.bytes);
@@ -173,6 +173,11 @@ test("concise lock v3 records and verifies capsule identity without replacing lo
     lock.activation.map((record) => record.identity),
     ["seed-file:.gitattributes", "text-section:AGENTS.md:core"],
   );
+  assert.deepEqual(lock.materialization, {
+    capsuleSha256: capsule.capsuleSha256,
+    treeSha256: capsule.treeSha256,
+    files: [],
+  });
   assert.deepEqual(verifyContextCapsuleLock(lock, capsule, activation), {
     ok: true,
     mismatches: [],
@@ -192,6 +197,21 @@ test("concise lock v3 records and verifies capsule identity without replacing lo
   }, activation[1]]);
   assert.equal(activationMismatch.ok, false);
   assert.match(activationMismatch.mismatches.join("\n"), /Activation records differ/u);
+
+  const materialization = [{
+    identity: "file:.codex/skills/example/SKILL.md",
+    targetPath: `.agents/skills/acf--example--${"c".repeat(64)}/SKILL.md`,
+    installedSha256: "c".repeat(64),
+  }] as const;
+  const materializedLock = createContextCapsuleLock(capsule, activation, materialization);
+  const materializationMismatch = verifyContextCapsuleLock(
+    materializedLock,
+    capsule,
+    activation,
+    [],
+  );
+  assert.equal(materializationMismatch.ok, false);
+  assert.match(materializationMismatch.mismatches.join("\n"), /Materialization records differ/u);
 });
 
 test("capsule writes and extracts atomically without replacing existing paths", async () => {
@@ -243,7 +263,7 @@ test("generated clean core application proves capsule installation equivalence w
     );
     const verification = await verifyContextCapsuleInstallation(capsule, projectRoot);
     assert.equal(verification.ok, true);
-    assert.equal(verification.artifactCount, 5);
+    assert.equal(verification.artifactCount, 6);
     assert.deepEqual(verification.mismatches, []);
     assert.equal(await git(projectRoot, ["rev-parse", "HEAD"]), revisionBefore);
     assert.equal(

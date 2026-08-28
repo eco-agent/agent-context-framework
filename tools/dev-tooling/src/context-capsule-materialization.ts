@@ -1,8 +1,13 @@
 import { createHash } from "node:crypto";
+import { spawn } from "node:child_process";
 import { lstat, readFile, readdir, realpath } from "node:fs/promises";
 import path from "node:path";
 
 import { artifactIdentity } from "@agent-context/repo-policy";
+import type {
+  ContextCapsuleActivationLock,
+  ContextCapsuleLockV3,
+} from "@agent-context/repo-policy";
 
 import {
   contextCapsuleEntryBytes,
@@ -14,6 +19,7 @@ import {
   type ContextMutation,
   type ContextTransactionOptions,
 } from "./context-transaction.js";
+import { verifyContextCapsuleLock } from "./context-capsule-lock.js";
 
 export const CONTEXT_MATERIALIZATION_PATH = ".agent-context/materialization.json";
 export const CONTEXT_MATERIALIZATION_SCHEMA_VERSION = 1 as const;
@@ -79,6 +85,11 @@ export interface ContextMaterializationResult {
   readonly writtenPaths: readonly string[];
 }
 
+export interface ContextMaterializationAuthorityVerification {
+  readonly ok: boolean;
+  readonly mismatches: readonly string[];
+}
+
 interface DesiredMaterializedFile {
   readonly receipt: ContextMaterializedFileV1;
   readonly content: Buffer;
@@ -102,6 +113,22 @@ export async function planContextCapsuleSkillMaterialization(
         targetPath: ".agent-context/transaction.json",
         detail: `Context transaction recovery is required before materialization: ${transaction.detail}`,
       }],
+    };
+  }
+  const ignoreConflicts = await findUnignoredMaterializationPaths(
+    resolvedProjectRoot,
+    [
+      CONTEXT_MATERIALIZATION_PATH,
+      ...desiredReceipt.files.map((file) => file.targetPath),
+    ],
+  );
+  if (ignoreConflicts.length > 0) {
+    return {
+      status: "blocked",
+      projectRoot: resolvedProjectRoot,
+      receipt: desiredReceipt,
+      previousReceipt: null,
+      conflicts: ignoreConflicts,
     };
   }
   const storedReceipt = await readStoredReceipt(resolvedProjectRoot);
@@ -280,6 +307,41 @@ export function decodeContextMaterializationReceipt(
   };
 }
 
+export function contextCapsuleSkillActivation(
+  capsule: BuiltContextCapsule,
+): readonly ContextCapsuleActivationLock[] {
+  return desiredSkillFiles(capsule).map((file) => ({
+    identity: file.receipt.identity,
+    targetPath: file.receipt.targetPath,
+    installedSha256: file.receipt.sha256,
+  })).sort((left, right) => compareStrings(left.identity, right.identity));
+}
+
+export function verifyContextMaterializationAuthority(
+  lock: ContextCapsuleLockV3,
+  capsule: BuiltContextCapsule,
+  receipt: ContextMaterializationReceiptV1,
+): ContextMaterializationAuthorityVerification {
+  const expectedActivation = contextCapsuleSkillActivation(capsule);
+  const mismatches = [
+    ...verifyContextCapsuleLock(
+      lock,
+      capsule,
+      lock.activation,
+      expectedActivation,
+    ).mismatches,
+  ];
+  const desiredFiles = desiredSkillFiles(capsule);
+  const expectedReceipt = createReceipt(
+    capsule,
+    desiredFiles.map((file) => file.receipt),
+  );
+  if (serializeReceipt(receipt) !== serializeReceipt(expectedReceipt)) {
+    mismatches.push("Materialization receipt differs from the capsule projection.");
+  }
+  return { ok: mismatches.length === 0, mismatches };
+}
+
 function desiredSkillFiles(capsule: BuiltContextCapsule): readonly DesiredMaterializedFile[] {
   const files: DesiredMaterializedFile[] = [];
   const targets = new Set<string>();
@@ -388,6 +450,50 @@ async function findUnexpectedDesiredTargets(
     }
   }
   return conflicts;
+}
+
+async function findUnignoredMaterializationPaths(
+  projectRoot: string,
+  targetPaths: readonly string[],
+): Promise<readonly ContextMaterializationConflict[]> {
+  const ignored = await gitIgnoredPaths(projectRoot, targetPaths);
+  return targetPaths.filter((targetPath) => !ignored.has(targetPath)).map((targetPath) => ({
+    targetPath,
+    detail: "Generated materialization path is not ignored by Git.",
+  }));
+}
+
+async function gitIgnoredPaths(
+  projectRoot: string,
+  targetPaths: readonly string[],
+): Promise<ReadonlySet<string>> {
+  return await new Promise((resolve, reject) => {
+    const child = spawn("git", ["check-ignore", "--no-index", "-z", "--stdin"], {
+      cwd: projectRoot,
+      shell: false,
+      windowsHide: true,
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    child.stdout.on("data", (chunk: Buffer) => stdout.push(chunk));
+    child.stderr.on("data", (chunk: Buffer) => stderr.push(chunk));
+    child.once("error", (error) => {
+      reject(new Error("Git could not inspect materialization ignore rules.", { cause: error }));
+    });
+    child.once("close", (code) => {
+      if (code !== 0 && code !== 1) {
+        reject(new Error(
+          `Git check-ignore failed with code ${code}: ${Buffer.concat(stderr).toString("utf8").trim()}`,
+        ));
+        return;
+      }
+      resolve(new Set(
+        Buffer.concat(stdout).toString("utf8").split("\0").filter((value) => value.length > 0),
+      ));
+    });
+    child.stdin.end(`${targetPaths.join("\0")}\0`, "utf8");
+  });
 }
 
 async function verifyReceiptFiles(

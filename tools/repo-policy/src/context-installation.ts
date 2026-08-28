@@ -157,12 +157,19 @@ export interface ContextCapsuleLockV3 {
     }[];
   };
   readonly activation: readonly ContextCapsuleActivationLock[];
+  readonly materialization: ContextCapsuleMaterializationLock;
 }
 
 export interface ContextCapsuleActivationLock {
   readonly identity: string;
   readonly targetPath: string;
   readonly installedSha256: string;
+}
+
+export interface ContextCapsuleMaterializationLock {
+  readonly capsuleSha256: string;
+  readonly treeSha256: string;
+  readonly files: readonly ContextCapsuleActivationLock[];
 }
 
 export function decodeContextRegistry(value: unknown): ContextRegistryV2 {
@@ -245,6 +252,7 @@ export function decodeContextCapsuleLock(value: unknown): ContextCapsuleLockV3 {
     "capsule",
     "components",
     "activation",
+    "materialization",
   ]);
   if (record.schemaVersion !== CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION) {
     throw new Error(
@@ -306,6 +314,7 @@ export function decodeContextCapsuleLock(value: unknown): ContextCapsuleLockV3 {
     activation.map((artifact) => artifact.identity),
     "Context capsule lock activation identities",
   );
+  const materialization = decodeCapsuleMaterialization(record.materialization);
   return {
     schemaVersion: CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION,
     registryRevision: requiredRevision(record, "registryRevision"),
@@ -321,6 +330,7 @@ export function decodeContextCapsuleLock(value: unknown): ContextCapsuleLockV3 {
     },
     components: { direct, resolved },
     activation,
+    materialization,
   };
 }
 
@@ -348,6 +358,39 @@ function decodeCapsuleActivation(value: unknown): ContextCapsuleActivationLock {
     identity: requiredString(record, "identity"),
     targetPath: portableRelativePath(record, "targetPath"),
     installedSha256: sha256(record, "installedSha256"),
+  };
+}
+
+function decodeCapsuleMaterialization(value: unknown): ContextCapsuleMaterializationLock {
+  const record = strictRecord(value, "Context capsule lock materialization", [
+    "capsuleSha256",
+    "treeSha256",
+    "files",
+  ]);
+  const files = decodeArray(
+    record.files,
+    "Context capsule lock materialization files",
+    decodeCapsuleActivation,
+  );
+  requireSortedUnique(
+    files.map((artifact) => artifact.identity),
+    "Context capsule lock materialization identities",
+  );
+  requireUnique(
+    files.map((artifact) => artifact.targetPath),
+    "Context capsule lock materialization target paths",
+  );
+  const outsideSkills = files.find((artifact) =>
+    !artifact.targetPath.startsWith(".agents/skills/"));
+  if (outsideSkills !== undefined) {
+    throw new Error(
+      `Context capsule lock materialization target must be below .agents/skills: ${outsideSkills.targetPath}.`,
+    );
+  }
+  return {
+    capsuleSha256: sha256(record, "capsuleSha256"),
+    treeSha256: sha256(record, "treeSha256"),
+    files,
   };
 }
 

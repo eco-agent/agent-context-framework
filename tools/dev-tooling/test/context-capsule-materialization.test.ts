@@ -12,10 +12,13 @@ import {
 } from "../src/context-capsule.js";
 import {
   CONTEXT_MATERIALIZATION_PATH,
+  contextCapsuleSkillActivation,
   decodeContextMaterializationReceipt,
   materializeContextCapsuleSkills,
   planContextCapsuleSkillMaterialization,
+  verifyContextMaterializationAuthority,
 } from "../src/context-capsule-materialization.js";
+import { createContextCapsuleLock } from "../src/context-capsule-lock.js";
 import { addComponent } from "../src/context-installer.js";
 import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
 
@@ -58,6 +61,37 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
       () => decodeContextMaterializationReceipt(forgedReceipt),
       /skillRoot does not match its skill and component revision/u,
     );
+    const activation = contextCapsuleSkillActivation(fixture.capsule);
+    const lock = createContextCapsuleLock(fixture.capsule, [], activation);
+    assert.deepEqual(
+      verifyContextMaterializationAuthority(lock, fixture.capsule, first.receipt),
+      { ok: true, mismatches: [] },
+    );
+    const redirectedLock = createContextCapsuleLock(
+      fixture.capsule,
+      [],
+      activation.map((record, index) =>
+        index === 0 ? { ...record, targetPath: ".agents/skills/other/SKILL.md" } : record),
+    );
+    const redirected = verifyContextMaterializationAuthority(
+      redirectedLock,
+      fixture.capsule,
+      first.receipt,
+    );
+    assert.equal(redirected.ok, false);
+    assert.match(redirected.mismatches.join("\n"), /Materialization records differ/u);
+
+    const receiptDrift = decodeContextMaterializationReceipt({
+      ...first.receipt,
+      capsuleSha256: "0".repeat(64),
+    });
+    const drifted = verifyContextMaterializationAuthority(
+      lock,
+      fixture.capsule,
+      receiptDrift,
+    );
+    assert.equal(drifted.ok, false);
+    assert.match(drifted.mismatches.join("\n"), /receipt differs/u);
 
     const second = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
     assert.equal(second.status, "current");
@@ -66,6 +100,17 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
       (await readFile(path.join(fixture.projectRoot, CONTEXT_MATERIALIZATION_PATH))).equals(
         receiptBefore,
       ),
+      true,
+    );
+    await writeFile(path.join(fixture.projectRoot, ".gitignore"), "# project rules removed\n", "utf8");
+    const unignored = await planContextCapsuleSkillMaterialization(
+      fixture.capsule,
+      fixture.projectRoot,
+    );
+    assert.equal(unignored.status, "blocked");
+    assert.equal(
+      unignored.conflicts.some((conflict) =>
+        conflict.targetPath === CONTEXT_MATERIALIZATION_PATH && /not ignored by Git/u.test(conflict.detail)),
       true,
     );
   } finally {

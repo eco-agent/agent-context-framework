@@ -37,6 +37,7 @@ No project contracts are declared in `.agent-context/policy.json`.
 | Added | Capsule inspection, extraction, and semantic comparison operate without installation writes. | Capsule reader and CLI |
 | Added | The generated application proves capsule entries against the real expanded core installation. | Fixture proof test |
 | Added | Selected whole-file skills materialize to ignored content-addressed directories under `.agents/skills`. | Capsule materializer and receipt |
+| Added | One tracked plain-Node bootstrap verifies the capsule, recovers context transactions, and materializes skills. | Core registry component and bootstrap entry |
 | Changed | The context transaction claims staging exclusively so concurrent writers cannot share or remove each other's staged bytes. | Context transaction |
 | Removed | None in the first checkpoint. | User approval remains required for migration |
 
@@ -83,6 +84,18 @@ from committed bytes and Git reports the path as binary. The ignored receipt
 records two exact `skill-diagnose` files below a content-addressed direct child
 of `.agents/skills`. A command rerun reports `current` and writes nothing.
 
+Core now owns a reproducible 40.29 kB minified bootstrap bundle at
+`.agent-context/bootstrap.mjs`. A fresh generated clone runs it with plain Node
+and no project dependencies or expanded runtime. The bootstrap materializes an
+absent projection, writes nothing on repeat, discards pre-journal staging, and
+fails closed on modified output. Git ignore inspection runs before every
+materialization attempt. Launcher integration before Codex discovery remains
+unproved.
+
+Lock v3 now separates tracked expanded activation from ignored materialization
+ownership. The capsule derives the expected skill records. Comparing caller
+supplied lock records with themselves is not accepted as verification.
+
 ## Topology
 
 1. Registry resolver selects components.
@@ -92,8 +105,10 @@ of `.agents/skills`. A command rerun reports `current` and writes nothing.
 5. Capsule reader verifies and decodes before exposing entries.
 6. Semantic commands operate on verified payloads.
 7. Generated application proof compares the capsule with expanded installation.
-8. Skill materialization writes an absent content-addressed output and receipt,
-   or verifies an exact repeat. Different capsule content blocks.
+8. The plain-Node bootstrap recovers a safe context transaction.
+9. Skill materialization verifies Git ignore rules, then writes an absent
+   content-addressed output and receipt, or verifies an exact repeat. Different
+   capsule content blocks.
 
 ## Active materialization slice
 
@@ -131,6 +146,8 @@ Reuse assessment:
 - Official OpenAI documentation confirms that repository skills belong under
   `.agents/skills` and that Codex scans that path from the working directory to
   the repository root.
+- The pinned `vite-plus` packer bundles the existing verifier and materializer
+  into one ESM file with no external package dependency.
 
 ### Materialization boundaries
 
@@ -158,7 +175,8 @@ installer writes remain the active representation.
 ## Remaining work
 
 - No lock v3 projection yet.
-- No bootstrap shim or startup runtime bundle yet.
+- No automatic bootstrap launcher or packaged runtime materialization yet.
+- No launcher integration proves bootstrap completion before Codex discovery.
 - No removal of tracked `.codex/skills` projections yet.
 - No ignored runtime materialization yet.
 - No one-time downstream deletion migration yet.
@@ -170,7 +188,7 @@ installer writes remain the active representation.
 - Registry source bytes to deterministic entries.
 - Dev-tooling exports and CLI to package and root commands.
 - Format tests to generated application equivalence.
-- Capsule decision to later lock, bootstrap, materialization, and fleet stages.
+- Capsule decision to lock, bootstrap, materialization, and fleet stages.
 
 ## Closure
 
@@ -190,16 +208,19 @@ active slice.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
-- Combined capsule, materialization, transaction, and fixture tests: 24 passed.
+- Combined policy, capsule, bootstrap, materialization, transaction, and fixture
+  tests: 33 passed.
+- Reproducible bundle and plain-Node fresh-clone bootstrap tests: 2 passed.
 - Different-capsule proof retains the exact prior materialized skill and reports
   that lock v3 must establish tracked ownership before replacement.
 - Existing installer, installer CLI, and transaction tests: 25 passed.
 - Dev-tooling TypeScript build: passed.
+- Root TypeScript build: passed.
 - Forged receipt mapping and stale unowned `SKILL.md` checks: passed.
 - Agent prose check: passed for the ADR, decision, and work record.
 - Technical prose check: passed for the ADR and decision.
 - Documentation profile: passed.
 - Workflow profile: passed, including workflow tests, dependency adoption,
   boundaries, and verification cleanliness.
-- Latest documentation and workflow profiles passed at receipt ownership safety
-  revision `332ad3b6069a71817aa3af27f900626b1ccae0dd`.
+- Latest documentation and workflow profiles passed after the bootstrap and
+  lock-v3 ownership changes.

@@ -18,6 +18,7 @@
     "agent:inspect": "node .codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs",
     "agent-context": "node --import tsx tools/dev-tooling/src/context-installer-cli.ts",
     "build": "tsc -b",
+    "capsule:bootstrap:build": "node node_modules/vite-plus/dist/pack-bin.js tools/dev-tooling/src/context-capsule-bootstrap-entry.ts --write --format esm --platform node --out-dir registry/sources/bootstrap --logLevel info --clean --minify",
     "check": "vp check",
     "clean": "tsc -b --clean",
     "context": "tsx tools/codex-workflows/src/context-cli.ts",

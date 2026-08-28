@@ -17,6 +17,7 @@ export interface ContextCapsuleLockVerification {
 export function createContextCapsuleLock(
   capsule: BuiltContextCapsule,
   activation: readonly ContextCapsuleActivationLock[],
+  materialization: readonly ContextCapsuleActivationLock[] = [],
 ): ContextCapsuleLockV3 {
   return decodeContextCapsuleLock({
     schemaVersion: CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION,
@@ -43,6 +44,12 @@ export function createContextCapsuleLock(
     },
     activation: [...activation].sort((left, right) =>
       compareStrings(left.identity, right.identity)),
+    materialization: {
+      capsuleSha256: capsule.capsuleSha256,
+      treeSha256: capsule.treeSha256,
+      files: [...materialization].sort((left, right) =>
+        compareStrings(left.identity, right.identity)),
+    },
   });
 }
 
@@ -50,8 +57,13 @@ export function verifyContextCapsuleLock(
   lock: ContextCapsuleLockV3,
   capsule: BuiltContextCapsule,
   expectedActivation: readonly ContextCapsuleActivationLock[],
+  expectedMaterialization: readonly ContextCapsuleActivationLock[] = [],
 ): ContextCapsuleLockVerification {
-  const expected = createContextCapsuleLock(capsule, expectedActivation);
+  const expected = createContextCapsuleLock(
+    capsule,
+    expectedActivation,
+    expectedMaterialization,
+  );
   const mismatches: string[] = [];
   if (lock.registryRevision !== expected.registryRevision) {
     mismatches.push("Registry revision differs from the capsule.");
@@ -79,6 +91,9 @@ export function verifyContextCapsuleLock(
   }
   if (!sameJson(lock.activation, expected.activation)) {
     mismatches.push("Activation records differ from the expected installed scopes.");
+  }
+  if (!sameJson(lock.materialization, expected.materialization)) {
+    mismatches.push("Materialization records differ from the capsule projection.");
   }
   return { ok: mismatches.length === 0, mismatches };
 }
