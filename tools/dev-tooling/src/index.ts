@@ -134,3 +134,28 @@ export {
   type TestApplicationFixtureResult,
   type TestApplicationGitState,
 } from "./test-application-fixture.js";
+export {
+  buildContextCapsule,
+  buildContextCapsuleForProject,
+  contextCapsuleEntryBytes,
+  diffContextCapsules,
+  extractContextCapsule,
+  inspectContextCapsule,
+  readContextCapsule,
+  readContextCapsuleFile,
+  writeContextCapsuleFile,
+  CONTEXT_CAPSULE_FORMAT,
+  CONTEXT_CAPSULE_MAGIC,
+  CONTEXT_CAPSULE_SCHEMA_VERSION,
+  type BuiltContextCapsule,
+  type ContextCapsuleBuildRequest,
+  type ContextCapsuleDiff,
+  type ContextCapsuleEntryV1,
+  type ContextCapsuleInspection,
+  type ContextCapsulePayloadV1,
+} from "./context-capsule.js";
+export {
+  verifyContextCapsuleInstallation,
+  type ContextCapsuleInstallationMismatch,
+  type ContextCapsuleInstallationVerification,
+} from "./context-capsule-installation.js";

@@ -27,6 +27,10 @@ import {
 } from "./runtime-bootstrap.js";
 import { startSetupServer } from "./setup-server.js";
 import { checkContextRegistry } from "./context-registry-builder.js";
+import {
+  CONTEXT_CAPSULE_HELP,
+  runContextCapsuleCli,
+} from "./context-capsule-cli.js";
 
 type ContextInstallerArguments =
   | {
@@ -114,6 +118,7 @@ Usage:
   pnpm agent-context recover [--cwd PROJECT]
   pnpm agent-context bootstrap-runtime [--no-install] [--cwd PROJECT]
   pnpm agent-context setup [--port PORT] [--no-open] [--exit-after-install] [--cwd PROJECT]
+  pnpm agent-context capsule <build|list|inspect|verify|diff|extract> [OPTIONS]
   pnpm agent-context help
 
 Behavior:
@@ -392,7 +397,23 @@ async function execute(arguments_: ExecutableContextArguments): Promise<ContextC
 }
 
 async function main(): Promise<void> {
-  const arguments_ = parseContextInstallerArguments(process.argv.slice(2), process.cwd());
+  const rawArguments = process.argv.slice(2);
+  if (rawArguments[0] === "capsule") {
+    if (rawArguments[1] === "help" || rawArguments[1] === "--help" || rawArguments[1] === "-h") {
+      console.log(CONTEXT_CAPSULE_HELP);
+      return;
+    }
+    if (rawArguments[1] === "build") await checkContextRegistry(frameworkRoot);
+    const result = await runContextCapsuleCli(
+      rawArguments.slice(1),
+      process.cwd(),
+      frameworkRoot,
+    );
+    console.log(result.output);
+    process.exitCode = result.exitCode;
+    return;
+  }
+  const arguments_ = parseContextInstallerArguments(rawArguments, process.cwd());
   if (arguments_.command === "help") {
     console.log(CONTEXT_INSTALLER_HELP);
     return;
