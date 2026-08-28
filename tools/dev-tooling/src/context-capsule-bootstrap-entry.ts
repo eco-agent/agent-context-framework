@@ -6,10 +6,13 @@ interface BootstrapArguments {
 }
 
 function parseArguments(values: readonly string[]): BootstrapArguments {
+  if (values[0] !== "materialize") {
+    throw new Error("Usage: node .agent-context/bootstrap.mjs materialize [--cwd PROJECT] [--json]");
+  }
   let projectRoot = process.cwd();
   let projectRootSet = false;
   let json = false;
-  for (let index = 0; index < values.length; index += 1) {
+  for (let index = 1; index < values.length; index += 1) {
     const value = values[index];
     if (value === "--cwd") {
       if (projectRootSet) throw new Error("--cwd may be specified only once.");

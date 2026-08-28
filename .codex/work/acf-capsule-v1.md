@@ -84,13 +84,14 @@ from committed bytes and Git reports the path as binary. The ignored receipt
 records two exact `skill-diagnose` files below a content-addressed direct child
 of `.agents/skills`. A command rerun reports `current` and writes nothing.
 
-Core now owns a reproducible 40.29 kB minified bootstrap bundle at
+Core now owns a reproducible 40.41 kB minified bootstrap bundle at
 `.agent-context/bootstrap.mjs`. A fresh generated clone runs it with plain Node
 and no project dependencies or expanded runtime. The bootstrap materializes an
 absent projection, writes nothing on repeat, discards pre-journal staging, and
 fails closed on modified output. Git ignore inspection runs before every
-materialization attempt. Launcher integration before Codex discovery remains
-unproved.
+materialization attempt. Fresh clones must run
+`node .agent-context/bootstrap.mjs materialize` before Codex starts. Git cannot
+make that portable and automatic. Launcher integration remains a convenience.
 
 Lock v3 now separates tracked expanded activation from ignored materialization
 ownership. The capsule derives the expected skill records. Comparing caller
@@ -176,7 +177,7 @@ installer writes remain the active representation.
 
 - No lock v3 projection yet.
 - No automatic bootstrap launcher or packaged runtime materialization yet.
-- No launcher integration proves bootstrap completion before Codex discovery.
+- No optional host launcher automates the explicit pre-Codex bootstrap command.
 - No removal of tracked `.codex/skills` projections yet.
 - No ignored runtime materialization yet.
 - No one-time downstream deletion migration yet.
@@ -213,7 +214,7 @@ active slice.
 - Combined policy, capsule, bootstrap, materialization, transaction, and fixture
   tests: 33 passed.
 - Reproducible bundle and plain-Node fresh-clone bootstrap tests: 2 passed.
-- Committed bootstrap bundle: 40,289 bytes. The generated fixture marks both the
+- Committed bootstrap bundle: 40,406 bytes. The generated fixture marks both the
   bootstrap and capsule as binary Git paths.
 - Different-capsule proof retains the exact prior materialized skill and reports
   that lock v3 must establish tracked ownership before replacement.

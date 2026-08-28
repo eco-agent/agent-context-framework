@@ -148,10 +148,11 @@ receipt before it writes. A missing ignore rule returns exact conflicts.
 
 The bundle is reproducible from a dedicated TypeScript entry with the pinned
 `vite-plus` packer. It uses Node and Git, with no package install in the project.
-The generated fixture invokes it synchronously and never starts Codex during
-that interval. A launcher integration must still run the bootstrap before Codex
-discovers repository skills. A `SessionStart` hook is not accepted as proof of
-that ordering.
+The reliable fresh-clone command is
+`node .agent-context/bootstrap.mjs materialize`. The user runs it before opening
+the project in Codex. Git has no portable post-clone mechanism that can guarantee
+this step. A future launcher may automate the same command, but a `SessionStart`
+hook is not accepted because Codex has already begun startup by then.
 
 ### Reserved lock v3
 
@@ -233,7 +234,8 @@ checkpoints may:
 2. Bind the old generated files to lock-v3 materialization ownership and replace
    valid materialization
    without exposing a partial skill to Codex discovery.
-3. Invoke the tracked bootstrap before Codex skill discovery.
+3. Preserve the explicit pre-Codex bootstrap command and add launcher convenience
+   only where the host can guarantee the ordering.
 4. Move runtime source to ignored immutable output.
 5. Retain startup files and project controls as tracked files.
 6. Migrate existing lock-v2 projects only when every managed file matches its

@@ -114,7 +114,7 @@ async function runBootstrap(
 ): Promise<{ readonly process: ProcessResult; readonly result: BootstrapOutput }> {
   const processResult = await runProcess(
     process.execPath,
-    [bootstrapPath, "--cwd", projectRoot, "--json"],
+    [bootstrapPath, "materialize", "--cwd", projectRoot, "--json"],
     projectRoot,
   );
   return {
