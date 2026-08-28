@@ -73,6 +73,12 @@ The host and packaged runtime policy sources both decode the additive lock-v3
 shape while all registry, config, and installation-lock v2 decoders remain at
 schema version 2. No project writes lock v3 yet.
 
+The generated application now has a committed `capsule` state. Its v2 lock and
+expanded targets remain authoritative, while the on-disk capsule verifies from
+the committed bytes and Git reports the path as binary. The existing transaction
+journal now stages raw bytes and can recover an interrupted `capsule` write. This
+prepares one atomic capsule-and-lock operation without publishing that pair yet.
+
 ## Topology
 
 1. Registry resolver selects components.

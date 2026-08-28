@@ -17,12 +17,16 @@ export const CONTEXT_TRANSACTION_STAGE_PATH = ".agent-context/transaction-stage"
 const CONTEXT_TRANSACTION_STAGED_JOURNAL = "journal.staged";
 
 export type ContextMutation =
-  | { readonly operation: "write"; readonly targetPath: string; readonly content: string }
+  | {
+      readonly operation: "write";
+      readonly targetPath: string;
+      readonly content: string | Uint8Array;
+    }
   | { readonly operation: "delete"; readonly targetPath: string };
 
 export interface ContextTransactionJournal {
   readonly schemaVersion: 1;
-  readonly command: "init" | "add" | "update" | "remove";
+  readonly command: "init" | "add" | "update" | "remove" | "capsule";
   readonly registryRevision: string;
   readonly mutations: readonly ContextTransactionJournalMutation[];
 }
@@ -103,13 +107,14 @@ export async function applyContextTransaction(
           stagedMutationPath(index),
           `Staged context write ${mutation.targetPath}`,
         );
-        await writeFile(staged, mutation.content, { encoding: "utf8", flag: "wx" });
+        const content = mutationContentBytes(mutation.content);
+        await writeFile(staged, content, { flag: "wx" });
         await notifyMutation(options, { kind: "write-staged", index, targetPath: mutation.targetPath });
         journalMutations.push({
           operation: "write",
           targetPath: mutation.targetPath,
           beforeSha256,
-          afterSha256: contentHash(Buffer.from(mutation.content, "utf8")),
+          afterSha256: contentHash(content),
         });
       } else {
         if (beforeSha256 === null) {
@@ -434,7 +439,13 @@ function decodeJournal(value: unknown): ContextTransactionJournal {
     "mutations",
   ]);
   if (record.schemaVersion !== 1) throw new Error("Context transaction journal schemaVersion must be 1.");
-  if (record.command !== "init" && record.command !== "add" && record.command !== "update" && record.command !== "remove") {
+  if (
+    record.command !== "init" &&
+    record.command !== "add" &&
+    record.command !== "update" &&
+    record.command !== "remove" &&
+    record.command !== "capsule"
+  ) {
     throw new Error("Context transaction command is invalid.");
   }
   if (typeof record.registryRevision !== "string" || record.registryRevision.length === 0) {
@@ -597,6 +608,12 @@ function nullableHash(value: unknown, label: string): string | null {
 
 function contentHash(content: Uint8Array): string {
   return createHash("sha256").update(content).digest("hex");
+}
+
+function mutationContentBytes(content: string | Uint8Array): Buffer {
+  return typeof content === "string"
+    ? Buffer.from(content, "utf8")
+    : Buffer.from(content);
 }
 
 function serializeJson(value: unknown): string {

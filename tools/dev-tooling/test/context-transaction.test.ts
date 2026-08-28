@@ -117,6 +117,42 @@ test("transaction inspection discards pre-journal staging and blocks target drif
   }
 });
 
+test("binary capsule writes keep exact bytes across interrupted recovery", async () => {
+  const projectRoot = await createTransactionFixture();
+  const capsuleBytes = Buffer.from([0x41, 0x43, 0x46, 0x00, 0x0d, 0x0a, 0xff]);
+  try {
+    await assert.rejects(
+      applyContextTransaction(
+        projectRoot,
+        "capsule",
+        "0.14.0",
+        [{
+          operation: "write",
+          targetPath: ".agent-context/capsule.acf",
+          content: capsuleBytes,
+        }],
+        {
+          afterMutation: (boundary) => {
+            if (boundary.kind === "journal-published") throw new Error("interrupt binary write");
+          },
+        },
+      ),
+      /interrupt binary write/u,
+    );
+    assert.equal((await inspectContextTransaction(projectRoot)).status, "resumable");
+    await resumeContextTransaction(projectRoot);
+    assert.equal(
+      (await readFile(path.join(projectRoot, ".agent-context", "capsule.acf"))).equals(
+        capsuleBytes,
+      ),
+      true,
+    );
+    assert.equal((await inspectContextTransaction(projectRoot)).status, "none");
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test("promotion revalidates a symbolic-link ancestor immediately before rename", async (t) => {
   const projectRoot = await createTransactionFixture();
   const outside = await mkdtemp(path.join(os.tmpdir(), "agent-context-promotion-outside-"));
