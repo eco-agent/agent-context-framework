@@ -25,6 +25,7 @@ import {
 } from "./context-capsule-materialization.js";
 import { migrateContextCapsuleV2 } from "./context-capsule-migration.js";
 import { classifyContextCapsuleRestart } from "./context-capsule-restart.js";
+import { updateContextCapsuleV3 } from "./context-capsule-update.js";
 
 export type ContextCapsuleCliArguments =
   | {
@@ -39,7 +40,7 @@ export type ContextCapsuleCliArguments =
       readonly json: boolean;
     }
   | {
-      readonly command: "verify" | "materialize" | "migrate";
+      readonly command: "verify" | "materialize" | "migrate" | "update";
       readonly projectRoot: string;
       readonly capsulePath: string;
       readonly json: boolean;
@@ -71,6 +72,7 @@ Usage:
   pnpm agent-context capsule verify [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule materialize [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule migrate [--cwd PROJECT] [--capsule CAPSULE] [--json]
+  pnpm agent-context capsule update [--cwd PROJECT] [--json]
   pnpm agent-context capsule diff --before CAPSULE --after CAPSULE [--json]
   pnpm agent-context capsule extract --capsule CAPSULE --output DIRECTORY [--json]
 
@@ -78,7 +80,8 @@ build writes a new capsule and refuses replacement. verify compares a capsule
 with the current expanded installation without writing. materialize writes the
 ignored skill and runtime projection with its receipt, reuses an exact projection,
 and blocks replacement until lock v3 proves prior ownership. migrate replaces a
-verified v2 lock and expanded materialization with lock v3. extract writes
+verified v2 lock and expanded materialization with lock v3. update publishes
+activation changes, capsule bytes, and lock v3 in one transaction. extract writes
 verified registry source paths to a new directory outside the framework worktree.`;
 
 export function parseContextCapsuleArguments(
@@ -94,6 +97,7 @@ export function parseContextCapsuleArguments(
     command !== "verify" &&
     command !== "materialize" &&
     command !== "migrate" &&
+    command !== "update" &&
     command !== "diff" &&
     command !== "extract"
   ) {
@@ -153,8 +157,16 @@ export function parseContextCapsuleArguments(
     rejectOptions(command, { outputValue, beforeValue, afterValue });
     return { command, capsulePath, json };
   }
-  if (command === "verify" || command === "materialize" || command === "migrate") {
+  if (
+    command === "verify" ||
+    command === "materialize" ||
+    command === "migrate" ||
+    command === "update"
+  ) {
     rejectOptions(command, { outputValue, beforeValue, afterValue });
+    if (command === "update" && capsuleValue !== null) {
+      throw new Error("--capsule is not valid for capsule update.");
+    }
     return { command, projectRoot, capsulePath, json };
   }
   if (command === "diff") {
@@ -275,6 +287,30 @@ export async function runContextCapsuleCli(
             `project: ${migration.projectRoot}`,
             `status: ${migration.status}`,
             ...migration.conflicts.map((conflict) =>
+              `conflict ${conflict.targetPath}: ${conflict.detail}`),
+          ].join("\n"),
+    };
+  }
+  if (request.command === "update") {
+    const update = await updateContextCapsuleV3(
+      frameworkRoot,
+      request.projectRoot,
+      await readGitRevision(frameworkRoot),
+    );
+    return {
+      exitCode: update.status === "blocked" ? 1 : 0,
+      output: request.json
+        ? JSON.stringify({ command: "update", ...update }, null, 2)
+        : [
+            `project: ${update.projectRoot}`,
+            `status: ${update.status}`,
+            ...(update.nextCapsuleSha256 === null
+              ? []
+              : [`capsule sha256: ${update.nextCapsuleSha256}`]),
+            ...(update.restart === null
+              ? []
+              : [`restart required: ${update.restart.required ? "yes" : "no"}`]),
+            ...update.conflicts.map((conflict) =>
               `conflict ${conflict.targetPath}: ${conflict.detail}`),
           ].join("\n"),
     };

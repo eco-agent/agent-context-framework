@@ -100,6 +100,7 @@ agent-context capsule inspect
 agent-context capsule verify
 agent-context capsule materialize
 agent-context capsule migrate
+agent-context capsule update
 agent-context capsule diff
 agent-context capsule extract
 ```
@@ -111,6 +112,15 @@ the project transaction. `migrate` removes verified v2 tracked materialization
 targets and replaces lock v2 with lock v3. `extract` writes the verified source
 tree to an explicit new directory. It never projects installation targets or
 replaces an existing directory.
+
+`update` accepts a current lock-v3 installation. It verifies the installed
+activation and ignored materialization, builds the selected closure from the
+current framework registry, and reuses the structured projection planner for
+tracked activation changes. Project-owned portions of shared files remain in
+place. Locally changed ACF-owned activation blocks. One binary-safe context
+transaction writes activation changes first, the capsule second, and lock v3
+last. Recovery completes the tracked set before bootstrap reconciles ignored
+materialization.
 
 Semantic diff reports direct-selection, component revision, and source-entry
 changes. Fresh installations add `*.acf binary` to `.gitattributes`. An existing
@@ -249,6 +259,7 @@ records with themselves.
 | Downstream fixture | Prove current installed scopes from capsule entries | Clean revision before and after verification | Report exact mismatches and leave the fixture unchanged |
 | Migration planner | Replace only exact v2 whole-file skill and runtime projections | v2 projection proof, current ignored projection, and lock-v3 rerun | Report exact conflicts before writing, or resume the recorded transaction |
 | Plain-Node bootstrap | Verify lock v3, the capsule, and every tracked activation scope before materialization | Lock and projection verification in a fresh clone | Stop before materialization on any mismatch |
+| Capsule updater | Publish activation, capsule, and lock as one recoverable tracked change | Structured projection plan and binary transaction journal | Block on local owned-scope edits, or recover the recorded transaction before retrying |
 | Project developer | Keep custom work outside generated materialization paths | Git status and materialization receipt | Promote the change into project-owned policy or a local component |
 
 ## Materialization migration
@@ -323,6 +334,9 @@ Capsule v1 is not accepted until all of these conditions hold:
     hook protocol begins, with no tracked runtime files or package install.
 12. Semantic diff reports whether changed startup activation, skills, or runtime
     require a Codex restart. Inspectable source-only changes do not invent one.
+13. Capsule update writes activation changes, binary capsule bytes, and lock v3
+    through one transaction. An interruption after capsule publication recovers
+    the matching lock before bootstrap replaces ignored output.
 
 ## Implementation references
 

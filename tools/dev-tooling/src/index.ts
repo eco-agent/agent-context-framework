@@ -1,4 +1,11 @@
 export {
+  planContextCapsuleV3Update,
+  updateContextCapsuleV3,
+  type ContextCapsuleUpdateConflict,
+  type ContextCapsuleUpdatePlan,
+  type ContextCapsuleUpdateResult,
+} from "./context-capsule-update.js";
+export {
   classifyContextCapsuleRestart,
   type ContextCapsuleRestartClassification,
   type ContextCapsuleRestartReason,

@@ -208,8 +208,6 @@ remains in place for projects that have not migrated.
 - No optional host launcher automates the explicit pre-Codex bootstrap command.
 - The current migration requires capsule and materialization prerequisites.
   It does not yet convert an ordinary v2 project in one command.
-- Capsule and lock update planning does not yet publish both tracked files through
-  one transaction.
 - No fleet manager yet.
 
 ## Completed repo-context runtime slice
@@ -267,11 +265,41 @@ require a Codex restart when applied to an active session. Licence, attribution,
 tests, and other inspectable source changes remain visible in semantic diff but
 do not claim a restart by themselves.
 
+An experimental capsule update planner synthesizes prior activation ownership
+from lock v3 and the verified previous capsule, then passes it through the
+existing v2 structured projection planner. Its focused transaction and recovery
+test passes, but the planner is not safe to release. The v2 planner validates
+ownership inside one desired artifact set. It does not validate overlaps between
+removed ownership from the old capsule and added ownership from the new capsule.
+On a shared target, an old removal could therefore delete content installed for
+the new identity.
+
+The next implementation must extract a shared owned-artifact transition planner
+from the projection, virtual-target, ownership-validation, and mutation code.
+That planner must receive verified old and new capsule artifacts together. It
+must validate ownership across both versions before it creates any mutation.
+The current update command and its documentation remain an experimental draft
+until that replacement exists.
+
 ## Closure
 
-Status, final revision, verification, and the remaining plan stages will be
-recorded before this temporary work record is removed or retained for the next
-active slice.
+The user stopped this work stream on 2026-08-28 after nearly five hours. The last
+safe completed revision is
+`3a55b70e4a53478ba5c20a1d3bb291bcfe8aed7c`. The following checkpoint preserves
+the experimental updater draft and this evidence. It does not mark the capsule
+program complete.
+
+The completed work reaches lock-v3 migration, ignored skill and runtime
+materialization, packaged launchers, lock-v2 compatibility, branch-switch
+reconciliation, and semantic restart classification. The atomic update command
+is unfinished for the cross-version ownership reason above. The fleet manager,
+optional host launcher, and one-command migration of an ordinary v2 project were
+not started or completed.
+
+The experimental draft passed the dev-tooling TypeScript build and its focused
+update transaction test. No documentation or workflow profile ran after the
+draft. The broader profiles listed below apply only through their named tested
+revisions.
 
 ### Checkpoint evidence
 
