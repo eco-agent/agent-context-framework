@@ -13,10 +13,10 @@ remains authoritative until that proof passes.
 - Baseline revision: `4b98e31a38e911e1d825456350a5f463abe16aea`
 - Task branch: `codex/acf-capsule-v1`
 - Generated application: `D:/dev/acf-fixture-command-check`
-- Generated application baseline: `5e0a7ff7cdb0dc51350a4f03d4db0124ff61c551`
-- Generated application revision: `89e8533b6b48590951d8b55df4d1954468ecbe16`
+- Generated application baseline: `7d5ff44a46eeb1541b507601c77509f4b0bfccd8`
+- Generated application revision: `9bf4930bd44a633e10fa63e59758823c8c2f25f1`
 - Generated capsule SHA-256:
-  `6e3eb1dcce7aaf543108c9d1ddb21e3b03a997a84dabbc0fe7c44c8e2c8ff6e6`
+  `8cc3895225b539fd4421b5b82f17ec1da56b80771877b4c48238ca3faa46dbcc`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
@@ -34,7 +34,8 @@ No project contracts are declared in `.agent-context/policy.json`.
 | Added | One deterministic Brotli capsule represents the selected closure. | Capsule builder |
 | Added | Capsule inspection, extraction, and semantic comparison operate without installation writes. | Capsule reader and CLI |
 | Added | The generated application proves capsule entries against the real expanded core installation. | Fixture proof test |
-| Changed | None in the first checkpoint. Side-by-side output does not yet replace lock v2 or tracked expanded files. | Future migration owns the change |
+| Added | Selected whole-file skills materialize to ignored content-addressed directories under `.agents/skills`. | Capsule materializer and receipt |
+| Changed | The context transaction claims staging exclusively so concurrent writers cannot share or remove each other's staged bytes. | Context transaction |
 | Removed | None in the first checkpoint. | User approval remains required for migration |
 
 ## Boundaries
@@ -63,9 +64,10 @@ bytes matches all five artifact targets, project config, and lock byte for byte.
 The dirty core variant also verifies without changing its commit or unrelated
 working files.
 
-The test application remains the expanded-installation oracle. Materialization,
-lock v3, tracked capsule attributes, and deletion of expanded files remain later
-stages.
+The test application remains the expanded-installation oracle. Its materialized
+state selects `skill-diagnose`, tracks the capsule and expanded projection, and
+writes the ignored repository skill and receipt. Git stays clean. Lock v3,
+runtime materialization, and deletion of expanded files remain later stages.
 
 Registry `0.14.0` now owns the capsule decision and adds `*.acf binary` to the
 fresh-project `.gitattributes` seed. Existing attributes remain project-owned.
@@ -73,11 +75,11 @@ The host and packaged runtime policy sources both decode the additive lock-v3
 shape while all registry, config, and installation-lock v2 decoders remain at
 schema version 2. No project writes lock v3 yet.
 
-The generated application now has a committed `capsule` state. Its v2 lock and
-expanded targets remain authoritative, while the on-disk capsule verifies from
-the committed bytes and Git reports the path as binary. The existing transaction
-journal now stages raw bytes and can recover an interrupted `capsule` write. This
-prepares one atomic capsule-and-lock operation without publishing that pair yet.
+The generated application now has a committed `materialized` state. Its v2 lock
+and expanded targets remain authoritative, while the on-disk capsule verifies
+from committed bytes and Git reports the path as binary. The ignored receipt
+records two exact `skill-diagnose` files below a content-addressed direct child
+of `.agents/skills`. A command rerun reports `current` and writes nothing.
 
 ## Topology
 
@@ -88,6 +90,8 @@ prepares one atomic capsule-and-lock operation without publishing that pair yet.
 5. Capsule reader verifies and decodes before exposing entries.
 6. Semantic commands operate on verified payloads.
 7. Generated application proof compares the capsule with expanded installation.
+8. Skill materialization writes content-addressed output, switches the receipt,
+   and removes only prior receipt-owned files.
 
 ## Active materialization slice
 
@@ -147,12 +151,12 @@ Reuse assessment:
 None in this checkpoint. Lock v2, expanded skills, expanded runtime, and existing
 installer writes remain the active representation.
 
-## Non-goals for the first checkpoint
+## Remaining work
 
 - No lock v3 projection yet.
-- No ignored materialized paths yet.
 - No bootstrap shim or startup runtime bundle yet.
-- No `.codex/skills` to `.agents/skills` migration yet.
+- No removal of tracked `.codex/skills` projections yet.
+- No ignored runtime materialization yet.
 - No one-time downstream deletion migration yet.
 - No fleet manager yet.
 
@@ -173,9 +177,16 @@ active slice.
 ### Checkpoint evidence
 
 - Capsule v1 checkpoint revision: `74d1db1ee0733f6659a98d16750d1fdacb698890`.
+- Initial receipt-backed materialization revision:
+  `d83f0e82986015d28feb35980bb4f821f27ac138`.
+- Content-addressed replacement revision:
+  `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
+- Combined capsule, materialization, transaction, and fixture tests: 24 passed.
+- Replacement failure injection proves the old complete skill remains readable
+  after the new receipt publishes, then transaction recovery removes it.
 - Existing installer, installer CLI, and transaction tests: 25 passed.
 - Dev-tooling TypeScript build: passed.
 - Agent prose check: passed for the ADR.
@@ -183,3 +194,5 @@ active slice.
 - Documentation profile: passed.
 - Workflow profile: passed, including workflow tests, dependency adoption,
   boundaries, and verification cleanliness.
+- Latest documentation and workflow profiles passed at replacement revision
+  `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.
