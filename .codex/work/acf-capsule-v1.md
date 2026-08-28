@@ -14,11 +14,11 @@ remains authoritative until that proof passes.
 - Task branch: `codex/acf-capsule-v1`
 - Generated application: `D:/dev/acf-fixture-command-check`
 - Generated application baseline: `7d5ff44a46eeb1541b507601c77509f4b0bfccd8`
-- Generated application revision: `6c67082b752caee08469b6ecaa648270181e7847`
+- Generated application revision: `c72d6e92421c9127ae609dc6530448fb61f49ab0`
 - Generated capsule SHA-256:
-  `778200ae069fa476d2c8272393a2735ed876d696091ae63682dcd76256afc3b7`
+  `26aec0c14bb9bb6c31cdd130fae4012780fc0f2cf547d79dd017ce7bede1dd19`
 - Generated capsule framework revision:
-  `dad3f2af4c92966b1d920a069f8c03564388e743`
+  `332ad3b6069a71817aa3af27f900626b1ccae0dd`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
@@ -92,8 +92,8 @@ of `.agents/skills`. A command rerun reports `current` and writes nothing.
 5. Capsule reader verifies and decodes before exposing entries.
 6. Semantic commands operate on verified payloads.
 7. Generated application proof compares the capsule with expanded installation.
-8. Skill materialization writes content-addressed output, switches the receipt,
-   and removes only prior receipt-owned files.
+8. Skill materialization writes an absent content-addressed output and receipt,
+   or verifies an exact repeat. Different capsule content blocks.
 
 ## Active materialization slice
 
@@ -185,6 +185,8 @@ active slice.
   `d83f0e82986015d28feb35980bb4f821f27ac138`.
 - Content-addressed materialization revision:
   `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.
+- Receipt ownership safety revision:
+  `332ad3b6069a71817aa3af27f900626b1ccae0dd`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
@@ -193,10 +195,11 @@ active slice.
   that lock v3 must establish tracked ownership before replacement.
 - Existing installer, installer CLI, and transaction tests: 25 passed.
 - Dev-tooling TypeScript build: passed.
-- Agent prose check: passed for the ADR.
-- Technical prose check: passed for the ADR.
+- Forged receipt mapping and stale unowned `SKILL.md` checks: passed.
+- Agent prose check: passed for the ADR, decision, and work record.
+- Technical prose check: passed for the ADR and decision.
 - Documentation profile: passed.
 - Workflow profile: passed, including workflow tests, dependency adoption,
   boundaries, and verification cleanliness.
-- Latest documentation and workflow profiles passed at materialization revision
-  `8edc44f71c25a76763de23e0f9233e9dd2f40f64`.
+- Latest documentation and workflow profiles passed at receipt ownership safety
+  revision `332ad3b6069a71817aa3af27f900626b1ccae0dd`.
