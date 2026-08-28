@@ -7,6 +7,10 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import test from "node:test";
 
+import { CONTEXT_CAPSULE_PATH } from "@agent-context/repo-policy";
+
+import { readContextCapsuleFile } from "../src/context-capsule.js";
+import { verifyContextCapsuleInstallation } from "../src/context-capsule-installation.js";
 import {
   generateTestApplicationFixture,
   TEST_APPLICATION_MARKER_PATH,
@@ -31,14 +35,14 @@ test("fixture CLI requires an absolute output and parses independent state contr
       "--state",
       "dirty",
       "--acf",
-      "core",
+      "capsule",
       "--replace",
       "--json",
     ]),
     {
       outputRoot,
       gitState: "dirty",
-      acfState: "core",
+      acfState: "capsule",
       replace: true,
       json: true,
     },
@@ -68,12 +72,13 @@ test("clean application generation is deterministic and passes its own tests", a
     assert.deepEqual(first.status, []);
     assert.equal(first.baselineRevision, second.baselineRevision);
     assert.equal(first.installationRevision, null);
+    assert.equal(first.capsuleSha256, null);
     assert.deepEqual(
       JSON.parse(await readFile(path.join(firstRoot, TEST_APPLICATION_MARKER_PATH), "utf8")),
       {
         schemaVersion: 1,
         kind: "agent-context-test-application",
-        generatorRevision: 1,
+        generatorRevision: 2,
         gitState: "clean",
         acfState: "none",
       },
@@ -82,6 +87,48 @@ test("clean application generation is deterministic and passes its own tests", a
       cwd: firstRoot,
       windowsHide: true,
     });
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("capsule fixture commits a verified binary capsule beside expanded core", async () => {
+  const fixture = await createFixtureParent();
+  try {
+    const outputRoot = path.join(fixture.parent, "capsule");
+    const result = await generateTestApplicationFixture({
+      frameworkRoot,
+      outputRoot,
+      gitState: "clean",
+      acfState: "capsule",
+      replace: false,
+    });
+
+    assert.notEqual(result.installationRevision, null);
+    assert.notEqual(result.capsuleSha256, null);
+    assert.deepEqual(result.status, []);
+    const capsule = await readContextCapsuleFile(path.join(outputRoot, CONTEXT_CAPSULE_PATH));
+    assert.equal(capsule.capsuleSha256, result.capsuleSha256);
+    assert.equal((await verifyContextCapsuleInstallation(capsule, outputRoot)).ok, true);
+    assert.equal(
+      JSON.parse(
+        await readFile(path.join(outputRoot, ".agent-context", "lock.json"), "utf8"),
+      ).schemaVersion,
+      2,
+    );
+    const attributes = await executeFile(
+      "git",
+      ["check-attr", "--all", "--", CONTEXT_CAPSULE_PATH],
+      { cwd: outputRoot, windowsHide: true },
+    );
+    assert.match(attributes.stdout, /binary: set/u);
+    assert.match(attributes.stdout, /text: unset/u);
+    const changed = await executeFile(
+      "git",
+      ["diff", "--name-only", result.baselineRevision, result.installationRevision!],
+      { cwd: outputRoot, windowsHide: true },
+    );
+    assert.match(changed.stdout, /\.agent-context\/capsule\.acf/u);
   } finally {
     await fixture.remove();
   }

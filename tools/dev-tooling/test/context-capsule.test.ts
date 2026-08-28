@@ -12,7 +12,10 @@ import {
   constants as zlibConstants,
 } from "node:zlib";
 
-import { decodeContextCapsuleLock } from "@agent-context/repo-policy";
+import {
+  CONTEXT_CAPSULE_PATH,
+  decodeContextCapsuleLock,
+} from "@agent-context/repo-policy";
 
 import {
   buildContextCapsule,
@@ -305,7 +308,7 @@ test("generated dirty core application verifies without disturbing unrelated wor
       frameworkRoot,
       outputRoot: projectRoot,
       gitState: "dirty",
-      acfState: "core",
+      acfState: "capsule",
       replace: false,
     });
     const revisionBefore = await git(projectRoot, ["rev-parse", "HEAD"]);
@@ -314,10 +317,8 @@ test("generated dirty core application verifies without disturbing unrelated wor
       "--porcelain=v1",
       "--untracked-files=all",
     ]);
-    const capsule = await buildContextCapsuleForProject(
-      frameworkRoot,
-      projectRoot,
-      frameworkRevision,
+    const capsule = await readContextCapsuleFile(
+      path.join(projectRoot, CONTEXT_CAPSULE_PATH),
     );
     assert.equal((await verifyContextCapsuleInstallation(capsule, projectRoot)).ok, true);
     assert.equal(await git(projectRoot, ["rev-parse", "HEAD"]), revisionBefore);
