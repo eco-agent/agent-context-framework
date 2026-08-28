@@ -1,5 +1,8 @@
 export const CONTEXT_INSTALLATION_SCHEMA_VERSION = 2 as const;
 export const CONTEXT_ADAPTER = "codex" as const;
+export const CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION = 3 as const;
+export const CONTEXT_CAPSULE_FORMAT_V1 = "acf-capsule-v1" as const;
+export const CONTEXT_CAPSULE_PATH = ".agent-context/capsule.acf" as const;
 
 export interface ContextRegistryV2 {
   readonly schemaVersion: typeof CONTEXT_INSTALLATION_SCHEMA_VERSION;
@@ -133,6 +136,35 @@ export type ContextLockedArtifact = ContextRegistryArtifact & {
   readonly installedSha256: string;
 };
 
+export interface ContextCapsuleLockV3 {
+  readonly schemaVersion: typeof CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION;
+  readonly registryRevision: string;
+  readonly frameworkRevision: string;
+  readonly capsule: {
+    readonly format: typeof CONTEXT_CAPSULE_FORMAT_V1;
+    readonly path: typeof CONTEXT_CAPSULE_PATH;
+    readonly sha256: string;
+    readonly treeSha256: string;
+    readonly compressedBytes: number;
+    readonly expandedBytes: number;
+    readonly entryCount: number;
+  };
+  readonly components: {
+    readonly direct: readonly string[];
+    readonly resolved: readonly {
+      readonly name: string;
+      readonly revision: string;
+    }[];
+  };
+  readonly activation: readonly ContextCapsuleActivationLock[];
+}
+
+export interface ContextCapsuleActivationLock {
+  readonly identity: string;
+  readonly targetPath: string;
+  readonly installedSha256: string;
+}
+
 export function decodeContextRegistry(value: unknown): ContextRegistryV2 {
   const record = strictRecord(value, "Context registry", [
     "schemaVersion",
@@ -202,6 +234,120 @@ export function decodeContextInstallationLock(value: unknown): ContextInstallati
     registryRevision: requiredRevision(record, "registryRevision"),
     components,
     artifacts,
+  };
+}
+
+export function decodeContextCapsuleLock(value: unknown): ContextCapsuleLockV3 {
+  const record = strictRecord(value, "Context capsule lock", [
+    "schemaVersion",
+    "registryRevision",
+    "frameworkRevision",
+    "capsule",
+    "components",
+    "activation",
+  ]);
+  if (record.schemaVersion !== CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION) {
+    throw new Error(
+      `Context capsule lock schemaVersion must be ${CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION}.`,
+    );
+  }
+  const capsule = strictRecord(record.capsule, "Context capsule lock capsule", [
+    "format",
+    "path",
+    "sha256",
+    "treeSha256",
+    "compressedBytes",
+    "expandedBytes",
+    "entryCount",
+  ]);
+  if (capsule.format !== CONTEXT_CAPSULE_FORMAT_V1) {
+    throw new Error(`Context capsule lock format must be ${CONTEXT_CAPSULE_FORMAT_V1}.`);
+  }
+  const capsulePath = portableRelativePath(capsule, "path");
+  if (capsulePath !== CONTEXT_CAPSULE_PATH) {
+    throw new Error(`Context capsule lock path must be ${CONTEXT_CAPSULE_PATH}.`);
+  }
+  const components = strictRecord(record.components, "Context capsule lock components", [
+    "direct",
+    "resolved",
+  ]);
+  const direct = decodeArray(
+    components.direct,
+    "Context capsule lock direct components",
+    (component) => componentName(component, "Context capsule lock direct component"),
+  );
+  if (direct.length === 0) throw new Error("Context capsule lock direct components must not be empty.");
+  requireUnique(direct, "Context capsule lock direct components");
+  const resolved = decodeArray(
+    components.resolved,
+    "Context capsule lock resolved components",
+    decodeCapsuleResolvedComponent,
+  );
+  if (resolved.length === 0) {
+    throw new Error("Context capsule lock resolved components must not be empty.");
+  }
+  requireUnique(
+    resolved.map((component) => component.name),
+    "Context capsule lock resolved components",
+  );
+  const resolvedNames = new Set(resolved.map((component) => component.name));
+  const missingDirect = direct.find((component) => !resolvedNames.has(component));
+  if (missingDirect !== undefined) {
+    throw new Error(
+      `Context capsule lock direct component ${missingDirect} is absent from the resolved closure.`,
+    );
+  }
+  const activation = decodeArray(
+    record.activation,
+    "Context capsule lock activation",
+    decodeCapsuleActivation,
+  );
+  requireSortedUnique(
+    activation.map((artifact) => artifact.identity),
+    "Context capsule lock activation identities",
+  );
+  return {
+    schemaVersion: CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION,
+    registryRevision: requiredRevision(record, "registryRevision"),
+    frameworkRevision: fullGitRevision(record.frameworkRevision, "frameworkRevision"),
+    capsule: {
+      format: CONTEXT_CAPSULE_FORMAT_V1,
+      path: CONTEXT_CAPSULE_PATH,
+      sha256: sha256(capsule, "sha256"),
+      treeSha256: sha256(capsule, "treeSha256"),
+      compressedBytes: nonnegativeSafeInteger(capsule.compressedBytes, "compressedBytes"),
+      expandedBytes: nonnegativeSafeInteger(capsule.expandedBytes, "expandedBytes"),
+      entryCount: nonnegativeSafeInteger(capsule.entryCount, "entryCount"),
+    },
+    components: { direct, resolved },
+    activation,
+  };
+}
+
+function decodeCapsuleResolvedComponent(value: unknown): {
+  readonly name: string;
+  readonly revision: string;
+} {
+  const record = strictRecord(value, "Context capsule lock resolved component", [
+    "name",
+    "revision",
+  ]);
+  return {
+    name: componentName(record.name, "Context capsule lock resolved component name"),
+    revision: componentRevision(record.revision),
+  };
+}
+
+function decodeCapsuleActivation(value: unknown): ContextCapsuleActivationLock {
+  const record = strictRecord(value, "Context capsule lock activation record", [
+    "identity",
+    "targetPath",
+    "installedSha256",
+  ]);
+  return {
+    identity: requiredString(record, "identity"),
+    targetPath: portableRelativePath(record, "targetPath"),
+    installedSha256: sha256(record, "installedSha256"),
   };
 }
 
@@ -583,6 +729,20 @@ function sha256(record: Record<string, unknown>, key: string): string {
   const value = requiredString(record, key);
   if (!/^[a-f0-9]{64}$/u.test(value)) {
     throw new Error(`${key} must be a lowercase SHA-256 hash.`);
+  }
+  return value;
+}
+
+function fullGitRevision(value: unknown, label: string): string {
+  if (typeof value !== "string" || !/^[a-f0-9]{40}$/u.test(value)) {
+    throw new Error(`${label} must be a full lowercase Git revision.`);
+  }
+  return value;
+}
+
+function nonnegativeSafeInteger(value: unknown, label: string): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
+    throw new Error(`${label} must be a nonnegative safe integer.`);
   }
   return value;
 }

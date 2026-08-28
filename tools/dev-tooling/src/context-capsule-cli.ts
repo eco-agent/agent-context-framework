@@ -2,6 +2,10 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 
 import {
+  CONTEXT_CAPSULE_PATH,
+} from "@agent-context/repo-policy";
+
+import {
   buildContextCapsuleForProject,
   diffContextCapsules,
   extractContextCapsule,
@@ -118,7 +122,7 @@ export function parseContextCapsuleArguments(
   }
   const capsulePath = path.resolve(
     currentDirectory,
-    capsuleValue ?? path.join(projectRoot, ".agent-context", "capsule.acf"),
+    capsuleValue ?? path.join(projectRoot, CONTEXT_CAPSULE_PATH),
   );
   if (command === "build") {
     rejectOptions(command, { capsuleValue, beforeValue, afterValue });
@@ -127,7 +131,7 @@ export function parseContextCapsuleArguments(
       projectRoot,
       capsulePath: path.resolve(
         currentDirectory,
-        outputValue ?? path.join(projectRoot, ".agent-context", "capsule.acf"),
+        outputValue ?? path.join(projectRoot, CONTEXT_CAPSULE_PATH),
       ),
       json,
     };

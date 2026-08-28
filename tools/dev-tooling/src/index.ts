@@ -159,3 +159,8 @@ export {
   type ContextCapsuleInstallationMismatch,
   type ContextCapsuleInstallationVerification,
 } from "./context-capsule-installation.js";
+export {
+  createContextCapsuleLock,
+  verifyContextCapsuleLock,
+  type ContextCapsuleLockVerification,
+} from "./context-capsule-lock.js";

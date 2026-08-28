@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.13.0",
-  "decisionPath": "registry/decisions/0.13.0-frontend-evidence-workflow.md",
+  "revision": "0.14.0",
+  "decisionPath": "registry/decisions/0.14.0-context-capsule.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:f2c3fdc7e142951fed2aa701f6a5e3c1b56156cd04cf3c5949e0c65d45aff3c7",
+      "revision": "sha256:de34e795bd4e87ef0499c60e62d301b0e7d69e9d4acb1c97b9f23c6f3d21795a",
       "dependencies": [],
       "capabilities": [
         {
@@ -48,7 +48,7 @@
         {
           "operation": "seed-file",
           "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
-          "sourceSha256": "95e3325fad03b45aba81b8ea1e4afd78ef8542fafe8e7a9017c2bb207a7c266e",
+          "sourceSha256": "3a7574ad82d3e0273e1ab153b39fb7b0a766241aa01121c95650a5f775359844",
           "targetPath": ".gitattributes"
         },
         {
@@ -2338,7 +2338,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:0f4f91226c3acefb65167cb6bc0f442fbbc55b0a193f2780db0c86c52fa43405",
+      "revision": "sha256:fabd46381adb92b942692e813018059a5c8f672b0614a1a4a18e38d58a97b6ae",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2381,7 +2381,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "6ca74035a9b447e4def626693f8992b8db79ce5a57b05b533cb6e210203c20ea",
+          "sourceSha256": "aa5da571ce7faed8f7d7477f1d66ce2dae95ea3e732393eeb76e89fa60a23a5f",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"

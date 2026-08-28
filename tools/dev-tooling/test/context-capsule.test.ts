@@ -12,6 +12,8 @@ import {
   constants as zlibConstants,
 } from "node:zlib";
 
+import { decodeContextCapsuleLock } from "@agent-context/repo-policy";
+
 import {
   buildContextCapsule,
   buildContextCapsuleForProject,
@@ -26,6 +28,10 @@ import {
   type BuiltContextCapsule,
 } from "../src/context-capsule.js";
 import { verifyContextCapsuleInstallation } from "../src/context-capsule-installation.js";
+import {
+  createContextCapsuleLock,
+  verifyContextCapsuleLock,
+} from "../src/context-capsule-lock.js";
 import { parseContextCapsuleArguments } from "../src/context-capsule-cli.js";
 import {
   CONTEXT_CONFIG_PATH,
@@ -137,6 +143,52 @@ test("capsule semantic diff reports component and source additions", async () =>
   assert.equal(difference.removedComponents.length, 0);
   assert.equal(difference.addedEntries.length > 0, true);
   assert.equal(difference.removedEntries.length, 0);
+});
+
+test("concise lock v3 records and verifies capsule identity without replacing lock v2", async () => {
+  const capsule = await buildCoreCapsule();
+  const activation = [
+    {
+      identity: "text-section:AGENTS.md:core",
+      targetPath: "AGENTS.md",
+      installedSha256: "b".repeat(64),
+    },
+    {
+      identity: "seed-file:.gitattributes",
+      targetPath: ".gitattributes",
+      installedSha256: "a".repeat(64),
+    },
+  ] as const;
+  const lock = createContextCapsuleLock(capsule, activation);
+  assert.equal(lock.schemaVersion, 3);
+  assert.equal(lock.capsule.sha256, capsule.capsuleSha256);
+  assert.equal(
+    lock.capsule.expandedBytes,
+    capsule.payload.entries.reduce((total, entry) => total + entry.byteLength, 0),
+  );
+  assert.deepEqual(
+    lock.activation.map((record) => record.identity),
+    ["seed-file:.gitattributes", "text-section:AGENTS.md:core"],
+  );
+  assert.deepEqual(verifyContextCapsuleLock(lock, capsule, activation), {
+    ok: true,
+    mismatches: [],
+  });
+
+  const drifted = decodeContextCapsuleLock({
+    ...lock,
+    capsule: { ...lock.capsule, sha256: "0".repeat(64) },
+  });
+  const verification = verifyContextCapsuleLock(drifted, capsule, activation);
+  assert.equal(verification.ok, false);
+  assert.match(verification.mismatches.join("\n"), /file digest differs/u);
+
+  const activationMismatch = verifyContextCapsuleLock(lock, capsule, [{
+    ...activation[0],
+    targetPath: "WRONG.md",
+  }, activation[1]]);
+  assert.equal(activationMismatch.ok, false);
+  assert.match(activationMismatch.mismatches.join("\n"), /Activation records differ/u);
 });
 
 test("capsule writes and extracts atomically without replacing existing paths", async () => {

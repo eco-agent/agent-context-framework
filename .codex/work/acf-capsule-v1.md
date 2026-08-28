@@ -64,6 +64,12 @@ The test application remains the expanded-installation oracle. Materialization,
 lock v3, tracked capsule attributes, and deletion of expanded files remain later
 stages.
 
+Registry `0.14.0` now owns the capsule decision and adds `*.acf binary` to the
+fresh-project `.gitattributes` seed. Existing attributes remain project-owned.
+The host and packaged runtime policy sources both decode the additive lock-v3
+shape while all registry, config, and installation-lock v2 decoders remain at
+schema version 2. No project writes lock v3 yet.
+
 ## Topology
 
 1. Registry resolver selects components.
@@ -112,12 +118,14 @@ active slice.
 
 ### Checkpoint evidence
 
+- Capsule v1 checkpoint revision: `74d1db1ee0733f6659a98d16750d1fdacb698890`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
-  before the full-component tree-hash correction. The final digest is resolved
-  after the checkpoint commit supplies the exact framework revision.
+  in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
 - Existing installer, installer CLI, and transaction tests: 25 passed.
 - Dev-tooling TypeScript build: passed.
 - Agent prose check: passed for the ADR.
-- Technical prose check initially found list punctuation. The prose was repaired
-  and must be rerun before the checkpoint commit.
+- Technical prose check: passed for the ADR.
+- Documentation profile: passed.
+- Workflow profile: passed, including workflow tests, dependency adoption,
+  boundaries, and verification cleanliness.

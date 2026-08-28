@@ -153,6 +153,10 @@ metadata:
 This ADR reserves the shape. The first implementation checkpoint does not write
 lock v3.
 
+`compressedBytes` counts the complete capsule file, including the eight-byte
+header. `expandedBytes` counts the decoded source-entry bytes, not the canonical
+JSON payload. These names remain stable when compression settings change.
+
 ## Ownership and recovery
 
 | Owner | Boundary | Observation | Recovery |

@@ -2,3 +2,4 @@
 AGENTS.md text eol=lf
 .agent-context/** text eol=lf
 .codex/** text eol=lf
+*.acf binary

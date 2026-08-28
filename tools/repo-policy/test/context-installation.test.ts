@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  CONTEXT_CAPSULE_FORMAT_V1,
+  CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION,
+  CONTEXT_CAPSULE_PATH,
+  decodeContextCapsuleLock,
   decodeContextInstallationLock,
   decodeContextProjectConfig,
   decodeContextRegistry,
@@ -130,6 +134,79 @@ test("installation lock validates exact provenance records", () => {
     ...lock,
     artifacts: [...lock.artifacts, lock.artifacts[0]],
   }), /duplicate text-section:AGENTS.md:base/u);
+});
+
+test("capsule lock v3 is separate from registry, config, and installation lock v2", () => {
+  const lock = {
+    schemaVersion: CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION,
+    registryRevision: "0.14.0",
+    frameworkRevision: "b".repeat(40),
+    capsule: {
+      format: CONTEXT_CAPSULE_FORMAT_V1,
+      path: CONTEXT_CAPSULE_PATH,
+      sha256: hash,
+      treeSha256: "b".repeat(64),
+      compressedBytes: 65_891,
+      expandedBytes: 259_980,
+      entryCount: 79,
+    },
+    components: {
+      direct: ["tools"],
+      resolved: [
+        { name: "base", revision: componentRevision },
+        { name: "tools", revision: `sha256:${"b".repeat(64)}` },
+      ],
+    },
+    activation: [
+      { identity: "git-attributes", targetPath: ".gitattributes", installedSha256: hash },
+      { identity: "instructions", targetPath: "AGENTS.md", installedSha256: "b".repeat(64) },
+    ],
+  } as const;
+  assert.deepEqual(decodeContextCapsuleLock(lock), lock);
+  assert.throws(
+    () => decodeContextInstallationLock(lock),
+    /unknown fields|schemaVersion must be 2/u,
+  );
+  assert.throws(
+    () => decodeContextRegistry({ ...registryValue, schemaVersion: 3 }),
+    /schemaVersion must be 2/u,
+  );
+  assert.throws(
+    () => decodeContextProjectConfig({ schemaVersion: 3, adapter: "codex", components: ["core"] }),
+    /schemaVersion must be 2/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({ ...lock, frameworkRevision: "short" }),
+    /full lowercase Git revision/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({
+      ...lock,
+      capsule: { ...lock.capsule, path: "capsule.acf" },
+    }),
+    /path must be .agent-context\/capsule.acf/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({
+      ...lock,
+      activation: [...lock.activation].reverse(),
+    }),
+    /activation identities must be sorted/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({
+      ...lock,
+      capsule: { ...lock.capsule, compressedBytes: -1 },
+    }),
+    /compressedBytes must be a nonnegative safe integer/u,
+  );
+  assert.throws(
+    () => decodeContextCapsuleLock({
+      ...lock,
+      components: { ...lock.components, direct: ["missing"] },
+    }),
+    /direct component missing is absent from the resolved closure/u,
+  );
 });
 
 test("format-specific ownership rejects unsorted or invalid paths", () => {

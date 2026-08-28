@@ -19,6 +19,7 @@ import {
 
 import {
   CONTEXT_ADAPTER,
+  CONTEXT_CAPSULE_FORMAT_V1,
   CONTEXT_INSTALLATION_SCHEMA_VERSION,
   artifactIdentity,
   decodeContextProjectConfig,
@@ -29,7 +30,7 @@ import {
 
 import { CONTEXT_CONFIG_PATH, loadContextRegistry } from "./context-installer.js";
 
-export const CONTEXT_CAPSULE_FORMAT = "acf-capsule-v1" as const;
+export const CONTEXT_CAPSULE_FORMAT = CONTEXT_CAPSULE_FORMAT_V1;
 export const CONTEXT_CAPSULE_SCHEMA_VERSION = 1 as const;
 export const CONTEXT_CAPSULE_MAGIC = Buffer.from("ACFCAP1\n", "ascii");
 
