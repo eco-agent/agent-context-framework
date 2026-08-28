@@ -183,9 +183,11 @@ export {
 } from "./context-capsule-migration.js";
 export {
   contextCapsuleSkillActivation,
+  contextCapsuleRuntimeActivation,
+  contextCapsuleMaterializationActivation,
   decodeContextMaterializationReceipt,
-  materializeContextCapsuleSkills,
-  planContextCapsuleSkillMaterialization,
+  materializeContextCapsule,
+  planContextCapsuleMaterialization,
   verifyContextMaterializationAuthority,
   CONTEXT_MATERIALIZATION_KIND,
   CONTEXT_MATERIALIZATION_PATH,
@@ -193,7 +195,9 @@ export {
   type ContextMaterializationConflict,
   type ContextMaterializationAuthorityVerification,
   type ContextMaterializationPlan,
-  type ContextMaterializationReceiptV1,
+  type ContextMaterializationReceiptV2,
   type ContextMaterializationResult,
-  type ContextMaterializedFileV1,
+  type ContextMaterializedFileV2,
+  type ContextMaterializedRuntimeFileV2,
+  type ContextMaterializedSkillFileV2,
 } from "./context-capsule-materialization.js";

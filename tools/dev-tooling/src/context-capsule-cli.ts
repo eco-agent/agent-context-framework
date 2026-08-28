@@ -20,7 +20,7 @@ import {
   type ContextCapsuleInstallationVerification,
 } from "./context-capsule-installation.js";
 import {
-  materializeContextCapsuleSkills,
+  materializeContextCapsule,
   type ContextMaterializationResult,
 } from "./context-capsule-materialization.js";
 import { migrateContextCapsuleV2 } from "./context-capsule-migration.js";
@@ -74,10 +74,10 @@ Usage:
   pnpm agent-context capsule extract --capsule CAPSULE --output DIRECTORY [--json]
 
 build writes a new capsule and refuses replacement. verify compares a capsule
-with the current expanded installation without writing. materialize writes a
-repository skill projection and receipt, reuses an exact projection, and
-blocks replacement until lock v3 proves prior ownership. migrate replaces a
-verified v2 lock and expanded skill projection with lock v3. extract writes
+with the current expanded installation without writing. materialize writes the
+ignored skill and runtime projection with its receipt, reuses an exact projection,
+and blocks replacement until lock v3 proves prior ownership. migrate replaces a
+verified v2 lock and expanded materialization with lock v3. extract writes
 verified registry source paths to a new directory outside the framework worktree.`;
 
 export function parseContextCapsuleArguments(
@@ -241,7 +241,7 @@ export async function runContextCapsuleCli(
     };
   }
   if (request.command === "materialize") {
-    const materialization = await materializeContextCapsuleSkills(
+    const materialization = await materializeContextCapsule(
       await readContextCapsuleFile(request.capsulePath),
       request.projectRoot,
     );

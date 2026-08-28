@@ -380,11 +380,12 @@ function decodeCapsuleMaterialization(value: unknown): ContextCapsuleMaterializa
     files.map((artifact) => artifact.targetPath),
     "Context capsule lock materialization target paths",
   );
-  const outsideSkills = files.find((artifact) =>
-    !artifact.targetPath.startsWith(".agents/skills/"));
-  if (outsideSkills !== undefined) {
+  const outsideMaterialization = files.find((artifact) =>
+    !artifact.targetPath.startsWith(".agents/skills/") &&
+    !artifact.targetPath.startsWith(".agent-context/runtime/materialized/"));
+  if (outsideMaterialization !== undefined) {
     throw new Error(
-      `Context capsule lock materialization target must be below .agents/skills: ${outsideSkills.targetPath}.`,
+      `Context capsule lock materialization target must be below .agents/skills or .agent-context/runtime/materialized: ${outsideMaterialization.targetPath}.`,
     );
   }
   return {

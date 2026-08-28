@@ -69,7 +69,10 @@ export async function validateWaveFourRegistryReferences(
     .filter((component) => WAVE_FOUR_COMPONENTS.has(component.name))
     .flatMap((component) => component.artifacts.map((artifact) => ({ component: component.name, artifact })));
   for (const { component, artifact } of artifacts) {
-    if (artifact.operation === "runtime-workspace") continue;
+    if (
+      artifact.operation === "runtime-workspace" ||
+      artifact.targetPath === ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js"
+    ) continue;
     const source = await readFile(path.join(frameworkRoot, artifact.sourcePath), "utf8");
     const diagnostics = unsafeReferenceDiagnostics(source);
     if (diagnostics.length > 0) {
@@ -193,8 +196,8 @@ function validateInstalledRepoContext(config: Readonly<Record<string, unknown>>,
   const args = array(server.args);
   if (
     server.command !== "node" ||
-    args[0] !== ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js" ||
-    args[1] !== "--root" || args[2] !== "." || args.length !== 3 ||
+    args[0] !== ".agent-context/bootstrap.mjs" ||
+    args[1] !== "exec" || args[2] !== "repo-context" || args.length !== 3 ||
     Object.hasOwn(server, "cwd") || server.required !== true ||
     JSON.stringify(server.enabled_tools) !== JSON.stringify(["repo_context"]) ||
     typeof server.startup_timeout_sec !== "number" || typeof server.tool_timeout_sec !== "number"
@@ -212,8 +215,12 @@ function validateHookDocument(value: unknown, label: string): void {
       const command = record(hook);
       for (const key of ["command", "commandWindows"] as const) {
         const value = command[key];
-        if (typeof value !== "string" || !value.includes(".agent-context/runtime/packages/hooks/dist/src/codex-cli.js")) {
-          throw new Error(`${label} ${event} ${key} must use the project-local installed hook entrypoint.`);
+        if (
+          typeof value !== "string" ||
+          !value.includes(".agent-context/bootstrap.mjs") ||
+          !value.includes("exec hook")
+        ) {
+          throw new Error(`${label} ${event} ${key} must use the project-local bootstrap hook entrypoint.`);
         }
       }
     }

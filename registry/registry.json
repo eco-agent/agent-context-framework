@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:0d65e0d81e067f53b416c386fb2ca050cf8762fbeaafacda4f25b25652b220c8",
+      "revision": "sha256:af4d3fa2d3ac9bebeb7cd681b079d6d5d6dd633fab357760f2f1b7449ab50f3c",
       "dependencies": [],
       "capabilities": [
         {
@@ -68,7 +68,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "sourceSha256": "7e06ca7c93c34d984c3375b2ab31014a932c9e7ea33e9db770fd8365ef097ae4",
+          "sourceSha256": "b0e83deb8ba5eeda1707c77fcdefb1ff8dc643ecf37752c20ab79e5acf146fcc",
           "targetPath": ".agent-context/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
@@ -2517,7 +2517,7 @@
     },
     {
       "name": "codex-hooks",
-      "revision": "sha256:ad8bbb4ddcd557461254a23e6411a237d12651d7245b9a33199e2f9e5ddb9b35",
+      "revision": "sha256:2b624deaf5cba8f8ab37c7b42bd964d9b24182dffbc4076269a349743b296b64",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2601,9 +2601,16 @@
           "mediaType": "application/json"
         },
         {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/hooks/codex-cli.mjs",
+          "sourceSha256": "539f4cb4495eb5fb35a90d5d538a0b5b52acd1e804bfb818be180826f3d640ff",
+          "targetPath": ".agent-context/runtime/packages/hooks/dist/src/codex-cli.js",
+          "mediaType": "text/javascript"
+        },
+        {
           "operation": "json-array-items",
           "sourcePath": "registry/sources/codex/hooks.json",
-          "sourceSha256": "54fec77bb72d4fcb6ceedd1743fa47073a7dce47f1862407fff6c66197bbcc06",
+          "sourceSha256": "16162cc8e34d3d73fc545b0d4b9491764775b92202f7b06a6fad1c3f1b75d635",
           "targetPath": ".codex/hooks.json",
           "ownedItems": [
             {
@@ -2622,7 +2629,7 @@
     },
     {
       "name": "codex-repo-context",
-      "revision": "sha256:86eec7f005a57000dbfec5a990b5363cdadf7e4820f0931ed62a19abca30409d",
+      "revision": "sha256:9e0947765ae3df3c9d67ff29f1f1fb0c5e070409db78f382d5fe70e97845fdfa",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2641,6 +2648,22 @@
           "sourcePath": "LICENSE",
           "noticePath": ".agent-context/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/modelcontextprotocol/typescript-sdk",
+          "revision": "2.0.0",
+          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
+          "noticeSha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/colinhacks/zod",
+          "revision": "v4.4.3",
+          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3",
+          "noticeSha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
         }
       ],
       "artifacts": [
@@ -2717,9 +2740,37 @@
           "mediaType": "application/json"
         },
         {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/repo-context/mcp-cli.mjs",
+          "sourceSha256": "53cf2ebe00d5c5202cb0e770cf6f42553ad2df08a2504bdd3c9d09061f20462c",
+          "targetPath": ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js",
+          "mediaType": "text/javascript"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/licenses/LICENSE.model-context-protocol-2.0.0",
+          "sourceSha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a",
+          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/licenses/LICENSE.zod-4.4.3",
+          "sourceSha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8",
+          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": "registry/sources/attributions/codex-repo-context/SOURCE.json",
+          "sourceSha256": "9811f5943d6ba3ff0612ac1b4b40a4e801ab97a402fd55dbea1d832f6b96a3cb",
+          "targetPath": ".agent-context/sources/codex-repo-context/SOURCE.json",
+          "mediaType": "application/json"
+        },
+        {
           "operation": "toml-tables",
           "sourcePath": "registry/sources/codex/repo-context.toml",
-          "sourceSha256": "b16d9332509ffcd1728c3adb1d2909d04615a186e1dfcafb205657d80b3cde92",
+          "sourceSha256": "8acb371c803fe5ae40d11aac887e93382fe217631ea2c0d11c6e317b45e6784c",
           "targetPath": ".codex/config.toml",
           "ownedTables": [
             "mcp_servers.repo_context"

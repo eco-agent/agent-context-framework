@@ -868,6 +868,13 @@
         },
         {
           "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/hooks/codex-cli.mjs",
+          "targetPath": ".agent-context/runtime/packages/hooks/dist/src/codex-cli.js",
+          "mediaType": "text/javascript"
+        },
+        {
+          "kind": "artifact",
           "operation": "json-array-items",
           "sourcePath": "registry/sources/codex/hooks.json",
           "targetPath": ".codex/hooks.json",
@@ -892,7 +899,23 @@
       "capabilities": [
         { "kind": "runtime", "name": "ripgrep", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [
+        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/modelcontextprotocol/typescript-sdk",
+          "revision": "2.0.0",
+          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0"
+        },
+        {
+          "kind": "third-party",
+          "spdx": "MIT",
+          "source": "https://github.com/colinhacks/zod",
+          "revision": "v4.4.3",
+          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3"
+        }
+      ],
       "artifacts": [
         {
           "kind": "runtime-directory",
@@ -900,6 +923,34 @@
           "targetDirectory": ".agent-context/runtime/packages/repo-context",
           "excludedPrefixes": ["dist/", "node_modules/"],
           "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/repo-context/mcp-cli.mjs",
+          "targetPath": ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js",
+          "mediaType": "text/javascript"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/licenses/LICENSE.model-context-protocol-2.0.0",
+          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
+          "mediaType": "text/plain"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/licenses/LICENSE.zod-4.4.3",
+          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3",
+          "mediaType": "text/plain"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/attributions/codex-repo-context/SOURCE.json",
+          "targetPath": ".agent-context/sources/codex-repo-context/SOURCE.json",
+          "mediaType": "application/json"
         },
         {
           "kind": "artifact",

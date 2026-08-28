@@ -38,6 +38,11 @@ test("v2 capsule migration removes exact tracked skills and is repeatable", asyn
     );
     const expandedSkill = path.join(projectRoot, ".codex/skills/diagnose/SKILL.md");
     const originalSkill = await readFile(expandedSkill);
+    await writeFile(
+      path.join(projectRoot, ".gitattributes"),
+      "# Project-owned attributes\n*.txt text\n",
+      "utf8",
+    );
     await writeFile(expandedSkill, "local tracked edit\n", "utf8");
     const blocked = await planContextCapsuleV2Migration(capsule, projectRoot);
     assert.equal(blocked.status, "blocked");
@@ -58,6 +63,7 @@ test("v2 capsule migration removes exact tracked skills and is repeatable", asyn
     );
     assert.deepEqual(plan.mutations.map((mutation) => mutation.targetPath), [
       ".agent-context/lock.json",
+      ".gitattributes",
       ".codex/skills/diagnose/SKILL.md",
       ".codex/skills/diagnose/scripts/hitl-loop.template.sh",
     ]);
@@ -81,8 +87,13 @@ test("v2 capsule migration removes exact tracked skills and is repeatable", asyn
     assert.deepEqual(lock, plan.nextLock);
     const status = await git(projectRoot, ["status", "--porcelain=v1", "--untracked-files=all"]);
     assert.match(status, / M \.agent-context\/lock\.json/u);
+    assert.match(status, / M \.gitattributes/u);
     assert.match(status, / D \.codex\/skills\/diagnose\/SKILL\.md/u);
     assert.match(status, / D \.codex\/skills\/diagnose\/scripts\/hitl-loop\.template\.sh/u);
+    assert.equal(
+      await readFile(path.join(projectRoot, ".gitattributes"), "utf8"),
+      "# Project-owned attributes\n*.txt text\n*.acf binary\n",
+    );
 
     const current = await migrateContextCapsuleV2(capsule, projectRoot);
     assert.equal(current.status, "current");

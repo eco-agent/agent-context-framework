@@ -36,10 +36,10 @@ No project contracts are declared in `.agent-context/policy.json`.
 | Added | One deterministic Brotli capsule represents the selected closure. | Capsule builder |
 | Added | Capsule inspection, extraction, and semantic comparison operate without installation writes. | Capsule reader and CLI |
 | Added | The generated application proves capsule entries against the real expanded core installation. | Fixture proof test |
-| Added | Selected whole-file skills materialize to ignored content-addressed directories under `.agents/skills`. | Capsule materializer and receipt |
-| Added | One tracked plain-Node bootstrap verifies the capsule, recovers context transactions, and materializes skills. | Core registry component and bootstrap entry |
+| Added | Selected whole-file skills and runtime files materialize to ignored content-addressed directories. | Capsule materializer and receipt |
+| Added | One tracked plain-Node bootstrap verifies the capsule, recovers context transactions, materializes ignored files, and starts packaged runtimes. | Core registry component and bootstrap entry |
 | Changed | The context transaction claims staging exclusively so concurrent writers cannot share or remove each other's staged bytes. | Context transaction |
-| Removed | Verified whole-file `.codex/skills` projections leave Git after migration. | Capsule migration planner |
+| Removed | Verified whole-file `.codex/skills` and `.agent-context/runtime` projections leave Git after migration. | Capsule migration planner |
 
 ## Boundaries
 
@@ -50,7 +50,7 @@ No project contracts are declared in `.agent-context/policy.json`.
 | Semantic commands | `list`, `inspect`, `diff`, and `extract` are read-only except extraction to an explicit empty directory outside the framework worktree. | CLI tests and output snapshots | Report unsupported or unsafe output without partial extraction. |
 | Existing installer | Continue writing the v2 lock and expanded artifacts exactly as before. | Existing installer suite | Keep the capsule side by side until equivalence passes. |
 | Downstream proof | Compare capsule entries with the selected registry sources and installed projections without modifying the committed fixture. | Fixture revision and Git status before and after | Stop and retain the mismatch report. |
-| Lock migration | Replace a verified v2 lock and exact tracked skill projection. | Migration plan, transaction recovery, and current rerun | Block before writes on drift. Resume an interrupted transaction before retrying. |
+| Lock migration | Replace a verified v2 lock and exact tracked skill and runtime projection. | Migration plan, transaction recovery, and current rerun | Block before writes on drift. Resume an interrupted transaction before retrying. |
 
 ## Current state
 
@@ -77,7 +77,8 @@ Registry `0.14.0` now owns the capsule decision and adds `*.acf binary` to the
 fresh-project `.gitattributes` seed. Existing attributes remain project-owned.
 The host and packaged runtime policy sources both decode the additive lock-v3
 shape while all registry, config, and installation-lock v2 decoders remain at
-schema version 2. No project writes lock v3 yet.
+schema version 2. Generated `migrated` and `runtime-migrated` applications now
+write lock v3.
 
 The generated application now has a committed `materialized` state. Its v2 lock
 and expanded targets remain authoritative, while the on-disk capsule verifies
@@ -95,6 +96,23 @@ inspection runs before every materialization attempt. Fresh clones must run
 `node .agent-context/bootstrap.mjs materialize` before Codex starts. Git cannot
 make that portable and automatic. Launcher integration remains a convenience.
 
+The runtime slice now maps the complete selected runtime closure below
+`.agent-context/runtime/materialized/<capsule-tree-digest>`. The receipt schema
+is version 2 and records skill and runtime files as separate entry shapes.
+Repository-context and Codex hook configuration call the tracked bootstrap with
+`exec repo-context` or `exec hook`. Bootstrap verifies lock v3 and tracked
+activation, repairs or verifies the ignored projection, then starts the exact
+packaged entrypoint. It emits no status text on a protocol child process's
+standard output. Lock-v2 projects use the same launcher but start the existing
+tracked runtime path until migration removes it.
+
+The generated `runtime-migrated` application selects `codex-runtime` and
+`skill-diagnose`. Clean and dirty variants remove every tracked skill and runtime
+file after lock-v3 publication. Their configured repo-context server and hook
+command recreate deleted ignored files through plain Node and leave Git status
+unchanged. The committed repo-context bundle includes its MCP SDK and Zod code;
+the capsule carries their exact licence texts and source attribution.
+
 Lock v3 now separates tracked expanded activation from ignored materialization
 ownership. The capsule derives the expected skill and activation sets. The
 bootstrap verifies activation bytes from capsule source and the current project,
@@ -110,11 +128,11 @@ not by comparing caller-supplied lock records with themselves.
 6. Semantic commands operate on verified payloads.
 7. Generated application proof compares the capsule with expanded installation.
 8. The plain-Node bootstrap recovers a safe context transaction.
-9. Skill materialization verifies Git ignore rules, then writes an absent
-   content-addressed output and receipt, or verifies an exact repeat. Different
-   capsule content blocks.
+9. Materialization verifies Git ignore rules, then writes absent
+   content-addressed skill and runtime output with its receipt, or verifies an
+   exact repeat. Different capsule content blocks.
 10. Migration proves v2 and ignored outputs, writes lock v3, and deletes the old
-    tracked whole-file skill targets last.
+    tracked whole-file skill and runtime targets last.
 
 ## Completed skill migration slice
 
@@ -174,17 +192,42 @@ Reuse assessment:
 ## Replacements
 
 Migrated projects replace lock v2 with lock v3 and remove verified tracked
-`.codex/skills` files. Expanded runtime and the existing v2 installer remain in
-place for projects that have not migrated.
+`.codex/skills` and `.agent-context/runtime` files. The existing v2 installer
+remains in place for projects that have not migrated.
 
 ## Remaining work
 
-- No automatic bootstrap launcher or packaged runtime materialization yet.
 - No optional host launcher automates the explicit pre-Codex bootstrap command.
-- No ignored runtime materialization yet.
-- The current migration requires capsule and skill materialization prerequisites.
+- The current migration requires capsule and materialization prerequisites.
   It does not yet convert an ordinary v2 project in one command.
+- Capsule and lock update planning does not yet classify restart requirements or
+  publish both files through one transaction.
 - No fleet manager yet.
+
+## Completed repo-context runtime slice
+
+The previous Codex configuration launched a generated `dist` file that a fresh
+clone did not contain. The capsule now carries packaged repository-context and
+hook entrypoints. Bootstrap materializes the selected runtime tree under the
+ignored `.agent-context/runtime/materialized` directory and owns the stable
+`exec repo-context` and `exec hook` entrypoints.
+
+Runtime ownership stays distinct even if lock v3 stores skill and runtime file
+records in the same materialization list. The runtime receipt owns only
+`.agent-context/runtime/**`. The skill receipt owns only `.agents/skills/**`.
+Neither ignored receipt can grant replacement permission without matching
+tracked lock-v3 records.
+
+The runtime fixture selects `codex-runtime` and `skill-diagnose` while still on
+lock v2. It proves the complete runtime projection, migrates all verified
+runtime-workspace and skill files out of Git, and starts repo-context with plain
+Node after deleting every ignored runtime and skill output.
+
+The standalone repo-context bundle includes `@modelcontextprotocol/server`,
+`@modelcontextprotocol/core`, and Zod. All three package manifests declare MIT.
+The registry records their exact versions, source revisions, copied distributed
+licence texts, and attribution. The selected capsule carries those files with
+the bundle.
 
 ## Propagation paths
 

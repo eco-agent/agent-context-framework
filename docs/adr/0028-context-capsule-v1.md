@@ -106,11 +106,11 @@ agent-context capsule extract
 
 `build` writes one new capsule through an atomic exclusive write. It does not
 overwrite an existing file. `list`, `inspect`, `verify`, and `diff` do not write.
-`materialize` writes verified skill files and their receipt through the project
-transaction. `migrate` removes a verified v2 tracked skill projection and
-replaces lock v2 with lock v3. `extract` writes the verified source tree to an explicit new
-directory. It never projects installation targets or replaces an existing
-directory.
+`materialize` writes verified skill and runtime files with their receipt through
+the project transaction. `migrate` removes verified v2 tracked materialization
+targets and replaces lock v2 with lock v3. `extract` writes the verified source
+tree to an explicit new directory. It never projects installation targets or
+replaces an existing directory.
 
 Semantic diff reports direct-selection, component revision, and source-entry
 changes. Fresh installations add `*.acf binary` to `.gitattributes`. An existing
@@ -118,7 +118,7 @@ project migration must add the same rule without replacing project-owned
 attributes. The generated capsule fixture proves that Git treats the tracked
 capsule as binary.
 
-### Initial skill materialization
+### Ignored materialization
 
 Codex scans `.agents/skills` in repository directories. ACF maps each selected
 whole-file skill artifact to an ACF-owned content-addressed direct child named
@@ -127,34 +127,49 @@ that child stays the same. The capsule keeps its original source and artifact
 paths, so the receipt records the component revision, skill name, owned root,
 source path, and mapped target path.
 
-The ignored receipt at `.agent-context/materialization.json` records the capsule
-and tree digests, registry revision, artifact identity, component, source path,
-target path, installed digest, and byte count for every generated file. It omits
+Selected runtime artifacts map below
+`.agent-context/runtime/materialized/<capsule-tree-digest>`. The digest keeps one
+capsule's runtime files separate from another capsule's files. Runtime paths
+retain their component-relative layout below that directory. This includes the
+prebuilt repository-context and hook entrypoints, so a fresh clone needs no
+project package install or TypeScript compiler.
+
+The schema-v2 ignored receipt at `.agent-context/materialization.json` records
+the capsule and tree digests, registry revision, artifact identity, component,
+source path, target path, installed digest, and byte count for every generated
+file. Skill entries also record the skill name and owned skill root. It omits
 timestamps, absolute paths, process identifiers, and host data.
 
 Materialization may create an absent projection or reuse an exact projection. It
 blocks when the receipt is missing or malformed, a generated file was changed,
 an unexpected path exists inside a generated skill, a path traverses a symbolic
-link, or the requested capsule differs. The ignored receipt cannot authorize
+link, or the requested capsule differs. Runtime verification checks every file
+owned by the receipt but leaves runtime state outside the content-addressed tree
+alone. The ignored receipt cannot authorize
 deletion by itself. Replacement waits until lock v3 or retained tracked capsule
-state proves the old ownership. The tracked expanded skill remains the
-installation oracle during this side-by-side checkpoint.
+state proves the old ownership. The tracked expanded installation remains the
+oracle until migration starts.
 
 The context transaction claims its staging directory exclusively. Initial
 materialization writes verified files and publishes the receipt last. A process
 failure can leave a partial new directory until transaction recovery finishes.
 The tracked `.agent-context/bootstrap.mjs` bundle resumes or discards a safe
 transaction before it reads the capsule. A blocked transaction fails the process.
-The bundle also requires Git to ignore every generated skill file and the
-receipt before it writes. A missing ignore rule returns exact conflicts.
+The bundle also requires Git to ignore every generated skill file, runtime file,
+and the receipt before it writes. A missing ignore rule returns exact conflicts.
 
 The bundle is reproducible from a dedicated TypeScript entry with the pinned
 `vite-plus` packer. It uses Node and Git, with no package install in the project.
-The reliable fresh-clone command is
-`node .agent-context/bootstrap.mjs materialize`. The user runs it before opening
-the project in Codex. Git has no portable post-clone mechanism that can guarantee
-this step. A future launcher may automate the same command, but a `SessionStart`
-hook is not accepted because Codex has already begun startup by then.
+The reliable explicit fresh-clone command is
+`node .agent-context/bootstrap.mjs materialize`. The repository-context MCP and
+Codex hooks call the same bootstrap with `exec repo-context` and `exec hook`.
+Those launchers verify and materialize before starting their packaged runtime.
+They write no bootstrap status to standard output because both child protocols
+own that stream. On lock v2, `exec` starts the existing tracked runtime path so
+installing the new launcher does not break projects before migration. Git has no
+portable post-clone mechanism that can guarantee
+materialization before every other tool, so the explicit command remains the
+general startup path.
 
 ### Lock v3
 
@@ -206,7 +221,7 @@ metadata:
 ```
 
 The migration command writes this shape after it proves the v2 installation and
-the ignored skill projection against the same capsule.
+the ignored materialization against the same capsule.
 
 `compressedBytes` counts the complete capsule file, including the eight-byte
 header. `expandedBytes` counts the decoded source-entry bytes, not the canonical
@@ -225,32 +240,34 @@ records with themselves.
 | Capsule reader | Expose only a completely verified capsule | Canonical payload, tree hash, entry hash, and closure checks | Reject without writing |
 | Existing installer | Keep lock v2 and expanded files authoritative during equivalence work | Existing installer and recovery tests | Leave the capsule beside the installation |
 | Downstream fixture | Prove current installed scopes from capsule entries | Clean revision before and after verification | Report exact mismatches and leave the fixture unchanged |
-| Migration planner | Replace only exact v2 whole-file skill projections | v2 projection proof, current ignored projection, and lock-v3 rerun | Report exact conflicts before writing, or resume the recorded transaction |
+| Migration planner | Replace only exact v2 whole-file skill and runtime projections | v2 projection proof, current ignored projection, and lock-v3 rerun | Report exact conflicts before writing, or resume the recorded transaction |
 | Plain-Node bootstrap | Verify lock v3, the capsule, and every tracked activation scope before materialization | Lock and projection verification in a fresh clone | Stop before materialization on any mismatch |
 | Project developer | Keep custom work outside generated materialization paths | Git status and materialization receipt | Promote the change into project-owned policy or a local component |
 
-## Skill migration
+## Materialization migration
 
-The first migration checkpoint requires a side-by-side v2 installation with a
-verified capsule and current ignored skill projection. It performs these steps:
+Migration requires a side-by-side v2 installation with a verified capsule and
+current ignored skill and runtime projection. It performs these steps:
 
 1. Verify the capsule against the v2 lock, config, and every installed artifact
    scope.
-2. Verify the ignored `.agents/skills` files and receipt against the capsule.
-3. Copy every non-skill v2 ownership record into lock-v3 activation.
+2. Verify the ignored materialized files and receipt against the capsule.
+3. Copy every non-materialized v2 ownership record into lock-v3 activation.
 4. Derive lock-v3 materialization records independently from capsule bytes.
 5. Write lock v3, then delete only the exact whole-file `.codex/skills` targets
-   proven by v2. Transaction recovery completes that order after interruption.
+   and runtime files proven by v2. Transaction recovery completes that order
+   after interruption.
 6. Verify the migrated state again. A rerun writes nothing.
 
-This checkpoint does not yet build a missing capsule, bootstrap, or ignored
-projection inside the migration transaction. Those side-by-side prerequisites
-keep the first destructive slice narrow. Runtime files also remain tracked
-activation until runtime materialization is implemented.
+The migration does not build a missing capsule, bootstrap, or ignored projection
+inside its transaction. Those side-by-side prerequisites keep the destructive
+operation narrow. The `runtime-migrated` generated application proves both clean
+and dirty v2 baselines, removes tracked runtime and skill files, deletes the
+ignored output, and starts repo-context and hooks through the tracked bootstrap.
 
 Later checkpoints may publish a new capsule, lock, runtime, skill projection,
-and receipt in one transaction, add launcher convenience where ordering is
-guaranteed, and connect updates to a multi-repository manager.
+and receipt in one transaction and connect updates to a multi-repository
+manager.
 
 No later checkpoint may infer permission to discard locally modified managed
 files. A blocked migration reports the exact files and leaves the repository
@@ -293,6 +310,9 @@ Capsule v1 is not accepted until all of these conditions hold:
 10. The committed bootstrap bundle rebuilds byte for byte, runs with plain Node
     in a fresh fixture, recovers discardable staging, writes nothing on repeat,
     and fails closed on modified generated output or missing Git ignore rules.
+11. The committed repo-context and hook bundles rebuild byte for byte. A migrated
+    fresh clone recreates each ignored bundle through bootstrap before the MCP or
+    hook protocol begins, with no tracked runtime files or package install.
 
 ## Implementation references
 

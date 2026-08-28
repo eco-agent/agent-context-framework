@@ -9,7 +9,7 @@ import {
   type ContextCapsuleV3InstallationVerification,
 } from "./context-capsule-installation.js";
 import {
-  materializeContextCapsuleSkills,
+  materializeContextCapsule,
   type ContextMaterializationResult,
 } from "./context-capsule-materialization.js";
 import {
@@ -42,7 +42,7 @@ export async function bootstrapContextCapsule(
       `Context capsule bootstrap verification failed: ${verification.mismatches.map((mismatch) => `${mismatch.targetPath ?? mismatch.identity}: ${mismatch.detail}`).join(" ")}`,
     );
   }
-  const materialization = await materializeContextCapsuleSkills(capsule, resolvedProjectRoot);
+  const materialization = await materializeContextCapsule(capsule, resolvedProjectRoot);
   return {
     command: "bootstrap-capsule",
     projectRoot: resolvedProjectRoot,

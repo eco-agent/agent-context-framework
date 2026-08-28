@@ -14,8 +14,8 @@ import {
   CONTEXT_MATERIALIZATION_PATH,
   contextCapsuleSkillActivation,
   decodeContextMaterializationReceipt,
-  materializeContextCapsuleSkills,
-  planContextCapsuleSkillMaterialization,
+  materializeContextCapsule,
+  planContextCapsuleMaterialization,
   verifyContextMaterializationAuthority,
 } from "../src/context-capsule-materialization.js";
 import { createContextCapsuleLock } from "../src/context-capsule-lock.js";
@@ -29,7 +29,7 @@ const frameworkRevision = "c".repeat(40);
 test("materialization writes verified skill bytes and reuses the exact receipt", async () => {
   const fixture = await createCapsuleFixture("current");
   try {
-    const first = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
+    const first = await materializeContextCapsule(fixture.capsule, fixture.projectRoot);
     assert.equal(first.status, "materialized");
     assert.equal(first.receipt.files.length, 2);
     assert.equal(
@@ -93,7 +93,7 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
     assert.equal(drifted.ok, false);
     assert.match(drifted.mismatches.join("\n"), /receipt differs/u);
 
-    const second = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
+    const second = await materializeContextCapsule(fixture.capsule, fixture.projectRoot);
     assert.equal(second.status, "current");
     assert.deepEqual(second.writtenPaths, []);
     assert.equal(
@@ -103,7 +103,7 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
       true,
     );
     await writeFile(path.join(fixture.projectRoot, ".gitignore"), "# project rules removed\n", "utf8");
-    const unignored = await planContextCapsuleSkillMaterialization(
+    const unignored = await planContextCapsuleMaterialization(
       fixture.capsule,
       fixture.projectRoot,
     );
@@ -121,14 +121,14 @@ test("materialization writes verified skill bytes and reuses the exact receipt",
 test("materialization blocks modified and unexpected generated output", async () => {
   const fixture = await createCapsuleFixture("modified");
   try {
-    await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
+    await materializeContextCapsule(fixture.capsule, fixture.projectRoot);
     const targetPath = installedSkillPath(
       fixture.capsule,
-      (await planContextCapsuleSkillMaterialization(fixture.capsule, fixture.projectRoot)).receipt.files,
+      (await planContextCapsuleMaterialization(fixture.capsule, fixture.projectRoot)).receipt.files,
       "SKILL.md",
     );
     await writeFile(path.join(fixture.projectRoot, targetPath), "local generated edit\n", "utf8");
-    const modified = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
+    const modified = await materializeContextCapsule(fixture.capsule, fixture.projectRoot);
     assert.equal(modified.status, "blocked");
     assert.deepEqual(modified.writtenPaths, []);
     assert.deepEqual(modified.conflicts.map((conflict) => conflict.targetPath), [targetPath]);
@@ -142,7 +142,7 @@ test("materialization blocks modified and unexpected generated output", async ()
       file.targetPath.endsWith("/scripts/hitl-loop.template.sh"))?.targetPath;
     assert.notEqual(scriptPath, undefined);
     await writeFile(path.join(fixture.projectRoot, path.dirname(scriptPath!), "extra.txt"), "extra\n");
-    const extra = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
+    const extra = await materializeContextCapsule(fixture.capsule, fixture.projectRoot);
     assert.equal(extra.status, "blocked");
     assert.match(extra.conflicts.map((conflict) => conflict.detail).join("\n"), /unexpected path/u);
   } finally {
@@ -151,7 +151,7 @@ test("materialization blocks modified and unexpected generated output", async ()
 
   const unexplained = await createCapsuleFixture("unexplained");
   try {
-    const initial = await planContextCapsuleSkillMaterialization(
+    const initial = await planContextCapsuleMaterialization(
       unexplained.capsule,
       unexplained.projectRoot,
     );
@@ -166,7 +166,7 @@ test("materialization blocks modified and unexpected generated output", async ()
     const staleSkillRoot = path.join(unexplained.projectRoot, staleSkillRootRelative);
     await mkdir(staleSkillRoot, { recursive: true });
     await writeFile(path.join(staleSkillRoot, "SKILL.md"), "# Stale\n", "utf8");
-    const plan = await planContextCapsuleSkillMaterialization(
+    const plan = await planContextCapsuleMaterialization(
       unexplained.capsule,
       unexplained.projectRoot,
     );
@@ -189,7 +189,7 @@ test("materialization blocks modified and unexpected generated output", async ()
 test("materialization keeps a valid prior capsule until lock v3 can prove ownership", async () => {
   const fixture = await createCapsuleFixture("different");
   try {
-    const installed = await materializeContextCapsuleSkills(fixture.capsule, fixture.projectRoot);
+    const installed = await materializeContextCapsule(fixture.capsule, fixture.projectRoot);
     assert.equal(installed.status, "materialized");
     const oldSkillPath = installedSkillPath(
       fixture.capsule,
@@ -207,7 +207,7 @@ test("materialization keeps a valid prior capsule until lock v3 can prove owners
       fixture.projectRoot,
       frameworkRevision,
     );
-    const blocked = await materializeContextCapsuleSkills(nextCapsule, fixture.projectRoot);
+    const blocked = await materializeContextCapsule(nextCapsule, fixture.projectRoot);
     assert.equal(blocked.status, "blocked");
     assert.equal(blocked.conflicts[0]?.targetPath, CONTEXT_MATERIALIZATION_PATH);
     assert.match(blocked.conflicts[0]?.detail ?? "", /requires tracked ownership from lock v3/u);

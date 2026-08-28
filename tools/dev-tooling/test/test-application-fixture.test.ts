@@ -59,6 +59,15 @@ test("fixture CLI requires an absolute output and parses independent state contr
       .acfState,
     "migrated",
   );
+  assert.equal(
+    parseTestApplicationFixtureArguments([
+      "--output",
+      outputRoot,
+      "--acf",
+      "runtime-migrated",
+    ]).acfState,
+    "runtime-migrated",
+  );
 });
 
 test("clean application generation is deterministic and passes its own tests", async () => {
@@ -91,7 +100,7 @@ test("clean application generation is deterministic and passes its own tests", a
       {
         schemaVersion: 1,
         kind: "agent-context-test-application",
-        generatorRevision: 4,
+        generatorRevision: 5,
         gitState: "clean",
         acfState: "none",
       },
@@ -270,6 +279,46 @@ test("migrated fixtures use lock v3 and bootstrap ignored skills without Git noi
         status.stdout.split(/\r?\n/u).filter(Boolean),
         result.status,
       );
+    }
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("runtime-migrated fixture moves the complete runtime projection out of Git", async () => {
+  const fixture = await createFixtureParent();
+  try {
+    for (const gitState of ["clean", "dirty"] as const) {
+      const outputRoot = path.join(fixture.parent, `runtime-migrated-${gitState}`);
+      const result = await generateTestApplicationFixture({
+        frameworkRoot,
+        outputRoot,
+        gitState,
+        acfState: "runtime-migrated",
+        replace: false,
+      });
+      assert.equal(result.materializedFileCount > 2, true);
+      assert.deepEqual(
+        result.status,
+        gitState === "clean" ? [] : [" M src/site-copy.mjs", "?? notes/local-request.md"],
+      );
+      const receipt = decodeContextMaterializationReceipt(JSON.parse(
+        await readFile(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+      ) as unknown);
+      const runtimeFiles = receipt.files.filter((file) =>
+        file.targetPath.startsWith(".agent-context/runtime/materialized/"));
+      assert.equal(runtimeFiles.length > 0, true);
+      assert.equal(
+        runtimeFiles.some((file) =>
+          file.targetPath.endsWith("/packages/repo-context/dist/src/mcp-cli.js")),
+        true,
+      );
+      const tracked = await executeFile(
+        "git",
+        ["ls-files", "--", ".agent-context/runtime", ".codex/skills"],
+        { cwd: outputRoot, windowsHide: true },
+      );
+      assert.equal(tracked.stdout, "");
     }
   } finally {
     await fixture.remove();

@@ -19,6 +19,8 @@
     "agent-context": "node --import tsx tools/dev-tooling/src/context-installer-cli.ts",
     "build": "tsc -b",
     "capsule:bootstrap:build": "node node_modules/vite-plus/dist/pack-bin.js tools/dev-tooling/src/context-capsule-bootstrap-entry.ts --write --format esm --platform node --out-dir registry/sources/bootstrap --logLevel info --clean --minify",
+    "capsule:hooks:build": "node node_modules/vite-plus/dist/pack-bin.js ./.agent-context/runtime/packages/hooks/src/codex-cli.ts --write --format esm --platform node --out-dir registry/sources/runtime/hooks --logLevel info --clean --minify",
+    "capsule:repo-context:build": "node node_modules/vite-plus/dist/pack-bin.js ./.agent-context/runtime/packages/repo-context/src/mcp-cli.ts --write --format esm --platform node --out-dir registry/sources/runtime/repo-context --logLevel info --clean --minify",
     "check": "vp check",
     "clean": "tsc -b --clean",
     "context": "tsx tools/codex-workflows/src/context-cli.ts",

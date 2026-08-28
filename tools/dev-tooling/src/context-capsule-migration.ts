@@ -1,4 +1,5 @@
-import { lstat } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { lstat, readFile } from "node:fs/promises";
 import path from "node:path";
 
 import {
@@ -20,8 +21,8 @@ import {
   verifyContextCapsuleLock,
 } from "./context-capsule-lock.js";
 import {
-  contextCapsuleSkillActivation,
-  planContextCapsuleSkillMaterialization,
+  contextCapsuleMaterializationActivation,
+  planContextCapsuleMaterialization,
 } from "./context-capsule-materialization.js";
 import { CONTEXT_LOCK_PATH } from "./context-installer.js";
 import {
@@ -32,6 +33,8 @@ import {
 } from "./context-transaction.js";
 
 const EXPANDED_SKILL_PREFIX = ".codex/skills/";
+const CAPSULE_ATTRIBUTES_PATH = ".gitattributes";
+const CAPSULE_ATTRIBUTES_RULE = "*.acf binary";
 
 export interface ContextCapsuleMigrationConflict {
   readonly identity: string;
@@ -102,7 +105,7 @@ export async function planContextCapsuleV2Migration(
       detail: mismatch.detail,
     })));
   }
-  const materialization = await planContextCapsuleSkillMaterialization(
+  const materialization = await planContextCapsuleMaterialization(
     capsule,
     installation.projectRoot,
   );
@@ -121,29 +124,59 @@ export async function planContextCapsuleV2Migration(
     return blockedPlan(installation.projectRoot, conflicts);
   }
 
-  const materialized = contextCapsuleSkillActivation(capsule);
+  const materialized = contextCapsuleMaterializationActivation(capsule);
   const materializedByIdentity = new Map(materialized.map((record) => [record.identity, record]));
-  const expandedSkills = installation.lock.artifacts.filter(isExpandedSkillArtifact);
-  const invalidSkill = expandedSkills.find((locked) => !materializedByIdentity.has(artifactIdentity(locked)));
-  if (invalidSkill !== undefined || expandedSkills.length !== materialized.length) {
+  const expandedMaterialization = installation.lock.artifacts.filter(isMaterializedArtifact);
+  const invalidMaterialization = expandedMaterialization.find(
+    (locked) => !materializedByIdentity.has(artifactIdentity(locked)),
+  );
+  if (
+    invalidMaterialization !== undefined ||
+    expandedMaterialization.length !== materialized.length
+  ) {
     return blockedPlan(installation.projectRoot, [{
-      identity: invalidSkill === undefined ? "materialization:scope" : artifactIdentity(invalidSkill),
-      targetPath: invalidSkill?.targetPath ?? ".agents/skills",
-      detail: "The v2 skill ownership does not match the capsule materialization scope.",
+      identity: invalidMaterialization === undefined
+        ? "materialization:scope"
+        : artifactIdentity(invalidMaterialization),
+      targetPath: invalidMaterialization?.targetPath ?? ".agent-context/materialization.json",
+      detail: "The v2 ownership does not match the capsule materialization scope.",
     }]);
   }
 
-  const activation = installation.lock.artifacts
-    .filter((locked) => !isExpandedSkillArtifact(locked))
-    .map(toActivation);
+  const attributes = await planCapsuleAttributes(installation.projectRoot);
+  const activation: ContextCapsuleActivationLock[] = [];
+  for (const locked of installation.lock.artifacts.filter(
+    (artifact) => !isMaterializedArtifact(artifact),
+  )) {
+    if (locked.operation === "seed-file") {
+      const content = locked.targetPath === CAPSULE_ATTRIBUTES_PATH && attributes !== null
+        ? Buffer.from(attributes, "utf8")
+        : await readFile(path.resolve(installation.projectRoot, locked.targetPath));
+      activation.push({
+        ...toActivation(locked),
+        installedSha256: createHash("sha256").update(content).digest("hex"),
+      });
+    } else {
+      activation.push(toActivation(locked));
+    }
+  }
   const nextLock = createContextCapsuleLock(capsule, activation, materialized);
-  const removedPaths = expandedSkills.map((locked) => locked.targetPath).sort(compareStrings);
+  const removedPaths = expandedMaterialization
+    .map((locked) => locked.targetPath)
+    .sort(compareStrings);
   const mutations: ContextMutation[] = [
     {
       operation: "write",
       targetPath: CONTEXT_LOCK_PATH,
       content: serializeJson(nextLock),
     },
+    ...(attributes === null
+      ? []
+      : [{
+          operation: "write" as const,
+          targetPath: CAPSULE_ATTRIBUTES_PATH,
+          content: attributes,
+        }]),
     ...removedPaths.map((targetPath) => ({ operation: "delete" as const, targetPath })),
   ];
   return {
@@ -206,7 +239,7 @@ async function planCurrentMigration(
   lockValue: unknown,
 ): Promise<ContextCapsuleMigrationPlan> {
   const lock = decodeContextCapsuleLock(lockValue);
-  const materialized = contextCapsuleSkillActivation(capsule);
+  const materialized = contextCapsuleMaterializationActivation(capsule);
   const verification = verifyContextCapsuleLock(
     lock,
     capsule,
@@ -225,7 +258,7 @@ async function planCurrentMigration(
       detail: "Project direct components differ from the capsule selection.",
     });
   }
-  const materialization = await planContextCapsuleSkillMaterialization(capsule, projectRoot);
+  const materialization = await planContextCapsuleMaterialization(capsule, projectRoot);
   if (materialization.status !== "current") {
     conflicts.push(...(materialization.status === "blocked"
       ? materialization.conflicts.map((conflict) => ({
@@ -239,7 +272,7 @@ async function planCurrentMigration(
           detail: "Run node .agent-context/bootstrap.mjs materialize before migration verification.",
         }]));
   }
-  for (const targetPath of expandedSkillTargets(capsule)) {
+  for (const targetPath of expandedMaterializationTargets(capsule)) {
     if (await pathExists(path.resolve(projectRoot, targetPath))) {
       conflicts.push({
         identity: `expanded:${targetPath}`,
@@ -260,8 +293,13 @@ async function planCurrentMigration(
       };
 }
 
-function isExpandedSkillArtifact(locked: ContextLockedArtifact): boolean {
-  return locked.operation === "file" && locked.targetPath.startsWith(EXPANDED_SKILL_PREFIX);
+function isMaterializedArtifact(locked: ContextLockedArtifact): boolean {
+  return (
+    locked.operation === "file" && locked.targetPath.startsWith(EXPANDED_SKILL_PREFIX)
+  ) || (
+    (locked.operation === "file" || locked.operation === "runtime-workspace") &&
+    locked.targetPath.startsWith(".agent-context/runtime/")
+  );
 }
 
 function toActivation(locked: ContextLockedArtifact): ContextCapsuleActivationLock {
@@ -299,10 +337,31 @@ function lockSchemaVersion(value: unknown): number | null {
   return typeof value.schemaVersion === "number" ? value.schemaVersion : null;
 }
 
-function expandedSkillTargets(capsule: BuiltContextCapsule): readonly string[] {
+function expandedMaterializationTargets(capsule: BuiltContextCapsule): readonly string[] {
   return capsule.payload.selection.resolvedComponents.flatMap((component) =>
-    component.artifacts.filter((artifact) => artifact.targetPath.startsWith(EXPANDED_SKILL_PREFIX))
+    component.artifacts.filter((artifact) =>
+      artifact.targetPath.startsWith(EXPANDED_SKILL_PREFIX) ||
+      artifact.targetPath.startsWith(".agent-context/runtime/"))
       .map((artifact) => artifact.targetPath));
+}
+
+async function planCapsuleAttributes(projectRoot: string): Promise<string | null> {
+  const target = path.join(projectRoot, CAPSULE_ATTRIBUTES_PATH);
+  let current: string;
+  try {
+    current = await readFile(target, "utf8");
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      current = "";
+    } else {
+      throw error;
+    }
+  }
+  if (current.split(/\r?\n/u).some((line) => line.trim() === CAPSULE_ATTRIBUTES_RULE)) {
+    return null;
+  }
+  if (current.length === 0) return `${CAPSULE_ATTRIBUTES_RULE}\n`;
+  return `${current}${current.endsWith("\n") ? "" : "\n"}${CAPSULE_ATTRIBUTES_RULE}\n`;
 }
 
 async function pathExists(candidate: string): Promise<boolean> {

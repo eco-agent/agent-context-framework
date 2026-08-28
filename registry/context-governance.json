@@ -266,12 +266,12 @@
     {
       "invariantId": "codex-hooks-project-local",
       "sourcePath": "registry/sources/codex/hooks.json",
-      "sha256": "54fec77bb72d4fcb6ceedd1743fa47073a7dce47f1862407fff6c66197bbcc06"
+      "sha256": "16162cc8e34d3d73fc545b0d4b9491764775b92202f7b06a6fad1c3f1b75d635"
     },
     {
       "invariantId": "codex-repo-context-project-local",
       "sourcePath": "registry/sources/codex/repo-context.toml",
-      "sha256": "b16d9332509ffcd1728c3adb1d2909d04615a186e1dfcafb205657d80b3cde92"
+      "sha256": "8acb371c803fe5ae40d11aac887e93382fe217631ea2c0d11c6e317b45e6784c"
     },
     {
       "invariantId": "orchestration-skill-contract",

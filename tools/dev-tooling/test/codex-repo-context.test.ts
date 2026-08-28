@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { execFile, spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createInterface } from "node:readline";
 import test from "node:test";
+import { promisify } from "node:util";
 
 import { resolveContextComponents } from "@agent-context/repo-policy";
 import { parse as parseToml } from "smol-toml";
@@ -16,9 +17,15 @@ import {
   removeComponent,
 } from "../src/context-installer.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
-import { bootstrapRuntime } from "../src/runtime-bootstrap.js";
+import { CONTEXT_MATERIALIZATION_PATH } from "../src/context-capsule-materialization.js";
+import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+const executeFile = promisify(execFile);
+const repoContextBundle = path.join(
+  frameworkRoot,
+  "registry/sources/runtime/repo-context/mcp-cli.mjs",
+);
 
 interface RepoContextConfig {
   readonly command: string;
@@ -28,6 +35,35 @@ interface RepoContextConfig {
   readonly startup_timeout_sec: number;
   readonly tool_timeout_sec: number;
 }
+
+test("tracked repo-context bundle is reproducible", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-repo-bundle-"));
+  try {
+    await executeFile(process.execPath, [
+      path.join(frameworkRoot, "node_modules/vite-plus/dist/pack-bin.js"),
+      path.join(frameworkRoot, ".agent-context/runtime/packages/repo-context/src/mcp-cli.ts"),
+      "--write",
+      "--format",
+      "esm",
+      "--platform",
+      "node",
+      "--out-dir",
+      temporaryRoot,
+      "--logLevel",
+      "error",
+      "--clean",
+      "--minify",
+    ], { cwd: frameworkRoot, windowsHide: true });
+    assert.equal(
+      (await readFile(path.join(temporaryRoot, "mcp-cli.mjs"))).equals(
+        await readFile(repoContextBundle),
+      ),
+      true,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
 
 test("codex-repo-context resolves the isolated bounded package and local MCP table", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
@@ -52,7 +88,7 @@ test("codex-repo-context resolves the isolated bounded package and local MCP tab
   );
   assert.deepEqual(repoContextConfig, {
     command: "node",
-    args: [".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js", "--root", "."],
+    args: [".agent-context/bootstrap.mjs", "exec", "repo-context"],
     required: true,
     enabled_tools: ["repo_context"],
     startup_timeout_sec: 20,
@@ -86,8 +122,6 @@ test("installed repository-context MCP stays host-neutral and serves the configu
     );
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
     assert.equal(await exists(path.join(projectRoot, "pnpm-lock.yaml")), false);
-    const bootstrapped = await bootstrapRuntime({ projectRoot, mode: "install-and-build" });
-    assert.equal(bootstrapped.status, "operational");
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
     assert.equal(await exists(path.join(projectRoot, "pnpm-lock.yaml")), false);
 
@@ -97,8 +131,13 @@ test("installed repository-context MCP stays host-neutral and serves the configu
     const installedServers = record(record(installedConfig).mcp_servers);
     assert.equal(record(installedServers.local).command, "local-server");
     const configured = decodeRepoContextConfig(installedServers.repo_context);
-    const entrypoint = path.join(projectRoot, configured.args[0] ?? "");
-    const session = startMcp(entrypoint, configured.args.slice(1), projectRoot);
+    assert.deepEqual(configured.args, [
+      ".agent-context/bootstrap.mjs",
+      "exec",
+      "repo-context",
+    ]);
+    const entrypoint = path.join(projectRoot, ".agent-context/bootstrap.mjs");
+    const session = startMcp(entrypoint, ["exec", "repo-context"], projectRoot);
     try {
       const initialized = await session.request("initialize", {
         protocolVersion: "2025-11-25",
@@ -129,6 +168,90 @@ test("installed repository-context MCP stays host-neutral and serves the configu
     assert.equal(retainedServers.repo_context, undefined);
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test("migrated capsule starts repo-context through bootstrap without installed packages", { timeout: 90_000 }, async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-capsule-repo-"));
+  const projectRoot = path.join(temporaryRoot, "application");
+  try {
+    await generateTestApplicationFixture({
+      frameworkRoot,
+      outputRoot: projectRoot,
+      gitState: "clean",
+      acfState: "runtime-migrated",
+      replace: false,
+    });
+    const trackedRuntime = await executeFile(
+      "git",
+      ["ls-files", "--", ".agent-context/runtime"],
+      { cwd: projectRoot, windowsHide: true },
+    );
+    assert.equal(trackedRuntime.stdout, "");
+    await rm(path.join(projectRoot, ".agents"), { recursive: true, force: true });
+    await rm(path.join(projectRoot, ".agent-context", "runtime"), {
+      recursive: true,
+      force: true,
+    });
+    await rm(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), { force: true });
+    assert.equal(await exists(path.join(projectRoot, "node_modules")), false);
+
+    const bootstrapPath = path.join(projectRoot, ".agent-context", "bootstrap.mjs");
+    const session = startMcp(
+      bootstrapPath,
+      ["exec", "repo-context"],
+      projectRoot,
+    );
+    try {
+      const initialized = await session.request("initialize", {
+        protocolVersion: "2025-11-25",
+        capabilities: {},
+        clientInfo: { name: "capsule-fixture", version: "1.0.0" },
+      });
+      assert.equal(initialized.error, undefined);
+      session.notify("notifications/initialized", {});
+      const called = await session.request("tools/call", {
+        name: "repo_context",
+        arguments: { operation: "read", path: "README.md" },
+      });
+      assert.match(toolText(called.result), /ordinary downstream Git/u);
+    } finally {
+      await session.close();
+    }
+    const receipt = JSON.parse(
+      await readFile(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+    ) as { files: readonly { targetPath: string }[] };
+    const materializedEntrypoint = receipt.files.find((file) =>
+      file.targetPath.endsWith("/packages/repo-context/dist/src/mcp-cli.js"))?.targetPath;
+    assert.notEqual(materializedEntrypoint, undefined);
+    await writeFile(
+      path.join(projectRoot, materializedEntrypoint!),
+      "local generated runtime edit\n",
+      "utf8",
+    );
+    await assert.rejects(
+      executeFile(
+        process.execPath,
+        [bootstrapPath, "materialize", "--cwd", projectRoot, "--json"],
+        { cwd: projectRoot, windowsHide: true },
+      ),
+      (error: unknown) => {
+        assert.equal(error instanceof Error, true);
+        const stdout = typeof error === "object" && error !== null && "stdout" in error
+          ? String(error.stdout)
+          : "";
+        assert.match(stdout, /was modified/u);
+        return true;
+      },
+    );
+    const status = await executeFile(
+      "git",
+      ["status", "--porcelain=v1", "--untracked-files=all"],
+      { cwd: projectRoot, windowsHide: true },
+    );
+    assert.equal(status.stdout, "");
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
 

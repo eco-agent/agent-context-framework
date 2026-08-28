@@ -22,13 +22,15 @@ import {
 import { verifyContextCapsuleLock } from "./context-capsule-lock.js";
 
 export const CONTEXT_MATERIALIZATION_PATH = ".agent-context/materialization.json";
-export const CONTEXT_MATERIALIZATION_SCHEMA_VERSION = 1 as const;
+export const CONTEXT_MATERIALIZATION_SCHEMA_VERSION = 2 as const;
 export const CONTEXT_MATERIALIZATION_KIND = "agent-context-materialization" as const;
 
 const EXPANDED_SKILL_PREFIX = ".codex/skills/";
 const MATERIALIZED_SKILL_PREFIX = ".agents/skills/";
+const EXPANDED_RUNTIME_PREFIX = ".agent-context/runtime/";
+const MATERIALIZED_RUNTIME_PREFIX = ".agent-context/runtime/materialized/";
 
-export interface ContextMaterializedFileV1 {
+export interface ContextMaterializedSkillFileV2 {
   readonly component: string;
   readonly componentRevision: string;
   readonly identity: string;
@@ -40,13 +42,27 @@ export interface ContextMaterializedFileV1 {
   readonly bytes: number;
 }
 
-export interface ContextMaterializationReceiptV1 {
+export interface ContextMaterializedRuntimeFileV2 {
+  readonly component: string;
+  readonly componentRevision: string;
+  readonly identity: string;
+  readonly sourcePath: string;
+  readonly targetPath: string;
+  readonly sha256: string;
+  readonly bytes: number;
+}
+
+export type ContextMaterializedFileV2 =
+  | ContextMaterializedSkillFileV2
+  | ContextMaterializedRuntimeFileV2;
+
+export interface ContextMaterializationReceiptV2 {
   readonly schemaVersion: typeof CONTEXT_MATERIALIZATION_SCHEMA_VERSION;
   readonly kind: typeof CONTEXT_MATERIALIZATION_KIND;
   readonly registryRevision: string;
   readonly capsuleSha256: string;
   readonly treeSha256: string;
-  readonly files: readonly ContextMaterializedFileV1[];
+  readonly files: readonly ContextMaterializedFileV2[];
 }
 
 export interface ContextMaterializationConflict {
@@ -58,29 +74,29 @@ export type ContextMaterializationPlan =
   | {
       readonly status: "ready";
       readonly projectRoot: string;
-      readonly receipt: ContextMaterializationReceiptV1;
-      readonly previousReceipt: ContextMaterializationReceiptV1 | null;
+      readonly receipt: ContextMaterializationReceiptV2;
+      readonly previousReceipt: ContextMaterializationReceiptV2 | null;
       readonly conflicts: readonly [];
     }
   | {
       readonly status: "current";
       readonly projectRoot: string;
-      readonly receipt: ContextMaterializationReceiptV1;
-      readonly previousReceipt: ContextMaterializationReceiptV1;
+      readonly receipt: ContextMaterializationReceiptV2;
+      readonly previousReceipt: ContextMaterializationReceiptV2;
       readonly conflicts: readonly [];
     }
   | {
       readonly status: "blocked";
       readonly projectRoot: string;
-      readonly receipt: ContextMaterializationReceiptV1;
-      readonly previousReceipt: ContextMaterializationReceiptV1 | null;
+      readonly receipt: ContextMaterializationReceiptV2;
+      readonly previousReceipt: ContextMaterializationReceiptV2 | null;
       readonly conflicts: readonly ContextMaterializationConflict[];
     };
 
 export interface ContextMaterializationResult {
   readonly status: "materialized" | "current" | "blocked";
   readonly projectRoot: string;
-  readonly receipt: ContextMaterializationReceiptV1;
+  readonly receipt: ContextMaterializationReceiptV2;
   readonly conflicts: readonly ContextMaterializationConflict[];
   readonly writtenPaths: readonly string[];
 }
@@ -91,16 +107,16 @@ export interface ContextMaterializationAuthorityVerification {
 }
 
 interface DesiredMaterializedFile {
-  readonly receipt: ContextMaterializedFileV1;
+  readonly receipt: ContextMaterializedFileV2;
   readonly content: Buffer;
 }
 
-export async function planContextCapsuleSkillMaterialization(
+export async function planContextCapsuleMaterialization(
   capsule: BuiltContextCapsule,
   projectRoot: string,
 ): Promise<ContextMaterializationPlan> {
   const resolvedProjectRoot = await realpath(projectRoot);
-  const desiredFiles = desiredSkillFiles(capsule);
+  const desiredFiles = desiredMaterializedFiles(capsule);
   const desiredReceipt = createReceipt(capsule, desiredFiles.map((file) => file.receipt));
   const transaction = await inspectContextTransaction(resolvedProjectRoot);
   if (transaction.status !== "none") {
@@ -203,12 +219,12 @@ export async function planContextCapsuleSkillMaterialization(
   };
 }
 
-export async function materializeContextCapsuleSkills(
+export async function materializeContextCapsule(
   capsule: BuiltContextCapsule,
   projectRoot: string,
   options: ContextTransactionOptions = {},
 ): Promise<ContextMaterializationResult> {
-  const plan = await planContextCapsuleSkillMaterialization(capsule, projectRoot);
+  const plan = await planContextCapsuleMaterialization(capsule, projectRoot);
   if (plan.status === "blocked") {
     return {
       status: "blocked",
@@ -228,7 +244,7 @@ export async function materializeContextCapsuleSkills(
     };
   }
 
-  const desiredFiles = desiredSkillFiles(capsule);
+  const desiredFiles = desiredMaterializedFiles(capsule);
   const mutations: ContextMutation[] = [
     ...desiredFiles.map((file) => ({
       operation: "write" as const,
@@ -248,7 +264,7 @@ export async function materializeContextCapsuleSkills(
     mutations,
     options,
   );
-  const verified = await planContextCapsuleSkillMaterialization(capsule, plan.projectRoot);
+  const verified = await planContextCapsuleMaterialization(capsule, plan.projectRoot);
   if (verified.status !== "current") {
     throw new Error("Context capsule materialization did not verify after publication.");
   }
@@ -263,7 +279,7 @@ export async function materializeContextCapsuleSkills(
 
 export function decodeContextMaterializationReceipt(
   value: unknown,
-): ContextMaterializationReceiptV1 {
+): ContextMaterializationReceiptV2 {
   const record = requiredRecord(value, "Context materialization receipt");
   requireKeys(record, [
     "schemaVersion",
@@ -274,7 +290,7 @@ export function decodeContextMaterializationReceipt(
     "files",
   ], "Context materialization receipt");
   if (record.schemaVersion !== CONTEXT_MATERIALIZATION_SCHEMA_VERSION) {
-    throw new Error("Context materialization receipt schemaVersion must be 1.");
+    throw new Error("Context materialization receipt schemaVersion must be 2.");
   }
   if (record.kind !== CONTEXT_MATERIALIZATION_KIND) {
     throw new Error(`Context materialization receipt kind must be ${CONTEXT_MATERIALIZATION_KIND}.`);
@@ -293,7 +309,10 @@ export function decodeContextMaterializationReceipt(
     throw new Error("Context materialization receipt must contain at least one file.");
   }
   for (const skillRoot of materializedSkillRoots(files)) {
-    if (!files.some((file) => file.skillRoot === skillRoot && file.targetPath === `${skillRoot}/SKILL.md`)) {
+    if (!files.some((file) =>
+      isSkillFile(file) &&
+      file.skillRoot === skillRoot &&
+      file.targetPath === `${skillRoot}/SKILL.md`)) {
       throw new Error(`Context materialization receipt skill root is missing SKILL.md: ${skillRoot}.`);
     }
   }
@@ -310,19 +329,41 @@ export function decodeContextMaterializationReceipt(
 export function contextCapsuleSkillActivation(
   capsule: BuiltContextCapsule,
 ): readonly ContextCapsuleActivationLock[] {
-  return desiredSkillFiles(capsule).map((file) => ({
+  return desiredMaterializedFiles(capsule).filter((file) => isSkillFile(file.receipt)).map((file) => ({
     identity: file.receipt.identity,
     targetPath: file.receipt.targetPath,
     installedSha256: file.receipt.sha256,
   })).sort((left, right) => compareStrings(left.identity, right.identity));
 }
 
+export function contextCapsuleRuntimeActivation(
+  capsule: BuiltContextCapsule,
+): readonly ContextCapsuleActivationLock[] {
+  return desiredMaterializedFiles(capsule)
+    .filter((file) => !isSkillFile(file.receipt))
+    .map((file) => ({
+      identity: file.receipt.identity,
+      targetPath: file.receipt.targetPath,
+      installedSha256: file.receipt.sha256,
+    }))
+    .sort((left, right) => compareStrings(left.identity, right.identity));
+}
+
+export function contextCapsuleMaterializationActivation(
+  capsule: BuiltContextCapsule,
+): readonly ContextCapsuleActivationLock[] {
+  return [
+    ...contextCapsuleSkillActivation(capsule),
+    ...contextCapsuleRuntimeActivation(capsule),
+  ].sort((left, right) => compareStrings(left.identity, right.identity));
+}
+
 export function verifyContextMaterializationAuthority(
   lock: ContextCapsuleLockV3,
   capsule: BuiltContextCapsule,
-  receipt: ContextMaterializationReceiptV1,
+  receipt: ContextMaterializationReceiptV2,
 ): ContextMaterializationAuthorityVerification {
-  const expectedActivation = contextCapsuleSkillActivation(capsule);
+  const expectedActivation = contextCapsuleMaterializationActivation(capsule);
   const mismatches = [
     ...verifyContextCapsuleLock(
       lock,
@@ -331,7 +372,7 @@ export function verifyContextMaterializationAuthority(
       expectedActivation,
     ).mismatches,
   ];
-  const desiredFiles = desiredSkillFiles(capsule);
+  const desiredFiles = desiredMaterializedFiles(capsule);
   const expectedReceipt = createReceipt(
     capsule,
     desiredFiles.map((file) => file.receipt),
@@ -342,11 +383,40 @@ export function verifyContextMaterializationAuthority(
   return { ok: mismatches.length === 0, mismatches };
 }
 
-function desiredSkillFiles(capsule: BuiltContextCapsule): readonly DesiredMaterializedFile[] {
+function desiredMaterializedFiles(capsule: BuiltContextCapsule): readonly DesiredMaterializedFile[] {
   const files: DesiredMaterializedFile[] = [];
   const targets = new Set<string>();
   for (const component of capsule.payload.selection.resolvedComponents) {
     for (const artifact of component.artifacts) {
+      if (artifact.targetPath.startsWith(EXPANDED_RUNTIME_PREFIX)) {
+        if (artifact.operation !== "file" && artifact.operation !== "runtime-workspace") {
+          throw new Error(
+            `Context capsule runtime artifact ${artifact.targetPath} must use a whole-file operation.`,
+          );
+        }
+        const content = contextCapsuleEntryBytes(capsule, artifact.sourcePath);
+        if (sha256(content) !== artifact.sourceSha256) {
+          throw new Error(`Context capsule materialization source drifted for ${artifact.sourcePath}.`);
+        }
+        const targetPath = `${MATERIALIZED_RUNTIME_PREFIX}${capsule.treeSha256}/${artifact.targetPath.slice(EXPANDED_RUNTIME_PREFIX.length)}`;
+        if (targets.has(targetPath)) {
+          throw new Error(`Context capsule resolves duplicate materialized target ${targetPath}.`);
+        }
+        targets.add(targetPath);
+        files.push({
+          content,
+          receipt: {
+            component: component.name,
+            componentRevision: component.revision,
+            identity: artifactIdentity(artifact),
+            sourcePath: artifact.sourcePath,
+            targetPath,
+            sha256: artifact.sourceSha256,
+            bytes: content.length,
+          },
+        });
+        continue;
+      }
       if (!artifact.targetPath.startsWith(EXPANDED_SKILL_PREFIX)) continue;
       if (artifact.operation !== "file") {
         throw new Error(
@@ -388,15 +458,15 @@ function desiredSkillFiles(capsule: BuiltContextCapsule): readonly DesiredMateri
   }
   files.sort((left, right) => compareStrings(left.receipt.targetPath, right.receipt.targetPath));
   if (files.length === 0) {
-    throw new Error("Context capsule selects no materializable skill files.");
+    throw new Error("Context capsule selects no materializable files.");
   }
   return files;
 }
 
 function createReceipt(
   capsule: BuiltContextCapsule,
-  files: readonly ContextMaterializedFileV1[],
-): ContextMaterializationReceiptV1 {
+  files: readonly ContextMaterializedFileV2[],
+): ContextMaterializationReceiptV2 {
   return decodeContextMaterializationReceipt({
     schemaVersion: CONTEXT_MATERIALIZATION_SCHEMA_VERSION,
     kind: CONTEXT_MATERIALIZATION_KIND,
@@ -408,7 +478,7 @@ function createReceipt(
 }
 
 async function readStoredReceipt(projectRoot: string): Promise<
-  | { readonly status: "valid"; readonly receipt: ContextMaterializationReceiptV1 | null }
+  | { readonly status: "valid"; readonly receipt: ContextMaterializationReceiptV2 | null }
   | { readonly status: "invalid"; readonly receipt: null; readonly detail: string }
 > {
   let bytes: Buffer | null;
@@ -434,7 +504,7 @@ async function readStoredReceipt(projectRoot: string): Promise<
 
 async function findUnexpectedDesiredTargets(
   projectRoot: string,
-  files: readonly ContextMaterializedFileV1[],
+  files: readonly ContextMaterializedFileV2[],
 ): Promise<readonly ContextMaterializationConflict[]> {
   const conflicts: ContextMaterializationConflict[] = [];
   for (const skillRoot of materializedSkillRoots(files)) {
@@ -447,6 +517,19 @@ async function findUnexpectedDesiredTargets(
       }
     } catch (error) {
       conflicts.push({ targetPath: skillRoot, detail: errorMessage(error) });
+    }
+  }
+  for (const file of files.filter((candidate) => !isSkillFile(candidate))) {
+    try {
+      const current = await readOptionalProjectFile(projectRoot, file.targetPath);
+      if (current !== null && (current.length !== file.bytes || sha256(current) !== file.sha256)) {
+        conflicts.push({
+          targetPath: file.targetPath,
+          detail: "A runtime target exists without a receipt and differs from the capsule.",
+        });
+      }
+    } catch (error) {
+      conflicts.push({ targetPath: file.targetPath, detail: errorMessage(error) });
     }
   }
   return conflicts;
@@ -498,7 +581,7 @@ async function gitIgnoredPaths(
 
 async function verifyReceiptFiles(
   projectRoot: string,
-  receipt: ContextMaterializationReceiptV1,
+  receipt: ContextMaterializationReceiptV2,
 ): Promise<readonly ContextMaterializationConflict[]> {
   const conflicts: ContextMaterializationConflict[] = [];
   for (const file of receipt.files) {
@@ -637,7 +720,7 @@ async function listMaterializedTree(
 }
 
 function expectedMaterializedTree(
-  files: readonly ContextMaterializedFileV1[],
+  files: readonly ContextMaterializedFileV2[],
   skillRoot: string,
 ): ReadonlySet<string> {
   const expected = new Set<string>();
@@ -652,9 +735,9 @@ function expectedMaterializedTree(
 }
 
 function materializedSkillRoots(
-  files: readonly ContextMaterializedFileV1[],
+  files: readonly ContextMaterializedFileV2[],
 ): readonly string[] {
-  return [...new Set(files.map((file) => file.skillRoot))].sort(compareStrings);
+  return [...new Set(files.filter(isSkillFile).map((file) => file.skillRoot))].sort(compareStrings);
 }
 
 async function readOptionalProjectFile(projectRoot: string, relativePath: string): Promise<Buffer | null> {
@@ -685,9 +768,33 @@ async function readOptionalProjectFile(projectRoot: string, relativePath: string
   return await readFile(absolutePath);
 }
 
-function decodeMaterializedFile(value: unknown, index: number): ContextMaterializedFileV1 {
+function decodeMaterializedFile(value: unknown, index: number): ContextMaterializedFileV2 {
   const label = `Context materialization receipt files[${index}]`;
   const record = requiredRecord(value, label);
+  const targetPath = portableRelativePath(record.targetPath, `${label}.targetPath`);
+  if (targetPath.startsWith(MATERIALIZED_RUNTIME_PREFIX)) {
+    requireKeys(record, [
+      "component",
+      "componentRevision",
+      "identity",
+      "sourcePath",
+      "targetPath",
+      "sha256",
+      "bytes",
+    ], label);
+    return {
+      component: requiredString(record.component, `${label}.component`),
+      componentRevision: requiredComponentRevision(
+        record.componentRevision,
+        `${label}.componentRevision`,
+      ),
+      identity: requiredString(record.identity, `${label}.identity`),
+      sourcePath: portableRelativePath(record.sourcePath, `${label}.sourcePath`),
+      targetPath,
+      sha256: requiredSha256(record.sha256, `${label}.sha256`),
+      bytes: requiredNonnegativeSafeInteger(record.bytes, `${label}.bytes`),
+    };
+  }
   requireKeys(record, [
     "component",
     "componentRevision",
@@ -710,7 +817,6 @@ function decodeMaterializedFile(value: unknown, index: number): ContextMateriali
     throw new Error(`${label}.skillRoot does not match its skill and component revision.`);
   }
   const sourcePath = portableRelativePath(record.sourcePath, `${label}.sourcePath`);
-  const targetPath = portableRelativePath(record.targetPath, `${label}.targetPath`);
   requireMaterializedTargetPath(targetPath);
   const sourcePrefix = `${EXPANDED_SKILL_PREFIX}${skillName}/`;
   if (!sourcePath.startsWith(sourcePrefix)) {
@@ -734,6 +840,12 @@ function decodeMaterializedFile(value: unknown, index: number): ContextMateriali
     sha256: requiredSha256(record.sha256, `${label}.sha256`),
     bytes: requiredNonnegativeSafeInteger(record.bytes, `${label}.bytes`),
   };
+}
+
+function isSkillFile(
+  file: ContextMaterializedFileV2,
+): file is ContextMaterializedSkillFileV2 {
+  return "skillRoot" in file;
 }
 
 function requireMaterializedTargetPath(targetPath: string): void {
@@ -766,7 +878,7 @@ function requiredSkillName(value: unknown, label: string): string {
   return skillName;
 }
 
-function serializeReceipt(receipt: ContextMaterializationReceiptV1): string {
+function serializeReceipt(receipt: ContextMaterializationReceiptV2): string {
   return `${JSON.stringify(receipt, null, 2)}\n`;
 }
 

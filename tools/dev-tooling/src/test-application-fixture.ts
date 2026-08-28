@@ -14,7 +14,7 @@ import { verifyContextCapsuleInstallation } from "./context-capsule-installation
 import { migrateContextCapsuleV2 } from "./context-capsule-migration.js";
 import {
   CONTEXT_MATERIALIZATION_PATH,
-  materializeContextCapsuleSkills,
+  materializeContextCapsule,
 } from "./context-capsule-materialization.js";
 import { addComponent, initProject } from "./context-installer.js";
 
@@ -26,7 +26,8 @@ export type TestApplicationAcfState =
   | "core"
   | "capsule"
   | "materialized"
-  | "migrated";
+  | "migrated"
+  | "runtime-migrated";
 
 export interface TestApplicationFixtureRequest {
   readonly frameworkRoot: string;
@@ -51,7 +52,7 @@ export interface TestApplicationFixtureResult {
 interface TestApplicationMarker {
   readonly schemaVersion: 1;
   readonly kind: "agent-context-test-application";
-  readonly generatorRevision: 4;
+  readonly generatorRevision: 5;
   readonly gitState: TestApplicationGitState;
   readonly acfState: TestApplicationAcfState;
 }
@@ -80,7 +81,7 @@ export async function generateTestApplicationFixture(
   const marker: TestApplicationMarker = {
     schemaVersion: 1,
     kind: "agent-context-test-application",
-    generatorRevision: 4,
+    generatorRevision: 5,
     gitState: request.gitState,
     acfState: request.acfState,
   };
@@ -104,22 +105,34 @@ export async function generateTestApplicationFixture(
     request.acfState === "core" ||
     request.acfState === "capsule" ||
     request.acfState === "materialized" ||
-    request.acfState === "migrated"
+    request.acfState === "migrated" ||
+    request.acfState === "runtime-migrated"
   ) {
     const installed = await initProject(outputRoot, frameworkRoot);
     if (installed.plan.status !== "ready") {
       throw new Error(`ACF core installation was blocked with status ${installed.plan.status}.`);
     }
-    if (request.acfState === "materialized" || request.acfState === "migrated") {
+    if (
+      request.acfState === "materialized" ||
+      request.acfState === "migrated" ||
+      request.acfState === "runtime-migrated"
+    ) {
       const added = await addComponent(outputRoot, frameworkRoot, "skill-diagnose");
       if (added.plan.status !== "ready") {
         throw new Error(`ACF diagnose installation was blocked with status ${added.plan.status}.`);
       }
     }
+    if (request.acfState === "runtime-migrated") {
+      const added = await addComponent(outputRoot, frameworkRoot, "codex-runtime");
+      if (added.plan.status !== "ready") {
+        throw new Error(`ACF runtime installation was blocked with status ${added.plan.status}.`);
+      }
+    }
     if (
       request.acfState === "capsule" ||
       request.acfState === "materialized" ||
-      request.acfState === "migrated"
+      request.acfState === "migrated" ||
+      request.acfState === "runtime-migrated"
     ) {
       const frameworkRevision = (await runGit(frameworkRoot, ["rev-parse", "HEAD"])).trim();
       if (!/^[a-f0-9]{40}$/u.test(frameworkRevision)) {
@@ -153,8 +166,12 @@ export async function generateTestApplicationFixture(
         throw new Error("Generated capsule must be marked binary by project Git attributes.");
       }
       capsuleSha256 = capsule.capsuleSha256;
-      if (request.acfState === "materialized" || request.acfState === "migrated") {
-        const materialized = await materializeContextCapsuleSkills(capsule, outputRoot);
+      if (
+        request.acfState === "materialized" ||
+        request.acfState === "migrated" ||
+        request.acfState === "runtime-migrated"
+      ) {
+        const materialized = await materializeContextCapsule(capsule, outputRoot);
         if (materialized.status !== "materialized") {
           throw new Error(`Generated capsule materialization returned ${materialized.status}.`);
         }
@@ -165,7 +182,7 @@ export async function generateTestApplicationFixture(
         ]) {
           await runGit(outputRoot, ["check-ignore", "--quiet", "--", generatedPath]);
         }
-        if (request.acfState === "migrated") {
+        if (request.acfState === "migrated" || request.acfState === "runtime-migrated") {
           const migration = await migrateContextCapsuleV2(capsule, outputRoot);
           if (migration.status !== "migrated") {
             throw new Error(`Generated capsule migration returned ${migration.status}.`);
@@ -175,7 +192,9 @@ export async function generateTestApplicationFixture(
     }
     installationRevision = await commitAll(
       outputRoot,
-      request.acfState === "migrated"
+      request.acfState === "runtime-migrated"
+        ? "Migrate ACF runtime capsule fixture"
+        : request.acfState === "migrated"
         ? "Migrate ACF capsule fixture"
         : request.acfState === "materialized"
           ? "Install ACF capsule materialization fixture"
@@ -282,7 +301,8 @@ async function requireFixtureMarker(outputRoot: string): Promise<void> {
     (value.generatorRevision !== 1 &&
       value.generatorRevision !== 2 &&
       value.generatorRevision !== 3 &&
-      value.generatorRevision !== 4) ||
+      value.generatorRevision !== 4 &&
+      value.generatorRevision !== 5) ||
     !("gitState" in value) ||
     (value.gitState !== "clean" && value.gitState !== "dirty") ||
     !("acfState" in value) ||
@@ -290,7 +310,8 @@ async function requireFixtureMarker(outputRoot: string): Promise<void> {
       value.acfState !== "core" &&
       value.acfState !== "capsule" &&
       value.acfState !== "materialized" &&
-      value.acfState !== "migrated")
+      value.acfState !== "migrated" &&
+      value.acfState !== "runtime-migrated")
   ) {
     throw new Error("Refusing to replace a directory without a valid ACF fixture marker.");
   }

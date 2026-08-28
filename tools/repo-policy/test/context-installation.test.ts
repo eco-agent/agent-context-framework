@@ -172,6 +172,19 @@ test("capsule lock v3 is separate from registry, config, and installation lock v
     },
   } as const;
   assert.deepEqual(decodeContextCapsuleLock(lock), lock);
+  assert.equal(
+    decodeContextCapsuleLock({
+      ...lock,
+      materialization: {
+        ...lock.materialization,
+        files: [{
+          ...lock.materialization.files[0],
+          targetPath: `.agent-context/runtime/materialized/${"d".repeat(64)}/repo-context.mjs`,
+        }],
+      },
+    }).materialization.files[0]?.targetPath.startsWith(".agent-context/runtime/materialized/"),
+    true,
+  );
   assert.throws(
     () => decodeContextInstallationLock(lock),
     /unknown fields|schemaVersion must be 2/u,
@@ -224,7 +237,7 @@ test("capsule lock v3 is separate from registry, config, and installation lock v
         files: [{ ...lock.materialization.files[0], targetPath: "project-owned.txt" }],
       },
     }),
-    /target must be below .agents\/skills/u,
+    /target must be below .agents\/skills or .agent-context\/runtime\/materialized/u,
   );
   assert.throws(
     () => decodeContextCapsuleLock({

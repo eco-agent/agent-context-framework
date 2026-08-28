@@ -21,7 +21,7 @@ import {
   CONTEXT_LOCK_PATH,
 } from "./context-installer.js";
 import { verifyContextCapsuleLock } from "./context-capsule-lock.js";
-import { contextCapsuleSkillActivation } from "./context-capsule-materialization.js";
+import { contextCapsuleMaterializationActivation } from "./context-capsule-materialization.js";
 
 const EXPANDED_SKILL_PREFIX = ".codex/skills/";
 
@@ -189,7 +189,7 @@ export async function verifyContextCapsuleV3Installation(
 ): Promise<ContextCapsuleV3InstallationVerification> {
   const projectFiles = await readContextCapsuleProjectFiles(projectRootCandidate);
   const lock = decodeContextCapsuleLock(projectFiles.lock);
-  const materialization = contextCapsuleSkillActivation(capsule);
+  const materialization = contextCapsuleMaterializationActivation(capsule);
   const mismatches: ContextCapsuleInstallationMismatch[] = verifyContextCapsuleLock(
     lock,
     capsule,
@@ -211,7 +211,10 @@ export async function verifyContextCapsuleV3Installation(
   const artifacts = new Map<string, ContextRegistryArtifact>();
   for (const component of capsule.payload.selection.resolvedComponents) {
     for (const artifact of component.artifacts) {
-      if (!artifact.targetPath.startsWith(EXPANDED_SKILL_PREFIX)) {
+      if (
+        !artifact.targetPath.startsWith(EXPANDED_SKILL_PREFIX) &&
+        !artifact.targetPath.startsWith(".agent-context/runtime/")
+      ) {
         artifacts.set(artifactIdentity(artifact), artifact);
       }
     }
@@ -264,6 +267,24 @@ async function verifyInstalledArtifact(
   projectRoot: string,
   locked: ContextLockedArtifact,
 ): Promise<ContextCapsuleInstallationMismatch | null> {
+  if (locked.operation === "seed-file") {
+    try {
+      const target = await readOptionalProjectText(projectRoot, locked.targetPath);
+      return target === null
+        ? {
+            identity: artifactIdentity(locked),
+            targetPath: locked.targetPath,
+            detail: "Installed project-owned seed is missing.",
+          }
+        : null;
+    } catch (error) {
+      return {
+        identity: artifactIdentity(locked),
+        targetPath: locked.targetPath,
+        detail: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
   return await verifyInstalledProjection(
     capsule,
     projectRoot,
@@ -296,7 +317,10 @@ async function verifyInstalledProjection(
     };
   }
   const projection = createArtifactProjection(artifact, source);
-  if (projection.sourceSha256 !== installed.installedSha256) {
+  if (
+    artifact.operation !== "seed-file" &&
+    projection.sourceSha256 !== installed.installedSha256
+  ) {
     return {
       identity,
       targetPath: installed.targetPath,
