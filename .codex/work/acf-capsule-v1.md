@@ -18,7 +18,7 @@ remains authoritative until that proof passes.
 - Generated capsule SHA-256:
   `eb788c0187ac42e866754c54c72010c757aca77d7a493acac87018c4b7b0fcfd`
 - Generated capsule framework revision:
-  `0554070f8760e1065597752c99bc0c1d2ec76b4c`
+  `055407057c0bf1aa89a072e24023e93e1fdb87f6`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
@@ -209,7 +209,7 @@ active slice.
 - Standalone bootstrap and lock-v3 ownership revision:
   `9315c38f9b2674f7eb638e09822bdb276816149f`.
 - Explicit materialization command revision:
-  `0554070f8760e1065597752c99bc0c1d2ec76b4c`.
+  `055407057c0bf1aa89a072e24023e93e1fdb87f6`.
 - Deterministic core capsule: 10,620 compressed bytes and 24,700 payload bytes
   in the live command proof before the full-component tree-hash correction.
 - Focused capsule tests: 7 passed.
