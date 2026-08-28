@@ -95,8 +95,21 @@ export async function applyContextTransaction(
     CONTEXT_TRANSACTION_STAGE_PATH,
     "Context transaction staging",
   );
+  let stageClaimed = false;
   try {
-    await mkdir(stageRoot, { recursive: true });
+    await mkdir(path.dirname(stageRoot), { recursive: true });
+    try {
+      await mkdir(stageRoot);
+    } catch (error) {
+      if (isAlreadyExistsError(error)) {
+        throw new Error(
+          "Another context transaction claimed project staging. Run agent-context doctor before retrying.",
+          { cause: error },
+        );
+      }
+      throw error;
+    }
+    stageClaimed = true;
     await notifyMutation(options, { kind: "stage-root-created" });
     const journalMutations: ContextTransactionJournalMutation[] = [];
     for (const [index, mutation] of mutations.entries()) {
@@ -152,7 +165,7 @@ export async function applyContextTransaction(
     await completeTransactionCleanup(resolvedProjectRoot, options);
     return mutations.map((mutation) => mutation.targetPath);
   } catch (error) {
-    if (!(await pathExists(journalPath))) {
+    if (stageClaimed && !(await pathExists(journalPath))) {
       await discardStageRoot(stageRoot);
     }
     throw error;
@@ -637,4 +650,8 @@ function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
 
 function isMissingPathError(error: unknown): boolean {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
+}
+
+function isAlreadyExistsError(error: unknown): boolean {
+  return error instanceof Error && "code" in error && error.code === "EEXIST";
 }

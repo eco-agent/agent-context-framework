@@ -19,6 +19,10 @@ import {
   verifyContextCapsuleInstallation,
   type ContextCapsuleInstallationVerification,
 } from "./context-capsule-installation.js";
+import {
+  materializeContextCapsuleSkills,
+  type ContextMaterializationResult,
+} from "./context-capsule-materialization.js";
 
 export type ContextCapsuleCliArguments =
   | {
@@ -33,7 +37,7 @@ export type ContextCapsuleCliArguments =
       readonly json: boolean;
     }
   | {
-      readonly command: "verify";
+      readonly command: "verify" | "materialize";
       readonly projectRoot: string;
       readonly capsulePath: string;
       readonly json: boolean;
@@ -63,12 +67,15 @@ Usage:
   pnpm agent-context capsule list [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule inspect [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule verify [--cwd PROJECT] [--capsule CAPSULE] [--json]
+  pnpm agent-context capsule materialize [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule diff --before CAPSULE --after CAPSULE [--json]
   pnpm agent-context capsule extract --capsule CAPSULE --output DIRECTORY [--json]
 
 build writes a new capsule and refuses replacement. verify compares a capsule
-with the current expanded installation without writing. extract writes verified
-registry source paths to a new directory outside the framework worktree.`;
+with the current expanded installation without writing. materialize writes an
+absent repository skill projection and receipt, reuses an exact projection, and
+blocks replacement. extract writes verified registry source paths to a new
+directory outside the framework worktree.`;
 
 export function parseContextCapsuleArguments(
   arguments_: readonly string[],
@@ -81,6 +88,7 @@ export function parseContextCapsuleArguments(
     command !== "list" &&
     command !== "inspect" &&
     command !== "verify" &&
+    command !== "materialize" &&
     command !== "diff" &&
     command !== "extract"
   ) {
@@ -140,7 +148,7 @@ export function parseContextCapsuleArguments(
     rejectOptions(command, { outputValue, beforeValue, afterValue });
     return { command, capsulePath, json };
   }
-  if (command === "verify") {
+  if (command === "verify" || command === "materialize") {
     rejectOptions(command, { outputValue, beforeValue, afterValue });
     return { command, projectRoot, capsulePath, json };
   }
@@ -226,6 +234,22 @@ export async function runContextCapsuleCli(
       output: request.json
         ? JSON.stringify({ command: "verify", capsulePath: request.capsulePath, ...verification }, null, 2)
         : formatVerification(request.capsulePath, verification),
+    };
+  }
+  if (request.command === "materialize") {
+    const materialization = await materializeContextCapsuleSkills(
+      await readContextCapsuleFile(request.capsulePath),
+      request.projectRoot,
+    );
+    return {
+      exitCode: materialization.status === "blocked" ? 1 : 0,
+      output: request.json
+        ? JSON.stringify({
+            command: "materialize",
+            capsulePath: request.capsulePath,
+            ...materialization,
+          }, null, 2)
+        : formatMaterialization(request.capsulePath, materialization),
     };
   }
   if (request.command === "diff") {
@@ -327,6 +351,20 @@ function formatDifference(
     ...difference.removedEntries.map((sourcePath) => `entry removed: ${sourcePath}`),
     ...difference.changedEntries.map((entry) =>
       `entry changed: ${entry.sourcePath} ${entry.beforeSha256} -> ${entry.afterSha256}`),
+  ].join("\n");
+}
+
+function formatMaterialization(
+  capsulePath: string,
+  materialization: ContextMaterializationResult,
+): string {
+  return [
+    `capsule: ${capsulePath}`,
+    `project: ${materialization.projectRoot}`,
+    `status: ${materialization.status}`,
+    `files: ${materialization.receipt.files.length}`,
+    ...materialization.conflicts.map((conflict) =>
+      `conflict ${conflict.targetPath}: ${conflict.detail}`),
   ].join("\n");
 }
 

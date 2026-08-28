@@ -89,7 +89,49 @@ prepares one atomic capsule-and-lock operation without publishing that pair yet.
 6. Semantic commands operate on verified payloads.
 7. Generated application proof compares the capsule with expanded installation.
 
-## Smallest complete slice
+## Active materialization slice
+
+The next checkpoint materializes the selected skill artifacts to Codex's real
+repository discovery path, `.agents/skills`. It keeps the tracked
+`.codex/skills` projection as the installation oracle. The generated fixture
+selects `skill-diagnose`, builds its capsule, writes the ignored copy and
+receipt, and proves that Git remains clean.
+
+This checkpoint supports an absent destination and an exact repeat. It blocks a
+modified generated file, a malformed receipt, an unexplained existing target,
+or a different capsule. Replacement remains a later slice because the current
+file transaction can recover a partial update, but it cannot leave the previous
+directory projection active throughout a crash.
+
+The existing context transaction becomes the project-local concurrency owner by
+claiming its stage directory exclusively. A losing process must not remove the
+winning process's staging directory.
+
+Reuse assessment:
+
+- `context-transaction.ts` already owns staged writes, exact before and after
+  hashes, crash inspection, and resume. Extending its exclusive claim is smaller
+  than adding a second transaction system.
+- The product precedent receipt supplies a useful receipt pattern, but its
+  direct multi-file writes do not meet this recovery boundary.
+- `write-file-atomic` handles one replacement file, not an immutable multi-file
+  projection plus receipt. `proper-lockfile` adds dependencies and stale-lock
+  policy to a bootstrap that must eventually run from packaged Node code.
+- Official OpenAI documentation confirms that repository skills belong under
+  `.agents/skills` and that Codex scans that path from the working directory to
+  the repository root.
+
+### Materialization boundaries
+
+| Owner | Boundary | Observation | Grace path |
+| --- | --- | --- | --- |
+| Capsule skill mapper | Only whole-file artifacts already owned below `.codex/skills` may map to `.agents/skills`. | Receipt decoder and mapping tests | Reject unsupported operations or escaping paths without writing. |
+| Materialization receipt | Record the capsule and every generated target with its source and installed digest. | Exact receipt and file verification | Report missing, malformed, or modified output and retain it for inspection. |
+| Initial materializer | Write only when every desired target and the receipt are absent. | Clean, repeat, unexplained-target, and dirty-output tests | Continue using the expanded tracked installation until replacement ships. |
+| Context transaction | One process owns staging and publication. | Concurrent stage-claim test and recovery suite | The losing process stops; doctor resumes or discards the winning transaction. |
+| Generated fixture | Ignore materialized files while keeping capsule, config, lock v2, and expanded projections tracked. | Git status and `check-ignore` assertions | Fail fixture generation when an expected generated path is not ignored. |
+
+## Smallest complete capsule slice
 
 1. Settle and document the capsule v1 schema.
 2. Implement deterministic build and verified read.

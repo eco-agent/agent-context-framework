@@ -79,6 +79,28 @@ test("failure injection after every transaction mutation boundary remains recove
   }
 });
 
+test("an existing stage claim blocks a second writer without deleting its files", async () => {
+  const projectRoot = await createTransactionFixture();
+  const stageRoot = path.join(projectRoot, CONTEXT_TRANSACTION_STAGE_PATH);
+  const sentinelPath = path.join(stageRoot, "winner.staged");
+  try {
+    await mkdir(stageRoot, { recursive: true });
+    await writeFile(sentinelPath, "winner\n", "utf8");
+    await assert.rejects(
+      applyContextTransaction(
+        projectRoot,
+        "capsule",
+        "0.14.0",
+        [{ operation: "write", targetPath: "capsule.txt", content: "capsule\n" }],
+      ),
+      /incomplete context transaction exists/u,
+    );
+    assert.equal(await readFile(sentinelPath, "utf8"), "winner\n");
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test("transaction inspection discards pre-journal staging and blocks target drift", async () => {
   const orphanedRoot = await createTransactionFixture();
   try {

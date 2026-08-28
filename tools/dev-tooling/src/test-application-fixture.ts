@@ -11,12 +11,16 @@ import {
   writeContextCapsuleFile,
 } from "./context-capsule.js";
 import { verifyContextCapsuleInstallation } from "./context-capsule-installation.js";
-import { initProject } from "./context-installer.js";
+import {
+  CONTEXT_MATERIALIZATION_PATH,
+  materializeContextCapsuleSkills,
+} from "./context-capsule-materialization.js";
+import { addComponent, initProject } from "./context-installer.js";
 
 export const TEST_APPLICATION_MARKER_PATH = ".acf-fixture.json";
 
 export type TestApplicationGitState = "clean" | "dirty";
-export type TestApplicationAcfState = "none" | "core" | "capsule";
+export type TestApplicationAcfState = "none" | "core" | "capsule" | "materialized";
 
 export interface TestApplicationFixtureRequest {
   readonly frameworkRoot: string;
@@ -27,20 +31,21 @@ export interface TestApplicationFixtureRequest {
 }
 
 export interface TestApplicationFixtureResult {
-  readonly schemaVersion: 2;
+  readonly schemaVersion: 3;
   readonly outputRoot: string;
   readonly gitState: TestApplicationGitState;
   readonly acfState: TestApplicationAcfState;
   readonly baselineRevision: string;
   readonly installationRevision: string | null;
   readonly capsuleSha256: string | null;
+  readonly materializedFileCount: number;
   readonly status: readonly string[];
 }
 
 interface TestApplicationMarker {
   readonly schemaVersion: 1;
   readonly kind: "agent-context-test-application";
-  readonly generatorRevision: 2;
+  readonly generatorRevision: 3;
   readonly gitState: TestApplicationGitState;
   readonly acfState: TestApplicationAcfState;
 }
@@ -69,7 +74,7 @@ export async function generateTestApplicationFixture(
   const marker: TestApplicationMarker = {
     schemaVersion: 1,
     kind: "agent-context-test-application",
-    generatorRevision: 2,
+    generatorRevision: 3,
     gitState: request.gitState,
     acfState: request.acfState,
   };
@@ -88,12 +93,23 @@ export async function generateTestApplicationFixture(
 
   let installationRevision: string | null = null;
   let capsuleSha256: string | null = null;
-  if (request.acfState === "core" || request.acfState === "capsule") {
+  let materializedFileCount = 0;
+  if (
+    request.acfState === "core" ||
+    request.acfState === "capsule" ||
+    request.acfState === "materialized"
+  ) {
     const installed = await initProject(outputRoot, frameworkRoot);
     if (installed.plan.status !== "ready") {
       throw new Error(`ACF core installation was blocked with status ${installed.plan.status}.`);
     }
-    if (request.acfState === "capsule") {
+    if (request.acfState === "materialized") {
+      const added = await addComponent(outputRoot, frameworkRoot, "skill-diagnose");
+      if (added.plan.status !== "ready") {
+        throw new Error(`ACF diagnose installation was blocked with status ${added.plan.status}.`);
+      }
+    }
+    if (request.acfState === "capsule" || request.acfState === "materialized") {
       const frameworkRevision = (await runGit(frameworkRoot, ["rev-parse", "HEAD"])).trim();
       if (!/^[a-f0-9]{40}$/u.test(frameworkRevision)) {
         throw new Error("Fixture generator could not resolve the full framework revision.");
@@ -126,10 +142,27 @@ export async function generateTestApplicationFixture(
         throw new Error("Generated capsule must be marked binary by project Git attributes.");
       }
       capsuleSha256 = capsule.capsuleSha256;
+      if (request.acfState === "materialized") {
+        const materialized = await materializeContextCapsuleSkills(capsule, outputRoot);
+        if (materialized.status !== "materialized") {
+          throw new Error(`Generated capsule materialization returned ${materialized.status}.`);
+        }
+        materializedFileCount = materialized.receipt.files.length;
+        for (const generatedPath of [
+          ...materialized.receipt.files.map((file) => file.targetPath),
+          CONTEXT_MATERIALIZATION_PATH,
+        ]) {
+          await runGit(outputRoot, ["check-ignore", "--quiet", "--", generatedPath]);
+        }
+      }
     }
     installationRevision = await commitAll(
       outputRoot,
-      request.acfState === "capsule" ? "Install ACF core and capsule" : "Install ACF core",
+      request.acfState === "materialized"
+        ? "Install ACF capsule materialization fixture"
+        : request.acfState === "capsule"
+          ? "Install ACF core and capsule"
+          : "Install ACF core",
       "2000-01-02T00:00:00Z",
     );
   }
@@ -148,13 +181,14 @@ export async function generateTestApplicationFixture(
   }
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     outputRoot,
     gitState: request.gitState,
     acfState: request.acfState,
     baselineRevision,
     installationRevision,
     capsuleSha256,
+    materializedFileCount,
     status,
   };
 }
@@ -226,11 +260,16 @@ async function requireFixtureMarker(outputRoot: string): Promise<void> {
     !("kind" in value) ||
     value.kind !== "agent-context-test-application" ||
     !("generatorRevision" in value) ||
-    (value.generatorRevision !== 1 && value.generatorRevision !== 2) ||
+    (value.generatorRevision !== 1 &&
+      value.generatorRevision !== 2 &&
+      value.generatorRevision !== 3) ||
     !("gitState" in value) ||
     (value.gitState !== "clean" && value.gitState !== "dirty") ||
     !("acfState" in value) ||
-    (value.acfState !== "none" && value.acfState !== "core" && value.acfState !== "capsule")
+    (value.acfState !== "none" &&
+      value.acfState !== "core" &&
+      value.acfState !== "capsule" &&
+      value.acfState !== "materialized")
   ) {
     throw new Error("Refusing to replace a directory without a valid ACF fixture marker.");
   }

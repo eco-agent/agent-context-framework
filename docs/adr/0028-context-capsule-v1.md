@@ -98,19 +98,48 @@ agent-context capsule build
 agent-context capsule list
 agent-context capsule inspect
 agent-context capsule verify
+agent-context capsule materialize
 agent-context capsule diff
 agent-context capsule extract
 ```
 
 `build` writes one new capsule through an atomic exclusive write. It does not
 overwrite an existing file. `list`, `inspect`, `verify`, and `diff` do not write.
-`extract` writes the verified source tree to an explicit new directory. It never
-projects installation targets or replaces an existing directory.
+`materialize` writes verified skill files and their receipt through the project
+transaction. `extract` writes the verified source tree to an explicit new
+directory. It never projects installation targets or replaces an existing
+directory.
 
 Semantic diff reports direct-selection, component revision, and source-entry
-changes. The migration that first tracks a capsule must add `*.acf binary` to
-the expanded project `.gitattributes`. The side-by-side checkpoint does not
-change project attributes because it does not track a capsule yet.
+changes. Fresh installations add `*.acf binary` to `.gitattributes`. An existing
+project migration must add the same rule without replacing project-owned
+attributes. The generated capsule fixture proves that Git treats the tracked
+capsule as binary.
+
+### Initial skill materialization
+
+Codex scans `.agents/skills` in repository directories. ACF maps the suffix of a
+selected whole-file artifact below `.codex/skills` to the same suffix below
+`.agents/skills`. The capsule keeps its original source and artifact paths, so
+the receipt records both the source path and the mapped target path.
+
+The ignored receipt at `.agent-context/materialization.json` records the capsule
+and tree digests, registry revision, artifact identity, component, source path,
+target path, installed digest, and byte count for every generated file. It omits
+timestamps, absolute paths, process identifiers, and host data.
+
+The first materialization checkpoint has a narrow write boundary. It may create
+an absent skill projection or reuse an exact projection. It blocks when the
+receipt is missing or malformed, a generated file was changed, an unexpected
+path exists inside a generated skill, a path traverses a symbolic link, or the
+receipt belongs to another capsule. The tracked expanded skill remains the
+active installation oracle while replacement is blocked.
+
+The context transaction claims its staging directory exclusively. It publishes
+the receipt after the skill files and can resume an interrupted initial write.
+It does not yet replace a valid materialization with another capsule. That needs
+a directory publication design that keeps the previous projection active across
+process failure.
 
 ### Reserved lock v3
 
@@ -170,15 +199,17 @@ JSON payload. These names remain stable when compression settings change.
 
 ## Later migration
 
-After side-by-side equivalence passes, later checkpoints may:
+After side-by-side equivalence and initial skill materialization pass, later
+checkpoints may:
 
-1. Write lock v3 and the capsule beside expanded files.
-2. Introduce a stable bootstrap and materialization receipt.
-3. Move selected skills and runtime source to ignored immutable output.
-4. Retain startup files and project controls as tracked files.
-5. Migrate existing lock-v2 projects only when every managed file matches its
+1. Publish capsule and lock v3 through one transaction.
+2. Replace a valid materialization without exposing a partial projection.
+3. Introduce the stable built-in bootstrap and packaged startup runtime.
+4. Move runtime source to ignored immutable output.
+5. Retain startup files and project controls as tracked files.
+6. Migrate existing lock-v2 projects only when every managed file matches its
    recorded provenance.
-6. Connect capsule updates to a multi-repository manager.
+7. Connect capsule updates to a multi-repository manager.
 
 No later checkpoint may infer permission to discard locally modified managed
 files. A blocked migration reports the exact files and leaves the repository
@@ -211,7 +242,11 @@ Capsule v1 is not accepted until all of these conditions hold:
 4. Extraction writes only verified source paths to a new directory.
 5. The generated clean core application verifies every installed artifact scope
    from the capsule and remains at the same clean Git revision.
-6. The existing installer and transaction suites still pass unchanged.
+6. The generated skill fixture writes exact ignored `.agents/skills` bytes,
+   retains tracked expanded bytes, and stays Git-clean.
+7. An exact materialization rerun writes nothing, while a modified file,
+   unexpected path, malformed receipt, or different capsule blocks replacement.
+8. The existing installer and transaction suites still pass.
 
 ## Implementation references
 
@@ -219,3 +254,5 @@ Node's [Brotli documentation](https://nodejs.org/api/zlib.html) defines the
 explicit mode, quality, window, and size-hint parameters used by the builder.
 Git's [attributes documentation](https://git-scm.com/docs/gitattributes)
 defines the `binary` macro as disabling text conversion, text diff, and merge.
+The [official OpenAI skills documentation](https://learn.chatgpt.com/docs/build-skills)
+defines `.agents/skills` as the repository skill discovery location.

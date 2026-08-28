@@ -353,6 +353,15 @@ test("capsule CLI parses side-by-side build, verification, diff, and extraction"
       json: false,
     },
   );
+  assert.deepEqual(
+    parseContextCapsuleArguments(["materialize", "--cwd", projectRoot], frameworkRoot),
+    {
+      command: "materialize",
+      projectRoot,
+      capsulePath: path.join(projectRoot, ".agent-context", "capsule.acf"),
+      json: false,
+    },
+  );
   assert.throws(
     () => parseContextCapsuleArguments(["diff", "--before", "one.acf"], frameworkRoot),
     /requires --before and --after/u,

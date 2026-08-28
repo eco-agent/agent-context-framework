@@ -164,3 +164,16 @@ export {
   verifyContextCapsuleLock,
   type ContextCapsuleLockVerification,
 } from "./context-capsule-lock.js";
+export {
+  decodeContextMaterializationReceipt,
+  materializeContextCapsuleSkills,
+  planContextCapsuleSkillMaterialization,
+  CONTEXT_MATERIALIZATION_KIND,
+  CONTEXT_MATERIALIZATION_PATH,
+  CONTEXT_MATERIALIZATION_SCHEMA_VERSION,
+  type ContextMaterializationConflict,
+  type ContextMaterializationPlan,
+  type ContextMaterializationReceiptV1,
+  type ContextMaterializationResult,
+  type ContextMaterializedFileV1,
+} from "./context-capsule-materialization.js";

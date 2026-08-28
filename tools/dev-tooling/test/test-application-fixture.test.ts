@@ -12,6 +12,10 @@ import { CONTEXT_CAPSULE_PATH } from "@agent-context/repo-policy";
 import { readContextCapsuleFile } from "../src/context-capsule.js";
 import { verifyContextCapsuleInstallation } from "../src/context-capsule-installation.js";
 import {
+  CONTEXT_MATERIALIZATION_PATH,
+  decodeContextMaterializationReceipt,
+} from "../src/context-capsule-materialization.js";
+import {
   generateTestApplicationFixture,
   TEST_APPLICATION_MARKER_PATH,
 } from "../src/test-application-fixture.js";
@@ -73,12 +77,13 @@ test("clean application generation is deterministic and passes its own tests", a
     assert.equal(first.baselineRevision, second.baselineRevision);
     assert.equal(first.installationRevision, null);
     assert.equal(first.capsuleSha256, null);
+    assert.equal(first.materializedFileCount, 0);
     assert.deepEqual(
       JSON.parse(await readFile(path.join(firstRoot, TEST_APPLICATION_MARKER_PATH), "utf8")),
       {
         schemaVersion: 1,
         kind: "agent-context-test-application",
-        generatorRevision: 2,
+        generatorRevision: 3,
         gitState: "clean",
         acfState: "none",
       },
@@ -129,6 +134,81 @@ test("capsule fixture commits a verified binary capsule beside expanded core", a
       { cwd: outputRoot, windowsHide: true },
     );
     assert.match(changed.stdout, /\.agent-context\/capsule\.acf/u);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("materialized fixture writes ignored repository skills beside tracked expansion", async () => {
+  const fixture = await createFixtureParent();
+  try {
+    const outputRoot = path.join(fixture.parent, "materialized");
+    const result = await generateTestApplicationFixture({
+      frameworkRoot,
+      outputRoot,
+      gitState: "clean",
+      acfState: "materialized",
+      replace: false,
+    });
+
+    assert.equal(result.materializedFileCount, 2);
+    assert.deepEqual(result.status, []);
+    const receipt = decodeContextMaterializationReceipt(
+      JSON.parse(
+        await readFile(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+      ) as unknown,
+    );
+    assert.deepEqual(
+      receipt.files.map((file) => file.targetPath),
+      [
+        ".agents/skills/diagnose/SKILL.md",
+        ".agents/skills/diagnose/scripts/hitl-loop.template.sh",
+      ],
+    );
+    for (const file of receipt.files) {
+      assert.equal(
+        (await readFile(path.join(outputRoot, file.targetPath))).equals(
+          await readFile(path.join(outputRoot, file.targetPath.replace(".agents/", ".codex/"))),
+        ),
+        true,
+      );
+    }
+    const tracked = await executeFile(
+      "git",
+      ["ls-files", "--", ".agents/skills", CONTEXT_MATERIALIZATION_PATH],
+      { cwd: outputRoot, windowsHide: true },
+    );
+    assert.equal(tracked.stdout, "");
+    const config = JSON.parse(
+      await readFile(path.join(outputRoot, ".agent-context", "config.json"), "utf8"),
+    ) as { components: readonly string[] };
+    assert.deepEqual(config.components, ["core", "skill-diagnose"]);
+    assert.equal(
+      JSON.parse(
+        await readFile(path.join(outputRoot, ".agent-context", "lock.json"), "utf8"),
+      ).schemaVersion,
+      2,
+    );
+    const capsule = await readContextCapsuleFile(path.join(outputRoot, CONTEXT_CAPSULE_PATH));
+    assert.equal((await verifyContextCapsuleInstallation(capsule, outputRoot)).ok, true);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("dirty materialized fixture preserves only the declared project work", async () => {
+  const fixture = await createFixtureParent();
+  try {
+    const outputRoot = path.join(fixture.parent, "dirty-materialized");
+    const result = await generateTestApplicationFixture({
+      frameworkRoot,
+      outputRoot,
+      gitState: "dirty",
+      acfState: "materialized",
+      replace: false,
+    });
+    assert.equal(result.materializedFileCount, 2);
+    assert.deepEqual(result.status, [" M src/site-copy.mjs", "?? notes/local-request.md"]);
   } finally {
     await fixture.remove();
   }
