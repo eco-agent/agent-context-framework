@@ -155,9 +155,15 @@ export {
   type ContextCapsulePayloadV1,
 } from "./context-capsule.js";
 export {
+  readContextCapsuleProjectFiles,
+  readContextCapsuleV2Installation,
   verifyContextCapsuleInstallation,
+  verifyContextCapsuleV3Installation,
   type ContextCapsuleInstallationMismatch,
   type ContextCapsuleInstallationVerification,
+  type ContextCapsuleProjectFiles,
+  type ContextCapsuleV2Installation,
+  type ContextCapsuleV3InstallationVerification,
 } from "./context-capsule-installation.js";
 export {
   createContextCapsuleLock,
@@ -168,6 +174,13 @@ export {
   bootstrapContextCapsule,
   type ContextCapsuleBootstrapResult,
 } from "./context-capsule-bootstrap.js";
+export {
+  migrateContextCapsuleV2,
+  planContextCapsuleV2Migration,
+  type ContextCapsuleMigrationConflict,
+  type ContextCapsuleMigrationPlan,
+  type ContextCapsuleMigrationResult,
+} from "./context-capsule-migration.js";
 export {
   contextCapsuleSkillActivation,
   decodeContextMaterializationReceipt,

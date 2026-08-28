@@ -39,7 +39,7 @@ No project contracts are declared in `.agent-context/policy.json`.
 | Added | Selected whole-file skills materialize to ignored content-addressed directories under `.agents/skills`. | Capsule materializer and receipt |
 | Added | One tracked plain-Node bootstrap verifies the capsule, recovers context transactions, and materializes skills. | Core registry component and bootstrap entry |
 | Changed | The context transaction claims staging exclusively so concurrent writers cannot share or remove each other's staged bytes. | Context transaction |
-| Removed | None in the first checkpoint. | User approval remains required for migration |
+| Removed | Verified whole-file `.codex/skills` projections leave Git after migration. | Capsule migration planner |
 
 ## Boundaries
 
@@ -50,7 +50,7 @@ No project contracts are declared in `.agent-context/policy.json`.
 | Semantic commands | `list`, `inspect`, `diff`, and `extract` are read-only except extraction to an explicit empty directory outside the framework worktree. | CLI tests and output snapshots | Report unsupported or unsafe output without partial extraction. |
 | Existing installer | Continue writing the v2 lock and expanded artifacts exactly as before. | Existing installer suite | Keep the capsule side by side until equivalence passes. |
 | Downstream proof | Compare capsule entries with the selected registry sources and installed projections without modifying the committed fixture. | Fixture revision and Git status before and after | Stop and retain the mismatch report. |
-| Lock migration | Do not write lock v3 in this checkpoint. | Absence of lock-schema changes | Move to lock v3 only after the side-by-side proof is durable. |
+| Lock migration | Replace a verified v2 lock and exact tracked skill projection. | Migration plan, transaction recovery, and current rerun | Block before writes on drift. Resume an interrupted transaction before retrying. |
 
 ## Current state
 
@@ -67,10 +67,11 @@ bytes matches all five artifact targets, project config, and lock byte for byte.
 The dirty core variant also verifies without changing its commit or unrelated
 working files.
 
-The test application remains the expanded-installation oracle. Its materialized
-state selects `skill-diagnose`, tracks the capsule and expanded projection, and
-writes the ignored repository skill and receipt. Git stays clean. Lock v3,
-runtime materialization, and deletion of expanded files remain later stages.
+The test application retains the expanded-installation oracle in its
+`materialized` state. Its `migrated` state starts from that proof, writes lock
+v3, and removes the two tracked `skill-diagnose` files. Clean and dirty migrated
+fixtures rematerialize the ignored projection without adding ACF paths to Git
+status.
 
 Registry `0.14.0` now owns the capsule decision and adds `*.acf binary` to the
 fresh-project `.gitattributes` seed. Existing attributes remain project-owned.
@@ -84,18 +85,20 @@ from committed bytes and Git reports the path as binary. The ignored receipt
 records two exact `skill-diagnose` files below a content-addressed direct child
 of `.agents/skills`. A command rerun reports `current` and writes nothing.
 
-Core now owns a reproducible 40.41 kB minified bootstrap bundle at
+Core now owns a reproducible plain-Node bootstrap bundle at
 `.agent-context/bootstrap.mjs`. A fresh generated clone runs it with plain Node
-and no project dependencies or expanded runtime. The bootstrap materializes an
-absent projection, writes nothing on repeat, discards pre-journal staging, and
-fails closed on modified output. Git ignore inspection runs before every
-materialization attempt. Fresh clones must run
+and no project dependencies or expanded runtime. The bootstrap requires lock
+v3, checks its capsule binding, config selection, and every tracked activation
+scope, then materializes an absent projection. It writes nothing on repeat,
+discards pre-journal staging, and fails closed on modified output. Git ignore
+inspection runs before every materialization attempt. Fresh clones must run
 `node .agent-context/bootstrap.mjs materialize` before Codex starts. Git cannot
 make that portable and automatic. Launcher integration remains a convenience.
 
 Lock v3 now separates tracked expanded activation from ignored materialization
-ownership. The capsule derives the expected skill records. Comparing caller
-supplied lock records with themselves is not accepted as verification.
+ownership. The capsule derives the expected skill and activation sets. The
+bootstrap verifies activation bytes from capsule source and the current project,
+not by comparing caller-supplied lock records with themselves.
 
 ## Topology
 
@@ -110,14 +113,14 @@ supplied lock records with themselves is not accepted as verification.
 9. Skill materialization verifies Git ignore rules, then writes an absent
    content-addressed output and receipt, or verifies an exact repeat. Different
    capsule content blocks.
+10. Migration proves v2 and ignored outputs, writes lock v3, and deletes the old
+    tracked whole-file skill targets last.
 
-## Active materialization slice
+## Completed skill migration slice
 
-The next checkpoint materializes the selected skill artifacts to Codex's real
-repository discovery path, `.agents/skills`. It keeps the tracked
-`.codex/skills` projection as the installation oracle. The generated fixture
-selects `skill-diagnose`, builds its capsule, writes the ignored copy and
-receipt, and proves that Git remains clean.
+The `materialized` fixture selects `skill-diagnose`, builds its capsule, writes
+the ignored copy and receipt, and keeps `.codex/skills` as the v2 oracle. The
+`migrated` fixture then replaces lock v2 and removes those tracked skill files.
 
 Each generated skill directory carries an explicit ACF prefix, skill name, and
 the component's full content digest. The receipt re-states those fields and must
@@ -125,10 +128,10 @@ preserve the skill-relative source mapping. Materialization supports an absent
 destination and an exact repeat. Modified generated files, malformed receipts,
 unexplained target paths, and a different capsule block replacement.
 
-The ignored receipt does not prove prior ownership strongly enough to authorize
-deletion. Replacement now waits for lock v3 or retained tracked capsule evidence.
-Initial publication remains a flat recoverable transaction, so the stable
-bootstrap must recover it before Codex discovers repository skills.
+The ignored receipt does not authorize deletion. The migration proves ownership
+from lock v2 and current projections before constructing lock v3. It publishes
+lock v3 before deleting old skills, and the stable bootstrap recovers an
+interrupted transaction before Codex discovers repository skills.
 
 The existing context transaction becomes the project-local concurrency owner by
 claiming its stage directory exclusively. A losing process must not remove the
@@ -170,17 +173,17 @@ Reuse assessment:
 
 ## Replacements
 
-None in this checkpoint. Lock v2, expanded skills, expanded runtime, and existing
-installer writes remain the active representation.
+Migrated projects replace lock v2 with lock v3 and remove verified tracked
+`.codex/skills` files. Expanded runtime and the existing v2 installer remain in
+place for projects that have not migrated.
 
 ## Remaining work
 
-- No lock v3 projection yet.
 - No automatic bootstrap launcher or packaged runtime materialization yet.
 - No optional host launcher automates the explicit pre-Codex bootstrap command.
-- No removal of tracked `.codex/skills` projections yet.
 - No ignored runtime materialization yet.
-- No one-time downstream deletion migration yet.
+- The current migration requires capsule and skill materialization prerequisites.
+  It does not yet convert an ordinary v2 project in one command.
 - No fleet manager yet.
 
 ## Propagation paths
@@ -218,6 +221,18 @@ active slice.
 - Reproducible bundle and plain-Node fresh-clone bootstrap tests: 2 passed.
 - Committed bootstrap bundle: 40,406 bytes. The generated fixture marks both the
   bootstrap and capsule as binary Git paths.
+- Lock-v3 activation verification increased the bootstrap bundle to 93,889
+  bytes because it now carries the structured projection reader. The bundle
+  remains a single reproducible plain-Node file.
+- Migration, capsule, materialization, bootstrap, transaction, and fixture
+  tests: 28 passed after the lock-v3 migration slice.
+- Clean and dirty `migrated` fixture states passed fresh materialization with no
+  ACF Git-status entries.
+- An injected failure after lock-v3 publication resumed the old skill deletions;
+  the next migration run wrote nothing.
+- Direct agent-prose checks passed for the ADR, registry decision, and work
+  record. Direct technical-prose checks passed for the ADR and registry decision.
+- Documentation and workflow profiles passed after the migration slice.
 - Different-capsule proof retains the exact prior materialized skill and reports
   that lock v3 must establish tracked ownership before replacement.
 - Existing installer, installer CLI, and transaction tests: 25 passed.

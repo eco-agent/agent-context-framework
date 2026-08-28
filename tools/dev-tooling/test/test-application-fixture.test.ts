@@ -7,7 +7,10 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import test from "node:test";
 
-import { CONTEXT_CAPSULE_PATH } from "@agent-context/repo-policy";
+import {
+  CONTEXT_CAPSULE_PATH,
+  decodeContextCapsuleLock,
+} from "@agent-context/repo-policy";
 
 import { readContextCapsuleFile } from "../src/context-capsule.js";
 import { verifyContextCapsuleInstallation } from "../src/context-capsule-installation.js";
@@ -51,6 +54,11 @@ test("fixture CLI requires an absolute output and parses independent state contr
       json: true,
     },
   );
+  assert.equal(
+    parseTestApplicationFixtureArguments(["--output", outputRoot, "--acf", "migrated"])
+      .acfState,
+    "migrated",
+  );
 });
 
 test("clean application generation is deterministic and passes its own tests", async () => {
@@ -83,7 +91,7 @@ test("clean application generation is deterministic and passes its own tests", a
       {
         schemaVersion: 1,
         kind: "agent-context-test-application",
-        generatorRevision: 3,
+        generatorRevision: 4,
         gitState: "clean",
         acfState: "none",
       },
@@ -207,6 +215,62 @@ test("dirty materialized fixture preserves only the declared project work", asyn
     });
     assert.equal(result.materializedFileCount, 2);
     assert.deepEqual(result.status, [" M src/site-copy.mjs", "?? notes/local-request.md"]);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("migrated fixtures use lock v3 and bootstrap ignored skills without Git noise", async () => {
+  const fixture = await createFixtureParent();
+  try {
+    for (const gitState of ["clean", "dirty"] as const) {
+      const outputRoot = path.join(fixture.parent, `migrated-${gitState}`);
+      const result = await generateTestApplicationFixture({
+        frameworkRoot,
+        outputRoot,
+        gitState,
+        acfState: "migrated",
+        replace: false,
+      });
+      assert.equal(result.materializedFileCount, 2);
+      assert.deepEqual(
+        result.status,
+        gitState === "clean" ? [] : [" M src/site-copy.mjs", "?? notes/local-request.md"],
+      );
+      const lock = decodeContextCapsuleLock(JSON.parse(
+        await readFile(path.join(outputRoot, ".agent-context", "lock.json"), "utf8"),
+      ) as unknown);
+      assert.equal(lock.schemaVersion, 3);
+      assert.equal(lock.materialization.files.length, 2);
+      const trackedSkills = await executeFile(
+        "git",
+        ["ls-files", "--", ".codex/skills", ".agents/skills", CONTEXT_MATERIALIZATION_PATH],
+        { cwd: outputRoot, windowsHide: true },
+      );
+      assert.equal(trackedSkills.stdout, "");
+
+      await rm(path.join(outputRoot, ".agents"), { recursive: true, force: true });
+      await rm(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), { force: true });
+      const bootstrap = await executeFile(
+        process.execPath,
+        [path.join(outputRoot, ".agent-context/bootstrap.mjs"), "materialize", "--json"],
+        { cwd: outputRoot, windowsHide: true },
+      );
+      assert.equal(
+        (JSON.parse(bootstrap.stdout) as { materialization: { status: string } })
+          .materialization.status,
+        "materialized",
+      );
+      const status = await executeFile(
+        "git",
+        ["status", "--porcelain=v1", "--untracked-files=all"],
+        { cwd: outputRoot, windowsHide: true },
+      );
+      assert.deepEqual(
+        status.stdout.split(/\r?\n/u).filter(Boolean),
+        result.status,
+      );
+    }
   } finally {
     await fixture.remove();
   }

@@ -99,6 +99,7 @@ agent-context capsule list
 agent-context capsule inspect
 agent-context capsule verify
 agent-context capsule materialize
+agent-context capsule migrate
 agent-context capsule diff
 agent-context capsule extract
 ```
@@ -106,7 +107,8 @@ agent-context capsule extract
 `build` writes one new capsule through an atomic exclusive write. It does not
 overwrite an existing file. `list`, `inspect`, `verify`, and `diff` do not write.
 `materialize` writes verified skill files and their receipt through the project
-transaction. `extract` writes the verified source tree to an explicit new
+transaction. `migrate` removes a verified v2 tracked skill projection and
+replaces lock v2 with lock v3. `extract` writes the verified source tree to an explicit new
 directory. It never projects installation targets or replaces an existing
 directory.
 
@@ -154,7 +156,7 @@ the project in Codex. Git has no portable post-clone mechanism that can guarante
 this step. A future launcher may automate the same command, but a `SessionStart`
 hook is not accepted because Codex has already begun startup by then.
 
-### Reserved lock v3
+### Lock v3
 
 Lock v3 stays concise because the capsule owns full component and artifact
 metadata:
@@ -203,8 +205,8 @@ metadata:
 }
 ```
 
-This ADR reserves the shape. The first implementation checkpoint does not write
-lock v3.
+The migration command writes this shape after it proves the v2 installation and
+the ignored skill projection against the same capsule.
 
 `compressedBytes` counts the complete capsule file, including the eight-byte
 header. `expandedBytes` counts the decoded source-entry bytes, not the canonical
@@ -223,24 +225,32 @@ records with themselves.
 | Capsule reader | Expose only a completely verified capsule | Canonical payload, tree hash, entry hash, and closure checks | Reject without writing |
 | Existing installer | Keep lock v2 and expanded files authoritative during equivalence work | Existing installer and recovery tests | Leave the capsule beside the installation |
 | Downstream fixture | Prove current installed scopes from capsule entries | Clean revision before and after verification | Report exact mismatches and leave the fixture unchanged |
+| Migration planner | Replace only exact v2 whole-file skill projections | v2 projection proof, current ignored projection, and lock-v3 rerun | Report exact conflicts before writing, or resume the recorded transaction |
+| Plain-Node bootstrap | Verify lock v3, the capsule, and every tracked activation scope before materialization | Lock and projection verification in a fresh clone | Stop before materialization on any mismatch |
 | Project developer | Keep custom work outside generated materialization paths | Git status and materialization receipt | Promote the change into project-owned policy or a local component |
 
-## Later migration
+## Skill migration
 
-After side-by-side equivalence and initial skill materialization pass, later
-checkpoints may:
+The first migration checkpoint requires a side-by-side v2 installation with a
+verified capsule and current ignored skill projection. It performs these steps:
 
-1. Publish capsule and lock v3 through one transaction.
-2. Bind the old generated files to lock-v3 materialization ownership and replace
-   valid materialization
-   without exposing a partial skill to Codex discovery.
-3. Preserve the explicit pre-Codex bootstrap command and add launcher convenience
-   only where the host can guarantee the ordering.
-4. Move runtime source to ignored immutable output.
-5. Retain startup files and project controls as tracked files.
-6. Migrate existing lock-v2 projects only when every managed file matches its
-   recorded provenance.
-7. Connect capsule updates to a multi-repository manager.
+1. Verify the capsule against the v2 lock, config, and every installed artifact
+   scope.
+2. Verify the ignored `.agents/skills` files and receipt against the capsule.
+3. Copy every non-skill v2 ownership record into lock-v3 activation.
+4. Derive lock-v3 materialization records independently from capsule bytes.
+5. Write lock v3, then delete only the exact whole-file `.codex/skills` targets
+   proven by v2. Transaction recovery completes that order after interruption.
+6. Verify the migrated state again. A rerun writes nothing.
+
+This checkpoint does not yet build a missing capsule, bootstrap, or ignored
+projection inside the migration transaction. Those side-by-side prerequisites
+keep the first destructive slice narrow. Runtime files also remain tracked
+activation until runtime materialization is implemented.
+
+Later checkpoints may publish a new capsule, lock, runtime, skill projection,
+and receipt in one transaction, add launcher convenience where ordering is
+guaranteed, and connect updates to a multi-repository manager.
 
 No later checkpoint may infer permission to discard locally modified managed
 files. A blocked migration reports the exact files and leaves the repository

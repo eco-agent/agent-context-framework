@@ -353,7 +353,7 @@ test("generated dirty core application verifies without disturbing unrelated wor
   }
 });
 
-test("capsule CLI parses side-by-side build, verification, diff, and extraction", () => {
+test("capsule CLI parses build, verification, migration, diff, and extraction", () => {
   const projectRoot = path.join(os.tmpdir(), "capsule-project");
   assert.deepEqual(
     parseContextCapsuleArguments(["build", "--cwd", projectRoot, "--json"], frameworkRoot),
@@ -377,6 +377,15 @@ test("capsule CLI parses side-by-side build, verification, diff, and extraction"
     parseContextCapsuleArguments(["materialize", "--cwd", projectRoot], frameworkRoot),
     {
       command: "materialize",
+      projectRoot,
+      capsulePath: path.join(projectRoot, ".agent-context", "capsule.acf"),
+      json: false,
+    },
+  );
+  assert.deepEqual(
+    parseContextCapsuleArguments(["migrate", "--cwd", projectRoot], frameworkRoot),
+    {
+      command: "migrate",
       projectRoot,
       capsulePath: path.join(projectRoot, ".agent-context", "capsule.acf"),
       json: false,

@@ -18,7 +18,7 @@ interface TestApplicationFixtureArguments {
 export const TEST_APPLICATION_FIXTURE_HELP = `ACF test application generator
 
 Usage:
-  pnpm fixture:test-app -- --output <absolute-path> [--state clean|dirty] [--acf none|core|capsule|materialized] [--replace] [--json]
+  pnpm fixture:test-app -- --output <absolute-path> [--state clean|dirty] [--acf none|core|capsule|materialized|migrated] [--replace] [--json]
 
 The command creates a deterministic Git repository. A dirty fixture contains one
 tracked application edit and one untracked note. --replace works only when the
@@ -54,9 +54,10 @@ export function parseTestApplicationFixtureArguments(
         value !== "none" &&
         value !== "core" &&
         value !== "capsule" &&
-        value !== "materialized"
+        value !== "materialized" &&
+        value !== "migrated"
       ) {
-        throw new Error("--acf must be none, core, capsule, or materialized.");
+        throw new Error("--acf must be none, core, capsule, materialized, or migrated.");
       }
       acfState = value;
       index += 1;

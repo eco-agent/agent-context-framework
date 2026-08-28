@@ -3,8 +3,10 @@ import path from "node:path";
 
 import {
   artifactIdentity,
+  decodeContextCapsuleLock,
   decodeContextInstallationLock,
   decodeContextProjectConfig,
+  type ContextCapsuleActivationLock,
   type ContextLockedArtifact,
   type ContextRegistryArtifact,
 } from "@agent-context/repo-policy";
@@ -18,6 +20,10 @@ import {
   CONTEXT_CONFIG_PATH,
   CONTEXT_LOCK_PATH,
 } from "./context-installer.js";
+import { verifyContextCapsuleLock } from "./context-capsule-lock.js";
+import { contextCapsuleSkillActivation } from "./context-capsule-materialization.js";
+
+const EXPANDED_SKILL_PREFIX = ".codex/skills/";
 
 export interface ContextCapsuleInstallationMismatch {
   readonly identity: string;
@@ -35,10 +41,27 @@ export interface ContextCapsuleInstallationVerification {
   readonly mismatches: readonly ContextCapsuleInstallationMismatch[];
 }
 
-export async function verifyContextCapsuleInstallation(
-  capsule: BuiltContextCapsule,
+export interface ContextCapsuleV2Installation {
+  readonly projectRoot: string;
+  readonly config: ReturnType<typeof decodeContextProjectConfig>;
+  readonly lock: ReturnType<typeof decodeContextInstallationLock>;
+}
+
+export interface ContextCapsuleProjectFiles {
+  readonly projectRoot: string;
+  readonly config: ReturnType<typeof decodeContextProjectConfig>;
+  readonly lock: unknown;
+}
+
+export interface ContextCapsuleV3InstallationVerification {
+  readonly ok: boolean;
+  readonly projectRoot: string;
+  readonly mismatches: readonly ContextCapsuleInstallationMismatch[];
+}
+
+export async function readContextCapsuleProjectFiles(
   projectRootCandidate: string,
-): Promise<ContextCapsuleInstallationVerification> {
+): Promise<ContextCapsuleProjectFiles> {
   const projectRoot = await realpath(projectRootCandidate);
   const config = decodeContextProjectConfig(
     await readJsonFile(
@@ -46,11 +69,29 @@ export async function verifyContextCapsuleInstallation(
       "Context project config",
     ),
   );
-  const lock = decodeContextInstallationLock(
-    await readJsonFile(
-      await secureProjectFile(projectRoot, CONTEXT_LOCK_PATH, "Context installation lock"),
-      "Context installation lock",
-    ),
+  const lock = await readJsonFile(
+    await secureProjectFile(projectRoot, CONTEXT_LOCK_PATH, "Context installation lock"),
+    "Context installation lock",
+  );
+  return { projectRoot, config, lock };
+}
+
+export async function readContextCapsuleV2Installation(
+  projectRootCandidate: string,
+): Promise<ContextCapsuleV2Installation> {
+  const { projectRoot, config, lock: lockValue } = await readContextCapsuleProjectFiles(
+    projectRootCandidate,
+  );
+  const lock = decodeContextInstallationLock(lockValue);
+  return { projectRoot, config, lock };
+}
+
+export async function verifyContextCapsuleInstallation(
+  capsule: BuiltContextCapsule,
+  projectRootCandidate: string,
+): Promise<ContextCapsuleInstallationVerification> {
+  const { projectRoot, config, lock } = await readContextCapsuleV2Installation(
+    projectRootCandidate,
   );
   const resolvedComponents = capsule.payload.selection.resolvedComponents.map(
     (component) => component.name,
@@ -142,39 +183,133 @@ export async function verifyContextCapsuleInstallation(
   };
 }
 
+export async function verifyContextCapsuleV3Installation(
+  capsule: BuiltContextCapsule,
+  projectRootCandidate: string,
+): Promise<ContextCapsuleV3InstallationVerification> {
+  const projectFiles = await readContextCapsuleProjectFiles(projectRootCandidate);
+  const lock = decodeContextCapsuleLock(projectFiles.lock);
+  const materialization = contextCapsuleSkillActivation(capsule);
+  const mismatches: ContextCapsuleInstallationMismatch[] = verifyContextCapsuleLock(
+    lock,
+    capsule,
+    lock.activation,
+    materialization,
+  ).mismatches.map((detail) => ({
+    identity: "lock:v3",
+    targetPath: CONTEXT_LOCK_PATH,
+    detail,
+  }));
+  if (!sameValues(projectFiles.config.components, capsule.payload.selection.directComponents)) {
+    mismatches.push({
+      identity: "selection:direct",
+      targetPath: CONTEXT_CONFIG_PATH,
+      detail: "Project direct components differ from the capsule selection.",
+    });
+  }
+
+  const artifacts = new Map<string, ContextRegistryArtifact>();
+  for (const component of capsule.payload.selection.resolvedComponents) {
+    for (const artifact of component.artifacts) {
+      if (!artifact.targetPath.startsWith(EXPANDED_SKILL_PREFIX)) {
+        artifacts.set(artifactIdentity(artifact), artifact);
+      }
+    }
+  }
+  const activation = new Map(lock.activation.map((record) => [record.identity, record]));
+  for (const [identity, artifact] of artifacts) {
+    const record = activation.get(identity);
+    if (record === undefined) {
+      mismatches.push({
+        identity,
+        targetPath: artifact.targetPath,
+        detail: "Capsule activation artifact is missing from lock v3.",
+      });
+      continue;
+    }
+    if (record.targetPath !== artifact.targetPath) {
+      mismatches.push({
+        identity,
+        targetPath: record.targetPath,
+        detail: "Lock-v3 activation target differs from the capsule manifest.",
+      });
+      continue;
+    }
+    const mismatch = await verifyInstalledProjection(
+      capsule,
+      projectFiles.projectRoot,
+      record,
+      artifact,
+    );
+    if (mismatch !== null) mismatches.push(mismatch);
+  }
+  for (const [identity, record] of activation) {
+    if (!artifacts.has(identity)) {
+      mismatches.push({
+        identity,
+        targetPath: record.targetPath,
+        detail: "Lock v3 contains an activation artifact absent from the capsule manifest.",
+      });
+    }
+  }
+  return {
+    ok: mismatches.length === 0,
+    projectRoot: projectFiles.projectRoot,
+    mismatches,
+  };
+}
+
 async function verifyInstalledArtifact(
   capsule: BuiltContextCapsule,
   projectRoot: string,
   locked: ContextLockedArtifact,
 ): Promise<ContextCapsuleInstallationMismatch | null> {
-  const identity = artifactIdentity(locked);
+  return await verifyInstalledProjection(
+    capsule,
+    projectRoot,
+    {
+      identity: artifactIdentity(locked),
+      targetPath: locked.targetPath,
+      installedSha256: locked.installedSha256,
+    },
+    locked,
+  );
+}
+
+async function verifyInstalledProjection(
+  capsule: BuiltContextCapsule,
+  projectRoot: string,
+  installed: ContextCapsuleActivationLock,
+  artifact: ContextRegistryArtifact,
+): Promise<ContextCapsuleInstallationMismatch | null> {
+  const identity = installed.identity;
   let source: string;
   try {
     source = new TextDecoder("utf-8", { fatal: true }).decode(
-      contextCapsuleEntryBytes(capsule, locked.sourcePath),
+      contextCapsuleEntryBytes(capsule, artifact.sourcePath),
     );
   } catch (error) {
     return {
       identity,
-      targetPath: locked.targetPath,
+      targetPath: installed.targetPath,
       detail: error instanceof Error ? error.message : String(error),
     };
   }
-  const projection = createArtifactProjection(locked, source);
-  if (projection.sourceSha256 !== locked.installedSha256) {
+  const projection = createArtifactProjection(artifact, source);
+  if (projection.sourceSha256 !== installed.installedSha256) {
     return {
       identity,
-      targetPath: locked.targetPath,
+      targetPath: installed.targetPath,
       detail: "Capsule source projects to a different installed hash than the project lock.",
     };
   }
   let target: string | null;
   try {
-    target = await readOptionalProjectText(projectRoot, locked.targetPath);
+    target = await readOptionalProjectText(projectRoot, installed.targetPath);
   } catch (error) {
     return {
       identity,
-      targetPath: locked.targetPath,
+      targetPath: installed.targetPath,
       detail: error instanceof Error ? error.message : String(error),
     };
   }
@@ -182,14 +317,14 @@ async function verifyInstalledArtifact(
   if (current.state !== "present") {
     return {
       identity,
-      targetPath: locked.targetPath,
+      targetPath: installed.targetPath,
       detail: current.state === "absent" ? "Installed artifact is missing." : current.detail,
     };
   }
-  if (current.sha256 !== locked.installedSha256) {
+  if (current.sha256 !== installed.installedSha256) {
     return {
       identity,
-      targetPath: locked.targetPath,
+      targetPath: installed.targetPath,
       detail: "Installed artifact scope differs from the capsule and project lock.",
     };
   }

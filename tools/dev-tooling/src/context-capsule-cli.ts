@@ -23,6 +23,7 @@ import {
   materializeContextCapsuleSkills,
   type ContextMaterializationResult,
 } from "./context-capsule-materialization.js";
+import { migrateContextCapsuleV2 } from "./context-capsule-migration.js";
 
 export type ContextCapsuleCliArguments =
   | {
@@ -37,7 +38,7 @@ export type ContextCapsuleCliArguments =
       readonly json: boolean;
     }
   | {
-      readonly command: "verify" | "materialize";
+      readonly command: "verify" | "materialize" | "migrate";
       readonly projectRoot: string;
       readonly capsulePath: string;
       readonly json: boolean;
@@ -68,14 +69,16 @@ Usage:
   pnpm agent-context capsule inspect [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule verify [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule materialize [--cwd PROJECT] [--capsule CAPSULE] [--json]
+  pnpm agent-context capsule migrate [--cwd PROJECT] [--capsule CAPSULE] [--json]
   pnpm agent-context capsule diff --before CAPSULE --after CAPSULE [--json]
   pnpm agent-context capsule extract --capsule CAPSULE --output DIRECTORY [--json]
 
 build writes a new capsule and refuses replacement. verify compares a capsule
 with the current expanded installation without writing. materialize writes a
 repository skill projection and receipt, reuses an exact projection, and
-blocks replacement until lock v3 proves prior ownership. extract writes verified
-registry source paths to a new directory outside the framework worktree.`;
+blocks replacement until lock v3 proves prior ownership. migrate replaces a
+verified v2 lock and expanded skill projection with lock v3. extract writes
+verified registry source paths to a new directory outside the framework worktree.`;
 
 export function parseContextCapsuleArguments(
   arguments_: readonly string[],
@@ -89,6 +92,7 @@ export function parseContextCapsuleArguments(
     command !== "inspect" &&
     command !== "verify" &&
     command !== "materialize" &&
+    command !== "migrate" &&
     command !== "diff" &&
     command !== "extract"
   ) {
@@ -148,7 +152,7 @@ export function parseContextCapsuleArguments(
     rejectOptions(command, { outputValue, beforeValue, afterValue });
     return { command, capsulePath, json };
   }
-  if (command === "verify" || command === "materialize") {
+  if (command === "verify" || command === "materialize" || command === "migrate") {
     rejectOptions(command, { outputValue, beforeValue, afterValue });
     return { command, projectRoot, capsulePath, json };
   }
@@ -250,6 +254,28 @@ export async function runContextCapsuleCli(
             ...materialization,
           }, null, 2)
         : formatMaterialization(request.capsulePath, materialization),
+    };
+  }
+  if (request.command === "migrate") {
+    const migration = await migrateContextCapsuleV2(
+      await readContextCapsuleFile(request.capsulePath),
+      request.projectRoot,
+    );
+    return {
+      exitCode: migration.status === "blocked" ? 1 : 0,
+      output: request.json
+        ? JSON.stringify({
+            command: "migrate",
+            capsulePath: request.capsulePath,
+            ...migration,
+          }, null, 2)
+        : [
+            `capsule: ${request.capsulePath}`,
+            `project: ${migration.projectRoot}`,
+            `status: ${migration.status}`,
+            ...migration.conflicts.map((conflict) =>
+              `conflict ${conflict.targetPath}: ${conflict.detail}`),
+          ].join("\n"),
     };
   }
   if (request.command === "diff") {

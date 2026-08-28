@@ -55,7 +55,7 @@ test("plain Node bootstrap materializes a fresh clone and fails closed on drift"
       frameworkRoot,
       outputRoot: projectRoot,
       gitState: "clean",
-      acfState: "materialized",
+      acfState: "migrated",
       replace: false,
     });
     await rm(path.join(projectRoot, ".agents"), { recursive: true, force: true });
@@ -67,6 +67,7 @@ test("plain Node bootstrap materializes a fresh clone and fails closed on drift"
     const first = await runBootstrap(bootstrapPath, projectRoot);
     assert.equal(first.process.code, 0, first.process.stderr);
     assert.equal(first.result.recovery.status, "none");
+    assert.equal(first.result.verification.ok, true);
     assert.equal(first.result.materialization.status, "materialized");
 
     const second = await runBootstrap(bootstrapPath, projectRoot);
@@ -79,6 +80,27 @@ test("plain Node bootstrap materializes a fresh clone and fails closed on drift"
     assert.equal(recovered.process.code, 0, recovered.process.stderr);
     assert.equal(recovered.result.recovery.status, "discarded");
     assert.equal(recovered.result.materialization.status, "current");
+
+    const lockPath = path.join(projectRoot, ".agent-context/lock.json");
+    const lockText = await readFile(lockPath, "utf8");
+    const driftedLock = JSON.parse(lockText) as { capsule: { sha256: string } };
+    driftedLock.capsule.sha256 = "0".repeat(64);
+    await writeFile(lockPath, `${JSON.stringify(driftedLock, null, 2)}\n`, "utf8");
+    const lockBlocked = await runBootstrapProcess(bootstrapPath, projectRoot);
+    assert.equal(lockBlocked.code, 1);
+    assert.match(lockBlocked.stderr, /Capsule file digest differs from the lock/u);
+    await writeFile(lockPath, lockText, "utf8");
+
+    const activationPath = path.join(
+      projectRoot,
+      ".agent-context/LICENSE.agent-context-framework",
+    );
+    const activationBytes = await readFile(activationPath);
+    await writeFile(activationPath, "local activation edit\n", "utf8");
+    const activationBlocked = await runBootstrapProcess(bootstrapPath, projectRoot);
+    assert.equal(activationBlocked.code, 1);
+    assert.match(activationBlocked.stderr, /Installed artifact scope differs/u);
+    await writeFile(activationPath, activationBytes);
 
     const skillPath = recovered.result.materialization.receipt.files.find((file) =>
       file.targetPath.endsWith("/SKILL.md"))?.targetPath;
@@ -98,6 +120,7 @@ test("plain Node bootstrap materializes a fresh clone and fails closed on drift"
 
 interface BootstrapOutput {
   readonly recovery: { readonly status: string };
+  readonly verification: { readonly ok: boolean };
   readonly materialization: {
     readonly status: string;
     readonly writtenPaths: readonly string[];
@@ -112,15 +135,22 @@ async function runBootstrap(
   bootstrapPath: string,
   projectRoot: string,
 ): Promise<{ readonly process: ProcessResult; readonly result: BootstrapOutput }> {
-  const processResult = await runProcess(
-    process.execPath,
-    [bootstrapPath, "materialize", "--cwd", projectRoot, "--json"],
-    projectRoot,
-  );
+  const processResult = await runBootstrapProcess(bootstrapPath, projectRoot);
   return {
     process: processResult,
     result: JSON.parse(processResult.stdout) as BootstrapOutput,
   };
+}
+
+async function runBootstrapProcess(
+  bootstrapPath: string,
+  projectRoot: string,
+): Promise<ProcessResult> {
+  return await runProcess(
+    process.execPath,
+    [bootstrapPath, "materialize", "--cwd", projectRoot, "--json"],
+    projectRoot,
+  );
 }
 
 interface ProcessResult {

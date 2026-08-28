@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:f068671d950dcb4bf5aaaf8b8a7439b51cfd1d0f83883c9327940c18b6ae533e",
+      "revision": "sha256:0d65e0d81e067f53b416c386fb2ca050cf8762fbeaafacda4f25b25652b220c8",
       "dependencies": [],
       "capabilities": [
         {
@@ -68,7 +68,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "sourceSha256": "a247f9459724d97ebb7475279a4d358ede752f41298b446d3f9c34c362270da8",
+          "sourceSha256": "7e06ca7c93c34d984c3375b2ab31014a932c9e7ea33e9db770fd8365ef097ae4",
           "targetPath": ".agent-context/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
