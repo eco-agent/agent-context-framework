@@ -22,6 +22,7 @@
     "clean": "tsc -b --clean",
     "context": "tsx tools/codex-workflows/src/context-cli.ts",
     "dependency:facts": "pnpm --filter @agent-context/dev-tooling dependency:facts",
+    "fixture:test-app": "node --import tsx tools/dev-tooling/src/test-application-fixture-cli.ts",
     "task:doctor": "pnpm policy:build && pnpm --filter @agent-context/dev-tooling task:doctor",
     "task:handoff": "node tools/dev-tooling/dist/src/task-handoff-cli.js",
     "typecheck": "tsc -b --pretty false",

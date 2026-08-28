@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "state": "configured",
+  "repository": {
+    "repositoryType": "application",
+    "languages": ["javascript"],
+    "documentationRoots": ["docs"],
+    "projectContracts": ["docs/product.md"],
+    "packageManager": {
+      "state": "declared",
+      "name": "pnpm",
+      "version": "10.22.0"
+    },
+    "layout": "single-package",
+    "frontend": true
+  },
+  "commands": [
+    {
+      "id": "verify-application",
+      "kind": "package-script",
+      "script": "verify",
+      "arguments": [],
+      "timeoutMs": 30000
+    }
+  ],
+  "profiles": [
+    {
+      "id": "full",
+      "commands": ["verify-application"]
+    }
+  ],
+  "defaultProfile": "full"
+}

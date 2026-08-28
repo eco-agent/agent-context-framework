@@ -247,6 +247,27 @@ stale copy  README.md       -> pnpm verify
 The stale copy sends the agent to the wrong check. ACF keeps the command with its
 owner and lets code select changed files against repository policy.
 
+### Regenerable downstream test application
+
+Framework development does not need to borrow a real product repository for
+installer tests. The repository includes a small web application generator with
+independent ACF and Git-state controls:
+
+```powershell
+pnpm fixture:test-app -- --output D:\dev\acf-test-app --state clean --acf none
+pnpm fixture:test-app -- --output D:\dev\acf-test-app --state dirty --acf core --replace
+```
+
+`--acf none` creates the application before installation. `--acf core` installs
+and commits the real core component. `--state dirty` then changes one tracked
+application file and adds one untracked note, so installer work can prove it
+preserved unrelated project changes. The generator replaces only a directory
+that contains its ACF fixture marker.
+
+Core fixtures are not final-acceptance fixtures. The final acceptance runner also
+requires repository policy, the isolated Codex runtime, hooks, and repository
+context. Keep that larger state explicit when a test actually needs it.
+
 ### Evidence that survives the chat
 
 Long work disappears surprisingly easily inside a model conversation. A context

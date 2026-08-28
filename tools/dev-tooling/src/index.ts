@@ -126,3 +126,11 @@ export {
   type SetupAssessmentCount,
   type SetupSnapshot,
 } from "./setup-contract.js";
+export {
+  generateTestApplicationFixture,
+  TEST_APPLICATION_MARKER_PATH,
+  type TestApplicationAcfState,
+  type TestApplicationFixtureRequest,
+  type TestApplicationFixtureResult,
+  type TestApplicationGitState,
+} from "./test-application-fixture.js";
