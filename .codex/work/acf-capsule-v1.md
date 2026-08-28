@@ -14,9 +14,11 @@ remains authoritative until that proof passes.
 - Task branch: `codex/acf-capsule-v1`
 - Generated application: `D:/dev/acf-fixture-command-check`
 - Generated application baseline: `7d5ff44a46eeb1541b507601c77509f4b0bfccd8`
-- Generated application revision: `9bf4930bd44a633e10fa63e59758823c8c2f25f1`
+- Generated application revision: `6c67082b752caee08469b6ecaa648270181e7847`
 - Generated capsule SHA-256:
-  `8cc3895225b539fd4421b5b82f17ec1da56b80771877b4c48238ca3faa46dbcc`
+  `778200ae069fa476d2c8272393a2735ed876d696091ae63682dcd76256afc3b7`
+- Generated capsule framework revision:
+  `dad3f2af4c92966b1d920a069f8c03564388e743`
 - Active writer: primary Sol agent in the current worktree
 - Canonical registry owner: `registry/registry.json` and its source builder
 - Capsule implementation owner: `tools/dev-tooling`
