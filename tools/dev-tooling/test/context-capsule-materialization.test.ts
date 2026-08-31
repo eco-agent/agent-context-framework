@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -185,6 +185,34 @@ test("materialization blocks modified and unexpected generated output", async ()
     );
   } finally {
     await unexplained.remove();
+  }
+});
+
+test("materialization blocks a symbolic-link skills directory", async () => {
+  const fixture = await createCapsuleFixture("symbolic-link");
+  try {
+    const outsideSkills = path.join(path.dirname(fixture.projectRoot), "outside-skills");
+    const skillsDirectory = path.join(fixture.projectRoot, ".agents", "skills");
+    await mkdir(outsideSkills, { recursive: true });
+    await mkdir(path.dirname(skillsDirectory), { recursive: true });
+    await symlink(outsideSkills, skillsDirectory, "junction");
+
+    const plan = await planContextCapsuleMaterialization(
+      fixture.capsule,
+      fixture.projectRoot,
+    );
+    assert.equal(plan.status, "blocked");
+    assert.equal(
+      plan.conflicts.some((conflict) =>
+        conflict.targetPath === ".agents/skills" && /symbolic-link/u.test(conflict.detail)),
+      true,
+    );
+    await assert.rejects(
+      readFile(path.join(fixture.projectRoot, CONTEXT_MATERIALIZATION_PATH)),
+      /ENOENT/u,
+    );
+  } finally {
+    await fixture.remove();
   }
 });
 

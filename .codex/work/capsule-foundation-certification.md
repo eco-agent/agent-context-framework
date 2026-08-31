@@ -34,9 +34,39 @@ once from a clean isolated worktree and report the real downstream Git shape.
 
 ## Current state
 
-The isolated branch points at the safe completed foundation revision. Three
-read-only review lanes are checking its contract, downstream Git shape, and test
-coverage. No broad verification has run in this workstream yet.
+The isolated branch contains the safe completed foundation revision and
+acceptance-only tests. The reviews found no updater implementation at this
+revision, which is the intended boundary. They also found two missing direct
+proofs: migration over unrelated dirty project files and rejection of a
+symbolic-link skills directory. Both tests now pass without changing runtime
+code. No broad verification has run in this workstream yet.
+
+## Review findings
+
+The durable runtime fixture starts from the bare application baseline
+`b9cee5f525206f39339452cf8c54945f277cc471` and ends at migrated revision
+`89da6216a12769067a68bab53f266f193c2d96d7`. That diff adds 16 paths and modifies
+`AGENTS.md`. It is an initial installation diff, not an ACF-to-ACF update diff.
+The capsule is 203,453 bytes and Git treats it as binary. The lock has 15 tracked
+activation records and 35 ignored materialization records. No skill or runtime
+path is tracked after migration.
+
+Compression removes the expanded skill and runtime trees, but the remaining
+initial-install review is still substantial. It contains 911 inserted text
+lines, including a 309-line lock, the expanded instruction section, licences,
+source records, and project configuration. The unfinished updater therefore
+remains necessary before the program can prove the intended small routine-update
+diff.
+
+The branch-switch test simulates a committed capsule and lock change before
+running bootstrap. It does not execute `git switch`. The fixture tests create
+fresh repositories, but they do not execute `git clone`. Certification reports
+those mechanisms accurately instead of treating the simulations as literal Git
+operations.
+
+Focused acceptance tests now prove that unrelated modified and untracked project
+files survive v2 migration. They also prove that a symbolic-link skills
+directory blocks before the receipt or generated files are written.
 
 ## Topology
 

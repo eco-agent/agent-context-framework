@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -36,6 +36,12 @@ test("v2 capsule migration removes exact tracked skills and is repeatable", asyn
     const capsule = await readContextCapsuleFile(
       path.join(projectRoot, ".agent-context/capsule.acf"),
     );
+    const dirtyProjectFile = path.join(projectRoot, "src/site-copy.mjs");
+    const dirtyProjectContent = "export const siteCopy = \"Project-owned dirty edit.\";\n";
+    const untrackedProjectFile = path.join(projectRoot, "notes/local-request.md");
+    await writeFile(dirtyProjectFile, dirtyProjectContent, "utf8");
+    await mkdir(path.dirname(untrackedProjectFile), { recursive: true });
+    await writeFile(untrackedProjectFile, "# Local request\n", "utf8");
     const expandedSkill = path.join(projectRoot, ".codex/skills/diagnose/SKILL.md");
     const originalSkill = await readFile(expandedSkill);
     await writeFile(
@@ -90,6 +96,10 @@ test("v2 capsule migration removes exact tracked skills and is repeatable", asyn
     assert.match(status, / M \.gitattributes/u);
     assert.match(status, / D \.codex\/skills\/diagnose\/SKILL\.md/u);
     assert.match(status, / D \.codex\/skills\/diagnose\/scripts\/hitl-loop\.template\.sh/u);
+    assert.match(status, / M src\/site-copy\.mjs/u);
+    assert.match(status, /\?\? notes\/local-request\.md/u);
+    assert.equal(await readFile(dirtyProjectFile, "utf8"), dirtyProjectContent);
+    assert.equal(await readFile(untrackedProjectFile, "utf8"), "# Local request\n");
     assert.equal(
       await readFile(path.join(projectRoot, ".gitattributes"), "utf8"),
       "# Project-owned attributes\n*.txt text\n*.acf binary\n",
