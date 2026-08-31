@@ -143,12 +143,14 @@ committed bundle and tests together.
 
 ## Closure
 
-Status: stopped at the 60-minute boundary before final acceptance.
+Status: implementation complete, final acceptance failed at the downstream
+fixture boundary.
 
 - Implementation checkpoint: `d02a820611b78ab5e87140738d2bf4806761c44f`
-- Acceptance-tested revision: none
+- Acceptance-tested revision: `6ca2894d774ec3ddbe235aae12b7107c53674acc`
+- Fixture revision: `89da6216a12769067a68bab53f266f193c2d96d7`
 
-Focused verification passed:
+Verification passed:
 
 - Dev-tooling TypeScript build and typecheck.
 - Both tracked bundle reproducibility tests.
@@ -157,10 +159,20 @@ Focused verification passed:
 - Codex runtime integration after packaged-entrypoint preservation.
 - Packaged-entrypoint restoration after successful and failed source builds.
 - Both public bundle build commands, with no bundle diff.
+- Serial dev-tooling suite: 143 tests passed, with no failures or skips, in
+  990,575 ms.
+- Acceptance workspace stage: typecheck, test, check, and registry check passed
+  in 814,640 ms.
+- Acceptance isolation stage: runtime isolation passed in 53,789 ms.
 
-The full dev-tooling suite was attempted with file concurrency two. It failed
-when the migrated hook test reached its 90-second limit. No child process from
-that stopped run remains. Concurrency is now one, but the full suite has not run
-again. Repository final acceptance has not run. Workspace `check`,
-`registry:check`, isolation, downstream runtime verification, and downstream
-policy verification therefore remain unverified in this workstream.
+The one final-acceptance invocation was:
+
+`pnpm --silent verify:acceptance -- --fixture D:\dev\acf-fixture-runtime-capsule`
+
+It failed in `downstream-codex-runtime` after 1,467 ms. Runtime bootstrap tried
+to read
+`D:\dev\acf-fixture-runtime-capsule\.agent-context\runtime\package.json`, but
+that file does not exist in the durable fixture. The command exited with code 1
+and reported `ENOENT`. Later downstream proof commands did not run. The
+acceptance command was not repeated. Both repositories remained clean at their
+recorded revisions after the failed run.
