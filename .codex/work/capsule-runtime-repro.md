@@ -145,6 +145,9 @@ committed bundle and tests together.
 
 Status: stopped at the 60-minute boundary before final acceptance.
 
+- Implementation checkpoint: `d02a820611b78ab5e87140738d2bf4806761c44f`
+- Acceptance-tested revision: none
+
 Focused verification passed:
 
 - Dev-tooling TypeScript build and typecheck.
