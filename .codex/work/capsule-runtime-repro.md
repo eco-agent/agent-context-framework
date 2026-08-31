@@ -66,8 +66,8 @@ Focused probes established two direct causes before implementation:
 
 The isolated check worktree is
 `D:/dev/agent-context-framework-capsule-runtime-fresh-repro` at
-`3eefd58cf6e4dd38338023272f8d99b64f3a35c5`. It is read-only evidence and will
-be removed after its clean tip is recorded.
+`3eefd58cf6e4dd38338023272f8d99b64f3a35c5`. Its clean tip was recorded and the
+worktree was removed after the startup comparison.
 
 ## Competing causes
 
