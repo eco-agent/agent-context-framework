@@ -103,5 +103,37 @@ None. This workstream certifies the existing foundation.
 
 ## Closure
 
-Status, tested revision, command result, downstream Git evidence, skipped checks,
-and final revision will be recorded after the acceptance run.
+Status: stopped after failed certification.
+
+- Foundation implementation: `3a55b70e4a53478ba5c20a1d3bb291bcfe8aed7c`
+- Final tested revision: `c4ac555b571e2602a3ad8af696e1fa53a19033d5`
+- Downstream fixture revision:
+  `89da6216a12769067a68bab53f266f193c2d96d7`
+- Acceptance command:
+  `pnpm --silent verify:acceptance -- --fixture D:\dev\acf-fixture-runtime-capsule`
+- Result: failed in the workspace test command after 949,198 milliseconds.
+
+The acceptance runner passed workspace type checking in 5,317 milliseconds. The
+workspace test command then failed after 943,881 milliseconds. In dev-tooling,
+134 of 140 tests passed. The tracked hook and repo-context bundle reproducibility
+tests failed because rebuilt bytes differed from the committed bundles. Four
+long-running tests reached their own timeout: migrated hook launch, migrated
+repo-context launch, Codex runtime installation, and optional frontend
+composition installation.
+
+The runner stopped at the first failed command. Workspace `check` and
+`registry:check`, runtime isolation, downstream runtime verification, and
+downstream policy verification did not run. They are skipped because repository
+policy permits one final-acceptance run, and this branch does not repair the
+foundation after that result.
+
+Before the broad run, five focused capsule tests passed in 56,426 milliseconds.
+They included the added dirty-baseline migration and symbolic-link
+materialization cases. Both the framework worktree and downstream fixture
+remained clean and at their original revisions after acceptance.
+
+This result does not certify the foundation. The next bounded workstream must
+diagnose the path-independent bundle mismatch and launcher timeouts, then decide
+whether the foundation revision needs implementation repair before another
+human-authorized acceptance attempt. The updater research remains separate at
+`d44cd444056c91211164e06a43829a24e7c8860b`.
