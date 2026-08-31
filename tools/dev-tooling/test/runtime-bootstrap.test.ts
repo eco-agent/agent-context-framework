@@ -48,6 +48,80 @@ test("runtime bootstrap exposes only fixed install, build, and doctor steps", as
   }
 });
 
+test("runtime bootstrap restores packaged protocol entrypoints after a source build", async () => {
+  const fixture = await createRuntimeFixture();
+  const entrypoints = [
+    "packages/hooks/dist/src/codex-cli.js",
+    "packages/repo-context/dist/src/mcp-cli.js",
+  ];
+  try {
+    for (const [index, relativePath] of entrypoints.entries()) {
+      const entrypoint = path.join(fixture.root, ".agent-context", "runtime", relativePath);
+      await mkdir(path.dirname(entrypoint), { recursive: true });
+      await writeFile(entrypoint, `packaged ${index}\n`, "utf8");
+    }
+    const result = await bootstrapRuntime(
+      { projectRoot: fixture.root, mode: "install-and-build" },
+      {
+        async run(step, runtimeRoot) {
+          if (step === "build") {
+            for (const relativePath of entrypoints) {
+              await writeFile(path.join(runtimeRoot, relativePath), "compiled source\n", "utf8");
+            }
+          }
+          return {
+            stdout: JSON.stringify({
+              status: step === "doctor" ? "operational" : "build-missing",
+              operational: step === "doctor",
+              message: step === "doctor" ? "Runtime is operational." : "Pending.",
+            }),
+          };
+        },
+      },
+    );
+    assert.equal(result.operational, true);
+    for (const [index, relativePath] of entrypoints.entries()) {
+      assert.equal(
+        await readFile(
+          path.join(fixture.root, ".agent-context", "runtime", relativePath),
+          "utf8",
+        ),
+        `packaged ${index}\n`,
+      );
+    }
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("runtime bootstrap restores a packaged entrypoint when the source build fails", async () => {
+  const fixture = await createRuntimeFixture();
+  const relativePath = "packages/hooks/dist/src/codex-cli.js";
+  const entrypoint = path.join(fixture.root, ".agent-context", "runtime", relativePath);
+  try {
+    await mkdir(path.dirname(entrypoint), { recursive: true });
+    await writeFile(entrypoint, "packaged hook\n", "utf8");
+    await assert.rejects(
+      bootstrapRuntime(
+        { projectRoot: fixture.root, mode: "install-and-build" },
+        {
+          async run(step, runtimeRoot) {
+            if (step === "build") {
+              await writeFile(path.join(runtimeRoot, relativePath), "partial build\n", "utf8");
+              throw new Error("source build failed");
+            }
+            return { stdout: "" };
+          },
+        },
+      ),
+      /source build failed/u,
+    );
+    assert.equal(await readFile(entrypoint, "utf8"), "packaged hook\n");
+  } finally {
+    await fixture.remove();
+  }
+});
+
 test("--no-install reports materialized runtime state without installing", async () => {
   const fixture = await createRuntimeFixture();
   const calls: RuntimeBootstrapStep[] = [];

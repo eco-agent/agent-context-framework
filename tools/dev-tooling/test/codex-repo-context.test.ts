@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile, spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
-import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createInterface } from "node:readline";
@@ -66,6 +66,57 @@ test("tracked repo-context bundle is reproducible", async () => {
     );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("framework Codex config starts the tracked package-free repo-context bundle", async () => {
+  const projectRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-fresh-worktree-repo-"));
+  try {
+    const frameworkConfig = parseToml(
+      await readFile(path.join(frameworkRoot, ".codex", "config.toml"), "utf8"),
+    );
+    const configured = decodeRepoContextConfig(
+      record(record(frameworkConfig).mcp_servers).repo_context,
+    );
+    assert.deepEqual(configured, {
+      command: "node",
+      args: ["registry/sources/runtime/repo-context/mcp-cli.mjs", "--root", "."],
+      required: true,
+      enabled_tools: ["repo_context"],
+      startup_timeout_sec: 20,
+      tool_timeout_sec: 15,
+    });
+
+    const initialized = await executeFile("git", ["init", "--quiet"], {
+      cwd: projectRoot,
+      windowsHide: true,
+    });
+    assert.equal(initialized.stderr, "");
+    await writeFile(path.join(projectRoot, "README.md"), "fresh package-free context\n", "utf8");
+    const installedBundle = path.join(projectRoot, configured.args[0]!);
+    await mkdir(path.dirname(installedBundle), { recursive: true });
+    await copyFile(repoContextBundle, installedBundle);
+    assert.equal(await exists(path.join(projectRoot, "node_modules")), false);
+
+    const session = startMcp(installedBundle, configured.args.slice(1), projectRoot);
+    try {
+      const response = await session.request("initialize", {
+        protocolVersion: "2025-11-25",
+        capabilities: {},
+        clientInfo: { name: "fresh-worktree-fixture", version: "1.0.0" },
+      });
+      assert.equal(response.error, undefined);
+      session.notify("notifications/initialized", {});
+      const called = await session.request("tools/call", {
+        name: "repo_context",
+        arguments: { operation: "read", path: "README.md" },
+      });
+      assert.match(toolText(called.result), /fresh package-free context/u);
+    } finally {
+      await session.close();
+    }
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
   }
 });
 

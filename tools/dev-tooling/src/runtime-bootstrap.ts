@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { readFile, realpath, stat } from "node:fs/promises";
+import { readFile, realpath, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { promisify } from "node:util";
@@ -11,6 +11,10 @@ const RUNTIME_RELATIVE_PATH = ".agent-context/runtime";
 const RUNTIME_PACKAGE_MANAGER = "pnpm@10.22.0";
 const RUNTIME_NODE_VERSION = "24.14.0";
 const MAX_COMMAND_OUTPUT_BYTES = 1_000_000;
+const PACKAGED_RUNTIME_ENTRYPOINTS = [
+  "packages/hooks/dist/src/codex-cli.js",
+  "packages/repo-context/dist/src/mcp-cli.js",
+] as const;
 
 export type RuntimeBootstrapMode = "install-and-build" | "no-install";
 export type RuntimeBootstrapStatus =
@@ -50,7 +54,7 @@ export async function bootstrapRuntime(
   const workspace = await resolveRuntimeWorkspace(request.projectRoot);
   if (request.mode === "install-and-build") {
     await executor.run("install", workspace.runtimeRoot);
-    await executor.run("build", workspace.runtimeRoot);
+    await buildPreservingPackagedEntrypoints(executor, workspace.runtimeRoot);
   }
   const doctor = decodeDoctorResult(
     (await executor.run("doctor", workspace.runtimeRoot)).stdout,
@@ -67,6 +71,50 @@ export async function bootstrapRuntime(
     mode: request.mode,
     ...doctor,
   };
+}
+
+async function buildPreservingPackagedEntrypoints(
+  executor: RuntimeBootstrapExecutor,
+  runtimeRoot: string,
+): Promise<void> {
+  const snapshots = await readPackagedEntrypoints(runtimeRoot);
+  try {
+    await executor.run("build", runtimeRoot);
+  } catch (buildError) {
+    try {
+      await restorePackagedEntrypoints(snapshots);
+    } catch (restoreError) {
+      throw new AggregateError(
+        [buildError, restoreError],
+        "Runtime build failed and the packaged entrypoints could not be restored.",
+      );
+    }
+    throw buildError;
+  }
+  await restorePackagedEntrypoints(snapshots);
+}
+
+async function readPackagedEntrypoints(
+  runtimeRoot: string,
+): Promise<readonly { readonly path: string; readonly content: Buffer }[]> {
+  const snapshots: { path: string; content: Buffer }[] = [];
+  for (const relativePath of PACKAGED_RUNTIME_ENTRYPOINTS) {
+    const entrypoint = path.join(runtimeRoot, relativePath);
+    try {
+      snapshots.push({ path: entrypoint, content: await readFile(entrypoint) });
+    } catch (error) {
+      if (error instanceof Error && "code" in error && error.code === "ENOENT") continue;
+      throw error;
+    }
+  }
+  return snapshots;
+}
+
+async function restorePackagedEntrypoints(
+  snapshots: readonly { readonly path: string; readonly content: Buffer }[],
+): Promise<void> {
+  await Promise.all(snapshots.map(async (snapshot) =>
+    await writeFile(snapshot.path, snapshot.content)));
 }
 
 const fixedRuntimeExecutor: RuntimeBootstrapExecutor = {

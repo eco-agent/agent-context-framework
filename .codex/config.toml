@@ -2,8 +2,8 @@ model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 
 [mcp_servers.repo_context]
-command = "pnpm"
-args = ["--filter", "@agent-context/codex-workflows", "exec", "tsx", "src/repo-context-bootstrap.ts"]
+command = "node"
+args = ["registry/sources/runtime/repo-context/mcp-cli.mjs", "--root", "."]
 required = true
 startup_timeout_sec = 20
 tool_timeout_sec = 15

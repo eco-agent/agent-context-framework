@@ -28,7 +28,7 @@
     "fixture:test-app": "node --import tsx src/test-application-fixture-cli.ts",
     "verify:acceptance": "node --import tsx src/acceptance-verification-cli.ts",
     "verify:isolation": "node --import tsx src/runtime-isolation-cli.ts",
-    "test": "node --import tsx --test test/*.test.ts",
+    "test": "pnpm --dir ../.. capsule:runtime:prepare && node --import tsx --test --test-concurrency=1 test/*.test.ts",
     "typecheck": "tsc -b --pretty false"
   },
   "dependencies": {
