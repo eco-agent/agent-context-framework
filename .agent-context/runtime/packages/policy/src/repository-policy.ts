@@ -11,6 +11,7 @@ import {
 } from "@agent-context-runtime/shared";
 
 import {
+  decodeContextCapsuleLock,
   decodeContextInstallationLock,
   decodeContextProjectConfig,
 } from "./context-installation.js";
@@ -561,24 +562,35 @@ async function checkContextInstallation(root: string): Promise<void> {
       "Context project configuration",
     ),
   );
-  const contextLock = decodeContextInstallationLock(
-    await readJson(
-      repositoryPath(root, ".agent-context/lock.json"),
-      "Context installation lock",
-    ),
+  const contextLock = await readJson(
+    repositoryPath(root, ".agent-context/lock.json"),
+    "Context installation lock",
   );
+  const resolvedComponents = contextLockComponents(contextLock);
   if (!contextConfig.components.includes("repository-policy")) {
     throw new Error("Context project configuration does not select repository-policy.");
   }
   const missing = contextConfig.components.find(
-    (component) => !contextLock.components.includes(component),
+    (component) => !resolvedComponents.includes(component),
   );
   if (missing !== undefined) {
     throw new Error(`Context installation lock does not resolve selected component ${missing}.`);
   }
-  if (!contextLock.components.includes("repository-policy")) {
+  if (!resolvedComponents.includes("repository-policy")) {
     throw new Error("Context installation lock does not contain repository-policy.");
   }
+}
+
+function contextLockComponents(value: unknown): readonly string[] {
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    "schemaVersion" in value &&
+    value.schemaVersion === 3
+  ) {
+    return decodeContextCapsuleLock(value).components.resolved.map((component) => component.name);
+  }
+  return decodeContextInstallationLock(value).components;
 }
 
 async function runPolicyCommand(

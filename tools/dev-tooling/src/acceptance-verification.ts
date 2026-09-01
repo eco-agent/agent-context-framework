@@ -208,6 +208,7 @@ export async function verifyAcceptanceSequence(
     if (framework.root === fixture.root) {
       throw new Error("Downstream fixture must be a different Git worktree from the framework.");
     }
+    await requireDownstreamProofComponents(fixture.root);
   } catch (error) {
     return failedResult(
       framework,
@@ -287,6 +288,30 @@ export async function verifyAcceptanceSequence(
     fixture,
     stages: requirePassedStages(stages),
   };
+}
+
+async function requireDownstreamProofComponents(fixtureRoot: string): Promise<void> {
+  const config = JSON.parse(
+    await readFile(path.join(fixtureRoot, ".agent-context", "config.json"), "utf8"),
+  ) as unknown;
+  if (
+    typeof config !== "object" ||
+    config === null ||
+    !("components" in config) ||
+    !Array.isArray(config.components) ||
+    !config.components.every((component) => typeof component === "string")
+  ) {
+    throw new Error("Downstream fixture ACF component selection is invalid.");
+  }
+  const selected = new Set(config.components);
+  const missing = ["codex-runtime", "repository-policy"].filter(
+    (component) => !selected.has(component),
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `Downstream fixture must select acceptance proof components: ${missing.join(", ")}.`,
+    );
+  }
 }
 
 function initialStages(): AcceptanceProofStageResult[] {

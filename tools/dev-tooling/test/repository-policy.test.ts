@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 
 import { resolveContextComponents } from "@agent-context/repo-policy";
 
@@ -18,10 +19,48 @@ import { buildContextRegistry } from "../src/context-registry-builder.js";
 import { bootstrapRuntime } from "../src/runtime-bootstrap.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+const executeFile = promisify(execFile);
+const policyBundle = path.join(
+  frameworkRoot,
+  "registry/sources/runtime/policy/cli.mjs",
+);
+
+test("tracked repository-policy bundle is reproducible", async () => {
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-policy-bundle-"));
+  try {
+    await executeFile(process.execPath, [
+      path.join(frameworkRoot, "node_modules/vite-plus/dist/pack-bin.js"),
+      path.join(frameworkRoot, ".agent-context/runtime/packages/policy/src/cli.ts"),
+      "--write",
+      "--format",
+      "esm",
+      "--platform",
+      "node",
+      "--out-dir",
+      temporaryRoot,
+      "--logLevel",
+      "error",
+      "--clean",
+      "--minify",
+    ], { cwd: frameworkRoot, windowsHide: true });
+    await executeFile(process.execPath, [
+      path.join(frameworkRoot, "tools/dev-tooling/scripts/normalize-generated-bundle.mjs"),
+      path.join(temporaryRoot, "cli.mjs"),
+    ], { cwd: frameworkRoot, windowsHide: true });
+    assert.equal(
+      (await readFile(path.join(temporaryRoot, "cli.mjs"))).equals(
+        await readFile(policyBundle),
+      ),
+      true,
+    );
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
 
 test("Wave 3 resolves only runtime base and repository policy", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.14.0");
+  assert.equal(registry.revision, "0.14.1");
   assert.equal(registry.components.length, 36);
   assert.deepEqual(
     resolveContextComponents(registry, ["repository-policy"]).map((component) => component.name),

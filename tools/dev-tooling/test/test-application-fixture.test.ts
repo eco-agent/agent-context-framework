@@ -14,6 +14,7 @@ import {
 
 import { readContextCapsuleFile } from "../src/context-capsule.js";
 import { verifyContextCapsuleInstallation } from "../src/context-capsule-installation.js";
+import { verifyInstalledCodexRuntime } from "../src/codex-runtime-verification.js";
 import {
   CONTEXT_MATERIALIZATION_PATH,
   decodeContextMaterializationReceipt,
@@ -68,6 +69,15 @@ test("fixture CLI requires an absolute output and parses independent state contr
     ]).acfState,
     "runtime-migrated",
   );
+  assert.equal(
+    parseTestApplicationFixtureArguments([
+      "--output",
+      outputRoot,
+      "--acf",
+      "acceptance-migrated",
+    ]).acfState,
+    "acceptance-migrated",
+  );
 });
 
 test("clean application generation is deterministic and passes its own tests", async () => {
@@ -100,7 +110,7 @@ test("clean application generation is deterministic and passes its own tests", a
       {
         schemaVersion: 1,
         kind: "agent-context-test-application",
-        generatorRevision: 5,
+      generatorRevision: 6,
         gitState: "clean",
         acfState: "none",
       },
@@ -320,6 +330,51 @@ test("runtime-migrated fixture moves the complete runtime projection out of Git"
       );
       assert.equal(tracked.stdout, "");
     }
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("acceptance-migrated fixture passes both downstream proof commands", { timeout: 120_000 }, async () => {
+  const fixture = await createFixtureParent();
+  const outputRoot = path.join(fixture.parent, "acceptance-migrated");
+  try {
+    const result = await generateTestApplicationFixture({
+      frameworkRoot,
+      outputRoot,
+      gitState: "clean",
+      acfState: "acceptance-migrated",
+      replace: false,
+    });
+    assert.deepEqual(result.status, []);
+    await assert.rejects(
+      readFile(path.join(outputRoot, ".agent-context", "runtime", "package.json")),
+      /ENOENT/u,
+    );
+    const config = JSON.parse(
+      await readFile(path.join(outputRoot, ".agent-context", "config.json"), "utf8"),
+    ) as { components: readonly string[] };
+    assert.deepEqual(config.components, [
+      "core",
+      "skill-diagnose",
+      "codex-runtime",
+      "repository-policy",
+    ]);
+
+    const runtime = await verifyInstalledCodexRuntime(outputRoot);
+    assert.equal(runtime.runtime, "operational");
+    const policy = await executeFile(
+      process.execPath,
+      [path.join(outputRoot, ".agent-context", "policy.mjs"), "verify"],
+      { cwd: outputRoot, windowsHide: true },
+    );
+    assert.equal((JSON.parse(policy.stdout) as { status: string }).status, "completed");
+    const status = await executeFile(
+      "git",
+      ["status", "--porcelain=v1", "--untracked-files=all"],
+      { cwd: outputRoot, windowsHide: true },
+    );
+    assert.equal(status.stdout, "");
   } finally {
     await fixture.remove();
   }

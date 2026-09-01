@@ -52,6 +52,7 @@ test("runtime bootstrap restores packaged protocol entrypoints after a source bu
   const fixture = await createRuntimeFixture();
   const entrypoints = [
     "packages/hooks/dist/src/codex-cli.js",
+    "packages/policy/dist/src/cli.js",
     "packages/repo-context/dist/src/mcp-cli.js",
   ];
   try {

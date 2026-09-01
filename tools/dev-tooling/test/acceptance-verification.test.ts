@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -159,6 +159,29 @@ test("acceptance verification requires a distinct downstream worktree", async ()
     assert.equal(result.failure.phase, "preflight");
     assert.match(result.failure.detail, /different Git worktree/u);
     assert.equal(executor.proofCalls.length, 0);
+  } finally {
+    await fixture.remove();
+  }
+});
+
+test("acceptance verification rejects a fixture missing a downstream proof component", async () => {
+  const fixture = await createRoots();
+  const executor = new SequencedExecutor(fixture.framework, fixture.downstream);
+  try {
+    await writeFile(
+      path.join(fixture.downstream, ".agent-context", "config.json"),
+      '{"components":["core","codex-runtime"]}\n',
+      "utf8",
+    );
+    const result = await verifyAcceptanceSequence(
+      { frameworkRoot: fixture.framework, fixtureRoot: fixture.downstream },
+      executor,
+    );
+    assert.equal(result.status, "failed");
+    if (result.ok) throw new Error("Expected failed acceptance result.");
+    assert.equal(result.failure.phase, "preflight");
+    assert.match(result.failure.detail, /repository-policy/u);
+    assert.deepEqual(executor.proofCalls, []);
   } finally {
     await fixture.remove();
   }
@@ -345,6 +368,12 @@ async function createRoots(): Promise<{
   await writeFile(
     path.join(framework, "package.json"),
     '{"packageManager":"pnpm@10.22.0"}\n',
+    "utf8",
+  );
+  await mkdir(path.join(downstream, ".agent-context"), { recursive: true });
+  await writeFile(
+    path.join(downstream, ".agent-context", "config.json"),
+    '{"components":["core","codex-runtime","repository-policy"]}\n',
     "utf8",
   );
   return {

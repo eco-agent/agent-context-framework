@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.14.0",
-  "decisionPath": "registry/decisions/0.14.0-context-capsule.md",
+  "revision": "0.14.1",
+  "decisionPath": "registry/decisions/0.14.1-capsule-runtime-completion.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:a69e773bdd951fe12959ac9f7edfe42a30754e804ddec814a3cfeaf5a04cdfb1",
+      "revision": "sha256:509a675e6d2e2a4b979960fa5fa78a0d307e1affe964b1620665025b76ea08aa",
       "dependencies": [],
       "capabilities": [
         {
@@ -68,7 +68,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "sourceSha256": "dceee8e5307f8b3195cf05ee2556e7a2d400c57fa70de9d610c817d9923d3748",
+          "sourceSha256": "72958dba43fa67ef28048529bedc96f45a6426fc5cc94e1bdbdba057b4fc57e4",
           "targetPath": ".agent-context/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
@@ -2345,7 +2345,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:fabd46381adb92b942692e813018059a5c8f672b0614a1a4a18e38d58a97b6ae",
+      "revision": "sha256:c87b337760e8f583ef92cf4f859eacf3a07b57473d94a20f7a0ffb662332152b",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2388,7 +2388,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "aa5da571ce7faed8f7d7477f1d66ce2dae95ea3e732393eeb76e89fa60a23a5f",
+          "sourceSha256": "e93df6d3a9cf5b19bd69dc328d5b99a0118d896ff1586b63ffea85c5f1af2909",
           "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2404,7 +2404,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
-          "sourceSha256": "e007c0e3fa2a0af1e862714c1b09f0a3e5745a2da24d70667c41d98b355fa1c1",
+          "sourceSha256": "bce90f83787fe8dee4b0729c35a86e4238e7afa1358835830c34a701bfa166b4",
           "targetPath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2434,6 +2434,13 @@
           "mediaType": "application/json"
         },
         {
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/policy/cli.mjs",
+          "sourceSha256": "945342f9e3d4ac87b9e89bb98647887b8fbccc009242caad0cbdc0ade68298d7",
+          "targetPath": ".agent-context/runtime/packages/policy/dist/src/cli.js",
+          "mediaType": "text/javascript"
+        },
+        {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/repository-policy.md",
           "sourceSha256": "e7c8a5c1d0d99f20e9ec1d62538ba28ba0686848146922bca3d5176c8bbbd419",
@@ -2457,7 +2464,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/policy/policy.mjs",
-          "sourceSha256": "18e0dc9cd7b3d82be7ee426be13be96b5105bf7e8e9f5e5ea8ea278e8f823b3d",
+          "sourceSha256": "a8f965e267cfea39a6a020a5df69518a0be9583e0c72eb285c1b18a3e2e79ebf",
           "targetPath": ".agent-context/policy.mjs",
           "mediaType": "text/javascript"
         }

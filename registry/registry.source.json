@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.14.0",
-  "decisionPath": "registry/decisions/0.14.0-context-capsule.md",
+  "revision": "0.14.1",
+  "decisionPath": "registry/decisions/0.14.1-capsule-runtime-completion.md",
   "components": [
     {
       "name": "core",
@@ -778,6 +778,13 @@
           "targetDirectory": ".agent-context/runtime/packages/policy",
           "excludedPrefixes": ["dist/", "node_modules/"],
           "workspaceId": "agent-context-runtime"
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/runtime/policy/cli.mjs",
+          "targetPath": ".agent-context/runtime/packages/policy/dist/src/cli.js",
+          "mediaType": "text/javascript"
         },
         {
           "kind": "artifact",

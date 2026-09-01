@@ -131,8 +131,8 @@ Selected runtime artifacts map below
 `.agent-context/runtime/materialized/<capsule-tree-digest>`. The digest keeps one
 capsule's runtime files separate from another capsule's files. Runtime paths
 retain their component-relative layout below that directory. This includes the
-prebuilt repository-context and hook entrypoints, so a fresh clone needs no
-project package install or TypeScript compiler.
+prebuilt repository-context, hook, and policy entrypoints, so a fresh clone
+needs no project package install or TypeScript compiler.
 
 The schema-v2 ignored receipt at `.agent-context/materialization.json` records
 the capsule and tree digests, registry revision, artifact identity, component,
@@ -168,13 +168,14 @@ and the receipt before it writes. A missing ignore rule returns exact conflicts.
 The bundle is reproducible from a dedicated TypeScript entry with the pinned
 `vite-plus` packer. It uses Node and Git, with no package install in the project.
 The reliable explicit fresh-clone command is
-`node .agent-context/bootstrap.mjs materialize`. The repository-context MCP and
-Codex hooks call the same bootstrap with `exec repo-context` and `exec hook`.
-Those launchers verify and materialize before starting their packaged runtime.
-They write no bootstrap status to standard output because both child protocols
-own that stream. On lock v2, `exec` starts the existing tracked runtime path so
-installing the new launcher does not break projects before migration. Git has no
-portable post-clone mechanism that can guarantee
+`node .agent-context/bootstrap.mjs materialize`. The repository-context MCP,
+Codex hooks, and repository-policy wrapper call the same bootstrap with
+`exec repo-context`, `exec hook`, and `exec policy`. Those launchers verify and
+materialize before starting their packaged runtime. They write no bootstrap
+status to standard output because each child process owns that stream. On lock
+v2, `exec` starts the existing tracked runtime path so installing the new
+launcher does not break projects before migration. Git has no portable
+post-clone mechanism that can guarantee
 materialization before every other tool, so the explicit command remains the
 general startup path.
 
@@ -186,7 +187,7 @@ metadata:
 ```json
 {
   "schemaVersion": 3,
-  "registryRevision": "0.14.0",
+  "registryRevision": "0.14.1",
   "frameworkRevision": "<40-character Git revision>",
   "capsule": {
     "format": "acf-capsule-v1",
@@ -272,6 +273,12 @@ operation narrow. The `runtime-migrated` generated application proves both clean
 and dirty v2 baselines, removes tracked runtime and skill files, deletes the
 ignored output, and starts repo-context and hooks through the tracked bootstrap.
 
+The `acceptance-migrated` application adds the independent
+`repository-policy` selection before capsule construction. It proves the same
+migration boundary, then runs the packaged policy CLI through the tracked
+bootstrap. This fixture composition does not add a dependency edge between
+`repository-policy` and `codex-runtime`.
+
 Later checkpoints may publish a new capsule, lock, runtime, skill projection,
 and receipt in one transaction and connect updates to a multi-repository
 manager.
@@ -318,9 +325,10 @@ Capsule v1 is not accepted until all of these conditions hold:
 10. The committed bootstrap bundle rebuilds byte for byte, runs with plain Node
     in a fresh fixture, recovers discardable staging, writes nothing on repeat,
     and fails closed on modified generated output or missing Git ignore rules.
-11. The committed repo-context and hook bundles rebuild byte for byte. A migrated
-    fresh clone recreates each ignored bundle through bootstrap before the MCP or
-    hook protocol begins, with no tracked runtime files or package install.
+11. The committed repo-context, hook, and policy bundles rebuild byte for byte.
+    A migrated fresh clone recreates each ignored bundle through bootstrap before
+    the MCP, hook, or policy command begins, with no tracked runtime files or
+    project package install.
 12. Semantic diff reports whether changed startup activation, skills, or runtime
     require a Codex restart. Inspectable source-only changes do not invent one.
 

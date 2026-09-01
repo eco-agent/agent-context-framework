@@ -141,10 +141,50 @@ committed bundle and tests together.
   tests.
 - Tested revision and fixture state to final acceptance evidence.
 
+## Completion pass
+
+This workstream resumed from clean framework revision
+`b60fc2ac6c3d630db8c8c62cbff74bd3910db3c1` and clean fixture revision
+`89da6216a12769067a68bab53f266f193c2d96d7`.
+
+The failed downstream proof exposed two separate ownership gaps:
+
+- The downstream Codex verifier called the source-workspace doctor before it
+  exercised the configured hook and MCP launchers. A migrated capsule has no
+  direct `.agent-context/runtime/package.json` by design. Its tracked
+  plain-Node bootstrap verifies the capsule, restores the ignored content
+  addressed runtime, and starts the packaged entrypoint.
+- The durable runtime fixture selects `codex-runtime` but not the independent
+  `repository-policy` component. It can prove capsule runtime launch, but it
+  cannot satisfy the acceptance runner's separate downstream policy command.
+- The repository-policy wrapper still starts a direct built policy file. A
+  migrated policy runtime removes that path, and the capsule does not yet carry
+  a standalone policy entrypoint. This is a second executable boundary, not a
+  reason to restore the expanded runtime.
+- The packaged policy lock decoder recognizes lock v3 but omits its
+  `materialization` authority. The host policy decoder already owns the exact
+  additive validation. Carry that validation into the packaged projection.
+
+Decisions for the completion pass:
+
+| Decision | Answer | Owner |
+| --- | --- | --- |
+| Runtime operation proof | Treat successful execution of the configured bootstrap-backed inert hook and MCP initialize, list, read, and search sequence as the downstream operational proof. Remove the obsolete direct source-workspace doctor precondition from that verifier. | Installed Codex runtime verifier |
+| Capsule runtime selection | Reuse `.agent-context/bootstrap.mjs exec hook` and `exec repo-context`. Do not add another materialized-runtime selector or weaken capsule and lock verification. | Plain-Node capsule bootstrap |
+| Policy runtime selection | Package the existing policy CLI with the same repository-owned bundler, add `exec policy` as a typed bootstrap command with policy-only forwarded arguments, and make the project wrapper call it. | Repository-policy component and plain-Node capsule bootstrap |
+| Acceptance fixture | Add a deterministic migrated acceptance state that selects `codex-runtime` and `repository-policy` independently before capsule build and migration. Do not add a dependency edge between those components. | Test application fixture generator |
+| Acceptance preflight | Require the fixture configuration to select both downstream proof owners before workspace proofs start. Report a preflight failure once and run no proof command. | Acceptance sequencer |
+| Failure behavior | Public launcher failures keep their existing process exit, timeout, cleanup, and bounded acceptance output contracts. There is no retry. | Codex runtime verifier and acceptance sequencer |
+| Scope | Finish encapsulation certification only. Fleet management remains a later workstream. | User request |
+
+The completion slice is done only when the exact downstream verifier passes on
+the migrated acceptance fixture, declared dev-tooling checks pass, both
+repositories are clean and committed, and the repository-owned final acceptance
+command passes once from those revisions.
+
 ## Closure
 
-Status: implementation complete, final acceptance failed at the downstream
-fixture boundary.
+Status: resumed after the downstream fixture failure.
 
 - Implementation checkpoint: `d02a820611b78ab5e87140738d2bf4806761c44f`
 - Acceptance-tested revision: `6ca2894d774ec3ddbe235aae12b7107c53674acc`
@@ -176,3 +216,25 @@ that file does not exist in the durable fixture. The command exited with code 1
 and reported `ENOENT`. Later downstream proof commands did not run. The
 acceptance command was not repeated. Both repositories remained clean at their
 recorded revisions after the failed run.
+
+## Completion verification checkpoint
+
+The completion implementation passed its focused owner checks before the
+framework commit:
+
+- The dev-tooling TypeScript typecheck passed.
+- Registry construction and governance check passed at revision `0.14.1`.
+- The tracked bootstrap and policy bundles rebuilt reproducibly.
+- The exact `acceptance-migrated` fixture test ran the installed Codex runtime
+  verifier and repository-policy verification command successfully.
+- The serial dev-tooling suite passed all 146 tests, with no failures or skips,
+  in 655,099 ms.
+
+Two earlier focused runs encountered an intermittent Windows `EPERM` while a
+transaction test renamed an unrelated staged path. The same repository-policy
+test passed unchanged on its focused rerun and in the full serial suite. The
+failure happened before the changed runtime launched, so this workstream does
+not change transaction persistence or retry behavior.
+
+The durable fixture and final acceptance command have not run in this
+completion pass yet. They remain gated on a clean committed framework revision.

@@ -6,7 +6,6 @@ import { createInterface } from "node:readline";
 import { parse as parseToml } from "smol-toml";
 
 import { inspectInstalledCodexInterface } from "./codex-interface.js";
-import { bootstrapRuntime } from "./runtime-bootstrap.js";
 
 export interface InstalledCodexRuntimeVerification {
   readonly schemaVersion: 1;
@@ -22,8 +21,6 @@ export async function verifyInstalledCodexRuntime(
 ): Promise<InstalledCodexRuntimeVerification> {
   const health = await inspectInstalledCodexInterface(projectRoot, ["codex-runtime"]);
   if (!health?.ok) throw new Error(health?.diagnostics.join(" ") ?? "Codex runtime is not installed.");
-  const runtime = await bootstrapRuntime({ projectRoot, mode: "no-install" });
-  if (!runtime.operational) throw new Error(`Installed runtime is not operational: ${runtime.message}`);
 
   const hooks = JSON.parse(await readFile(path.join(projectRoot, ".codex", "hooks.json"), "utf8")) as {
     hooks: { PreToolUse: Array<{ matcher: string; hooks: Array<{ command: string; commandWindows: string }> }> };

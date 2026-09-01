@@ -13,6 +13,7 @@ const RUNTIME_NODE_VERSION = "24.14.0";
 const MAX_COMMAND_OUTPUT_BYTES = 1_000_000;
 const PACKAGED_RUNTIME_ENTRYPOINTS = [
   "packages/hooks/dist/src/codex-cli.js",
+  "packages/policy/dist/src/cli.js",
   "packages/repo-context/dist/src/mcp-cli.js",
 ] as const;
 

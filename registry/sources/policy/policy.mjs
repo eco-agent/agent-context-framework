@@ -16,16 +16,16 @@ try {
   }
   const contextRoot = path.dirname(fileURLToPath(import.meta.url));
   const projectRoot = path.dirname(contextRoot);
-  const policyCli = path.join(
-    contextRoot,
-    "runtime",
-    "packages",
+  const bootstrap = path.join(contextRoot, "bootstrap.mjs");
+  const arguments_ = [
+    bootstrap,
+    "exec",
     "policy",
-    "dist",
-    "src",
-    "cli.js",
-  );
-  const arguments_ = [policyCli, operation, "--root", projectRoot];
+    "--cwd",
+    projectRoot,
+    "--",
+    operation,
+  ];
   if (operation === "doctor" || operation === "verify") {
     arguments_.push(
       "--config",
