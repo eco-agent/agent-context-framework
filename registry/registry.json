@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.14.1",
-  "decisionPath": "registry/decisions/0.14.1-capsule-runtime-completion.md",
+  "revision": "0.14.2",
+  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:509a675e6d2e2a4b979960fa5fa78a0d307e1affe964b1620665025b76ea08aa",
+      "revision": "sha256:1a20b37b9c5db892f31a910bde05b54748a0c98d88541779d7295191ce80eece",
       "dependencies": [],
       "capabilities": [
         {
@@ -68,7 +68,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "sourceSha256": "72958dba43fa67ef28048529bedc96f45a6426fc5cc94e1bdbdba057b4fc57e4",
+          "sourceSha256": "33e36f05f91dbaa15357273c845cb1dec21b2c461b06d03f71b4b13c1369aa31",
           "targetPath": ".agent-context/bootstrap.mjs",
           "mediaType": "text/javascript"
         },

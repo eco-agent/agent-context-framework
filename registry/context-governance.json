@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.14.1",
-  "decisionPath": "registry/decisions/0.14.1-capsule-runtime-completion.md",
+  "registryRevision": "0.14.2",
+  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",

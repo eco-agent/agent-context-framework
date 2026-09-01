@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, symlink, unlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, open, readFile, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -171,6 +171,73 @@ test("binary capsule writes keep exact bytes across interrupted recovery", async
     );
     assert.equal((await inspectContextTransaction(projectRoot)).status, "none");
   } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test("Windows promotion waits for a transient destination handle", {
+  skip: process.platform !== "win32",
+}, async () => {
+  const projectRoot = await createTransactionFixture();
+  let releaseHandle = Promise.resolve();
+  try {
+    await applyContextTransaction(
+      projectRoot,
+      "update",
+      "0.2.0",
+      [{ operation: "write", targetPath: "existing.txt", content: "after\n" }],
+      {
+        afterMutation: async (boundary) => {
+          if (boundary.kind !== "target-parent-created") return;
+          const targetHandle = await open(path.join(projectRoot, "existing.txt"), "r+");
+          releaseHandle = new Promise<void>((resolve) => {
+            setTimeout(resolve, 150);
+          }).then(async () => {
+            await targetHandle.close();
+          });
+        },
+      },
+    );
+    await releaseHandle;
+    assert.equal(await readFile(path.join(projectRoot, "existing.txt"), "utf8"), "after\n");
+    assert.equal((await inspectContextTransaction(projectRoot)).status, "none");
+  } finally {
+    await releaseHandle;
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test("Windows promotion preserves recovery state after its lock retry window", {
+  skip: process.platform !== "win32",
+}, async () => {
+  const projectRoot = await createTransactionFixture();
+  const targetHandle = await open(path.join(projectRoot, "existing.txt"), "r+");
+  let targetHandleClosed = false;
+  try {
+    await assert.rejects(
+      applyContextTransaction(
+        projectRoot,
+        "update",
+        "0.2.0",
+        [{ operation: "write", targetPath: "existing.txt", content: "after\n" }],
+      ),
+      (error: unknown) => {
+        assert.ok(error instanceof Error);
+        assert.match(error.message, /remained locked after 3 Windows EPERM retries over 600 ms/u);
+        assert.ok(error.cause instanceof Error);
+        assert.equal("code" in error.cause ? error.cause.code : null, "EPERM");
+        return true;
+      },
+    );
+    assert.equal(await readFile(path.join(projectRoot, "existing.txt"), "utf8"), "before\n");
+    assert.equal((await inspectContextTransaction(projectRoot)).status, "resumable");
+    await targetHandle.close();
+    targetHandleClosed = true;
+    await resumeContextTransaction(projectRoot);
+    assert.equal(await readFile(path.join(projectRoot, "existing.txt"), "utf8"), "after\n");
+    assert.equal((await inspectContextTransaction(projectRoot)).status, "none");
+  } finally {
+    if (!targetHandleClosed) await targetHandle.close();
     await rm(projectRoot, { recursive: true, force: true });
   }
 });

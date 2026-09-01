@@ -187,7 +187,7 @@ metadata:
 ```json
 {
   "schemaVersion": 3,
-  "registryRevision": "0.14.1",
+  "registryRevision": "0.14.2",
   "frameworkRevision": "<40-character Git revision>",
   "capsule": {
     "format": "acf-capsule-v1",

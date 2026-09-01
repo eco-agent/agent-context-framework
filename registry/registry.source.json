@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.14.1",
-  "decisionPath": "registry/decisions/0.14.1-capsule-runtime-completion.md",
+  "revision": "0.14.2",
+  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
   "components": [
     {
       "name": "core",

@@ -60,7 +60,7 @@ test("tracked repository-policy bundle is reproducible", async () => {
 
 test("Wave 3 resolves only runtime base and repository policy", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.14.1");
+  assert.equal(registry.revision, "0.14.2");
   assert.equal(registry.components.length, 36);
   assert.deepEqual(
     resolveContextComponents(registry, ["repository-policy"]).map((component) => component.name),

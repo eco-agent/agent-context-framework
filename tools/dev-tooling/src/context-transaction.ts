@@ -11,10 +11,12 @@ import {
   writeFile,
 } from "node:fs/promises";
 import path from "node:path";
+import { setTimeout as wait } from "node:timers/promises";
 
 export const CONTEXT_TRANSACTION_PATH = ".agent-context/transaction.json";
 export const CONTEXT_TRANSACTION_STAGE_PATH = ".agent-context/transaction-stage";
 const CONTEXT_TRANSACTION_STAGED_JOURNAL = "journal.staged";
+const WINDOWS_RENAME_RETRY_DELAYS_MS = [100, 200, 300] as const;
 
 export type ContextMutation =
   | {
@@ -364,30 +366,26 @@ async function promotePendingMutation(
     if (stagedSha256 !== mutation.afterSha256) {
       throw new Error(`Staged context write hash differs from the journal: ${mutation.targetPath}.`);
     }
-    let target = await secureProjectPath(
+    const target = await secureProjectPath(
       projectRoot,
       mutation.targetPath,
       `Context promotion target ${mutation.targetPath}`,
     );
     await mkdir(path.dirname(target), { recursive: true });
     await notifyMutation(options, { kind: "target-parent-created", index, targetPath: mutation.targetPath });
-    const staged = await secureProjectPath(
-      projectRoot,
-      stagedMutationPath(index),
-      `Staged context write ${mutation.targetPath}`,
-    );
     if (await readStagedHash(projectRoot, mutation.targetPath, index) !== mutation.afterSha256) {
       throw new Error(`Staged context write changed during promotion: ${mutation.targetPath}.`);
     }
-    target = await secureProjectPath(
-      projectRoot,
-      mutation.targetPath,
-      `Context promotion target ${mutation.targetPath}`,
-    );
     if (await readTargetHash(projectRoot, mutation.targetPath) !== mutation.beforeSha256) {
       throw new Error(`Context target changed during promotion: ${mutation.targetPath}.`);
     }
-    await rename(staged, target);
+    await promoteStagedWriteWithWindowsRetry(
+      projectRoot,
+      index,
+      mutation.targetPath,
+      mutation.beforeSha256,
+      mutation.afterSha256,
+    );
     await notifyMutation(options, { kind: "target-written", index, targetPath: mutation.targetPath });
     return;
   }
@@ -406,6 +404,92 @@ async function promotePendingMutation(
   }
   await unlink(target);
   await notifyMutation(options, { kind: "target-deleted", index, targetPath: mutation.targetPath });
+}
+
+async function promoteStagedWriteWithWindowsRetry(
+  projectRoot: string,
+  index: number,
+  targetPath: string,
+  beforeSha256: string | null,
+  afterSha256: string | null,
+): Promise<void> {
+  if (afterSha256 === null) {
+    throw new Error(`Context transaction write has no after hash: ${targetPath}.`);
+  }
+  for (let attempt = 0; attempt <= WINDOWS_RENAME_RETRY_DELAYS_MS.length; attempt += 1) {
+    const state = await inspectWritePromotionState(
+      projectRoot,
+      index,
+      targetPath,
+      beforeSha256,
+      afterSha256,
+    );
+    if (state === "applied") return;
+    if (state !== "pending") {
+      throw new Error(`Context write state changed before promotion: ${targetPath}.`);
+    }
+    const staged = await secureProjectPath(
+      projectRoot,
+      stagedMutationPath(index),
+      `Staged context write ${targetPath}`,
+    );
+    const target = await secureProjectPath(
+      projectRoot,
+      targetPath,
+      `Context promotion target ${targetPath}`,
+    );
+    try {
+      await rename(staged, target);
+      return;
+    } catch (error) {
+      if (!isTransientWindowsRenameError(error)) throw error;
+      const failureState = await inspectWritePromotionState(
+        projectRoot,
+        index,
+        targetPath,
+        beforeSha256,
+        afterSha256,
+      );
+      if (failureState === "applied") return;
+      if (failureState !== "pending") {
+        throw new Error(`Context write state changed after Windows rename failure: ${targetPath}.`, {
+          cause: error,
+        });
+      }
+      const retryDelayMs = WINDOWS_RENAME_RETRY_DELAYS_MS[attempt];
+      if (retryDelayMs === undefined) {
+        throw new Error(
+          `Context promotion target remained locked after 3 Windows EPERM retries over 600 ms: ${targetPath}. The published transaction can be resumed.`,
+          { cause: error },
+        );
+      }
+      await wait(retryDelayMs);
+    }
+  }
+}
+
+async function inspectWritePromotionState(
+  projectRoot: string,
+  index: number,
+  targetPath: string,
+  beforeSha256: string | null,
+  afterSha256: string,
+): Promise<"pending" | "applied" | "changed"> {
+  await secureProjectPath(
+    projectRoot,
+    stagedMutationPath(index),
+    `Staged context write ${targetPath}`,
+  );
+  await secureProjectPath(
+    projectRoot,
+    targetPath,
+    `Context promotion target ${targetPath}`,
+  );
+  const stagedSha256 = await readStagedHash(projectRoot, targetPath, index);
+  const targetSha256 = await readTargetHash(projectRoot, targetPath);
+  if (stagedSha256 === null && targetSha256 === afterSha256) return "applied";
+  if (stagedSha256 === afterSha256 && targetSha256 === beforeSha256) return "pending";
+  return "changed";
 }
 
 async function completeTransactionCleanup(
@@ -654,4 +738,13 @@ function isMissingPathError(error: unknown): boolean {
 
 function isAlreadyExistsError(error: unknown): boolean {
   return error instanceof Error && "code" in error && error.code === "EEXIST";
+}
+
+function isTransientWindowsRenameError(error: unknown): boolean {
+  return process.platform === "win32" &&
+    error instanceof Error &&
+    "code" in error &&
+    error.code === "EPERM" &&
+    "syscall" in error &&
+    error.syscall === "rename";
 }
