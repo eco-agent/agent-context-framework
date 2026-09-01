@@ -251,5 +251,30 @@ commands pass:
 - The installed repository-policy wrapper completed its `full` verification
   profile, including the fixture check and two behavior tests.
 
-The final acceptance command has not run in this completion pass yet. It remains
-gated on committing this evidence and confirming both repositories are clean.
+The final acceptance command ran once against clean framework revision
+`0b2b5ff0a0b22067122666d47457e574683175de` and clean fixture revision
+`cca919d73eda10f6e473fc4ea797b43f337d7c6c`.
+
+## Completion pass closure
+
+Status: stopped at the one-shot final acceptance gate.
+
+The acceptance workspace typecheck passed in 2,220 ms. The workspace test stage
+then failed after 537,670 ms with one failure among 146 dev-tooling tests. The
+failing repository-context integration test received Windows `EPERM` while
+`context-transaction.ts` renamed a staged file to `.agent-context/lock.json` in
+a temporary repository. The same test and transaction path passed in the prior
+serial dev-tooling suite. The acceptance run also reached and passed the exact
+`acceptance-migrated` downstream fixture test before the workspace command
+reported its aggregate failure.
+
+Acceptance stopped after the workspace stage, as designed. Isolation and the
+two durable downstream proof stages did not run. The acceptance command was not
+repeated. Both repositories remained clean at the revisions recorded above.
+
+The capsule runtime and policy implementation pass their focused and serial
+owner checks, and the durable fixture passes both downstream commands directly.
+Encapsulation is not certified complete because the repository-wide acceptance
+contract did not pass. A later completion pass must decide and test the Windows
+transaction-promotion failure policy before it can run a new one-shot acceptance
+sequence. Fleet management remains out of scope until that gate passes.
