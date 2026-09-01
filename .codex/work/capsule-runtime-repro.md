@@ -236,5 +236,20 @@ test passed unchanged on its focused rerun and in the full serial suite. The
 failure happened before the changed runtime launched, so this workstream does
 not change transaction persistence or retry behavior.
 
-The durable fixture and final acceptance command have not run in this
-completion pass yet. They remain gated on a clean committed framework revision.
+The completion implementation is committed at
+`f634868ff7b6eb4d3c969ff7877f2628575d297b`.
+
+The fixture generator replaced the marked durable fixture with the
+`acceptance-migrated` state and committed revision
+`cca919d73eda10f6e473fc4ea797b43f337d7c6c`. The fixture selects
+`codex-runtime` and `repository-policy`, has no expanded
+`.agent-context/runtime/package.json`, and remains clean after both downstream
+commands pass:
+
+- The installed Codex verifier reported the bootstrap-backed hook and MCP
+  runtime operational.
+- The installed repository-policy wrapper completed its `full` verification
+  profile, including the fixture check and two behavior tests.
+
+The final acceptance command has not run in this completion pass yet. It remains
+gated on committing this evidence and confirming both repositories are clean.
