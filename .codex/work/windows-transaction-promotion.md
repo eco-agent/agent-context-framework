@@ -114,3 +114,16 @@ Focused verification passed before the implementation checkpoint:
   set passed all 19 tests in 181,192 ms.
 - Bootstrap build, registry build, registry check, bundle reproducibility, and
   changed-file prose checks passed at registry revision `0.14.2`.
+
+The implementation checkpoint is
+`421510892b721b67570fffaeeabc7bc630f32adc`. The full serial dev-tooling suite
+passed all 148 tests, with no failures or skips, in 501,786 ms.
+
+The marked durable fixture was regenerated from that checkpoint and committed
+at `3ad8a24c676745c0ebb57a7437e2168fd998da24`. It selects `codex-runtime` and
+`repository-policy`, has no expanded `.agent-context/runtime/package.json`, and
+remains clean after the installed Codex runtime verifier and repository-policy
+full profile pass directly.
+
+Final acceptance has not run for this workstream yet. It remains gated on
+committing this evidence and confirming both repositories are clean.
