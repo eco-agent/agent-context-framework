@@ -125,5 +125,20 @@ at `3ad8a24c676745c0ebb57a7437e2168fd998da24`. It selects `codex-runtime` and
 remains clean after the installed Codex runtime verifier and repository-policy
 full profile pass directly.
 
-Final acceptance has not run for this workstream yet. It remains gated on
-committing this evidence and confirming both repositories are clean.
+Final acceptance ran once against clean framework revision
+`99db82d757b86a79ac51dd905a9a415c60cb3947` and clean fixture revision
+`3ad8a24c676745c0ebb57a7437e2168fd998da24`.
+
+Status: complete.
+
+Acceptance passed every stage:
+
+- Workspace passed in 760,834 ms. Typecheck, tests, repository check, and
+  registry check all passed.
+- Runtime isolation passed in 31,832 ms.
+- Downstream verification passed in 8,220 ms. The installed Codex runtime proof
+  took 4,991 ms and repository policy took 3,229 ms.
+
+The acceptance command was not repeated. Both repositories remained clean at
+their tested revisions. This later work-record update changes documentation
+only, so the executable gates do not need another run.
