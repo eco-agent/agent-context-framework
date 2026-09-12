@@ -69,7 +69,7 @@ So the routing question is not simply, “Which model is best?” It is:
 
 3. Which failures can task boundaries, read-only access, deterministic checks, or Sol review safely contain?
 ---
-Recently I've been avoiding subagent v1 or v2 in codex for anything but "tool calling" (Luna agents being that tool) 
+Recently I've been avoiding subagent v1 or v2 in codex for anything but "tool calling" (Luna agents being that tool)
 Instead I opt for my agent to spawn new persistent threads. I already typically work on mega-threads because it uses less tokens than using subagents and is more monitorable for me. My agent spins up new threads and they all collaborate with their own responsibilities for the codebase that are assigned, no-one is the orchestrator they just pass messages around and I go to whatever thread concerns what I want handled. If need be they wake up the others to help. Parallelism for humans who do real work. Not factories churning slop.
 ---
 Astra is high intelligence, bad behaviour. Fantastic and review, bounded hyperspecified work with determinism and orchestration (though funny enough it's so expensive it makes a terrible orchestrator because input tokens fuck your usage). It can do some novi shit though, is highly intelligent and coherent, fantastic to steer and is best-in-class for computer-use and 3D.
@@ -487,7 +487,7 @@ Turn ID: `7404c2bc-1a16-4e43-8362-e272c283ddd2`
 
 Message ID: `7404c2bc-1a16-4e43-8362-e272c283ddd2`
 
-Have a look at @GitHub [Lungren2/agent-context-framework](https://github.com/Lungren2/agent-context-framework)  
+Have a look at @GitHub [Lungren2/agent-context-framework](https://github.com/Lungren2/agent-context-framework)
 I want to rearchitect it around this workflow. It have a ton of very useful bits but also a lot of shit I need to cut out and consolidate
 
 ### Assistant
@@ -498,15 +498,15 @@ Message ID: `8cc4d88a-d786-4eda-a9d2-78b5faba4577`
 
 There is useful engineering here. The artifact stores, source bindings, installation-conflict handling, and revision-specific acceptance records deserve preservation. The largest mismatch is the objective and SDK workflow machinery. It models bounded jobs and fixed role plans, while you now work through persistent domain owners.
 
-I reviewed `main` at `cd0516aa39472f64a460028a05449ae4e71fe244`, dated 24 August 2026. This is a source review, including implementation files and selected tests. I have not changed the repository or run its checks. 
+I reviewed `main` at `cd0516aa39472f64a460028a05449ae4e71fe244`, dated 24 August 2026. This is a source review, including implementation files and selected tests. I have not changed the repository or run its checks.
 
 ## Where the current design fights your workflow
 
 ### The execution model has the wrong lifetime
 
-The durable runtime centres on an `Objective`, its attempts, leases, acceptance gates, and terminal outcome. The Codex integration can resume threads, so persistence itself is not missing. The problem is that continuity belongs to the objective and its execution attempt. Your domain owner needs to survive several tasks, branches, PRs, and changes in direction. 
+The durable runtime centres on an `Objective`, its attempts, leases, acceptance gates, and terminal outcome. The Codex integration can resume threads, so persistence itself is not missing. The problem is that continuity belongs to the objective and its execution attempt. Your domain owner needs to survive several tasks, branches, PRs, and changes in direction.
 
-The optional `orchestrate-codex-workflows` skill reinforces that model. It requires fixed roles and stages, tells the agent to copy a TypeScript runtime into a project package, and prohibits dynamic role creation. It also leaves one primary agent responsible for implementation and integration. Those choices are coherent for bounded automated jobs. They conflict with the peer workflow you described. 
+The optional `orchestrate-codex-workflows` skill reinforces that model. It requires fixed roles and stages, tells the agent to copy a TypeScript runtime into a project package, and prohibits dynamic role creation. It also leaves one primary agent responsible for implementation and integration. Those choices are coherent for bounded automated jobs. They conflict with the peer workflow you described.
 
 I would make these identities separate:
 
@@ -523,9 +523,9 @@ A domain thread should not end because a task finishes. A task should not acquir
 
 This is the clearest performance problem in the source.
 
-In `tools/repo-policy/src/profiles.ts`, the `frontend`, `backend`, `domain-module`, `product-topology`, and `workspace-structure` profiles all use the same `fullChecks` collection. Those checks include repository typechecking and tests. The command registry invokes root `pnpm typecheck` and `pnpm test`.  
+In `tools/repo-policy/src/profiles.ts`, the `frontend`, `backend`, `domain-module`, `product-topology`, and `workspace-structure` profiles all use the same `fullChecks` collection. Those checks include repository typechecking and tests. The command registry invokes root `pnpm typecheck` and `pnpm test`.
 
-The runner accepts `affectedUnits`, but only returns them in its report. It does not pass them into command selection. The project policy mirrors the same broad routing through `verify-full`.  
+The runner accepts `affectedUnits`, but only returns them in its report. It does not pass them into command selection. The project policy mirrors the same broad routing through `verify-full`.
 
 I have not measured the elapsed cost, but the routing is demonstrably broader than the profile names suggest.
 
@@ -533,7 +533,7 @@ I would fix this before building new coordination features. Each pass needs an a
 
 ### The frontend contract enforces a workflow you no longer want
 
-The baseline and frontend skill require adopting a licensed implementation when changing an application shell or major navigation. This is more than advice. `ImplementationContractV2` contains a product-precedent structure, and its decoder rejects an observation-only choice when the declared license permits source reuse.   
+The baseline and frontend skill require adopting a licensed implementation when changing an application shell or major navigation. This is more than advice. `ImplementationContractV2` contains a product-precedent structure, and its decoder rejects an observation-only choice when the declared license permits source reuse.
 
 That makes a particular design method part of contract validity.
 
@@ -541,13 +541,13 @@ Your procedure starts with your direction, an installed component system, and an
 
 I would remove **mandatory product adoption** from the normal frontend path. Keep source pinning, license notices, and materialisation receipts when you deliberately adopt code. Make an original mock and its component annotations equally valid design inputs.
 
-I would also remove the mandatory alternative-design exercise after you have already settled the direction. The current frontend skill requires replacing a major choice and comparing another solution before retaining the first acceptable design. That is useful during exploration, but unnecessary when the user has supplied the decision. 
+I would also remove the mandatory alternative-design exercise after you have already settled the direction. The current frontend skill requires replacing a major choice and comparing another solution before retaining the first acceptable design. That is useful during exploration, but unnecessary when the user has supplied the decision.
 
 ### The existing hooks detect some problems but cannot coordinate recovery
 
-The installed hook implementation recognises two relevant situations: context compaction and `apply_patch`. It can restore stored context after compaction and reject patch paths outside a session's scope. Other tool events return an unsupported result. 
+The installed hook implementation recognises two relevant situations: context compaction and `apply_patch`. It can restore stored context after compaction and reject patch paths outside a session's scope. Other tool events return an unsupported result.
 
-The active-task code also checks source hashes and rejects bindings whose sources changed after projection. That is useful stale-state detection. It does not tell an affected owner which decision replaced the old one or deliver the correction before its next consequential action. 
+The active-task code also checks source hashes and rejects bindings whose sources changed after projection. That is useful stale-state detection. It does not tell an affected owner which decision replaced the old one or deliver the correction before its next consequential action.
 
 I would preserve those checks, then add the missing continuation behaviour. A stale contract should produce a specific update and a permitted next action. It should not leave the agent with a failed binding and another investigation to perform.
 
@@ -567,9 +567,9 @@ I would preserve those checks, then add the missing continuation behaviour. A st
 
 There is an important distinction here: **generated copies are not automatically redundant authorities**.
 
-The registry explicitly projects source instructions and skills into installed locations. The architecture also describes the distributable workflow runtime as an exact source-and-test projection. Those copies should remain generated and checked, or disappear because their distribution path is being removed. They should not be deleted merely because a search found similar files.  
+The registry explicitly projects source instructions and skills into installed locations. The architecture also describes the distributable workflow runtime as an exact source-and-test projection. Those copies should remain generated and checked, or disappear because their distribution path is being removed. They should not be deleted merely because a search found similar files.
 
-Your maintenance skill already gives the right procedure for this work. Trace each behaviour through its canonical source, installed projection, registry entry, governance requirement, and tests. Classify it as retained, changed, removed, or added. I would use that preservation map throughout the rewrite. 
+Your maintenance skill already gives the right procedure for this work. Trace each behaviour through its canonical source, installed projection, registry entry, governance requirement, and tests. Classify it as retained, changed, removed, or added. I would use that preservation map throughout the rewrite.
 
 ## The smaller architecture I would build
 
@@ -634,9 +634,9 @@ Likewise, a request to Astra should carry the unresolved question and decisive s
 
 ### Evidence and authority remain different
 
-There is already worthwhile code here. `transitionHumanAcceptance` rejects a target that differs from the expected result and rejects a conflicting replay. Preserve that behaviour. 
+There is already worthwhile code here. `transitionHumanAcceptance` rejects a target that differs from the expected result and rejects a conflicting replay. Preserve that behaviour.
 
-However, its `owner` field is a decoded string. That function does not authenticate the person who supplied it. A record that says a human accepted something is not, by itself, proof of human authorisation. The new host should receive acceptance through a trusted human interaction, then write the record. 
+However, its `owner` field is a decoded string. That function does not authenticate the person who supplied it. A record that says a human accepted something is not, by itself, proof of human authorisation. The new host should receive acceptance through a trusted human interaction, then write the record.
 
 I would apply the same separation throughout ACF:
 
@@ -658,7 +658,7 @@ The motion pass would preserve those decisions and inspect transitions, interrup
 
 Your first completed feature would become a reusable example. Preserve its important corrections and link later work to that example. Do not manufacture repetitive priming exercises or treat a `primed: true` flag as evidence that the workflow will be followed.
 
-The root instructions should retain universal obligations and your communication preferences. Conditional frontend detail belongs with the pass that uses it. The current root `AGENTS.md` is 20,755 bytes, so there is substantial material to classify before adding more instructions. 
+The root instructions should retain universal obligations and your communication preferences. Conditional frontend detail belongs with the pass that uses it. The current root `AGENTS.md` is 20,755 bytes, so there is substantial material to classify before adding more instructions.
 
 ## Make checkpoints and environment management mechanical
 
@@ -690,7 +690,7 @@ I would use reviewable PRs with direct replacement at each boundary. I would avo
 | **4. Exercise the frontend procedure and environment controls.** | Run an approved mock through component mapping, fixtures, the refinement passes, and acceptance using the same domain owner. Add owned-process cleanup and heavy-check capacity limits. | The resulting PR contains inspectable increments and reproducible states. A restart does not require rebuilding the owner's understanding or environment from scratch. |
 | **5. Remove the superseded machinery.** | Delete displaced objective execution paths, fixed-role templates, mandatory-precedent code, obsolete dependencies, and their unused registry entries. Consolidate remaining authoring tools. | Required behaviours still pass their scenario tests, installed output has no references to removed paths, and licenses remain attached to retained source. |
 
-The existing infrastructure tests already cover useful behaviours such as artifact idempotency, byte verification, exact human acceptance, and zero-model preflight. I would retain and adapt those tests rather than replace them with tests that merely confirm the new schema parses. I have inspected these tests, not executed them. 
+The existing infrastructure tests already cover useful behaviours such as artifact idempotency, byte verification, exact human acceptance, and zero-model preflight. I would retain and adapt those tests rather than replace them with tests that merely confirm the new schema parses. I have inspected these tests, not executed them.
 
 The new scenario suite should concentrate on the fail
 
@@ -716,7 +716,7 @@ There are two requirements worth preserving: use established interaction pattern
 
 ## Adoption should inform the mock
 
-The existing skill has more substance than "find visual inspiration." It asks the agent to identify a product handling the same user task, inspect its interactions, pin its source, and state what will remain or change. It also requires actual source reuse rather than a look-alike generated from a description. Those are useful safeguards to retain. 
+The existing skill has more substance than "find visual inspiration." It asks the agent to identify a product handling the same user task, inspect its interactions, pin its source, and state what will remain or change. It also requires actual source reuse rather than a look-alike generated from a description. Those are useful safeguards to retain.
 
 I would place that investigation before mock generation, once the project's direction and component-system choice are known.
 
@@ -744,7 +744,7 @@ These details can live in the approved design record and its annotated image. Th
 
 For example, an annotation should do more than label a region "dropdown." It should name the installed menu component, its trigger, its actions, and the relevant behaviour to retain. The implementation agent should not infer a custom menu from a rectangle in the mock.
 
-The existing frontend discipline already says that adopted components retain ownership of behaviour and accessibility unless their public API cannot meet a recorded requirement. I would bring that rule into annotation, where it can prevent an incompatible implementation plan before coding starts. 
+The existing frontend discipline already says that adopted components retain ownership of behaviour and accessibility unless their public API cannot meet a recorded requirement. I would bring that rule into annotation, where it can prevent an incompatible implementation plan before coding starts.
 
 The component inventory should constrain implementation choices without forcing every mock to resemble an unmodified component gallery. Your composition, styling, texture, and asset passes still have room to establish the product's appearance.
 
@@ -754,7 +754,7 @@ Moving adoption earlier must not reduce it to screenshots and notes.
 
 A coding agent should receive the selected implementation and its mapping to the approved design. Where the plan calls for copying or adapting source, the agent should start from those bytes, retain the required notices, and make its changes against that baseline. Where an installed dependency already supplies the required behaviour, the agent should compose its API.
 
-That preserves the useful part of your current materialisation requirement. The skill explicitly requires reusable source to exist locally before replacement code is written, with upstream identity retained for adapted files. 
+That preserves the useful part of your current materialisation requirement. The skill explicitly requires reusable source to exist locally before replacement code is written, with upstream identity retained for adapted files.
 
 A statement such as "I studied the source and implemented the same idea" should not satisfy a task that explicitly called for adopting that implementation.
 
@@ -766,12 +766,10 @@ I would revise the earlier keep/cut decision as follows:
 
 **Retain `adopt-established-product`, source pinning, materialisation, and provenance checks. Make the frontend workflow invoke adoption before mock creation. Carry its result into annotation, implementation, and verification.**
 
-There is one ordering problem in the current skill worth correcting. It asks for the implementation contract and every upstream-to-target file mapping before the frontend specification. That puts detailed implementation placement ahead of the design work that should help determine it. 
+There is one ordering problem in the current skill worth correcting. It asks for the implementation contract and every upstream-to-target file mapping before the frontend specification. That puts detailed implementation placement ahead of the design work that should help determine it.
 
 I would instead pin the precedent and identify reusable implementations early, settle their exact placement during annotation, then materialise the selected source before adaptation. The same adoption record can acquire those details as the work progresses. A mock-creation pass should not fail because final target paths are not settled yet.
 
 After that, later passes consume the decision. They should not repeat product research whenever a Sol edits a component. Reopen the affected part only when a requirement, component limitation, or observed behaviour contradicts the accepted plan.
 
 This also changes how I should approach the wider ACF cleanup. **A useful rule that loads at the wrong time should first be relocated, not weakened.** In this case, the work to cut is repeated discovery and premature implementation mapping. The safeguards against generic design and avoidable reimplementation should remain.
-
-
