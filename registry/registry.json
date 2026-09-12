@@ -2198,7 +2198,7 @@
     },
     {
       "name": "runtime-base",
-      "revision": "sha256:206159083577767dfad0da43be6efd7fa21ca938713b78f22d104c8f27bfa241",
+      "revision": "sha256:d6fdd9dd75d1c7412d9ee050e5d2b3f5b8d9db2cf8812705a0685909fda85c12",
       "dependencies": [],
       "capabilities": [
         {
@@ -2313,7 +2313,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".codex/acf/runtime-source/packages/shared/src/filesystem.ts",
-          "sourceSha256": "745400878fd74a826ea220949e240e2860736489042269986bf1dcd10d95aed8",
+          "sourceSha256": "40308ecb12251688e4f48e75b31397c4ec53d7b6193c383aa74a96316e3b8160",
           "targetPath": ".codex/acf/runtime-source/packages/shared/src/filesystem.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2346,7 +2346,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:aaa2fc3d43414ac3bd5e7ef17bde33b4bdc458883302951126a1c6325032a622",
+      "revision": "sha256:b4284164cb58aec3aa830f16027ebd0a01ca4673d3856c5d6c2eec00ca0ce864",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2437,7 +2437,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/runtime/policy/cli.mjs",
-          "sourceSha256": "06100f8711ca0cc45d17213de18d50e178f4d7694281a7e7aae4a038a8d61bb6",
+          "sourceSha256": "d89f80ba2cfd3a25cc7431b164f1cd87b578b625bca1a109b054be8bbb2883b0",
           "targetPath": ".codex/acf/runtime-source/packages/policy/dist/src/cli.js",
           "mediaType": "text/javascript"
         },

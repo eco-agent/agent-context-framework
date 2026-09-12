@@ -3,8 +3,9 @@ import path from "node:path";
 
 const ignoredDirectories = new Set([".git", "dist", "node_modules"]);
 const ignoredRelativeDirectories = new Set([
+  ".codex/acf/runtime",
   ".codex/acf/runtime-source",
-  ".codex/work/reference-checkouts",
+  ".codex/work",
 ]);
 
 export async function findFiles(
