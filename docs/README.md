@@ -12,3 +12,6 @@ Control Tower repository.
 - [Portable objective orchestration](architecture/portable-objective-orchestration.md)
   describes the implemented stores, task-envelope launcher, Codex adapter,
   recovery behavior, and operational commands.
+- [Capsule operational audit](architecture/capsule-operational-audit.md)
+  records the fixture results, post-migration lifecycle breaks, and proposed
+  one-capsule replacement.
