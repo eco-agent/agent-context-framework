@@ -34,7 +34,7 @@ export async function verifyInstalledCodexRuntime(
     session_id: "wave-four-verification-missing-binding",
     tool_input: { command: "*** Update File: README.md" },
   });
-  for (const cwd of [projectRoot, path.join(projectRoot, ".agent-context")]) {
+  for (const cwd of [projectRoot, path.join(projectRoot, ".codex", "acf")]) {
     const result = await runShell(command, cwd, input);
     if (result.code !== 0 || result.stdout.trim() !== "") {
       throw new Error(`Installed hook was not inert from ${cwd}: ${result.stderr || result.stdout}`);

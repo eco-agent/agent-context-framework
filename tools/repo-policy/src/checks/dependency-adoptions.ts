@@ -21,7 +21,7 @@ export async function checkDependencyAdoptions(root: string): Promise<readonly s
   const diagnostics: string[] = [];
   const records = await loadRecords(root, diagnostics);
   const manifests = await findFiles(root, (relativePath) => relativePath.endsWith("package.json"));
-  const runtimeRoot = path.join(root, ".agent-context", "runtime");
+  const runtimeRoot = path.join(root, ".codex", "acf", "runtime-source");
   const runtimeManifests = await pathExists(runtimeRoot)
     ? await findFiles(runtimeRoot, (relativePath) => relativePath.endsWith("package.json"))
     : [];

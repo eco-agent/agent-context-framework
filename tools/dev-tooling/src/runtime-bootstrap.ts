@@ -5,9 +5,13 @@ import process from "node:process";
 import { promisify } from "node:util";
 
 import { corepackInvocation } from "./corepack-command.js";
+import {
+  CONTEXT_MATERIALIZATION_PATH,
+  decodeContextMaterializationReceipt,
+} from "./context-capsule-materialization.js";
 
 const execFileAsync = promisify(execFile);
-const RUNTIME_RELATIVE_PATH = ".codex/acf/runtime-source";
+const RUNTIME_PREFIX = ".codex/acf/runtime";
 const RUNTIME_PACKAGE_MANAGER = "pnpm@10.22.0";
 const RUNTIME_NODE_VERSION = "24.14.0";
 const MAX_COMMAND_OUTPUT_BYTES = 1_000_000;
@@ -197,15 +201,17 @@ async function resolveRuntimeWorkspace(projectRoot: string): Promise<{
   if (!(await stat(resolvedProjectRoot)).isDirectory()) {
     throw new Error("Runtime project root must be a directory.");
   }
-  const runtimeRoot = await realpath(
-    path.join(resolvedProjectRoot, RUNTIME_RELATIVE_PATH),
-  );
+  const receipt = decodeContextMaterializationReceipt(JSON.parse(
+    await readFile(path.join(resolvedProjectRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+  ) as unknown);
+  const runtimeRelativePath = `${RUNTIME_PREFIX}/${receipt.treeSha256}`;
+  const runtimeRoot = await realpath(path.join(resolvedProjectRoot, runtimeRelativePath));
   const relative = path.relative(resolvedProjectRoot, runtimeRoot);
   if (
-    relative !== RUNTIME_RELATIVE_PATH.replaceAll("/", path.sep) ||
+    relative !== runtimeRelativePath.replaceAll("/", path.sep) ||
     path.isAbsolute(relative)
   ) {
-    throw new Error("Runtime workspace must resolve to project-owned .codex/acf/runtime-source.");
+    throw new Error("Runtime workspace must resolve below project-owned .codex/acf/runtime.");
   }
   const manifest = JSON.parse(
     await readFile(path.join(runtimeRoot, "package.json"), "utf8"),

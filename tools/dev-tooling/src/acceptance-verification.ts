@@ -4,6 +4,8 @@ import path from "node:path";
 import process from "node:process";
 
 import { corepackInvocation, type ProcessInvocation } from "./corepack-command.js";
+import { readContextCapsuleFile } from "./context-capsule.js";
+import { CONTEXT_CAPSULE_PATH } from "@agent-context/repo-policy";
 
 const MAX_RETAINED_OUTPUT_BYTES = 32_768;
 
@@ -291,19 +293,8 @@ export async function verifyAcceptanceSequence(
 }
 
 async function requireDownstreamProofComponents(fixtureRoot: string): Promise<void> {
-  const config = JSON.parse(
-    await readFile(path.join(fixtureRoot, ".agent-context", "config.json"), "utf8"),
-  ) as unknown;
-  if (
-    typeof config !== "object" ||
-    config === null ||
-    !("components" in config) ||
-    !Array.isArray(config.components) ||
-    !config.components.every((component) => typeof component === "string")
-  ) {
-    throw new Error("Downstream fixture ACF component selection is invalid.");
-  }
-  const selected = new Set(config.components);
+  const capsule = await readContextCapsuleFile(path.join(fixtureRoot, CONTEXT_CAPSULE_PATH));
+  const selected = new Set(capsule.payload.selection.directComponents);
   const missing = ["codex-runtime", "repository-policy"].filter(
     (component) => !selected.has(component),
   );
@@ -389,7 +380,7 @@ function stageDefinitions(
           id: "downstream-policy",
           invocation: {
             file: process.execPath,
-            arguments: [path.join(fixtureRoot, ".agent-context", "policy.mjs"), "verify"],
+            arguments: [path.join(fixtureRoot, ".codex", "acf", "policy.mjs"), "verify"],
             cwd: fixtureRoot,
           },
         },

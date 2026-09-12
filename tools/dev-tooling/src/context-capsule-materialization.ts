@@ -9,7 +9,6 @@ import type {
 } from "@agent-context/repo-policy";
 
 import {
-  CONTEXT_CAPSULE_RUNTIME_SOURCE_PREFIX,
   contextCapsuleEntryBytes,
   type BuiltContextCapsule,
 } from "./context-capsule.js";
@@ -25,7 +24,7 @@ export const CONTEXT_MATERIALIZATION_KIND = "agent-context-materialization" as c
 
 const EXPANDED_SKILL_PREFIX = ".codex/skills/";
 const MATERIALIZED_SKILL_PREFIX = ".agents/skills/";
-const EXPANDED_RUNTIME_PREFIX = CONTEXT_CAPSULE_RUNTIME_SOURCE_PREFIX;
+const EXPANDED_RUNTIME_PREFIX = ".codex/acf/runtime-source/";
 const MATERIALIZED_RUNTIME_PREFIX = ".codex/acf/runtime/";
 
 export interface ContextMaterializedSkillFileV2 {
@@ -314,9 +313,6 @@ export function decodeContextMaterializationReceipt(
   }
   if (new Set(files.map((file) => file.targetPath)).size !== files.length) {
     throw new Error("Context materialization receipt target paths must be unique.");
-  }
-  if (files.length === 0) {
-    throw new Error("Context materialization receipt must contain at least one file.");
   }
   for (const skillRoot of materializedSkillRoots(files)) {
     if (!files.some((file) =>
@@ -800,16 +796,13 @@ function decodeMaterializedFile(value: unknown, index: number): ContextMateriali
   }
   const sourcePath = portableRelativePath(record.sourcePath, `${label}.sourcePath`);
   requireMaterializedTargetPath(targetPath);
-  const sourcePrefix = `${EXPANDED_SKILL_PREFIX}${skillName}/`;
-  if (!sourcePath.startsWith(sourcePrefix)) {
-    throw new Error(`${label}.sourcePath does not match its skill name.`);
+  const relativeSkillPath = targetPath.slice(skillRoot.length + 1);
+  if (relativeSkillPath.length === 0) {
+    throw new Error(`${label}.targetPath must name a file below its skill root.`);
   }
-  const relativeSkillPath = sourcePath.slice(sourcePrefix.length);
-  if (targetPath !== `${skillRoot}/${relativeSkillPath}`) {
-    throw new Error(`${label}.targetPath does not preserve its skill-relative source path.`);
-  }
-  if (record.identity !== `file:${sourcePath}`) {
-    throw new Error(`${label}.identity does not match its whole-file source.`);
+  const expandedTarget = `${EXPANDED_SKILL_PREFIX}${skillName}/${relativeSkillPath}`;
+  if (record.identity !== `file:${expandedTarget}`) {
+    throw new Error(`${label}.identity does not match its expanded skill target.`);
   }
   return {
     component: requiredString(record.component, `${label}.component`),

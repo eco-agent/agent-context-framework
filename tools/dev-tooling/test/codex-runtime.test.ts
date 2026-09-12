@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -9,15 +10,13 @@ import { parse as parseToml } from "smol-toml";
 
 import {
   codexInterfaceSelectionDisclosures,
+  inspectInstalledCodexInterface,
   unsafeReferenceDiagnostics,
 } from "../src/codex-interface.js";
 import {
-  addComponent,
-  diffProject,
-  doctorProject,
-  initProject,
-  removeComponent,
-} from "../src/context-installer.js";
+  packContextCapsule,
+  syncContextCapsule,
+} from "../src/context-capsule-workflow.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
 import { bootstrapRuntime } from "../src/runtime-bootstrap.js";
 
@@ -25,7 +24,7 @@ const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("codex-runtime is dependency-only with the exact Wave 4 closure", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.14.2");
+  assert.equal(registry.revision, "0.15.0");
   assert.equal(registry.components.length, 36);
   const component = registry.components.find((candidate) => candidate.name === "codex-runtime");
   assert.ok(component);
@@ -98,10 +97,8 @@ test("codex-runtime installs, diagnoses, and removes only its owned project conf
       '{"hooks":{"PreToolUse":[{"matcher":"^Bash$","hooks":[{"type":"command","command":"local"}]}]}}\n',
       "utf8",
     );
-    await initProject(projectRoot, frameworkRoot);
-    const added = await addComponent(projectRoot, frameworkRoot, "codex-runtime");
-    assert.equal(added.plan.status, "ready");
-    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+    await pack(projectRoot, ["codex-runtime"]);
+    assert.equal((await syncContextCapsule(projectRoot)).status, "current");
     const installed = parseToml(await readFile(path.join(projectRoot, ".codex", "config.toml"), "utf8")) as {
       mcp_servers: { local: { command: string }; repo_context: { command: string } };
     };
@@ -114,14 +111,15 @@ test("codex-runtime installs, diagnoses, and removes only its owned project conf
 
     const bootstrap = await bootstrapRuntime({ projectRoot, mode: "install-and-build" });
     assert.equal(bootstrap.status, "operational");
-    const doctor = await doctorProject(projectRoot, frameworkRoot);
-    assert.equal(doctor.health, "healthy");
-    assert.equal(doctor.codexInterface?.status, "ready");
-    assert.equal(doctor.codexInterface?.trustRequired, true);
-    assert.match(doctor.diagnostics.join("\n"), /trust this project/u);
+    const inspection = await inspectInstalledCodexInterface(
+      projectRoot,
+      ["core", "codex-agents", "runtime-base", "codex-hooks", "codex-repo-context", "codex-runtime"],
+    );
+    assert.equal(inspection?.status, "ready");
+    assert.equal(inspection?.trustRequired, true);
+    assert.match(inspection?.diagnostics.join("\n") ?? "", /trust this project/u);
 
-    const removed = await removeComponent(projectRoot, frameworkRoot, "codex-runtime");
-    assert.equal(removed.plan.status, "ready");
+    await pack(projectRoot, ["core"]);
     const retained = parseToml(await readFile(path.join(projectRoot, ".codex", "config.toml"), "utf8")) as {
       mcp_servers: { local: { command: string }; repo_context?: unknown };
       agents?: unknown;
@@ -137,3 +135,14 @@ test("codex-runtime installs, diagnoses, and removes only its owned project conf
     await rm(projectRoot, { recursive: true, force: true });
   }
 });
+
+async function pack(projectRoot: string, components: readonly string[]): Promise<void> {
+  execFileSync("git", ["init", "--quiet"], { cwd: projectRoot, windowsHide: true });
+  const result = await packContextCapsule(
+    frameworkRoot,
+    projectRoot,
+    "0".repeat(40),
+    components,
+  );
+  assert.notEqual(result.status, "blocked");
+}

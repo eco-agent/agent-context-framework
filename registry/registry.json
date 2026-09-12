@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.14.2",
-  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
+  "revision": "0.15.0",
+  "decisionPath": "registry/decisions/0.15.0-single-capsule-workflow.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:65b3bea286df76eec35de43836b0f4a48e0d9139ef81d8d318ff19c5e210ff45",
+      "revision": "sha256:0407969d87f428d995656543d981f14a991c685ed3a7e2f8d38c9161ce125efe",
       "dependencies": [],
       "capabilities": [
         {
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "d54d963926cb4cbf1dcf0a7c35a54ef6bcfee18a1bfeaa39a6f1e591754d7c4c",
+          "sourceSha256": "2ed549a002972be9a5cd3bea20f04a610cbcb65944e7bc2aa4faee7b5eed8318",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -50,6 +50,14 @@
           "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
           "sourceSha256": "4fd88698271ce6ce3470cac4707fe5572daa686827d7391a13a0c1ff6acf40d0",
           "targetPath": ".gitattributes"
+        },
+        {
+          "operation": "text-section",
+          "sourcePath": "registry/sources/git/managed-acf.gitignore",
+          "sourceSha256": "a972d945807f87c0da161d7ea7634ac2e4807301cb5a29df816c92360eb0b2e0",
+          "targetPath": ".gitignore",
+          "sectionId": "acf-generated",
+          "markerStyle": "toml"
         },
         {
           "operation": "file",
@@ -68,7 +76,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "sourceSha256": "33e36f05f91dbaa15357273c845cb1dec21b2c461b06d03f71b4b13c1369aa31",
+          "sourceSha256": "5a9b7d8e62c7f7129bac6aab9c3bef7de73b21a3e03deeb04a29bb0253ff2ce0",
           "targetPath": ".codex/acf/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
@@ -1479,7 +1487,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:a27a2cec15081c0fa47d2f282a83890665a981ff1a373e7059dd8d1fafaad4d8",
+      "revision": "sha256:3291b63d67c8fa437a0c33f209db5e1dbe0249d9edd0f8304222ebde9eda3bb3",
       "dependencies": [],
       "capabilities": [
         {
@@ -1566,7 +1574,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
-          "sourceSha256": "70062e74af80262ec955792b4ca439e072e098cd85cb10203c22e3d364860ffb",
+          "sourceSha256": "bad6e33944ad1b7446005fc4c9b560d448c857b0fdafce64abf59602eb763901",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
           "mediaType": "text/markdown"
         },
@@ -1580,7 +1588,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-          "sourceSha256": "2dfc54b69ca27a5f798443f28ea17b34720fc62f1bd6bcebafec118e819e8429",
+          "sourceSha256": "d70c1f7483149af7efc2be7757402844f02e2756656ab994c7ac33794c36ce8e",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
           "mediaType": "text/markdown"
         },
@@ -2010,7 +2018,7 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:1cd25455a741ae081ea005a9d12ddb30be4f601204cbe2b325ac6d9b3516c929",
+      "revision": "sha256:99cc2c4f2a7491d7f5e08847f801bb17d1643f25ae5ca720c78b849b8f17eb0c",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-design-operational-boundaries",
@@ -2050,7 +2058,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/engineering.md",
-          "sourceSha256": "f56b907349bda632057f2573b346690d42494a8dd72fa39de76d945ca820da80",
+          "sourceSha256": "ab5052277008f3c80b9003c254562f361e162a0fb4bfc96b10560803c8efeca1",
           "targetPath": "AGENTS.md",
           "sectionId": "engineering",
           "markerStyle": "markdown"
@@ -2062,13 +2070,6 @@
           "targetPath": "docs/AGENTS.md",
           "sectionId": "documentation",
           "markerStyle": "markdown"
-        },
-        {
-          "operation": "file",
-          "sourcePath": "registry/sources/templates/work-record.md",
-          "sourceSha256": "90f232b3f65db8088d14b0a90345f71190eef46f4c0738003748656953d3ae32",
-          "targetPath": ".codex/templates/work-record.md",
-          "mediaType": "text/markdown"
         },
         {
           "operation": "file",
@@ -2197,7 +2198,7 @@
     },
     {
       "name": "runtime-base",
-      "revision": "sha256:d67ecedb1a6612c666222bb230a62ab7489a90cf1909a27542bc58029312e7a1",
+      "revision": "sha256:206159083577767dfad0da43be6efd7fa21ca938713b78f22d104c8f27bfa241",
       "dependencies": [],
       "capabilities": [
         {
@@ -2232,7 +2233,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".codex/acf/runtime-source/package.json",
-          "sourceSha256": "16349d2166c64fa4df7e8b1662bf710e96664e1152c946434f2fc97eddeab8ed",
+          "sourceSha256": "0ee19e51d941cec94eb7a53e72328eff61936e3001404855bcb2b21e7e6e61d2",
           "targetPath": ".codex/acf/runtime-source/package.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
@@ -2345,7 +2346,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:514b108f1a9a0651abb9c49dcc829d5f54c229aac4c88bf618a7fd83b7baf923",
+      "revision": "sha256:aaa2fc3d43414ac3bd5e7ef17bde33b4bdc458883302951126a1c6325032a622",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2388,7 +2389,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".codex/acf/runtime-source/packages/policy/src/context-installation.ts",
-          "sourceSha256": "7c815b690f38c71c2dd0f571c966f7c4415ffcd7c13b04ff8c55dffc31d35640",
+          "sourceSha256": "2dd94ee5fb928e6c2d2fd399fc3b55fb94ef01935dbb37e022fe67988b1d1330",
           "targetPath": ".codex/acf/runtime-source/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2420,7 +2421,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".codex/acf/runtime-source/packages/policy/test/policy.test.ts",
-          "sourceSha256": "ca541daea97db6b3aba7ab86fdb5e7ae67d697d87e2467b3763a8d3cda3deb1b",
+          "sourceSha256": "ff58ba16ed7894ce8254eb79a80aeae1f8da8cd40d27d94858549b6cb3e730ef",
           "targetPath": ".codex/acf/runtime-source/packages/policy/test/policy.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2436,7 +2437,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/runtime/policy/cli.mjs",
-          "sourceSha256": "945342f9e3d4ac87b9e89bb98647887b8fbccc009242caad0cbdc0ade68298d7",
+          "sourceSha256": "06100f8711ca0cc45d17213de18d50e178f4d7694281a7e7aae4a038a8d61bb6",
           "targetPath": ".codex/acf/runtime-source/packages/policy/dist/src/cli.js",
           "mediaType": "text/javascript"
         },
@@ -2524,7 +2525,7 @@
     },
     {
       "name": "codex-hooks",
-      "revision": "sha256:d53d218c1e3ad1e7788714c8347bf4c7adbd86910da7c671155e3eec1d943b30",
+      "revision": "sha256:b6753e9629062bd8bd09a2fee1efb1bf96af5eb442b46b601679bcd30e9ef7ca",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2578,7 +2579,7 @@
         {
           "operation": "runtime-workspace",
           "sourcePath": ".codex/acf/runtime-source/packages/hooks/src/hook.ts",
-          "sourceSha256": "ec376767ca2b2228235e745f72621095cdc5b838961f5fe321f41c0bedf33a34",
+          "sourceSha256": "f119e1f86931265afc54a6147bf2ad0487aef47bc09222af5d076042a921829a",
           "targetPath": ".codex/acf/runtime-source/packages/hooks/src/hook.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
@@ -2610,7 +2611,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/runtime/hooks/codex-cli.mjs",
-          "sourceSha256": "539f4cb4495eb5fb35a90d5d538a0b5b52acd1e804bfb818be180826f3d640ff",
+          "sourceSha256": "dbe5a9c6b2b8696d86fc0e28d25787a7fd2a7d2572a5b2d1e2cc0db2cbd19c07",
           "targetPath": ".codex/acf/runtime-source/packages/hooks/dist/src/codex-cli.js",
           "mediaType": "text/javascript"
         },

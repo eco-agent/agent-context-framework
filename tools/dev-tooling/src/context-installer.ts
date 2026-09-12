@@ -573,13 +573,9 @@ async function inspectInstalledRepositoryPolicy(
 ): Promise<ContextRepositoryPolicyHealth> {
   const cliPath = path.join(
     projectRoot,
-    ".agent-context",
-    "runtime",
-    "packages",
-    "policy",
-    "dist",
-    "src",
-    "cli.js",
+    ".codex",
+    "acf",
+    "policy.mjs",
   );
   const output = await executeCompactJson(process.execPath, [
     cliPath,
@@ -935,6 +931,17 @@ function assessDesired(
         nextSourceSha256: desired.artifact.sourceSha256,
         difference: boundedDifference("absent", desired.artifact.targetPath, "", desired.projection.sourceDisplay),
         detail: "The selected project-owned source has not been installed.",
+      };
+    }
+    if (current.state === "present" && current.sha256 === desired.projection.sourceSha256) {
+      return {
+        ...base,
+        status: "unchanged",
+        previousSourceSha256: null,
+        currentSha256: current.sha256,
+        nextSourceSha256: desired.artifact.sourceSha256,
+        difference: null,
+        detail: "The existing target exactly matches the capsule activation projection.",
       };
     }
     return {

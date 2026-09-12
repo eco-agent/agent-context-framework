@@ -1,17 +1,22 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.14.2",
-  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
+  "registryRevision": "0.15.0",
+  "decisionPath": "registry/decisions/0.15.0-single-capsule-workflow.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "99c7088b417d4299a06f476d6bf64329ea727b262394fbf4976017446c88f481"
+      "sha256": "2ed549a002972be9a5cd3bea20f04a610cbcb65944e7bc2aa4faee7b5eed8318"
     },
     {
       "invariantId": "framework-root-prefix",
       "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
-      "sha256": "3b29f7dd6b50dbdd64011259d696d84e1ce458105b5ed4c666f74dfe2b0ba32e"
+      "sha256": "cbbc6554009cbcedaa446aed67089a4bc53077b063299582c7aee7054cf7a80d"
+    },
+    {
+      "invariantId": "acf-generated-ignore",
+      "sourcePath": "registry/sources/git/managed-acf.gitignore",
+      "sha256": "a972d945807f87c0da161d7ea7634ac2e4807301cb5a29df816c92360eb0b2e0"
     },
     {
       "invariantId": "frontend-discipline",
@@ -199,16 +204,6 @@
       "sha256": "179e3ffa8477ba66d8e19b8816d75aed031b0e4c45acb283b3384adc2a804ee2"
     },
     {
-      "invariantId": "repository-work",
-      "sourcePath": "registry/sources/instructions/repository-work.md",
-      "sha256": "fafe8eb62c53d652e60e45e515f28fb9d8d8229f68cb95841dc0f5624a516339"
-    },
-    {
-      "invariantId": "verification",
-      "sourcePath": "registry/sources/instructions/verification.md",
-      "sha256": "53345f4af4b56888ab0e715b0089ba69838f4f9db439643f3b049ab71ef21c38"
-    },
-    {
       "invariantId": "documentation-prose",
       "sourcePath": "registry/sources/instructions/documentation.md",
       "sha256": "55904f39eb6ae94cc51509b9e5060b5298dc48a8e65c99fc9074d280a6e9a7b8"
@@ -216,7 +211,7 @@
     {
       "invariantId": "engineering-independent",
       "sourcePath": "registry/sources/instructions/engineering.md",
-      "sha256": "f56b907349bda632057f2573b346690d42494a8dd72fa39de76d945ca820da80"
+      "sha256": "ab5052277008f3c80b9003c254562f361e162a0fb4bfc96b10560803c8efeca1"
     },
     {
       "invariantId": "typescript-engineering-explicit",
@@ -234,14 +229,9 @@
       "sha256": "5692c6624f196a44b47ee571ac4c8ce9604d6211cf911b3881c9a9469a14fa80"
     },
     {
-      "invariantId": "work-record-lifecycle",
-      "sourcePath": "registry/sources/templates/work-record.md",
-      "sha256": "90f232b3f65db8088d14b0a90345f71190eef46f4c0738003748656953d3ae32"
-    },
-    {
       "invariantId": "repository-policy-explicit",
       "sourcePath": "registry/sources/instructions/repository-policy.md",
-      "sha256": "e7c8a5c1d0d99f20e9ec1d62538ba28ba0686848146922bca3d5176c8bbbd419"
+      "sha256": "c3aade536a550c7c1f4e9d0c5e0100dd6ec6353b9c5fb1d91b3068b1b6fb424e"
     },
     {
       "invariantId": "codex-agent-selection",
@@ -266,22 +256,22 @@
     {
       "invariantId": "codex-hooks-project-local",
       "sourcePath": "registry/sources/codex/hooks.json",
-      "sha256": "16162cc8e34d3d73fc545b0d4b9491764775b92202f7b06a6fad1c3f1b75d635"
+      "sha256": "d894e2235f8d9fd5a0247d403939402de13d14873c1f68dfea7d40f36db3282a"
     },
     {
       "invariantId": "codex-repo-context-project-local",
       "sourcePath": "registry/sources/codex/repo-context.toml",
-      "sha256": "8acb371c803fe5ae40d11aac887e93382fe217631ea2c0d11c6e317b45e6784c"
+      "sha256": "573c2030b2fe3221783f64b29907f86ff6b58cadca539b66c507ebd773bf1603"
     },
     {
       "invariantId": "orchestration-skill-contract",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/SKILL.md",
-      "sha256": "2dfc54b69ca27a5f798443f28ea17b34720fc62f1bd6bcebafec118e819e8429"
+      "sha256": "d70c1f7483149af7efc2be7757402844f02e2756656ab994c7ac33794c36ce8e"
     },
     {
       "invariantId": "orchestration-git-transaction",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
-      "sha256": "70062e74af80262ec955792b4ca439e072e098cd85cb10203c22e3d364860ffb"
+      "sha256": "bad6e33944ad1b7446005fc4c9b560d448c857b0fdafce64abf59602eb763901"
     },
     {
       "invariantId": "orchestration-loop-catalog",
@@ -427,7 +417,7 @@
       "invariantId": "framework-root-prefix",
       "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
       "targetPath": "AGENTS.md",
-      "beforeHeading": "## Communication"
+      "beforeHeading": "<!-- agent-context:core:start -->"
     },
     {
       "kind": "markdown-section",
@@ -442,13 +432,6 @@
       "sourcePath": "registry/sources/instructions/core.md",
       "targetPath": "AGENTS.md",
       "heading": "## Agent routing"
-    },
-    {
-      "kind": "markdown-section",
-      "invariantId": "repository-work",
-      "sourcePath": "registry/sources/instructions/repository-work.md",
-      "targetPath": "AGENTS.md",
-      "heading": "## Work"
     },
     {
       "kind": "markdown-section",
@@ -470,13 +453,6 @@
       "sourcePath": "registry/sources/instructions/frontend.md",
       "targetPath": "AGENTS.md",
       "heading": "## Frontend"
-    },
-    {
-      "kind": "markdown-section",
-      "invariantId": "verification",
-      "sourcePath": "registry/sources/instructions/verification.md",
-      "targetPath": "AGENTS.md",
-      "heading": "## Verification"
     },
     {
       "kind": "markdown-section",

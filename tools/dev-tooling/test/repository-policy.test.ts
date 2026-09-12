@@ -9,12 +9,10 @@ import { promisify } from "node:util";
 import { resolveContextComponents } from "@agent-context/repo-policy";
 
 import {
-  addComponent,
-  diffProject,
-  doctorProject,
-  initProject,
-  removeComponent,
-} from "../src/context-installer.js";
+  packContextCapsule,
+  syncContextCapsule,
+} from "../src/context-capsule-workflow.js";
+import { CONTEXT_MATERIALIZATION_PATH } from "../src/context-capsule-materialization.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
 import { bootstrapRuntime } from "../src/runtime-bootstrap.js";
 
@@ -60,7 +58,7 @@ test("tracked repository-policy bundle is reproducible", async () => {
 
 test("Wave 3 resolves only runtime base and repository policy", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.14.2");
+  assert.equal(registry.revision, "0.15.0");
   assert.equal(registry.components.length, 36);
   assert.deepEqual(
     resolveContextComponents(registry, ["repository-policy"]).map((component) => component.name),
@@ -85,22 +83,15 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     await mkdir(path.join(projectRoot, "docs"));
     await writeFile(path.join(projectRoot, "pyproject.toml"), "[project]\nname = \"fixture\"\n", "utf8");
 
-    await initProject(projectRoot, frameworkRoot);
-    assert.match(await readFile(path.join(projectRoot, ".gitattributes"), "utf8"), /\.agent-context\/\*\* text eol=lf/u);
-    const installed = await addComponent(projectRoot, frameworkRoot, "repository-policy");
-    assert.equal(installed.plan.status, "ready");
-    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+    await pack(projectRoot, ["repository-policy"]);
+    assert.match(await readFile(path.join(projectRoot, ".gitattributes"), "utf8"), /\.codex\/acf\/\*\* text eol=lf/u);
+    assert.equal((await syncContextCapsule(projectRoot)).status, "current");
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
     assert.equal(await exists(path.join(projectRoot, "pnpm-lock.yaml")), false);
     assert.deepEqual(
-      (await readdir(path.join(projectRoot, ".agent-context", "runtime", "packages"))).sort(),
+      (await readdir(path.join(await runtimeRoot(projectRoot), "packages"))).sort(),
       ["policy", "shared"],
     );
-
-    const materializedDoctor = await doctorProject(projectRoot, frameworkRoot);
-    assert.equal(materializedDoctor.health, "attention");
-    assert.equal(materializedDoctor.runtime?.status, "dependencies-missing");
-    assert.equal(materializedDoctor.repositoryPolicy, null);
 
     const bootstrapped = await bootstrapRuntime({
       projectRoot,
@@ -110,7 +101,7 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
     assert.equal(await exists(path.join(projectRoot, "pnpm-lock.yaml")), false);
 
-    const wrapper = path.join(projectRoot, ".agent-context", "policy.mjs");
+    const wrapper = path.join(projectRoot, ".codex", "acf", "policy.mjs");
     const inspection = await runJson(process.execPath, [wrapper, "inspect"], projectRoot);
     assert.equal(inspection.code, 0);
     assert.equal(record(inspection.value).operation, "inspect");
@@ -120,7 +111,7 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     assert.equal(unconfigured.code, 1);
     assert.equal(record(unconfigured.value).status, "configuration-required");
 
-    await writeJson(path.join(projectRoot, ".agent-context", "policy.json"), {
+    await writeJson(path.join(projectRoot, ".codex", "acf", "policy.json"), {
       schemaVersion: 1,
       state: "configured",
       repository: {
@@ -145,29 +136,15 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     assert.equal(record(verification.value).status, "completed");
     assert.deepEqual(record(verification.value).commands, []);
 
-    const finalDoctor = await doctorProject(projectRoot, frameworkRoot);
-    assert.equal(finalDoctor.health, "healthy");
-    assert.equal(finalDoctor.runtime?.status, "operational");
-    assert.equal(finalDoctor.repositoryPolicy?.status, "ready");
-    assert.equal(finalDoctor.diff?.current, true);
-    assert.equal(
-      finalDoctor.diff?.plan.status === "ready" &&
-        finalDoctor.diff.plan.assessments.some((assessment) =>
-          assessment.targetPath === ".codex/acf/policy.json" &&
-          assessment.status === "unchanged"),
-      true,
-    );
-
-    const removed = await removeComponent(projectRoot, frameworkRoot, "repository-policy");
-    assert.equal(removed.plan.status, "ready");
-    assert.equal(await exists(path.join(projectRoot, ".agent-context", "policy.json")), true);
-    assert.equal(await exists(path.join(projectRoot, ".agent-context", "policy-invariants.json")), false);
-    assert.equal(await exists(path.join(projectRoot, ".agent-context", "policy.mjs")), false);
-    assert.equal(
-      await exists(path.join(projectRoot, ".agent-context", "runtime", "packages", "policy", "src", "index.ts")),
-      false,
-    );
-    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+    await pack(projectRoot, ["core"]);
+    assert.equal(await exists(path.join(projectRoot, ".codex", "acf", "policy.json")), true);
+    assert.equal(await exists(path.join(projectRoot, ".codex", "acf", "policy-invariants.json")), false);
+    assert.equal(await exists(path.join(projectRoot, ".codex", "acf", "policy.mjs")), false);
+    const coreReceipt = JSON.parse(
+      await readFile(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+    ) as { files: readonly unknown[] };
+    assert.deepEqual(coreReceipt.files, []);
+    assert.equal((await syncContextCapsule(projectRoot)).status, "current");
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }
@@ -181,14 +158,12 @@ test("Oxfmt integration owns only the framework runtime ignore", async () => {
       `${JSON.stringify({ ignorePatterns: ["dist/**"] }, null, 2)}\n`,
       "utf8",
     );
-    await initProject(projectRoot, frameworkRoot);
-    const installed = await addComponent(projectRoot, frameworkRoot, "integration-oxfmt");
-    assert.equal(installed.plan.status, "ready");
+    await pack(projectRoot, ["integration-oxfmt"]);
     assert.deepEqual(
       JSON.parse(await readFile(path.join(projectRoot, ".oxfmtrc.json"), "utf8")),
-      { ignorePatterns: ["dist/**", ".agent-context/**"] },
+      { ignorePatterns: ["dist/**", ".codex/acf/**"] },
     );
-    await removeComponent(projectRoot, frameworkRoot, "integration-oxfmt");
+    await pack(projectRoot, ["core"]);
     assert.deepEqual(
       JSON.parse(await readFile(path.join(projectRoot, ".oxfmtrc.json"), "utf8")),
       { ignorePatterns: ["dist/**"] },
@@ -224,6 +199,24 @@ async function runJson(
       }
     });
   });
+}
+
+async function pack(projectRoot: string, components: readonly string[]): Promise<void> {
+  await executeFile("git", ["init", "--quiet"], { cwd: projectRoot, windowsHide: true });
+  const result = await packContextCapsule(
+    frameworkRoot,
+    projectRoot,
+    "0".repeat(40),
+    components,
+  );
+  assert.notEqual(result.status, "blocked");
+}
+
+async function runtimeRoot(projectRoot: string): Promise<string> {
+  const receipt = JSON.parse(
+    await readFile(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+  ) as { treeSha256: string };
+  return path.join(projectRoot, ".codex", "acf", "runtime", receipt.treeSha256);
 }
 
 async function writeJson(candidate: string, value: unknown): Promise<void> {

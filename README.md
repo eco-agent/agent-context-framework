@@ -205,7 +205,7 @@ the request needs that work. An ordinary code edit should never pay for all of t
 Generic instructions cannot know whether a repository is a TypeScript monorepo,
 which package manager owns it, whether it has a frontend, or which commands count
 as verification. ACF stores those answers in the project-owned
-`.agent-context/policy.json`.
+`.codex/acf/policy.json`.
 
 The repository block makes those facts explicit:
 
@@ -250,19 +250,19 @@ owner and lets code select changed files against repository policy.
 ### Regenerable downstream test application
 
 Framework development does not need to borrow a real product repository for
-installer tests. The repository includes a small web application generator with
+capsule tests. The repository includes a small web application generator with
 independent ACF and Git-state controls:
 
 ```powershell
 pnpm fixture:test-app -- --output D:\dev\acf-test-app --state clean --acf none
-pnpm fixture:test-app -- --output D:\dev\acf-test-app --state dirty --acf core --replace
+pnpm fixture:test-app -- --output D:\dev\acf-test-app --state dirty --acf runtime --replace
 ```
 
-`--acf none` creates the application before installation. `--acf core` installs
-and commits the real core component. `--state dirty` then changes one tracked
-application file and adds one untracked note, so installer work can prove it
-preserved unrelated project changes. The generator replaces only a directory
-that contains its ACF fixture marker.
+`--acf none` creates the application before packing. `core`, `runtime`, and
+`acceptance` pack progressively larger real component selections. `--state
+dirty` then changes one tracked application file and adds one untracked note, so
+capsule work can prove it preserved unrelated project changes. The generator
+replaces only a directory that contains its ACF fixture marker.
 
 Core fixtures are not final-acceptance fixtures. The final acceptance runner also
 requires repository policy, the isolated Codex runtime, hooks, and repository
@@ -270,16 +270,11 @@ context. Keep that larger state explicit when a test actually needs it.
 
 ### Evidence that survives the chat
 
-Long work disappears surprisingly easily inside a model conversation. A context
-compaction drops detail. Another agent inherits a summary. A later turn remembers
-the decision but not the evidence that justified it.
-
-For substantial code, ACF writes temporary task state to `.codex/work`. The record
-names the target result, baseline commit, current branch, decisions, smallest
-complete change, and the paths that must move together. Checkpoint commits keep
-task-owned work out of the chat transcript. At closure, the record captures the
-tested revision and verification result, then disappears unless it still owns
-evidence that has nowhere durable to go.
+Checkpoint commits preserve task-owned code without copying the conversation
+into the repository. Durable decisions go in project documents such as an ADR.
+ACF does not require `.codex/work/<task>.md`. If an interrupted filesystem
+transaction needs a resume token, it writes a short ignored record below
+`.codex/acf/state/` and deletes it after recovery.
 
 The optional
 [`orchestrate-codex-workflows`](.codex/skills/orchestrate-codex-workflows/SKILL.md)
@@ -296,7 +291,7 @@ It answers one repository question and stops. Independent scouts run in parallel
 up to the capacity Codex exposes. The project does not replace that capacity with
 its own smaller thread limit.
 
-The worker uses Sol at high reasoning and owns one exclusive branch and index. The
+The worker uses Sol at high reasoning and owns one exclusive checkout, branch, and index. The
 primary Sol agent remains responsible for product and architecture decisions,
 combines scout evidence, and resolves contradictions. Repeated delegation failure
 falls back to direct Sol work instead of leaving the task waiting on a broken
@@ -307,13 +302,12 @@ dormant without a valid session binding. The repository tool reads bounded line
 ranges or runs fixed-string searches inside one authorized root. It cannot turn a
 context helper into unrestricted filesystem access.
 
-### The manifest itself
+### The capsule itself
 
-The installer carries this setup between repositories without another copy-paste
-project. The registry records which components I chose, which source revision each
-artifact came from, and which exact file or structured scope ACF owns. That keeps
-the source visible and editable without confusing my changes with framework
-updates.
+One tracked `.codex/acf/capsule.acf` carries the selected component closure,
+source bytes, and activation hashes. `pack` writes it and the tracked activation
+files. `sync` recreates ignored runtime files and `.agents/skills` from it. The
+receipt is ignored and can replace only files whose hashes still match.
 
 Fork it and rewrite whatever annoys you. Keep only the rules you would defend in a
 code review. I want people to begin with a serious setup and edit it, instead of
@@ -342,8 +336,13 @@ ACF currently runs from a source checkout and requires Node.js `24.14.0` with pn
 git clone https://github.com/Lungren2/agent-context-framework.git
 cd agent-context-framework
 pnpm install --frozen-lockfile
-pnpm agent-context setup --cwd D:\path\to\your-project
+pnpm agent-context pack codex-runtime repository-policy --cwd D:\path\to\your-project
+pnpm agent-context sync --cwd D:\path\to\your-project
 ```
+
+Agents work on `codex/<task>` branches from the human-owned `development`
+branch. They push the task branch and open a pull request to `development`, but
+they never merge it.
 
 [`registry`](registry) contains the component manifest. [`docs`](docs/README.md)
 contains the architecture notes.

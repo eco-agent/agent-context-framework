@@ -4,7 +4,7 @@ import path from "node:path";
 import test from "node:test";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
-const runtimeRoot = path.join(frameworkRoot, ".agent-context", "runtime");
+const runtimeRoot = path.join(frameworkRoot, ".codex", "acf", "runtime-source");
 
 test("isolated runtime owns an exact static package graph", async () => {
   const manifest = await readJson(path.join(runtimeRoot, "package.json"));

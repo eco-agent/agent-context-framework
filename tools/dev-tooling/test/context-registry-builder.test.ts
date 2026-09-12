@@ -19,7 +19,6 @@ import {
   writeContextRegistry,
 } from "../src/context-registry-builder.js";
 import { checkContextGovernance } from "../src/context-governance.js";
-import { planSetupSelection } from "../src/setup-server.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
@@ -759,7 +758,7 @@ test("optional orchestration authoring has an explicit consumer and a governed s
   assert.equal(intentRecord >= 0 && externalEffect > intentRecord, true, "evidence intent must precede the external effect");
 });
 
-test("orchestration authoring install and setup planning preserve the consumer package graph", async () => {
+test("orchestration authoring installation preserves the consumer package graph", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-authoring-"));
   const componentName = "skill-orchestrate-codex-workflows";
   const manifest = '{"name":"consumer","private":true,"dependencies":{"existing":"1.0.0"}}\n';
@@ -784,18 +783,6 @@ test("orchestration authoring install and setup planning preserve the consumer p
     assert.equal(preview.trustRequired, true);
     assert.equal(preview.activations.some((activation) =>
       activation.id === "codex-authenticated-execution" && activation.status === "dormant"), true);
-
-    const setupPreview = await planSetupSelection(root, frameworkRoot, {
-      components: [componentName],
-      overrides: [],
-    });
-    assert.deepEqual(setupPreview.requestedComponents, preview.requestedComponents);
-    assert.deepEqual(setupPreview.resolvedComponents, preview.resolvedComponents);
-    assert.deepEqual(setupPreview.footprint, preview.footprint);
-    assert.deepEqual(setupPreview.capabilities, preview.capabilities);
-    assert.equal(setupPreview.licenses.some((license) => license.spdx === "Apache-2.0"), true);
-    assert.equal(setupPreview.trustRequired, true);
-    assert.deepEqual(setupPreview.activations, preview.activations);
 
     const installed = await addComponent(root, frameworkRoot, componentName);
     assert.equal(installed.plan.status, "ready");
@@ -1258,8 +1245,8 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
     );
   }
   await cp(
-    path.join(frameworkRoot, ".agent-context", "runtime"),
-    path.join(temporaryRoot, ".agent-context", "runtime"),
+    path.join(frameworkRoot, ".codex", "acf", "runtime-source"),
+    path.join(temporaryRoot, ".codex", "acf", "runtime-source"),
     {
       recursive: true,
       filter: (source) => {

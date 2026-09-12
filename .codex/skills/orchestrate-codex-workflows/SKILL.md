@@ -49,8 +49,8 @@ recursive manager trees, sibling voting, or an open-ended scheduler.
 1. Read [references/loop-catalog.md](references/loop-catalog.md) and choose the
    smallest helper that matches the required return path.
 2. Read [references/git-transaction.md](references/git-transaction.md) before a
-   role creates commits, branches, refs, or worktrees, or when review compares
-   Git history. Define cleanup checks before execution.
+   role creates commits, branches, or refs, or when review compares Git history.
+   Define cleanup checks before execution.
 3. Copy `assets/typescript-runtime/` into a new project-owned package directory.
    Do not overwrite an existing package manifest. Keep the copied tests until
    the project workflow passes them.

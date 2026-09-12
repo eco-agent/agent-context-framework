@@ -162,9 +162,9 @@ export function unsafeReferenceDiagnostics(source: string): readonly string[] {
     [/--filter\b/u, "Host workspace package filters are forbidden."],
   ];
   for (const [pattern, diagnostic] of rules) if (pattern.test(source)) diagnostics.push(diagnostic);
-  for (const match of source.matchAll(/\.agent-context[\\/]runtime[\\/][^\s"']*/gu)) {
+  for (const match of source.matchAll(/\.codex[\\/]acf[\\/]runtime(?:-source)?[\\/][^\s"']*/gu)) {
     if (match[0].split(/[\\/]/u).includes("..")) {
-      diagnostics.push("Runtime references may not escape .codex/acf/runtime-source.");
+      diagnostics.push("Runtime references may not escape .codex/acf runtime directories.");
       break;
     }
   }

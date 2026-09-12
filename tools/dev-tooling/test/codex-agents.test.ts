@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -8,19 +9,19 @@ import { resolveContextComponents } from "@agent-context/repo-policy";
 import { parse as parseToml } from "smol-toml";
 
 import {
-  addComponent,
-  diffProject,
-  doctorProject,
-  initProject,
-  removeComponent,
-} from "../src/context-installer.js";
+  inspectInstalledCodexInterface,
+} from "../src/codex-interface.js";
+import {
+  packContextCapsule,
+  syncContextCapsule,
+} from "../src/context-capsule-workflow.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("codex-agents resolves the explicit authority-based model profile", async () => {
   const registry = await buildContextRegistry(frameworkRoot);
-  assert.equal(registry.revision, "0.14.2");
+  assert.equal(registry.revision, "0.15.0");
   assert.equal(registry.components.length, 36);
   assert.deepEqual(
     resolveContextComponents(registry, ["codex-agents"]).map((component) => component.name),
@@ -74,8 +75,7 @@ test("codex-agents resolves the explicit authority-based model profile", async (
 test("codex-agents doctor rejects obsolete bootstrap concurrency settings", async () => {
   const projectRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-codex-agent-obsolete-"));
   try {
-    await initProject(projectRoot, frameworkRoot);
-    await addComponent(projectRoot, frameworkRoot, "codex-agents");
+    await pack(projectRoot, ["codex-agents"]);
     const configPath = path.join(projectRoot, ".codex", "config.toml");
     await writeFile(
       configPath,
@@ -85,9 +85,9 @@ test("codex-agents doctor rejects obsolete bootstrap concurrency settings", asyn
       ),
       "utf8",
     );
-    const doctor = await doctorProject(projectRoot, frameworkRoot);
-    assert.equal(doctor.codexInterface?.status, "invalid");
-    assert.match(doctor.diagnostics.join("\n"), /agents\.max_concurrent_threads_per_session is obsolete/u);
+    const inspection = await inspectInstalledCodexInterface(projectRoot, ["core", "codex-agents"]);
+    assert.equal(inspection?.status, "invalid");
+    assert.match(inspection?.diagnostics.join("\n") ?? "", /agents\.max_concurrent_threads_per_session is obsolete/u);
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }
@@ -102,10 +102,8 @@ test("codex-agents install and removal preserve unrelated Codex configuration", 
       '[mcp_servers.local]\ncommand = "local-server"\n',
       "utf8",
     );
-    await initProject(projectRoot, frameworkRoot);
-    const added = await addComponent(projectRoot, frameworkRoot, "codex-agents");
-    assert.equal(added.plan.status, "ready");
-    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+    await pack(projectRoot, ["codex-agents"]);
+    assert.equal((await syncContextCapsule(projectRoot)).status, "current");
     const installed = parseToml(await readFile(path.join(projectRoot, ".codex", "config.toml"), "utf8")) as {
       agents: {
         default: { config_file: string };
@@ -119,8 +117,7 @@ test("codex-agents install and removal preserve unrelated Codex configuration", 
     assert.equal(installed.agents.scout.config_file, "./agents/scout.toml");
     assert.equal(installed.agents.worker.config_file, "./agents/worker.toml");
 
-    const removed = await removeComponent(projectRoot, frameworkRoot, "codex-agents");
-    assert.equal(removed.plan.status, "ready");
+    await pack(projectRoot, ["core"]);
     const retained = parseToml(await readFile(path.join(projectRoot, ".codex", "config.toml"), "utf8")) as {
       agents?: unknown;
       mcp_servers: { local: { command: string } };
@@ -143,4 +140,15 @@ async function exists(candidate: string): Promise<boolean> {
     if (error instanceof Error && "code" in error && error.code === "ENOENT") return false;
     throw error;
   }
+}
+
+async function pack(projectRoot: string, components: readonly string[]): Promise<void> {
+  execFileSync("git", ["init", "--quiet"], { cwd: projectRoot, windowsHide: true });
+  const result = await packContextCapsule(
+    frameworkRoot,
+    projectRoot,
+    "0".repeat(40),
+    components,
+  );
+  assert.notEqual(result.status, "blocked");
 }

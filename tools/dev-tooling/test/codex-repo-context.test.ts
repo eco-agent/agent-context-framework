@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile, spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
-import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createInterface } from "node:readline";
@@ -11,11 +11,9 @@ import { resolveContextComponents } from "@agent-context/repo-policy";
 import { parse as parseToml } from "smol-toml";
 
 import {
-  addComponent,
-  diffProject,
-  initProject,
-  removeComponent,
-} from "../src/context-installer.js";
+  packContextCapsule,
+  syncContextCapsule,
+} from "../src/context-capsule-workflow.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
 import { CONTEXT_MATERIALIZATION_PATH } from "../src/context-capsule-materialization.js";
 import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
@@ -69,55 +67,21 @@ test("tracked repo-context bundle is reproducible", async () => {
   }
 });
 
-test("framework Codex config starts the tracked package-free repo-context bundle", async () => {
-  const projectRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-fresh-worktree-repo-"));
-  try {
-    const frameworkConfig = parseToml(
-      await readFile(path.join(frameworkRoot, ".codex", "config.toml"), "utf8"),
-    );
-    const configured = decodeRepoContextConfig(
-      record(record(frameworkConfig).mcp_servers).repo_context,
-    );
-    assert.deepEqual(configured, {
-      command: "node",
-      args: ["registry/sources/runtime/repo-context/mcp-cli.mjs", "--root", "."],
-      required: true,
-      enabled_tools: ["repo_context"],
-      startup_timeout_sec: 20,
-      tool_timeout_sec: 15,
-    });
-
-    const initialized = await executeFile("git", ["init", "--quiet"], {
-      cwd: projectRoot,
-      windowsHide: true,
-    });
-    assert.equal(initialized.stderr, "");
-    await writeFile(path.join(projectRoot, "README.md"), "fresh package-free context\n", "utf8");
-    const installedBundle = path.join(projectRoot, configured.args[0]!);
-    await mkdir(path.dirname(installedBundle), { recursive: true });
-    await copyFile(repoContextBundle, installedBundle);
-    assert.equal(await exists(path.join(projectRoot, "node_modules")), false);
-
-    const session = startMcp(installedBundle, configured.args.slice(1), projectRoot);
-    try {
-      const response = await session.request("initialize", {
-        protocolVersion: "2025-11-25",
-        capabilities: {},
-        clientInfo: { name: "fresh-worktree-fixture", version: "1.0.0" },
-      });
-      assert.equal(response.error, undefined);
-      session.notify("notifications/initialized", {});
-      const called = await session.request("tools/call", {
-        name: "repo_context",
-        arguments: { operation: "read", path: "README.md" },
-      });
-      assert.match(toolText(called.result), /fresh package-free context/u);
-    } finally {
-      await session.close();
-    }
-  } finally {
-    await rm(projectRoot, { recursive: true, force: true });
-  }
+test("framework Codex config starts repo-context through the capsule bootstrap", async () => {
+  const frameworkConfig = parseToml(
+    await readFile(path.join(frameworkRoot, ".codex", "config.toml"), "utf8"),
+  );
+  const configured = decodeRepoContextConfig(
+    record(record(frameworkConfig).mcp_servers).repo_context,
+  );
+  assert.deepEqual(configured, {
+    command: "node",
+    args: [".codex/acf/bootstrap.mjs", "exec", "repo-context"],
+    required: true,
+    enabled_tools: ["repo_context"],
+    startup_timeout_sec: 20,
+    tool_timeout_sec: 15,
+  });
 });
 
 test("codex-repo-context resolves the isolated bounded package and local MCP table", async () => {
@@ -167,12 +131,11 @@ test("installed repository-context MCP stays host-neutral and serves the configu
       "utf8",
     );
     await writeFile(path.join(projectRoot, "README.md"), "bounded fixture context\n", "utf8");
-    await initProject(projectRoot, frameworkRoot);
-    const added = await addComponent(projectRoot, frameworkRoot, "codex-repo-context");
-    assert.equal(added.plan.status, "ready");
-    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+    await pack(projectRoot, ["codex-repo-context"]);
+    assert.equal((await syncContextCapsule(projectRoot)).status, "current");
+    const runtime = await runtimeRoot(projectRoot);
     assert.deepEqual(
-      (await readdir(path.join(projectRoot, ".agent-context", "runtime", "packages"))).sort(),
+      (await readdir(path.join(runtime, "packages"))).sort(),
       ["repo-context", "shared"],
     );
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
@@ -213,8 +176,7 @@ test("installed repository-context MCP stays host-neutral and serves the configu
       await session.close();
     }
 
-    const removed = await removeComponent(projectRoot, frameworkRoot, "codex-repo-context");
-    assert.equal(removed.plan.status, "ready");
+    await pack(projectRoot, ["core"]);
     const retained = parseToml(
       await readFile(path.join(projectRoot, ".codex", "config.toml"), "utf8"),
     );
@@ -244,14 +206,14 @@ test("capsule starts repo-context through bootstrap without installed packages",
     );
     assert.equal(trackedRuntime.stdout, "");
     await rm(path.join(projectRoot, ".agents"), { recursive: true, force: true });
-    await rm(path.join(projectRoot, ".agent-context", "runtime"), {
+    await rm(path.join(projectRoot, ".codex", "acf", "runtime"), {
       recursive: true,
       force: true,
     });
     await rm(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), { force: true });
     assert.equal(await exists(path.join(projectRoot, "node_modules")), false);
 
-    const bootstrapPath = path.join(projectRoot, ".agent-context", "bootstrap.mjs");
+    const bootstrapPath = path.join(projectRoot, ".codex", "acf", "bootstrap.mjs");
     const session = startMcp(
       bootstrapPath,
       ["exec", "repo-context"],
@@ -287,7 +249,7 @@ test("capsule starts repo-context through bootstrap without installed packages",
     await assert.rejects(
       executeFile(
         process.execPath,
-        [bootstrapPath, "materialize", "--cwd", projectRoot, "--json"],
+        [bootstrapPath, "sync", "--cwd", projectRoot, "--json"],
         { cwd: projectRoot, windowsHide: true },
       ),
       (error: unknown) => {
@@ -314,6 +276,24 @@ interface RpcResponse {
   readonly id: number;
   readonly result?: unknown;
   readonly error?: unknown;
+}
+
+async function pack(projectRoot: string, components: readonly string[]): Promise<void> {
+  await executeFile("git", ["init", "--quiet"], { cwd: projectRoot, windowsHide: true });
+  const result = await packContextCapsule(
+    frameworkRoot,
+    projectRoot,
+    "0".repeat(40),
+    components,
+  );
+  assert.notEqual(result.status, "blocked");
+}
+
+async function runtimeRoot(projectRoot: string): Promise<string> {
+  const receipt = JSON.parse(
+    await readFile(path.join(projectRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
+  ) as { treeSha256: string };
+  return path.join(projectRoot, ".codex", "acf", "runtime", receipt.treeSha256);
 }
 
 function startMcp(

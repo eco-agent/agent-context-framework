@@ -9,11 +9,9 @@ import { promisify } from "node:util";
 import { resolveContextComponents } from "@agent-context/repo-policy";
 
 import {
-  addComponent,
-  diffProject,
-  initProject,
-  removeComponent,
-} from "../src/context-installer.js";
+  packContextCapsule,
+  syncContextCapsule,
+} from "../src/context-capsule-workflow.js";
 import { buildContextRegistry } from "../src/context-registry-builder.js";
 import { CONTEXT_MATERIALIZATION_PATH } from "../src/context-capsule-materialization.js";
 import { generateTestApplicationFixture } from "../src/test-application-fixture.js";
@@ -106,7 +104,7 @@ test("codex-hooks resolves only the isolated hook runtime and precise matcher ow
     assert.ok(hook);
     for (const command of [hook.command, hook.commandWindows]) {
       assert.match(command, /git rev-parse --show-toplevel/u);
-      assert.match(command, /\.agent-context\/bootstrap\.mjs/u);
+      assert.match(command, /\.codex\/acf\/bootstrap\.mjs/u);
       assert.match(command, /exec hook/u);
       assert.doesNotMatch(command, /tools\/|tsx|~\/\.codex|[A-Za-z]:\\/u);
     }
@@ -133,10 +131,8 @@ test("installed Codex hooks launch from root and nested directories and preserve
     const nested = path.join(projectRoot, "nested", "directory");
     await mkdir(nested, { recursive: true });
 
-    await initProject(projectRoot, frameworkRoot);
-    const added = await addComponent(projectRoot, frameworkRoot, "codex-hooks");
-    assert.equal(added.plan.status, "ready");
-    assert.equal((await diffProject(projectRoot, frameworkRoot)).current, true);
+    await pack(projectRoot, ["codex-hooks"]);
+    assert.equal((await syncContextCapsule(projectRoot)).status, "current");
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
     assert.equal(await exists(path.join(projectRoot, "package.json")), false);
 
@@ -163,8 +159,8 @@ test("installed Codex hooks launch from root and nested directories and preserve
 
     const bindingDirectory = path.join(
       projectRoot,
-      ".agent-context",
-      "runtime",
+      ".codex",
+      "acf",
       "state",
       "codex-hooks",
     );
@@ -188,8 +184,7 @@ test("installed Codex hooks launch from root and nested directories and preserve
     };
     assert.equal(allowedOutput.hookSpecificOutput.permissionDecision, "allow");
 
-    const removed = await removeComponent(projectRoot, frameworkRoot, "codex-hooks");
-    assert.equal(removed.plan.status, "ready");
+    await pack(projectRoot, ["core"]);
     const retained = JSON.parse(await readFile(hooksPath, "utf8")) as HooksFile;
     assert.deepEqual(retained.hooks.PreToolUse.map((matcher) => matcher.matcher), ["^Bash$"]);
     assert.deepEqual(retained.hooks.SessionStart, []);
@@ -217,7 +212,7 @@ test("hook command resyncs its bundle before evaluation", { timeout: 90_000 }, a
     assert.ok(owned);
     const command = process.platform === "win32" ? owned.commandWindows : owned.command;
     await rm(path.join(projectRoot, ".agents"), { recursive: true, force: true });
-    await rm(path.join(projectRoot, ".agent-context", "runtime"), {
+    await rm(path.join(projectRoot, ".codex", "acf", "runtime"), {
       recursive: true,
       force: true,
     });
@@ -265,6 +260,22 @@ async function runHookCommand(
     }));
     child.stdin.end(input);
   });
+}
+
+async function pack(projectRoot: string, components: readonly string[]): Promise<void> {
+  const initialized = spawnSync("git", ["init", "--quiet"], {
+    cwd: projectRoot,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  assert.equal(initialized.status, 0, initialized.stderr);
+  const result = await packContextCapsule(
+    frameworkRoot,
+    projectRoot,
+    "0".repeat(40),
+    components,
+  );
+  assert.notEqual(result.status, "blocked");
 }
 
 async function exists(candidate: string): Promise<boolean> {

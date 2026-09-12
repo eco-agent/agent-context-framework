@@ -9,7 +9,8 @@ import {
   type RuntimeBootstrapExecutor,
   type RuntimeBootstrapStep,
 } from "../src/runtime-bootstrap.js";
-import { parseContextInstallerArguments } from "../src/context-installer-cli.js";
+
+const treeSha256 = "f".repeat(64);
 
 test("runtime bootstrap exposes only fixed install, build, and doctor steps", async () => {
   const fixture = await createRuntimeFixture();
@@ -57,7 +58,7 @@ test("runtime bootstrap restores packaged protocol entrypoints after a source bu
   ];
   try {
     for (const [index, relativePath] of entrypoints.entries()) {
-      const entrypoint = path.join(fixture.root, ".agent-context", "runtime", relativePath);
+      const entrypoint = path.join(fixture.runtimeRoot, relativePath);
       await mkdir(path.dirname(entrypoint), { recursive: true });
       await writeFile(entrypoint, `packaged ${index}\n`, "utf8");
     }
@@ -84,7 +85,7 @@ test("runtime bootstrap restores packaged protocol entrypoints after a source bu
     for (const [index, relativePath] of entrypoints.entries()) {
       assert.equal(
         await readFile(
-          path.join(fixture.root, ".agent-context", "runtime", relativePath),
+          path.join(fixture.runtimeRoot, relativePath),
           "utf8",
         ),
         `packaged ${index}\n`,
@@ -98,7 +99,7 @@ test("runtime bootstrap restores packaged protocol entrypoints after a source bu
 test("runtime bootstrap restores a packaged entrypoint when the source build fails", async () => {
   const fixture = await createRuntimeFixture();
   const relativePath = "packages/hooks/dist/src/codex-cli.js";
-  const entrypoint = path.join(fixture.root, ".agent-context", "runtime", relativePath);
+  const entrypoint = path.join(fixture.runtimeRoot, relativePath);
   try {
     await mkdir(path.dirname(entrypoint), { recursive: true });
     await writeFile(entrypoint, "packaged hook\n", "utf8");
@@ -145,19 +146,6 @@ test("--no-install reports materialized runtime state without installing", async
     assert.deepEqual(calls, ["doctor"]);
     assert.equal(result.status, "dependencies-missing");
     assert.equal(result.operational, false);
-    assert.deepEqual(
-      parseContextInstallerArguments(
-        ["bootstrap-runtime", "--cwd", fixture.root, "--no-install"],
-        "D:/outside",
-      ),
-      {
-        command: "bootstrap-runtime",
-        projectRoot: fixture.root,
-        component: null,
-        output: "text",
-        mode: "no-install",
-      },
-    );
   } finally {
     await fixture.remove();
   }
@@ -189,11 +177,12 @@ async function createMaterializedRuntimeFixture(
   frameworkRoot: string,
 ): Promise<{
   readonly root: string;
+  readonly runtimeRoot: string;
   readonly remove: () => Promise<void>;
 }> {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-materialized-runtime-"));
-  const sourceRoot = path.join(frameworkRoot, ".agent-context", "runtime");
-  const targetRoot = path.join(root, ".agent-context", "runtime");
+  const sourceRoot = path.join(frameworkRoot, ".codex", "acf", "runtime-source");
+  const targetRoot = path.join(root, ".codex", "acf", "runtime", treeSha256);
   await mkdir(path.dirname(targetRoot), { recursive: true });
   await cp(sourceRoot, targetRoot, {
     recursive: true,
@@ -202,18 +191,21 @@ async function createMaterializedRuntimeFixture(
       return !segments.includes("node_modules") && !segments.includes("dist");
     },
   });
+  await writeReceipt(root);
   return {
     root,
+    runtimeRoot: targetRoot,
     remove: async () => await rm(root, { recursive: true, force: true }),
   };
 }
 
 async function createRuntimeFixture(): Promise<{
   readonly root: string;
+  readonly runtimeRoot: string;
   readonly remove: () => Promise<void>;
 }> {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-bootstrap-"));
-  const runtimeRoot = path.join(root, ".agent-context", "runtime");
+  const runtimeRoot = path.join(root, ".codex", "acf", "runtime", treeSha256);
   await mkdir(runtimeRoot, { recursive: true });
   await writeFile(path.join(root, "package.json"), '{"name":"host"}\n', "utf8");
   await writeFile(path.join(root, "host.lock"), "host lock\n", "utf8");
@@ -227,8 +219,26 @@ async function createRuntimeFixture(): Promise<{
     "utf8",
   );
   await writeFile(path.join(runtimeRoot, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\n", "utf8");
+  await writeReceipt(root);
   return {
     root,
+    runtimeRoot,
     remove: async () => await rm(root, { recursive: true, force: true }),
   };
+}
+
+async function writeReceipt(root: string): Promise<void> {
+  await mkdir(path.join(root, ".codex", "acf"), { recursive: true });
+  await writeFile(
+    path.join(root, ".codex", "acf", "receipt.json"),
+    `${JSON.stringify({
+      schemaVersion: 2,
+      kind: "agent-context-materialization",
+      registryRevision: "0.15.0",
+      capsuleSha256: "e".repeat(64),
+      treeSha256,
+      files: [],
+    })}\n`,
+    "utf8",
+  );
 }

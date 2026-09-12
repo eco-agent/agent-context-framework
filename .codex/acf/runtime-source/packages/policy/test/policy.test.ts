@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { brotliCompressSync } from "node:zlib";
 import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -73,9 +74,9 @@ test("workspace inspection accepts a non-Node repository", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-non-node-"));
   try {
     await writeFile(path.join(root, "README.md"), "# fixture\n", "utf8");
-    await mkdir(path.join(root, ".agent-context", "runtime"), { recursive: true });
+    await mkdir(path.join(root, ".codex", "acf", "runtime", "fixture"), { recursive: true });
     await writeFile(
-      path.join(root, ".agent-context", "runtime", "package.json"),
+      path.join(root, ".codex", "acf", "runtime", "fixture", "package.json"),
       '{"name":"@agent-context/runtime-workspace","private":true}\n',
       "utf8",
     );
@@ -120,7 +121,7 @@ test("repository policy excludes partial decisions and invalid profile reference
 test("policy doctor requires explicit configuration and validates declared paths", async () => {
   const root = await createPolicyFixture();
   try {
-    await writeJson(path.join(root, ".agent-context", "policy.json"), {
+    await writeJson(path.join(root, ".codex", "acf", "policy.json"), {
       schemaVersion: 1,
       state: "unconfigured",
     });
@@ -136,7 +137,7 @@ test("policy doctor requires explicit configuration and validates declared paths
       },
     );
 
-    await writeJson(path.join(root, ".agent-context", "policy.json"), configuredPolicy());
+    await writeJson(path.join(root, ".codex", "acf", "policy.json"), configuredPolicy());
     const missingDocs = await doctorRepositoryPolicy(root);
     assert.equal(missingDocs.status, "invalid");
     assert.match(missingDocs.diagnostics[0] ?? "", /documentation root does not exist/u);
@@ -147,7 +148,7 @@ test("policy doctor requires explicit configuration and validates declared paths
     assert.equal(ready.status, "ready");
 
     await writeJson(
-      path.join(root, ".agent-context", "policy.json"),
+      path.join(root, ".codex", "acf", "policy.json"),
       configuredPolicy("process", ["docs/architecture.md"]),
     );
     const missingContract = await doctorRepositoryPolicy(root);
@@ -167,7 +168,7 @@ test("policy verification executes only the selected tokenized profile", async (
   const root = await createPolicyFixture();
   try {
     await mkdir(path.join(root, "docs"));
-    await writeJson(path.join(root, ".agent-context", "policy.json"), configuredPolicy());
+    await writeJson(path.join(root, ".codex", "acf", "policy.json"), configuredPolicy());
     const result = await verifyRepositoryPolicy(root, null);
     assert.equal(result.status, "completed");
     assert.equal(result.profile, "default");
@@ -180,7 +181,7 @@ test("policy verification executes only the selected tokenized profile", async (
       scripts: { "policy-check": "node -e \"process.exit(0)\"" },
     });
     await writeJson(
-      path.join(root, ".agent-context", "policy.json"),
+      path.join(root, ".codex", "acf", "policy.json"),
       configuredPolicy("package-script"),
     );
     const packageScript = await verifyRepositoryPolicy(root, null);
@@ -202,7 +203,7 @@ test("repository inspection reports observations without creating policy", async
     assert.deepEqual(result.observations.languageMarkers, ["pyproject.toml"]);
     assert.equal(result.observations.rootEntries.includes("docs/"), true);
     assert.equal(result.observations.packageManifests.length, 0);
-    assert.equal(await fileExists(path.join(root, ".agent-context", "policy.json")), false);
+    assert.equal(await fileExists(path.join(root, ".codex", "acf", "policy.json")), false);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -276,7 +277,7 @@ test("repository inspection covers the declared project-shape matrix without inf
         inspection.observations.rootEntries.includes(".codex/"),
         fixture.name === "codex-configured",
       );
-      assert.equal(await fileExists(path.join(fixtureRoot, ".agent-context", "policy.json")), false);
+      assert.equal(await fileExists(path.join(fixtureRoot, ".codex", "acf", "policy.json")), false);
     }
   } finally {
     await rm(root, { recursive: true, force: true });
@@ -321,19 +322,28 @@ function configuredPolicy(
 
 async function createPolicyFixture(): Promise<string> {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-policy-"));
-  await mkdir(path.join(root, ".agent-context"), { recursive: true });
-  await writeJson(path.join(root, ".agent-context", "config.json"), {
+  await mkdir(path.join(root, ".codex", "acf"), { recursive: true });
+  const capsulePayload = {
     schemaVersion: 2,
-    adapter: "codex",
-    components: ["core", "repository-policy"],
-  });
-  await writeJson(path.join(root, ".agent-context", "lock.json"), {
-    schemaVersion: 2,
-    registryRevision: "0.4.0",
-    components: ["core", "runtime-base", "repository-policy"],
-    artifacts: [],
-  });
-  await writeJson(path.join(root, ".agent-context", "policy-invariants.json"), {
+    format: "acf-capsule-v2",
+    frameworkRevision: "0".repeat(40),
+    registry: { schemaVersion: 2, revision: "0.15.0", decisionPath: "registry/decisions/test.md" },
+    selection: {
+      directComponents: ["core", "repository-policy"],
+      resolvedComponents: [{ name: "core" }, { name: "runtime-base" }, { name: "repository-policy" }],
+    },
+    entries: [],
+    activation: [],
+    treeSha256: "0".repeat(64),
+  };
+  await writeFile(
+    path.join(root, ".codex", "acf", "capsule.acf"),
+    Buffer.concat([
+      Buffer.from("ACFCAP2\n", "ascii"),
+      brotliCompressSync(Buffer.from(JSON.stringify(capsulePayload), "utf8")),
+    ]),
+  );
+  await writeJson(path.join(root, ".codex", "acf", "policy-invariants.json"), {
     schemaVersion: 1,
     invariants: [
       "explicit-project-facts",

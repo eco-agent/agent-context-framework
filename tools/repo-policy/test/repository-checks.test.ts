@@ -26,7 +26,7 @@ test("instruction hierarchy retains communication, anti-prior, and direct-reuse 
   assert.match(rootInstructions, /in plain English/u);
   assert.match(rootInstructions, /Do not impose character, word, paragraph, or bullet limits/u);
   assert.match(rootInstructions, /Use the `visualize`[\s>]+skill when an in-conversation visual/u);
-  assert.match(rootInstructions, /Create a standalone HTML response file only when the user asks/u);
+  assert.match(rootInstructions, /Create a standalone HTML response file only when the\s+>\s+user asks/u);
   assert.match(rootInstructions, /eyebrows,\s+kickers, overlines, pills, badges/u);
   assert.match(
     frontendInstructions,
@@ -51,14 +51,14 @@ test("distributable dependencies require immutable sources and packaged notices"
   const fixture = await mkdtemp(path.join(os.tmpdir(), "agent-context-adoption-"));
   try {
     await mkdir(path.join(fixture, "dependency-adoptions"), { recursive: true });
-    await mkdir(path.join(fixture, ".agent-context", "runtime"), { recursive: true });
+    await mkdir(path.join(fixture, ".codex", "acf", "runtime-source"), { recursive: true });
     await mkdir(path.join(fixture, "node_modules", "example"), { recursive: true });
     await writeFile(
       path.join(fixture, "package.json"),
       `${JSON.stringify({ dependencies: { example: "1.0.0", internal: "link:../internal" } }, null, 2)}\n`,
     );
     await writeFile(
-      path.join(fixture, ".agent-context", "runtime", "package.json"),
+      path.join(fixture, ".codex", "acf", "runtime-source", "package.json"),
       `${JSON.stringify({ dependencies: { example: "1.0.0", internal: "link:../internal" } }, null, 2)}\n`,
     );
     await writeFile(path.join(fixture, "node_modules", "example", "LICENSE"), "MIT\n");

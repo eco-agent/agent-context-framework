@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.14.2",
-  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
+  "revision": "0.15.0",
+  "decisionPath": "registry/decisions/0.15.0-single-capsule-workflow.md",
   "components": [
     {
       "name": "core",
@@ -34,6 +34,14 @@
           "operation": "seed-file",
           "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
           "targetPath": ".gitattributes"
+        },
+        {
+          "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/git/managed-acf.gitignore",
+          "targetPath": ".gitignore",
+          "sectionId": "acf-generated",
+          "markerStyle": "toml"
         },
         {
           "kind": "artifact",
@@ -662,13 +670,6 @@
           "targetPath": "docs/AGENTS.md",
           "sectionId": "documentation",
           "markerStyle": "markdown"
-        },
-        {
-          "kind": "artifact",
-          "operation": "file",
-          "sourcePath": "registry/sources/templates/work-record.md",
-          "targetPath": ".codex/templates/work-record.md",
-          "mediaType": "text/markdown"
         },
         {
           "kind": "artifact",

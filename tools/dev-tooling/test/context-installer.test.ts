@@ -161,7 +161,7 @@ test("adding a runtime package refreshes its workspace lock before bootstrap", a
     const installed = await addComponent(fixture.projectRoot, fixture.frameworkRoot, "runtime-feature");
     assert.equal(installed.plan.status, "ready");
     assert.equal(
-      await readFile(path.join(fixture.projectRoot, ".agent-context", "runtime", "pnpm-lock.yaml"), "utf8"),
+      await readFile(path.join(fixture.projectRoot, ".codex", "acf", "runtime-source", "pnpm-lock.yaml"), "utf8"),
       "lock: v2\n",
     );
     assert.equal(
@@ -691,7 +691,8 @@ test("doctor explains an interrupted transaction and mutators refuse it", async 
   const fixture = await createFixture();
   try {
     await initProject(fixture.projectRoot, fixture.frameworkRoot);
-    await writeFile(path.join(fixture.projectRoot, ".agent-context", "transaction.json"), `${JSON.stringify({
+    await mkdir(path.join(fixture.projectRoot, ".codex", "acf", "state"), { recursive: true });
+    await writeFile(path.join(fixture.projectRoot, ".codex", "acf", "state", "transaction.json"), `${JSON.stringify({
       schemaVersion: 1,
       command: "update",
       registryRevision: "0.2.0",
