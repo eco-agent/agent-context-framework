@@ -15,3 +15,8 @@ Control Tower repository.
 - [Capsule operational audit](architecture/capsule-operational-audit.md)
   records the fixture results, post-migration lifecycle breaks, and proposed
   one-capsule replacement.
+
+## Source conversations
+
+- [Sol Luna Policy](conversations/sol-luna-policy.md) preserves the referenced
+  design discussion as source evidence. Its proposals are not framework policy.
