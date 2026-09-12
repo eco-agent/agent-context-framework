@@ -7,10 +7,12 @@ import {
   parseContextInstallerArguments,
 } from "../src/context-installer-cli.js";
 
-test("CLI exposes only pack, sync, and diff", () => {
+test("CLI exposes capsule operations and the global repository catalog", () => {
   assert.match(CONTEXT_INSTALLER_HELP, /pack \[COMPONENT\.\.\.\]/u);
   assert.match(CONTEXT_INSTALLER_HELP, /sync/u);
   assert.match(CONTEXT_INSTALLER_HELP, /diff --before CAPSULE --after CAPSULE/u);
+  assert.match(CONTEXT_INSTALLER_HELP, /repo register/u);
+  assert.match(CONTEXT_INSTALLER_HELP, /repo status/u);
   assert.doesNotMatch(CONTEXT_INSTALLER_HELP, /\binit\b|\badd\b|\bremove\b|\bmigrate\b/u);
 
   assert.deepEqual(
@@ -25,6 +27,29 @@ test("CLI exposes only pack, sync, and diff", () => {
   assert.deepEqual(parseContextInstallerArguments(["sync", "--cwd", "fixture"], "D:\\project"), {
     command: "sync",
     projectRoot: path.resolve("D:\\project", "fixture"),
+    json: false,
+  });
+  assert.deepEqual(parseContextInstallerArguments(["sync", "--all", "--json"], "D:\\project"), {
+    command: "sync-all",
+    json: true,
+  });
+  assert.deepEqual(parseContextInstallerArguments(["repo", "register", "--cwd", "fixture"], "D:\\project"), {
+    command: "repo-register",
+    projectRoot: path.resolve("D:\\project", "fixture"),
+    json: false,
+  });
+  assert.deepEqual(parseContextInstallerArguments(["repo", "list", "--json"], "D:\\project"), {
+    command: "repo-list",
+    json: true,
+  });
+  assert.deepEqual(parseContextInstallerArguments(["repo", "status", "a".repeat(64)], "D:\\project"), {
+    command: "repo-status",
+    id: "a".repeat(64),
+    json: false,
+  });
+  assert.deepEqual(parseContextInstallerArguments(["repo", "forget", "b".repeat(64)], "D:\\project"), {
+    command: "repo-forget",
+    id: "b".repeat(64),
     json: false,
   });
   assert.deepEqual(
@@ -45,4 +70,6 @@ test("CLI exposes only pack, sync, and diff", () => {
     /duplicate component/u,
   );
   assert.throws(() => parseContextInstallerArguments(["diff"], "D:\\project"), /requires/u);
+  assert.throws(() => parseContextInstallerArguments(["repo", "forget"], "D:\\project"), /requires/u);
+  assert.throws(() => parseContextInstallerArguments(["repo", "list", "unexpected"], "D:\\project"), /does not accept/u);
 });

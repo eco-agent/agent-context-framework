@@ -118,6 +118,24 @@ export {
   type ContextCapsuleSyncResult,
 } from "./context-capsule-workflow.js";
 export {
+  decodeContextRepositoryRecord,
+  forgetContextRepository,
+  inspectContextRepositories,
+  inspectContextRepository,
+  listContextRepositories,
+  registerContextRepository,
+  resolveCodexHome,
+  resolveContextRepositoryCatalogRoot,
+  syncContextRepositories,
+  CONTEXT_REPOSITORY_CATALOG_RELATIVE_PATH,
+  CONTEXT_REPOSITORY_CATALOG_SCHEMA_VERSION,
+  type ContextRepositoryForgetResult,
+  type ContextRepositoryObservation,
+  type ContextRepositoryRecordV1,
+  type ContextRepositoryRegistrationResult,
+  type ContextRepositorySyncResult,
+} from "./context-repository-catalog.js";
+export {
   contextCapsuleSkillActivation,
   contextCapsuleRuntimeActivation,
   contextCapsuleMaterializationActivation,
