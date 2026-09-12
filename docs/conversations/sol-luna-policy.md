@@ -8,11 +8,11 @@
 - Conversation ID: `6aa50cd3-8590-83ea-8722-7988ceb9758e`
 - Source URI: `chatgpt-conversation://6aa50cd3-8590-83ea-8722-7988ceb9758e`
 - Retrieved: 2026-09-12
-- Retrieval: Codex task API, one turn per cursor page, newest-first pages reordered chronologically
+- Retrieval: Codex task API, one turn per cursor page, newest-first pages reordered chronologically; the user supplied the tail of the capped turn 4 response from the original chat
 
-## Retrieval limits
+## Retrieval note
 
-The task API caps each message at 20,000 characters. The assistant response in turn 4 reaches that ceiling and ends mid-sentence. The transcript marks the cutoff. All other messages were retrieved below the cap.
+The task API capped the assistant response in turn 4 at 20,000 characters. The user supplied the missing ending from the original chat. The transcript combines that ending with the API copy and now contains all five turns.
 
 ## Transcript
 
@@ -692,9 +692,9 @@ I would use reviewable PRs with direct replacement at each boundary. I would avo
 
 The existing infrastructure tests already cover useful behaviours such as artifact idempotency, byte verification, exact human acceptance, and zero-model preflight. I would retain and adapt those tests rather than replace them with tests that merely confirm the new schema parses. I have inspected these tests, not executed them.
 
-The new scenario suite should concentrate on the fail
+The new scenario suite should concentrate on the failures that matter to your workflow: stale decisions after resume, duplicate owners, conflicting writers, old verification presented as current, Luna exceeding read-only authority, and cleanup removing resources it does not own.
 
-> [Source cutoff] This message reached the task API's 20,000-character per-message limit. Its remaining text was not returned.
+I would start with scoped verification and the policy changes, then prove two real persistent peers completing committed passes. That delivers value while the rewrite proceeds. Renaming Objective to Peer, rebuilding the setup UI, or designing another general scheduler would leave the most important problems untouched.
 
 ## Turn 5
 
