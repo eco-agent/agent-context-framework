@@ -49,7 +49,7 @@ const COMPONENT_DESCRIPTIONS: Readonly<Record<string, string>> = {
 const REPOSITORY_CONTEXT_TOOL: SetupToolSummary = {
   name: "repo_context",
   description: "Read or fixed-string search within the explicitly authorized repository root.",
-  sourcePath: ".agent-context/runtime/packages/repo-context/src/mcp-server.ts",
+  sourcePath: ".codex/acf/runtime-source/packages/repo-context/src/mcp-server.ts",
   modes: [
     {
       name: "read",

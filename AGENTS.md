@@ -193,7 +193,7 @@ Never silently cut mandatory context or user-facing explanation.
 ## Project contracts
 
 - Before implementation, read every exact path declared in a configured
-  `.agent-context/policy.json` under `repository.projectContracts`.
+  `.codex/acf/policy.json` under `repository.projectContracts`.
 - If a declared contract is missing, or repository policy is unconfigured, report
   that state before relying on project architecture or documentation assumptions.
 
@@ -305,7 +305,7 @@ verification reports according to `docs/AGENTS.md`. Use
 
 ## Repository policy
 
-`.agent-context/policy.json` is the project-owned authority for repository facts
+`.codex/acf/policy.json` is the project-owned authority for repository facts
 and verification profiles. Inspection can describe the repository, but its
 output must never write policy or silently become policy.
 
@@ -322,7 +322,7 @@ Run verification through a named profile declared by the project. Each command
 must be expressed as typed process or package-script tokens, never as a shell
 command string. Registry components must not provide executable commands.
 
-Bootstrap and rebuild the isolated `.agent-context/runtime` through its fixed
+Bootstrap and rebuild the isolated `.codex/acf/runtime-source` through its fixed
 project-local operation. Repository policy must neither modify nor depend on the
 host package graph.
 

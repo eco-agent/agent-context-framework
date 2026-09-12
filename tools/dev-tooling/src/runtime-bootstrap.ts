@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import { corepackInvocation } from "./corepack-command.js";
 
 const execFileAsync = promisify(execFile);
-const RUNTIME_RELATIVE_PATH = ".agent-context/runtime";
+const RUNTIME_RELATIVE_PATH = ".codex/acf/runtime-source";
 const RUNTIME_PACKAGE_MANAGER = "pnpm@10.22.0";
 const RUNTIME_NODE_VERSION = "24.14.0";
 const MAX_COMMAND_OUTPUT_BYTES = 1_000_000;
@@ -205,7 +205,7 @@ async function resolveRuntimeWorkspace(projectRoot: string): Promise<{
     relative !== RUNTIME_RELATIVE_PATH.replaceAll("/", path.sep) ||
     path.isAbsolute(relative)
   ) {
-    throw new Error("Runtime workspace must resolve to project-owned .agent-context/runtime.");
+    throw new Error("Runtime workspace must resolve to project-owned .codex/acf/runtime-source.");
   }
   const manifest = JSON.parse(
     await readFile(path.join(runtimeRoot, "package.json"), "utf8"),

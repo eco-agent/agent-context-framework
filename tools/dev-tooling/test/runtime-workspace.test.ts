@@ -87,8 +87,8 @@ test("runtime base excludes host orchestration while its lock includes optional 
     path.join(frameworkRoot, "tsconfig.json"),
     "utf8",
   );
-  assert.equal(hostWorkspace.includes(".agent-context/runtime"), false);
-  assert.equal(hostTypeScript.includes(".agent-context/runtime"), false);
+  assert.equal(hostWorkspace.includes(".codex/acf/runtime-source"), false);
+  assert.equal(hostTypeScript.includes(".codex/acf/runtime-source"), false);
 });
 
 async function sourceFiles(root: string): Promise<readonly string[]> {

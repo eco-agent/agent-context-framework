@@ -10,7 +10,7 @@ const REQUIRED_REVIEW_OWNER = "@bet01";
 const REQUIRED_REVIEW_PATTERNS = [
   "/AGENTS.md",
   "/.codex/skills/",
-  "/.agent-context/runtime/",
+  "/.codex/acf/runtime-source/",
   "/.github/CODEOWNERS",
   "/packages/codex-workflow-runtime/",
   "/packages/codex-frontend-workflows/",

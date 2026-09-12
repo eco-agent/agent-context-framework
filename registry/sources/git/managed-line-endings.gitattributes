@@ -1,6 +1,6 @@
 .gitattributes text eol=lf
 AGENTS.md text eol=lf
-.agent-context/** text eol=lf
-.agent-context/bootstrap.mjs binary
+.codex/acf/** text eol=lf
+.codex/acf/bootstrap.mjs binary
 .codex/** text eol=lf
 *.acf binary

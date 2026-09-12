@@ -49,12 +49,12 @@ test("Wave 4 local-reference rules reject host-coupled entrypoints", () => {
     'command = "tsx"',
     'args = ["--filter", "@host/server"]',
     'command = "~/.codex/server.js"',
-    'command = ".agent-context/runtime/../server.js"',
+    'command = ".codex/acf/runtime-source/../server.js"',
   ]) {
     assert.equal(unsafeReferenceDiagnostics(source).length > 0, true, source);
   }
   assert.deepEqual(
-    unsafeReferenceDiagnostics('command = "node"\nargs = [".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js"]'),
+    unsafeReferenceDiagnostics('command = "node"\nargs = [".codex/acf/runtime-source/packages/repo-context/dist/src/mcp-cli.js"]'),
     [],
   );
 });

@@ -1,8 +1,8 @@
 export const CONTEXT_INSTALLATION_SCHEMA_VERSION = 2 as const;
 export const CONTEXT_ADAPTER = "codex" as const;
 export const CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION = 3 as const;
-export const CONTEXT_CAPSULE_FORMAT_V1 = "acf-capsule-v1" as const;
-export const CONTEXT_CAPSULE_PATH = ".agent-context/capsule.acf" as const;
+export const CONTEXT_CAPSULE_FORMAT = "acf-capsule-v2" as const;
+export const CONTEXT_CAPSULE_PATH = ".codex/acf/capsule.acf" as const;
 
 export interface ContextRegistryV2 {
   readonly schemaVersion: typeof CONTEXT_INSTALLATION_SCHEMA_VERSION;
@@ -141,7 +141,7 @@ export interface ContextCapsuleLockV3 {
   readonly registryRevision: string;
   readonly frameworkRevision: string;
   readonly capsule: {
-    readonly format: typeof CONTEXT_CAPSULE_FORMAT_V1;
+    readonly format: typeof CONTEXT_CAPSULE_FORMAT;
     readonly path: typeof CONTEXT_CAPSULE_PATH;
     readonly sha256: string;
     readonly treeSha256: string;
@@ -268,8 +268,8 @@ export function decodeContextCapsuleLock(value: unknown): ContextCapsuleLockV3 {
     "expandedBytes",
     "entryCount",
   ]);
-  if (capsule.format !== CONTEXT_CAPSULE_FORMAT_V1) {
-    throw new Error(`Context capsule lock format must be ${CONTEXT_CAPSULE_FORMAT_V1}.`);
+  if (capsule.format !== CONTEXT_CAPSULE_FORMAT) {
+    throw new Error(`Context capsule lock format must be ${CONTEXT_CAPSULE_FORMAT}.`);
   }
   const capsulePath = portableRelativePath(capsule, "path");
   if (capsulePath !== CONTEXT_CAPSULE_PATH) {
@@ -320,7 +320,7 @@ export function decodeContextCapsuleLock(value: unknown): ContextCapsuleLockV3 {
     registryRevision: requiredRevision(record, "registryRevision"),
     frameworkRevision: fullGitRevision(record.frameworkRevision, "frameworkRevision"),
     capsule: {
-      format: CONTEXT_CAPSULE_FORMAT_V1,
+      format: CONTEXT_CAPSULE_FORMAT,
       path: CONTEXT_CAPSULE_PATH,
       sha256: sha256(capsule, "sha256"),
       treeSha256: sha256(capsule, "treeSha256"),
@@ -382,10 +382,10 @@ function decodeCapsuleMaterialization(value: unknown): ContextCapsuleMaterializa
   );
   const outsideMaterialization = files.find((artifact) =>
     !artifact.targetPath.startsWith(".agents/skills/") &&
-    !artifact.targetPath.startsWith(".agent-context/runtime/materialized/"));
+    !artifact.targetPath.startsWith(".codex/acf/runtime-source/materialized/"));
   if (outsideMaterialization !== undefined) {
     throw new Error(
-      `Context capsule lock materialization target must be below .agents/skills or .agent-context/runtime/materialized: ${outsideMaterialization.targetPath}.`,
+      `Context capsule lock materialization target must be below .agents/skills or .codex/acf/runtime-source/materialized: ${outsideMaterialization.targetPath}.`,
     );
   }
   return {

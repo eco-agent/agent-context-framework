@@ -48,7 +48,7 @@ test("tracked Codex hook bundle is reproducible", async () => {
   try {
     await executeFile(process.execPath, [
       path.join(frameworkRoot, "node_modules/vite-plus/dist/pack-bin.js"),
-      path.join(frameworkRoot, ".agent-context/runtime/packages/hooks/src/codex-cli.ts"),
+      path.join(frameworkRoot, ".codex/acf/runtime-source/packages/hooks/src/codex-cli.ts"),
       "--write",
       "--format",
       "esm",
@@ -198,7 +198,7 @@ test("installed Codex hooks launch from root and nested directories and preserve
   }
 });
 
-test("migrated hook command rematerializes its bundle before evaluation", { timeout: 90_000 }, async () => {
+test("hook command resyncs its bundle before evaluation", { timeout: 90_000 }, async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-capsule-hook-"));
   const projectRoot = path.join(temporaryRoot, "application");
   try {
@@ -206,7 +206,7 @@ test("migrated hook command rematerializes its bundle before evaluation", { time
       frameworkRoot,
       outputRoot: projectRoot,
       gitState: "clean",
-      acfState: "runtime-migrated",
+      acfState: "runtime",
       replace: false,
     });
     const hooks = JSON.parse(
@@ -233,7 +233,7 @@ test("migrated hook command rematerializes its bundle before evaluation", { time
     assert.equal(inert.code, 0, inert.stderr);
     assert.equal(inert.stdout, "");
     assert.equal(
-      await exists(path.join(projectRoot, ".agent-context", "runtime", "materialized")),
+      await exists(path.join(projectRoot, ".codex", "acf", "runtime")),
       true,
     );
   } finally {

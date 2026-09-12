@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { readdir, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
+import { brotliDecompressSync } from "node:zlib";
 
 import {
   findFiles,
@@ -10,16 +11,10 @@ import {
   stringArray,
 } from "@agent-context-runtime/shared";
 
-import {
-  decodeContextCapsuleLock,
-  decodeContextInstallationLock,
-  decodeContextProjectConfig,
-} from "./context-installation.js";
-
 export const REPOSITORY_POLICY_SCHEMA_VERSION = 1 as const;
-export const REPOSITORY_POLICY_CONFIG_PATH = ".agent-context/policy.json";
+export const REPOSITORY_POLICY_CONFIG_PATH = ".codex/acf/policy.json";
 export const REPOSITORY_POLICY_INVARIANTS_PATH =
-  ".agent-context/policy-invariants.json";
+  ".codex/acf/policy-invariants.json";
 
 export const repositoryPolicyInvariantIds = [
   "explicit-project-facts",
@@ -556,41 +551,68 @@ function decodeVerificationProfile(value: unknown): VerificationProfile {
 }
 
 async function checkContextInstallation(root: string): Promise<void> {
-  const contextConfig = decodeContextProjectConfig(
-    await readJson(
-      repositoryPath(root, ".agent-context/config.json"),
-      "Context project configuration",
-    ),
+  const selection = await readCapsuleSelection(
+    repositoryPath(root, ".codex/acf/capsule.acf"),
   );
-  const contextLock = await readJson(
-    repositoryPath(root, ".agent-context/lock.json"),
-    "Context installation lock",
-  );
-  const resolvedComponents = contextLockComponents(contextLock);
-  if (!contextConfig.components.includes("repository-policy")) {
-    throw new Error("Context project configuration does not select repository-policy.");
+  if (!selection.direct.includes("repository-policy")) {
+    throw new Error("Context capsule does not directly select repository-policy.");
   }
-  const missing = contextConfig.components.find(
-    (component) => !resolvedComponents.includes(component),
+  const missing = selection.direct.find(
+    (component) => !selection.resolved.includes(component),
   );
   if (missing !== undefined) {
-    throw new Error(`Context installation lock does not resolve selected component ${missing}.`);
+    throw new Error(`Context capsule does not resolve selected component ${missing}.`);
   }
-  if (!resolvedComponents.includes("repository-policy")) {
-    throw new Error("Context installation lock does not contain repository-policy.");
+  if (!selection.resolved.includes("repository-policy")) {
+    throw new Error("Context capsule does not contain repository-policy.");
   }
 }
 
-function contextLockComponents(value: unknown): readonly string[] {
-  if (
-    typeof value === "object" &&
-    value !== null &&
-    "schemaVersion" in value &&
-    value.schemaVersion === 3
-  ) {
-    return decodeContextCapsuleLock(value).components.resolved.map((component) => component.name);
+async function readCapsuleSelection(
+  capsulePath: string,
+): Promise<{ readonly direct: readonly string[]; readonly resolved: readonly string[] }> {
+  const bytes = await readFile(capsulePath);
+  const magic = Buffer.from("ACFCAP2\n", "ascii");
+  if (bytes.length <= magic.length || !bytes.subarray(0, magic.length).equals(magic)) {
+    throw new Error("Context capsule must begin with the ACFCAP2 header.");
   }
-  return decodeContextInstallationLock(value).components;
+  let value: unknown;
+  try {
+    value = JSON.parse(brotliDecompressSync(bytes.subarray(magic.length)).toString("utf8")) as unknown;
+  } catch (error) {
+    throw new Error("Context capsule payload is invalid.", { cause: error });
+  }
+  const payload = strictRecord(value, "Context capsule", [
+    "schemaVersion",
+    "format",
+    "frameworkRevision",
+    "registry",
+    "selection",
+    "entries",
+    "activation",
+    "treeSha256",
+  ]);
+  if (payload.schemaVersion !== 2 || payload.format !== "acf-capsule-v2") {
+    throw new Error("Context capsule must use schema 2 and format acf-capsule-v2.");
+  }
+  const selection = strictRecord(payload.selection, "Context capsule selection", [
+    "directComponents",
+    "resolvedComponents",
+  ]);
+  const direct = stringArray(selection.directComponents, "Context capsule direct components")
+    .map((component) => identifier(component, "Context capsule direct component"));
+  if (!Array.isArray(selection.resolvedComponents)) {
+    throw new Error("Context capsule resolved components must be an array.");
+  }
+  const resolved = selection.resolvedComponents.map((component) => {
+    if (typeof component !== "object" || component === null || !("name" in component)) {
+      throw new Error("Context capsule resolved component must have a name.");
+    }
+    return identifier(component.name, "Context capsule resolved component name");
+  });
+  requireUnique(direct, "Context capsule direct components");
+  requireUnique(resolved, "Context capsule resolved components");
+  return { direct, resolved };
 }
 
 async function runPolicyCommand(

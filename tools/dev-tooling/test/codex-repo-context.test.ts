@@ -41,7 +41,7 @@ test("tracked repo-context bundle is reproducible", async () => {
   try {
     await executeFile(process.execPath, [
       path.join(frameworkRoot, "node_modules/vite-plus/dist/pack-bin.js"),
-      path.join(frameworkRoot, ".agent-context/runtime/packages/repo-context/src/mcp-cli.ts"),
+      path.join(frameworkRoot, ".codex/acf/runtime-source/packages/repo-context/src/mcp-cli.ts"),
       "--write",
       "--format",
       "esm",
@@ -143,7 +143,7 @@ test("codex-repo-context resolves the isolated bounded package and local MCP tab
   );
   assert.deepEqual(repoContextConfig, {
     command: "node",
-    args: [".agent-context/bootstrap.mjs", "exec", "repo-context"],
+    args: [".codex/acf/bootstrap.mjs", "exec", "repo-context"],
     required: true,
     enabled_tools: ["repo_context"],
     startup_timeout_sec: 20,
@@ -187,11 +187,11 @@ test("installed repository-context MCP stays host-neutral and serves the configu
     assert.equal(record(installedServers.local).command, "local-server");
     const configured = decodeRepoContextConfig(installedServers.repo_context);
     assert.deepEqual(configured.args, [
-      ".agent-context/bootstrap.mjs",
+      ".codex/acf/bootstrap.mjs",
       "exec",
       "repo-context",
     ]);
-    const entrypoint = path.join(projectRoot, ".agent-context/bootstrap.mjs");
+    const entrypoint = path.join(projectRoot, ".codex/acf/bootstrap.mjs");
     const session = startMcp(entrypoint, ["exec", "repo-context"], projectRoot);
     try {
       const initialized = await session.request("initialize", {
@@ -226,7 +226,7 @@ test("installed repository-context MCP stays host-neutral and serves the configu
   }
 });
 
-test("migrated capsule starts repo-context through bootstrap without installed packages", { timeout: 90_000 }, async () => {
+test("capsule starts repo-context through bootstrap without installed packages", { timeout: 90_000 }, async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-capsule-repo-"));
   const projectRoot = path.join(temporaryRoot, "application");
   try {
@@ -234,12 +234,12 @@ test("migrated capsule starts repo-context through bootstrap without installed p
       frameworkRoot,
       outputRoot: projectRoot,
       gitState: "clean",
-      acfState: "runtime-migrated",
+      acfState: "runtime",
       replace: false,
     });
     const trackedRuntime = await executeFile(
       "git",
-      ["ls-files", "--", ".agent-context/runtime"],
+      ["ls-files", "--", ".codex/acf/runtime-source"],
       { cwd: projectRoot, windowsHide: true },
     );
     assert.equal(trackedRuntime.stdout, "");

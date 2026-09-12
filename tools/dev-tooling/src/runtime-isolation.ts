@@ -192,7 +192,7 @@ async function materializeArchivedRuntime(
       `--output=${archivePath}`,
       "HEAD",
       "--",
-      ".agent-context/runtime",
+      ".codex/acf/runtime-source",
     ],
     frameworkRoot,
   );

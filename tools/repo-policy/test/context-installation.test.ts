@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  CONTEXT_CAPSULE_FORMAT_V1,
+  CONTEXT_CAPSULE_FORMAT,
   CONTEXT_CAPSULE_LOCK_SCHEMA_VERSION,
   CONTEXT_CAPSULE_PATH,
   decodeContextCapsuleLock,
@@ -142,7 +142,7 @@ test("capsule lock v3 is separate from registry, config, and installation lock v
     registryRevision: "0.14.0",
     frameworkRevision: "b".repeat(40),
     capsule: {
-      format: CONTEXT_CAPSULE_FORMAT_V1,
+      format: CONTEXT_CAPSULE_FORMAT,
       path: CONTEXT_CAPSULE_PATH,
       sha256: hash,
       treeSha256: "b".repeat(64),
@@ -179,10 +179,10 @@ test("capsule lock v3 is separate from registry, config, and installation lock v
         ...lock.materialization,
         files: [{
           ...lock.materialization.files[0],
-          targetPath: `.agent-context/runtime/materialized/${"d".repeat(64)}/repo-context.mjs`,
+          targetPath: `.codex/acf/runtime-source/materialized/${"d".repeat(64)}/repo-context.mjs`,
         }],
       },
-    }).materialization.files[0]?.targetPath.startsWith(".agent-context/runtime/materialized/"),
+    }).materialization.files[0]?.targetPath.startsWith(".codex/acf/runtime-source/materialized/"),
     true,
   );
   assert.throws(
@@ -351,7 +351,7 @@ test("member and identified-array-item ownership decode as closed artifact varia
           operation: "seed-file",
           sourcePath: "policy.json",
           sourceSha256: hash,
-          targetPath: ".agent-context/policy.json",
+          targetPath: ".codex/acf/policy.json",
         },
       ],
     }],

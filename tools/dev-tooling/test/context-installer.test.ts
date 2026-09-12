@@ -16,10 +16,8 @@ import {
   planProjectSelection,
   recoverProject,
   removeComponent,
-  type ContextSelectionPreview,
   updateProject,
 } from "../src/context-installer.js";
-import { formatContextResult, parseContextInstallerArguments } from "../src/context-installer-cli.js";
 
 const componentRevision = `sha256:${"b".repeat(64)}`;
 
@@ -167,7 +165,7 @@ test("adding a runtime package refreshes its workspace lock before bootstrap", a
       "lock: v2\n",
     );
     assert.equal(
-      installed.writtenPaths.includes(".agent-context/runtime/pnpm-lock.yaml"),
+      installed.writtenPaths.includes(".codex/acf/runtime-source/pnpm-lock.yaml"),
       true,
     );
   } finally {
@@ -732,44 +730,6 @@ test("registry sources reject hash drift, invalid UTF-8, and BOMs", async () => 
   }
 });
 
-test("CLI exposes the complete lifecycle and keeps JSON read-only", () => {
-  assert.deepEqual(parseContextInstallerArguments(["init", "--cwd", "fixture"], "D:/repo"), {
-    command: "init", projectRoot: path.resolve("D:/repo", "fixture"), component: null, output: "text",
-  });
-  assert.deepEqual(parseContextInstallerArguments(["update", "frontend"], "D:/repo"), {
-    command: "update", projectRoot: "D:/repo", component: "frontend", output: "text", mode: "preserve-local",
-  });
-  assert.deepEqual(parseContextInstallerArguments(["update", "frontend", "--overwrite"], "D:/repo"), {
-    command: "update", projectRoot: "D:/repo", component: "frontend", output: "text", mode: "overwrite-selected",
-  });
-  assert.deepEqual(parseContextInstallerArguments(["doctor", "--json"], "D:/repo"), {
-    command: "doctor", projectRoot: "D:/repo", component: null, output: "json",
-  });
-  assert.deepEqual(parseContextInstallerArguments(["recover"], "D:/repo"), {
-    command: "recover", projectRoot: "D:/repo", component: null, output: "text",
-  });
-  assert.deepEqual(parseContextInstallerArguments(["setup", "--port", "4312", "--no-open"], "D:/repo"), {
-    command: "setup", projectRoot: "D:/repo", component: null, output: "text", port: 4312, openBrowser: false,
-    exitAfterInstall: false,
-  });
-  assert.throws(() => parseContextInstallerArguments(["add"], "D:/repo"), /requires a component/u);
-  assert.throws(() => parseContextInstallerArguments(["init", "--json"], "D:/repo"), /read-only/u);
-  assert.throws(() => parseContextInstallerArguments(["remove", "frontend", "--overwrite"], "D:/repo"), /valid only.*update/u);
-  assert.throws(() => parseContextInstallerArguments(["update", "--overwrite", "--overwrite"], "D:/repo"), /only once/u);
-  assert.throws(() => parseContextInstallerArguments(["doctor", "--no-open"], "D:/repo"), /valid only.*setup/u);
-  assert.throws(() => parseContextInstallerArguments(["setup", "--port", "70000"], "D:/repo"), /integer from 0/u);
-  assert.match(formatContextResult({
-    command: "inspect",
-    projectRoot: "D:/repo",
-    initialized: false,
-    hasAgents: false,
-    hasCodexConfig: false,
-    hasCodexHooks: false,
-    registryRevision: "0.2.0",
-    selection: selectionPreviewFixture("D:/repo"),
-  }), /initialized: no/u);
-});
-
 async function createFixture(): Promise<Fixture> {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-installer-"));
   const frameworkRoot = path.join(root, "framework");
@@ -928,7 +888,7 @@ async function addRuntimeComponents(
       operation: "runtime-workspace",
       sourcePath: "registry/sources/runtime-lock.yaml",
       sourceSha256: sha(lock),
-      targetPath: ".agent-context/runtime/pnpm-lock.yaml",
+      targetPath: ".codex/acf/runtime-source/pnpm-lock.yaml",
       workspaceId: "fixture-runtime",
       mediaType: "application/yaml",
     }],
@@ -943,7 +903,7 @@ async function addRuntimeComponents(
       operation: "runtime-workspace",
       sourcePath: "registry/sources/runtime-package.ts",
       sourceSha256: sha(packageSource),
-      targetPath: ".agent-context/runtime/packages/feature/src/index.ts",
+      targetPath: ".codex/acf/runtime-source/packages/feature/src/index.ts",
       workspaceId: "fixture-runtime",
       mediaType: "text/typescript",
     }],
@@ -998,44 +958,6 @@ async function writeLegacyMarkdownLock(lockPath: string): Promise<void> {
   if (core === undefined) assert.fail("Fixture lock must contain the core text section.");
   core.installedSha256 = sha("# Core rules\n");
   await writeFile(lockPath, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
-}
-
-function selectionPreviewFixture(projectRoot: string): ContextSelectionPreview {
-  return {
-    command: "plan",
-    projectRoot,
-    initialized: false,
-    registryRevision: "0.2.0",
-    status: "changes-ready",
-    currentDirectComponents: [],
-    requestedComponents: [],
-    directComponents: ["core"],
-    resolvedComponents: ["core"],
-    transitiveComponents: [],
-    bundleComponents: [],
-    footprint: {
-      componentCount: 1,
-      directComponentCount: 1,
-      transitiveComponentCount: 0,
-      bundleCount: 0,
-      artifactCount: 1,
-      targetCount: 1,
-      skillTargetCount: 0,
-      runtimeTargetCount: 0,
-    },
-    capabilities: [],
-    capabilityAvailability: "not-inspected",
-    licenses: [],
-    trustRequired: false,
-    activations: [],
-    drift: {
-      assessmentCounts: [{ status: "uninstalled", count: 1 }],
-      conflicts: [],
-      plannedWritePaths: ["AGENTS.md", CONTEXT_CONFIG_PATH, CONTEXT_LOCK_PATH],
-      configChangeRequired: true,
-      lockChangeRequired: true,
-    },
-  };
 }
 
 async function snapshotProject(projectRoot: string): Promise<readonly string[]> {

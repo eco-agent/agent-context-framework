@@ -118,7 +118,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
           assert.equal(targets.has(license.noticePath), true);
         } else {
           assert.equal(license.sourcePath, "LICENSE");
-          assert.equal(license.noticePath, ".agent-context/LICENSE.agent-context-framework");
+          assert.equal(license.noticePath, ".codex/acf/LICENSE.agent-context-framework");
         }
       }
     }

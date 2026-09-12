@@ -131,7 +131,7 @@ test("policy doctor requires explicit configuration and validates declared paths
         ok: false,
         status: "configuration-required",
         diagnostics: [
-          ".agent-context/policy.json is unconfigured; record explicit repository facts and verification profiles.",
+          ".codex/acf/policy.json is unconfigured; record explicit repository facts and verification profiles.",
         ],
       },
     );

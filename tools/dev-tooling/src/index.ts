@@ -142,7 +142,6 @@ export {
 } from "./test-application-fixture.js";
 export {
   buildContextCapsule,
-  buildContextCapsuleForProject,
   contextCapsuleEntryBytes,
   diffContextCapsules,
   extractContextCapsule,
@@ -158,35 +157,24 @@ export {
   type ContextCapsuleDiff,
   type ContextCapsuleEntryV1,
   type ContextCapsuleInspection,
-  type ContextCapsulePayloadV1,
+  type ContextCapsulePayloadV2,
 } from "./context-capsule.js";
 export {
-  readContextCapsuleProjectFiles,
-  readContextCapsuleV2Installation,
   verifyContextCapsuleInstallation,
-  verifyContextCapsuleV3Installation,
   type ContextCapsuleInstallationMismatch,
   type ContextCapsuleInstallationVerification,
-  type ContextCapsuleProjectFiles,
-  type ContextCapsuleV2Installation,
-  type ContextCapsuleV3InstallationVerification,
 } from "./context-capsule-installation.js";
-export {
-  createContextCapsuleLock,
-  verifyContextCapsuleLock,
-  type ContextCapsuleLockVerification,
-} from "./context-capsule-lock.js";
 export {
   bootstrapContextCapsule,
   type ContextCapsuleBootstrapResult,
 } from "./context-capsule-bootstrap.js";
 export {
-  migrateContextCapsuleV2,
-  planContextCapsuleV2Migration,
-  type ContextCapsuleMigrationConflict,
-  type ContextCapsuleMigrationPlan,
-  type ContextCapsuleMigrationResult,
-} from "./context-capsule-migration.js";
+  packContextCapsule,
+  syncContextCapsule,
+  type ContextCapsulePackConflict,
+  type ContextCapsulePackResult,
+  type ContextCapsuleSyncResult,
+} from "./context-capsule-workflow.js";
 export {
   contextCapsuleSkillActivation,
   contextCapsuleRuntimeActivation,
@@ -194,12 +182,10 @@ export {
   decodeContextMaterializationReceipt,
   materializeContextCapsule,
   planContextCapsuleMaterialization,
-  verifyContextMaterializationAuthority,
   CONTEXT_MATERIALIZATION_KIND,
   CONTEXT_MATERIALIZATION_PATH,
   CONTEXT_MATERIALIZATION_SCHEMA_VERSION,
   type ContextMaterializationConflict,
-  type ContextMaterializationAuthorityVerification,
   type ContextMaterializationPlan,
   type ContextMaterializationOptions,
   type ContextMaterializationReceiptV2,

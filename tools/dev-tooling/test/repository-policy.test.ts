@@ -30,7 +30,7 @@ test("tracked repository-policy bundle is reproducible", async () => {
   try {
     await executeFile(process.execPath, [
       path.join(frameworkRoot, "node_modules/vite-plus/dist/pack-bin.js"),
-      path.join(frameworkRoot, ".agent-context/runtime/packages/policy/src/cli.ts"),
+      path.join(frameworkRoot, ".codex/acf/runtime-source/packages/policy/src/cli.ts"),
       "--write",
       "--format",
       "esm",
@@ -153,7 +153,7 @@ test("repository policy materializes and bootstraps in a non-Node project", asyn
     assert.equal(
       finalDoctor.diff?.plan.status === "ready" &&
         finalDoctor.diff.plan.assessments.some((assessment) =>
-          assessment.targetPath === ".agent-context/policy.json" &&
+          assessment.targetPath === ".codex/acf/policy.json" &&
           assessment.status === "unchanged"),
       true,
     );

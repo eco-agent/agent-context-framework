@@ -1,5 +1,4 @@
 import { spawn } from "node:child_process";
-import { readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 
 import { bootstrapContextCapsule } from "./context-capsule-bootstrap.js";
@@ -7,7 +6,7 @@ import { bootstrapContextCapsule } from "./context-capsule-bootstrap.js";
 type BootstrapExecutable = "hook" | "policy" | "repo-context";
 
 type BootstrapArguments =
-  | { readonly command: "materialize"; readonly projectRoot: string; readonly json: boolean }
+  | { readonly command: "sync"; readonly projectRoot: string; readonly json: boolean }
   | {
       readonly command: "exec";
       readonly executable: "hook" | "repo-context";
@@ -27,14 +26,14 @@ function parseArguments(values: readonly string[]): BootstrapArguments {
   const command = values[0];
   const executable = values[1];
   if (
-    command !== "materialize" &&
+    command !== "sync" &&
     !(command === "exec" &&
       (executable === "hook" || executable === "policy" || executable === "repo-context"))
   ) {
     throw new Error(
-      "Usage: node .agent-context/bootstrap.mjs materialize [--cwd PROJECT] [--json]\n" +
-      "       node .agent-context/bootstrap.mjs exec hook|repo-context [--cwd PROJECT]\n" +
-      "       node .agent-context/bootstrap.mjs exec policy [--cwd PROJECT] -- <policy arguments>",
+      "Usage: node .codex/acf/bootstrap.mjs sync [--cwd PROJECT] [--json]\n" +
+      "       node .codex/acf/bootstrap.mjs exec hook|repo-context [--cwd PROJECT]\n" +
+      "       node .codex/acf/bootstrap.mjs exec policy [--cwd PROJECT] -- <policy arguments>",
     );
   }
   let projectRoot = process.cwd();
@@ -67,7 +66,7 @@ function parseArguments(values: readonly string[]): BootstrapArguments {
       throw new Error(`Unknown bootstrap argument ${value ?? ""}.`);
     }
   }
-  if (command === "materialize") return { command, projectRoot, json };
+  if (command === "sync") return { command, projectRoot, json };
   if (executable === "policy") {
     if (forwardedArguments === null) {
       throw new Error("exec policy requires -- followed by policy arguments.");
@@ -89,39 +88,26 @@ function parseArguments(values: readonly string[]): BootstrapArguments {
 try {
   const request = parseArguments(process.argv.slice(2));
   if (request.command === "exec") {
-    const legacyEntrypoint = await contextCapsuleV2Entrypoint(
-      request.projectRoot,
-      request.executable,
-    );
-    if (legacyEntrypoint !== null) {
-      process.exitCode = await runEntrypoint(
-        legacyEntrypoint.entrypoint,
-        legacyEntrypoint.projectRoot,
-        request.executable,
-        request.arguments,
-      );
-    } else {
-      const result = await bootstrapContextCapsule(request.projectRoot);
-      if (result.materialization.status === "blocked") {
-        throw new Error(
-          result.materialization.conflicts.map((conflict) =>
-            `${conflict.targetPath}: ${conflict.detail}`).join("\n"),
-        );
-      }
-      const suffix = executableSuffix(request.executable);
-      const candidates = result.materialization.receipt.files.filter((file) =>
-        file.targetPath.endsWith(suffix));
-      if (candidates.length !== 1) {
-        throw new Error(`The capsule must materialize exactly one ${request.executable} entrypoint.`);
-      }
-      const entrypoint = path.resolve(result.projectRoot, candidates[0]!.targetPath);
-      process.exitCode = await runEntrypoint(
-        entrypoint,
-        result.projectRoot,
-        request.executable,
-        request.arguments,
+    const result = await bootstrapContextCapsule(request.projectRoot);
+    if (result.materialization.status === "blocked") {
+      throw new Error(
+        result.materialization.conflicts.map((conflict) =>
+          `${conflict.targetPath}: ${conflict.detail}`).join("\n"),
       );
     }
+    const suffix = executableSuffix(request.executable);
+    const candidates = result.materialization.receipt.files.filter((file) =>
+      file.targetPath.endsWith(suffix));
+    if (candidates.length !== 1) {
+      throw new Error(`The capsule must materialize exactly one ${request.executable} entrypoint.`);
+    }
+    const entrypoint = path.resolve(result.projectRoot, candidates[0]!.targetPath);
+    process.exitCode = await runEntrypoint(
+      entrypoint,
+      result.projectRoot,
+      request.executable,
+      request.arguments,
+    );
   } else {
     const result = await bootstrapContextCapsule(request.projectRoot);
     const output = request.json
@@ -140,31 +126,6 @@ try {
 } catch (error) {
   process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
   process.exitCode = 1;
-}
-
-async function contextCapsuleV2Entrypoint(
-  projectRootCandidate: string,
-  executable: BootstrapExecutable,
-): Promise<{ readonly projectRoot: string; readonly entrypoint: string } | null> {
-  const projectRoot = await realpath(projectRootCandidate);
-  const lockPath = path.join(projectRoot, ".agent-context", "lock.json");
-  let lock: unknown;
-  try {
-    lock = JSON.parse(await readFile(lockPath, "utf8")) as unknown;
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
-    throw error;
-  }
-  if (
-    typeof lock !== "object" ||
-    lock === null ||
-    !("schemaVersion" in lock) ||
-    lock.schemaVersion !== 2
-  ) {
-    return null;
-  }
-  const relativePath = `.agent-context/runtime${executableSuffix(executable)}`;
-  return { projectRoot, entrypoint: path.join(projectRoot, relativePath) };
 }
 
 function executableSuffix(executable: BootstrapExecutable): string {

@@ -17,7 +17,7 @@ export function typescriptCli() {
   );
   if (!existsSync(executable)) {
     throw new Error(
-      "Runtime dependencies are missing. Bootstrap .agent-context/runtime before building.",
+      "Runtime dependencies are missing. Bootstrap .codex/acf/runtime-source before building.",
     );
   }
   return executable;

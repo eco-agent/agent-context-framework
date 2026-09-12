@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:1a20b37b9c5db892f31a910bde05b54748a0c98d88541779d7295191ce80eece",
+      "revision": "sha256:65b3bea286df76eec35de43836b0f4a48e0d9139ef81d8d318ff19c5e210ff45",
       "dependencies": [],
       "capabilities": [
         {
@@ -24,7 +24,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         },
         {
@@ -32,7 +32,7 @@
           "spdx": "MIT",
           "source": "https://github.com/cursor/plugins",
           "revision": "fd6dd6f7276956a532bb78a748a8d2818b6eb5f4",
-          "noticePath": ".agent-context/LICENSE.cursor-unslop.upstream",
+          "noticePath": ".codex/acf/LICENSE.cursor-unslop.upstream",
           "noticeSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
         }
       ],
@@ -40,7 +40,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "99c7088b417d4299a06f476d6bf64329ea727b262394fbf4976017446c88f481",
+          "sourceSha256": "d54d963926cb4cbf1dcf0a7c35a54ef6bcfee18a1bfeaa39a6f1e591754d7c4c",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -48,42 +48,42 @@
         {
           "operation": "seed-file",
           "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
-          "sourceSha256": "b7b7c0c0bb467e5ef7e4fe289cb1d4e612ca366516952e24aa5c71503059d91b",
+          "sourceSha256": "4fd88698271ce6ce3470cac4707fe5572daa686827d7391a13a0c1ff6acf40d0",
           "targetPath": ".gitattributes"
         },
         {
           "operation": "file",
           "sourcePath": "LICENSE",
           "sourceSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3",
-          "targetPath": ".agent-context/LICENSE.agent-context-framework",
+          "targetPath": ".codex/acf/LICENSE.agent-context-framework",
           "mediaType": "text/plain"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/licenses/LICENSE.cursor-unslop.upstream",
           "sourceSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
-          "targetPath": ".agent-context/LICENSE.cursor-unslop.upstream",
+          "targetPath": ".codex/acf/LICENSE.cursor-unslop.upstream",
           "mediaType": "text/plain"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
           "sourceSha256": "33e36f05f91dbaa15357273c845cb1dec21b2c461b06d03f71b4b13c1369aa31",
-          "targetPath": ".agent-context/bootstrap.mjs",
+          "targetPath": ".codex/acf/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/attributions/core/SOURCE.json",
           "sourceSha256": "a9827bd103412b8c6a4b274deb904f3098561b7a01f671675d02c25977bd6f70",
-          "targetPath": ".agent-context/sources/core/SOURCE.json",
+          "targetPath": ".codex/acf/sources/core/SOURCE.json",
           "mediaType": "application/json"
         }
       ]
     },
     {
       "name": "skill-adopt-established-product",
-      "revision": "sha256:5e6c5663fc8cd92a89abf6fb63b8644c8d4352ddba9f7491d99aeaf7bd4e57a5",
+      "revision": "sha256:b85154d6f8e2cbd9fa46619460b83ff21093cb88023447423e1e25abfeaad2b3",
       "dependencies": [],
       "capabilities": [
         {
@@ -97,7 +97,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -120,7 +120,7 @@
     },
     {
       "name": "skill-choose-react-animation",
-      "revision": "sha256:7db184377acbb555c26be668bdbea025ae521d047430430902de84c17bb8a99c",
+      "revision": "sha256:b0f7658888765239bb70a9468507f8143cb9215d02b91dcf51c49c3bf8a2012b",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -128,7 +128,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -453,7 +453,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:3689c95c814e69b1efa7e0aa9046fb4cca6c3be56c0fd2612391ffd507de6372",
+      "revision": "sha256:125f943f2d3364bde82d431ac8691f813ef3e17c730f1415bdc5e08278ba39f4",
       "dependencies": [],
       "capabilities": [
         {
@@ -467,7 +467,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -595,7 +595,7 @@
     },
     {
       "name": "skill-responsive-css-architect",
-      "revision": "sha256:6a143d51b255b3b4a354eede1277c057acf0287b2641a2be2815b67b53337147",
+      "revision": "sha256:cfa08f0fe143204a51ee90629173578da5b9be6e72529206b3eb8e06bea24bd7",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -603,7 +603,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -647,7 +647,7 @@
     },
     {
       "name": "skill-tailwind-css-architect",
-      "revision": "sha256:cc9e1640d9b5f1d537b57a9188bf61bfdbc97432c744e07ee15c86380d0d727a",
+      "revision": "sha256:ef8a59898dceff208fea6802d60e4e8613c8645ebb9563a080095083b00e9f29",
       "dependencies": [],
       "capabilities": [
         {
@@ -671,7 +671,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -736,7 +736,7 @@
     },
     {
       "name": "frontend",
-      "revision": "sha256:07f85a6715327a0bc200462445c980d151cf8e055402b149e5f3d8d1c26a7740",
+      "revision": "sha256:0a2eb7c71d627e70a74d07871d82c7ae0f2ad469a8262a5ec5cc0d153d7b6cea",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -763,7 +763,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -780,7 +780,7 @@
     },
     {
       "name": "frontend-tailwind",
-      "revision": "sha256:9a74ae4fb5beead3a3b5f7be3f1607af32c754b971fa330408388795fd329b15",
+      "revision": "sha256:b40992018eca900730b29f8616fde86df3d3c1e813f94e55878e6bd78be82707",
       "dependencies": [
         "frontend",
         "skill-responsive-css-architect",
@@ -792,7 +792,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -809,7 +809,7 @@
     },
     {
       "name": "skill-codebase-inventory",
-      "revision": "sha256:285c6b049acacca8c55cf62c1651b3d97d4c7d22d5f62ba59a74064db44379e0",
+      "revision": "sha256:97af60be355f024b3558c113dfaf21d81bed69361bffb5821c637436fbbd28da",
       "dependencies": [],
       "capabilities": [
         {
@@ -823,7 +823,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -916,7 +916,7 @@
     },
     {
       "name": "skill-design-operational-boundaries",
-      "revision": "sha256:15864358ba021c64bfb82324a1c7cc3ba081ed34f23d1580019b0aff0a3d1209",
+      "revision": "sha256:af6c7671fbd91b652ac1e377e08717857913741faf5d4f4f54a9612a05a45a22",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -924,7 +924,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1050,7 +1050,7 @@
     },
     {
       "name": "skill-diagnose",
-      "revision": "sha256:6dce91a3e3601ea4b314779fb09b25bc39e91e669819ed4a9781e6f8c39eb50a",
+      "revision": "sha256:25b19f68b5624d8a9d986fc30eef9dfebd9cee4106215137276e55b37ceb0c82",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -1058,7 +1058,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1127,7 +1127,7 @@
     },
     {
       "name": "skill-reuse-before-implementation",
-      "revision": "sha256:b5b15d8457497c0eb772cdaa2a653895c38d102eade80a0c5b09d3aef7fb623b",
+      "revision": "sha256:3872f1c6975a9c56c12fad9c0db3748e64606bde1b4495defd0c5ab3f00c799c",
       "dependencies": [],
       "capabilities": [
         {
@@ -1141,7 +1141,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1336,7 +1336,7 @@
     },
     {
       "name": "skill-maintain-agent-context-framework",
-      "revision": "sha256:c26b2adbd81417440be79f63cb0531b1da7f441d59e81c11ed624e220f5bb667",
+      "revision": "sha256:4326ca4f7c8918afddd99faecc074ccdaca92390fc2bcde7f1ab228b4d657468",
       "dependencies": [],
       "capabilities": [
         {
@@ -1355,7 +1355,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1385,7 +1385,7 @@
     },
     {
       "name": "skill-optimize-codex-sessions",
-      "revision": "sha256:f923c89cfcff2cf8723c935a15a933aba208cd9eacfa3603529a5bfd08145c57",
+      "revision": "sha256:9814c7dda06434054bd3f50ba9d0b7b88ef72deac0e46b4bac75fda97b30f9b7",
       "dependencies": [],
       "capabilities": [
         {
@@ -1414,7 +1414,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1721,7 +1721,7 @@
     },
     {
       "name": "workflow-frontend-composition",
-      "revision": "sha256:55669eae0daf858e9e1290fcf30aba9dfb5ad0874010269843645310b0f3c229",
+      "revision": "sha256:04da5afbedb3178c1fd56e32d0df0da9d9a9476d6445d61fb65fc877b2fc0def",
       "dependencies": [
         "core",
         "runtime-base",
@@ -1750,7 +1750,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -1759,35 +1759,35 @@
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-workflow-runtime.tsconfig.json",
           "sourceSha256": "539e4afc28bd6d04f4e78b9452705911fa33d8b6d7e64bbfba639b6f3e482efc",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/tsconfig.json",
           "mediaType": "application/json"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-frontend-workflows.tsconfig.json",
           "sourceSha256": "35a58fdf4db1c74cb634a75402b9d07b7ab13a2234d482698618e88cf8d35a3a",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/tsconfig.json",
           "mediaType": "application/json"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-workflow-runtime.package.json",
           "sourceSha256": "b3600f0701e895ae94c80182892594ec87807a0c62322519d3686dd3060bd398",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/package.json",
           "mediaType": "application/json"
         },
         {
           "operation": "file",
           "sourcePath": "packages/codex-workflow-runtime/LICENSE",
           "sourceSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/LICENSE",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/LICENSE",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/bounded-workflow.ts",
           "sourceSha256": "4ac2c062588946e30602c26ec7af87d8931d654efe148325b4c2e1605525c151",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/bounded-workflow.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/bounded-workflow.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1795,7 +1795,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/codex-turn-transport.ts",
           "sourceSha256": "0a247ae2446537e2237a25973585d366183b19ef263ad8576923cedff5d94f4d",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/codex-turn-transport.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/codex-turn-transport.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1803,7 +1803,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/contracts.ts",
           "sourceSha256": "089155841c99c0765262f6d3f1452bffc2e33e603f68f40c97b38f5cb7c310c7",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/contracts.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/contracts.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1811,7 +1811,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/index.ts",
           "sourceSha256": "ef3215c6bf9c58a61ba37f6c2ec28cdc9ff68083ccc49c508166caf217daf3de",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/index.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/index.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1819,7 +1819,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/ledger.ts",
           "sourceSha256": "cc87a90935cf67bc3af58f7db1a94ba672ba91ca247f298c67baf553d11a53cc",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/ledger.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/ledger.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1827,7 +1827,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loop-support.ts",
           "sourceSha256": "579b43bc904518c05ecfd78349e6070c176f8cd484c70973e7e0f80f7fc36707",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loop-support.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loop-support.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1835,7 +1835,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
           "sourceSha256": "d75a457a07df0411fcd338a10dbc03786ec2c7ba8c8d7f8fe7d84e91f897c25c",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/authority-ladder.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1843,7 +1843,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
           "sourceSha256": "10b9c6af14f963b7958302ccc1379bed2ed4911acb1d89991350e0330362f4f9",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/autonomous-environment.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1851,7 +1851,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
           "sourceSha256": "e0a4c0e49591d2c240c4c296519368a409601e397be5f20a53bc9174ac497e35",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/membrane-routing.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1859,7 +1859,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/relay-chain.ts",
           "sourceSha256": "47afa99d5e612c72f63de18605c45df927c3c2909a930e7b2ce8042b15842216",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/relay-chain.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/relay-chain.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1867,7 +1867,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
           "sourceSha256": "84cddb21353bcfbfcfdc11f84c01d4829c5f366f5ec0886ffba890672eef4ae8",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/reviewer-repair.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1875,7 +1875,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
           "sourceSha256": "b19fa49852bf8faaee239c976ec7343f8fff7f809c3cc4791fe5e16f06217413",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/scope-reconciliation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1883,7 +1883,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
           "sourceSha256": "ae93882828bd8594ca6ea841619354470c308c81c58c37683fd5d15ad9639136",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/shared-artifact.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1891,7 +1891,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
           "sourceSha256": "f6f9c019a40f4b7d3d030b875447a7d88e42ea522e1476a5b8eaa3953f86b134",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/loops/subsidiarity-escalation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1899,7 +1899,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/plan-codex-client.ts",
           "sourceSha256": "ce9d978f07d97ce5e9b1781fb9c398b98a225f1e3e0a1f44cf8ba8b8f00fa529",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/plan-codex-client.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/plan-codex-client.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1907,7 +1907,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-workflow-runtime/src/plan.ts",
           "sourceSha256": "6a3658eb65385c3656399d2a84c40551bc0b47b0833991d95c55786e65c0fac9",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/src/plan.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src/plan.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1915,14 +1915,14 @@
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-frontend-workflows.package.json",
           "sourceSha256": "8ccd2f1e3827f71f394c74579a152c266bcf5615c8a6b42d0c7695a328faa870",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/package.json",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/content-addressed-artifacts.ts",
           "sourceSha256": "c186d63d99de26c06c460753633d2adab2a2c363b8f47ac6fb13d221caf59db8",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/content-addressed-artifacts.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/content-addressed-artifacts.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1930,7 +1930,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
           "sourceSha256": "b299bfa6afab4a505edd296a906f19f19f126713a4a4182b065dd96945594749",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/frontend-compose-refine.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1938,7 +1938,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/frontend-representation.ts",
           "sourceSha256": "c1ac73f9b4cde13a233127307eebb72b5963747516395a08ddfcfe1d08d7fe9b",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-representation.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/frontend-representation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1946,7 +1946,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/frontend-specification.ts",
           "sourceSha256": "0164e1772beb1a8f843b37b24e499cdee733cd448c8a0bdf79550ac6ac501fa8",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/frontend-specification.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/frontend-specification.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1954,7 +1954,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/human-acceptance.ts",
           "sourceSha256": "ad67afba8005a8c61ed5a0c68ead4590c1cf8d4b1a69c82eabfd67567fa21f6a",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/human-acceptance.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/human-acceptance.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1962,7 +1962,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/index.ts",
           "sourceSha256": "63d7d409254be5ffb84c5dbaf01797cb9638524641f9b6ece3540ea31208dcc2",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/index.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/index.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1970,7 +1970,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/preflight-cli.ts",
           "sourceSha256": "4e1bf3ce3fc6727e23a58327d3cdb1ae93a7c31a101f4a43b1ba053bbc53ed45",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/preflight-cli.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/preflight-cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1978,7 +1978,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/src/preflight.ts",
           "sourceSha256": "41a07c52341689cf75cc6a9c445947045d350c104d4f552c6f1e70ae33fff329",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/src/preflight.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src/preflight.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1986,7 +1986,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
           "sourceSha256": "b71232e4bf5e0fc3ea0e80c550b7d92fc67120183964f6e458adc1ff5220c52d",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/test/frontend-compose-refine.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -1994,7 +1994,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/test/frontend-representation.test.ts",
           "sourceSha256": "51ef268ae2268324fb05695996964ce967d5bdd74ac338d286f3cae84db0e82c",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/frontend-representation.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/test/frontend-representation.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
@@ -2002,7 +2002,7 @@
           "operation": "runtime-workspace",
           "sourcePath": "packages/codex-frontend-workflows/test/workflow-infrastructure.test.ts",
           "sourceSha256": "f677657a12638d0eb020ff8dbaf737ad9dbed87cddc1490214e99bfb4032dce1",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/test/workflow-infrastructure.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/test/workflow-infrastructure.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         }
@@ -2010,7 +2010,7 @@
     },
     {
       "name": "engineering",
-      "revision": "sha256:d1103ac3b8f1e569ab7adedd4323671fecbdaabf2943d288068cff1f1087d390",
+      "revision": "sha256:1cd25455a741ae081ea005a9d12ddb30be4f601204cbe2b325ac6d9b3516c929",
       "dependencies": [
         "skill-codebase-inventory",
         "skill-design-operational-boundaries",
@@ -2042,7 +2042,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -2081,7 +2081,7 @@
     },
     {
       "name": "typescript-engineering",
-      "revision": "sha256:2d2f7901b6ed18242aa41f2077f6f6b7b00e662741cab36d716126a4558c0855",
+      "revision": "sha256:3ac8001d2c5062af021024f968a4bd4b43ae723b62354bbecffb70e1cd6aa3a0",
       "dependencies": [
         "engineering",
         "skill-design-typescript-invariants"
@@ -2092,7 +2092,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -2116,7 +2116,7 @@
     },
     {
       "name": "session-quality",
-      "revision": "sha256:6a8f898d75b3b97704fbe994738e89c932422c951aa6b4911f6ce7cdf5c8eb14",
+      "revision": "sha256:744f3329a6a35b6309892d2cfb4627cb40ffd7abc6bfb3b97fe0f0f3c6a64528",
       "dependencies": [
         "skill-optimize-codex-sessions"
       ],
@@ -2147,7 +2147,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -2164,7 +2164,7 @@
     },
     {
       "name": "skill-authoring",
-      "revision": "sha256:07f005213c634c2fbb077b777444cd8013047e250abb7b0fd91646406228c2a6",
+      "revision": "sha256:5808bd05184263e22a75c5d0acc6c5145f321ba71a27283a05acec9939a270b5",
       "dependencies": [
         "skill-writing-great-skills"
       ],
@@ -2180,7 +2180,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -2197,7 +2197,7 @@
     },
     {
       "name": "runtime-base",
-      "revision": "sha256:f445f68a738fd811da3fa6cfd768081a29e2f32e1fadff464f9435e7fa30a583",
+      "revision": "sha256:d67ecedb1a6612c666222bb230a62ab7489a90cf1909a27542bc58029312e7a1",
       "dependencies": [],
       "capabilities": [
         {
@@ -2216,128 +2216,128 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
       "artifacts": [
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/.gitignore",
+          "sourcePath": ".codex/acf/runtime-source/.gitignore",
           "sourceSha256": "186e39ea117084ad4758a1cb07593a984a1cd50d98edb81070bb8ed45fc7a97c",
-          "targetPath": ".agent-context/runtime/.gitignore",
+          "targetPath": ".codex/acf/runtime-source/.gitignore",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/package.json",
+          "sourcePath": ".codex/acf/runtime-source/package.json",
           "sourceSha256": "16349d2166c64fa4df7e8b1662bf710e96664e1152c946434f2fc97eddeab8ed",
-          "targetPath": ".agent-context/runtime/package.json",
+          "targetPath": ".codex/acf/runtime-source/package.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/pnpm-lock.yaml",
+          "sourcePath": ".codex/acf/runtime-source/pnpm-lock.yaml",
           "sourceSha256": "4635121173913edd5c4746a68f0b05a687fd43d4423c9a41f5391b26142c8012",
-          "targetPath": ".agent-context/runtime/pnpm-lock.yaml",
+          "targetPath": ".codex/acf/runtime-source/pnpm-lock.yaml",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/yaml"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/pnpm-workspace.yaml",
+          "sourcePath": ".codex/acf/runtime-source/pnpm-workspace.yaml",
           "sourceSha256": "0fb360452b0231d114d0b0ad6cc76bb48fe528382f55827cf93739bf64ec79e1",
-          "targetPath": ".agent-context/runtime/pnpm-workspace.yaml",
+          "targetPath": ".codex/acf/runtime-source/pnpm-workspace.yaml",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/yaml"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/scripts/build.mjs",
+          "sourcePath": ".codex/acf/runtime-source/scripts/build.mjs",
           "sourceSha256": "b28af8a402f69cfd64f30488a260c8efa088bd70e28012d02bfd88bf32a8a2b8",
-          "targetPath": ".agent-context/runtime/scripts/build.mjs",
+          "targetPath": ".codex/acf/runtime-source/scripts/build.mjs",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/scripts/clean.mjs",
+          "sourcePath": ".codex/acf/runtime-source/scripts/clean.mjs",
           "sourceSha256": "8e5ce55dfc730ae4f0a4db56662ead797dba08a601dab59c9777a541297639ab",
-          "targetPath": ".agent-context/runtime/scripts/clean.mjs",
+          "targetPath": ".codex/acf/runtime-source/scripts/clean.mjs",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/scripts/doctor.mjs",
+          "sourcePath": ".codex/acf/runtime-source/scripts/doctor.mjs",
           "sourceSha256": "82cbe32da7bebebf95f2fcd663096ba45d6bb45a442b12eab038e0310adbc0f0",
-          "targetPath": ".agent-context/runtime/scripts/doctor.mjs",
+          "targetPath": ".codex/acf/runtime-source/scripts/doctor.mjs",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/scripts/tooling.mjs",
-          "sourceSha256": "a203faba1174df3fbab944a8228b330dca199487df8ad38893add6de7f9fac27",
-          "targetPath": ".agent-context/runtime/scripts/tooling.mjs",
+          "sourcePath": ".codex/acf/runtime-source/scripts/tooling.mjs",
+          "sourceSha256": "2d2d90365f7ab518885c0967f4fe8469fc67be396dd6fd8e5946e482da78a703",
+          "targetPath": ".codex/acf/runtime-source/scripts/tooling.mjs",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/tsconfig.json",
+          "sourcePath": ".codex/acf/runtime-source/tsconfig.json",
           "sourceSha256": "c3d286b48eba0c6adea2d13a3c2341b228f40305d29fdc05fbcdf7a9fa53b161",
-          "targetPath": ".agent-context/runtime/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/tsconfig.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/shared/package.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/shared/package.json",
           "sourceSha256": "2e28602a8e1150c69345d6141861892645bbf23d70f2fab62ef4c53c83693426",
-          "targetPath": ".agent-context/runtime/packages/shared/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/shared/package.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/shared/src/decoding.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/shared/src/decoding.ts",
           "sourceSha256": "c88b25a87ebef1aea6754aa5c5a5a0c214eb5116d93ea6d48a0bbdf46ceaf8e3",
-          "targetPath": ".agent-context/runtime/packages/shared/src/decoding.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/shared/src/decoding.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/shared/src/filesystem.ts",
-          "sourceSha256": "8b7e444ab25a32ec2bc893586fed8b632836a2da991ea837b1be4f45dce19ab9",
-          "targetPath": ".agent-context/runtime/packages/shared/src/filesystem.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/shared/src/filesystem.ts",
+          "sourceSha256": "745400878fd74a826ea220949e240e2860736489042269986bf1dcd10d95aed8",
+          "targetPath": ".codex/acf/runtime-source/packages/shared/src/filesystem.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/shared/src/index.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/shared/src/index.ts",
           "sourceSha256": "961f3bbac6e19fe0061d32ca92d5ef8fc936b30fd9485d2fa280e001dc0716ee",
-          "targetPath": ".agent-context/runtime/packages/shared/src/index.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/shared/src/index.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/shared/test/decoding.test.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/shared/test/decoding.test.ts",
           "sourceSha256": "d9a537af70f50ddf7b56991d8cdc04686c64c3e8005ef455145da5841f48f86a",
-          "targetPath": ".agent-context/runtime/packages/shared/test/decoding.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/shared/test/decoding.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/shared/tsconfig.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/shared/tsconfig.json",
           "sourceSha256": "26e84a4e129c35d22402a8fd53ed72d384ec7ac79e64e111c622f13ec9513405",
-          "targetPath": ".agent-context/runtime/packages/shared/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/shared/tsconfig.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         }
@@ -2345,7 +2345,7 @@
     },
     {
       "name": "repository-policy",
-      "revision": "sha256:c87b337760e8f583ef92cf4f859eacf3a07b57473d94a20f7a0ffb662332152b",
+      "revision": "sha256:514b108f1a9a0651abb9c49dcc829d5f54c229aac4c88bf618a7fd83b7baf923",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2356,80 +2356,80 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
       "artifacts": [
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/package.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/package.json",
           "sourceSha256": "9096bc13cf19fbf93735ab3b3c136fbd66f1a1bfc377bcbdd12b9f8acc01dbce",
-          "targetPath": ".agent-context/runtime/packages/policy/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/package.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/src/cli.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/src/cli.ts",
           "sourceSha256": "54b779aa4c69fa7e33ecb42ea064c55835a80a209af9d2b8a66d56ec898350d9",
-          "targetPath": ".agent-context/runtime/packages/policy/src/cli.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/src/cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/src/context-governance.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/src/context-governance.ts",
           "sourceSha256": "fa2c23b30ab3cae9b8814fc234e84dee3a34700e90dcebea725e282b34086090",
-          "targetPath": ".agent-context/runtime/packages/policy/src/context-governance.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/src/context-governance.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
-          "sourceSha256": "e93df6d3a9cf5b19bd69dc328d5b99a0118d896ff1586b63ffea85c5f1af2909",
-          "targetPath": ".agent-context/runtime/packages/policy/src/context-installation.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/src/context-installation.ts",
+          "sourceSha256": "7c815b690f38c71c2dd0f571c966f7c4415ffcd7c13b04ff8c55dffc31d35640",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/src/context-installation.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/src/index.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/src/index.ts",
           "sourceSha256": "48a39dcf76977a48fb676c7df71a651ecbaafa6aec2d420d1b6c249d2a53e69b",
-          "targetPath": ".agent-context/runtime/packages/policy/src/index.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/src/index.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
-          "sourceSha256": "bce90f83787fe8dee4b0729c35a86e4238e7afa1358835830c34a701bfa166b4",
-          "targetPath": ".agent-context/runtime/packages/policy/src/repository-policy.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/src/repository-policy.ts",
+          "sourceSha256": "96b5205b29d869048ab5c9d607d7c5f97fe61567126ca767d1ef544e47175a4b",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/src/repository-policy.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/src/workspace.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/src/workspace.ts",
           "sourceSha256": "cbf889f12415cd987886f66f011ee3b66ac37d0c14946377676a8a6d43dfedef",
-          "targetPath": ".agent-context/runtime/packages/policy/src/workspace.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/src/workspace.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
-          "sourceSha256": "ef2f307fe2336d881081584499ff5c8b6f985ccf8d16bba3593968d9152f1f40",
-          "targetPath": ".agent-context/runtime/packages/policy/test/policy.test.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/test/policy.test.ts",
+          "sourceSha256": "ca541daea97db6b3aba7ab86fdb5e7ae67d697d87e2467b3763a8d3cda3deb1b",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/test/policy.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/policy/tsconfig.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/policy/tsconfig.json",
           "sourceSha256": "a4baf50b7650a9960c62923e654f33c43c6e7776b641a613a8c89ca2265d3526",
-          "targetPath": ".agent-context/runtime/packages/policy/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/tsconfig.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
@@ -2437,13 +2437,13 @@
           "operation": "file",
           "sourcePath": "registry/sources/runtime/policy/cli.mjs",
           "sourceSha256": "945342f9e3d4ac87b9e89bb98647887b8fbccc009242caad0cbdc0ade68298d7",
-          "targetPath": ".agent-context/runtime/packages/policy/dist/src/cli.js",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/dist/src/cli.js",
           "mediaType": "text/javascript"
         },
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/repository-policy.md",
-          "sourceSha256": "e7c8a5c1d0d99f20e9ec1d62538ba28ba0686848146922bca3d5176c8bbbd419",
+          "sourceSha256": "c3aade536a550c7c1f4e9d0c5e0100dd6ec6353b9c5fb1d91b3068b1b6fb424e",
           "targetPath": "AGENTS.md",
           "sectionId": "repository-policy",
           "markerStyle": "markdown"
@@ -2452,27 +2452,27 @@
           "operation": "seed-file",
           "sourcePath": "registry/sources/policy/policy.json",
           "sourceSha256": "d8ed30e1ebc01d0eeac79730e541299006aaadeda6134b2fa258276f14b9d517",
-          "targetPath": ".agent-context/policy.json"
+          "targetPath": ".codex/acf/policy.json"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/policy/invariants.json",
           "sourceSha256": "ed6ac1816ad2938365e2e01fa88a2f3d89cdf634cf3b422628dbcb65b34263d5",
-          "targetPath": ".agent-context/policy-invariants.json",
+          "targetPath": ".codex/acf/policy-invariants.json",
           "mediaType": "application/json"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/policy/policy.mjs",
-          "sourceSha256": "a8f965e267cfea39a6a020a5df69518a0be9583e0c72eb285c1b18a3e2e79ebf",
-          "targetPath": ".agent-context/policy.mjs",
+          "sourceSha256": "b9c48aae5fde0d2da74685f7fd1260409b05d33ed46986c2a4d0b3f536d3dd3b",
+          "targetPath": ".codex/acf/policy.mjs",
           "mediaType": "text/javascript"
         }
       ]
     },
     {
       "name": "codex-agents",
-      "revision": "sha256:2807c6ee8a84e795b4098b28612a720c0fe85504436eec9ac3c7ac890f669438",
+      "revision": "sha256:4faf09339bfbdfe64e8801cd10c0637b1329b1f4ecb53dd8981104c459d06c72",
       "dependencies": [
         "core"
       ],
@@ -2482,7 +2482,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -2524,7 +2524,7 @@
     },
     {
       "name": "codex-hooks",
-      "revision": "sha256:2b624deaf5cba8f8ab37c7b42bd964d9b24182dffbc4076269a349743b296b64",
+      "revision": "sha256:d53d218c1e3ad1e7788714c8347bf4c7adbd86910da7c671155e3eec1d943b30",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2546,64 +2546,64 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
       "artifacts": [
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/package.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/package.json",
           "sourceSha256": "6144e41dd09bc4e5b81e8df1523ed2e4350be48801f52cde6d76f13691473097",
-          "targetPath": ".agent-context/runtime/packages/hooks/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/package.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/src/cli.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/src/cli.ts",
           "sourceSha256": "7c1044662947fb545c737a0d95b579808617c7057753426a177c6c76f143e13d",
-          "targetPath": ".agent-context/runtime/packages/hooks/src/cli.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/src/cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/src/codex-cli.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/src/codex-cli.ts",
           "sourceSha256": "4c0e7acfb97b5e3114a367598ea3ea4dac64de9e75837b0402b0987b5a2b4291",
-          "targetPath": ".agent-context/runtime/packages/hooks/src/codex-cli.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/src/codex-cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/src/hook.ts",
-          "sourceSha256": "f3954df9452c7927fe57e687902646f48ef9c5caa3681b3cb956d007311c3253",
-          "targetPath": ".agent-context/runtime/packages/hooks/src/hook.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/src/hook.ts",
+          "sourceSha256": "ec376767ca2b2228235e745f72621095cdc5b838961f5fe321f41c0bedf33a34",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/src/hook.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/src/index.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/src/index.ts",
           "sourceSha256": "a0f59f000a0da977d8ac03924d2c5fb24944a4f710942c7a5f3a55716d920c9b",
-          "targetPath": ".agent-context/runtime/packages/hooks/src/index.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/src/index.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/test/hook.test.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/test/hook.test.ts",
           "sourceSha256": "bb7624fabb1153ff8fcd2f72d22c1bc59def2fcff30c4665820bbbed1fa3878e",
-          "targetPath": ".agent-context/runtime/packages/hooks/test/hook.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/test/hook.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/hooks/tsconfig.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/hooks/tsconfig.json",
           "sourceSha256": "a4baf50b7650a9960c62923e654f33c43c6e7776b641a613a8c89ca2265d3526",
-          "targetPath": ".agent-context/runtime/packages/hooks/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/tsconfig.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
@@ -2611,13 +2611,13 @@
           "operation": "file",
           "sourcePath": "registry/sources/runtime/hooks/codex-cli.mjs",
           "sourceSha256": "539f4cb4495eb5fb35a90d5d538a0b5b52acd1e804bfb818be180826f3d640ff",
-          "targetPath": ".agent-context/runtime/packages/hooks/dist/src/codex-cli.js",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/dist/src/codex-cli.js",
           "mediaType": "text/javascript"
         },
         {
           "operation": "json-array-items",
           "sourcePath": "registry/sources/codex/hooks.json",
-          "sourceSha256": "16162cc8e34d3d73fc545b0d4b9491764775b92202f7b06a6fad1c3f1b75d635",
+          "sourceSha256": "d894e2235f8d9fd5a0247d403939402de13d14873c1f68dfea7d40f36db3282a",
           "targetPath": ".codex/hooks.json",
           "ownedItems": [
             {
@@ -2636,7 +2636,7 @@
     },
     {
       "name": "codex-repo-context",
-      "revision": "sha256:3e2b1145900755d575a8b5c8ded61dd335c0a6f23f537117f5f9be5d040d4d29",
+      "revision": "sha256:ad861594b247e4cff1d21ee77d30b4f972a52172dbf89a89d2a351abedfb811a",
       "dependencies": [
         "core",
         "runtime-base"
@@ -2653,7 +2653,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         },
         {
@@ -2661,7 +2661,7 @@
           "spdx": "MIT",
           "source": "https://github.com/modelcontextprotocol/typescript-sdk",
           "revision": "2.0.0",
-          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
+          "noticePath": ".codex/acf/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
           "noticeSha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
         },
         {
@@ -2669,80 +2669,80 @@
           "spdx": "MIT",
           "source": "https://github.com/colinhacks/zod",
           "revision": "v4.4.3",
-          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3",
+          "noticePath": ".codex/acf/sources/codex-repo-context/LICENSE.zod-4.4.3",
           "noticeSha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
         }
       ],
       "artifacts": [
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/package.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/package.json",
           "sourceSha256": "c741c4e358ed16aca819f1a661f38ed29e9b47ad8f9b0ff9c4db625874595fbd",
-          "targetPath": ".agent-context/runtime/packages/repo-context/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/package.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/src/cli.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/src/cli.ts",
           "sourceSha256": "5da9fc5ae914879e4d2544e210de9ecbcf9c774c3f04ab42d8a238c5ac6c2ce9",
-          "targetPath": ".agent-context/runtime/packages/repo-context/src/cli.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/src/cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/src/index.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/src/index.ts",
           "sourceSha256": "188b34f74d033965b799219a9483cd216302ad09b233008ab9bc4ff2a1eafa60",
-          "targetPath": ".agent-context/runtime/packages/repo-context/src/index.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/src/index.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/src/mcp-cli.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/src/mcp-cli.ts",
           "sourceSha256": "846ce7590e7dbac4ecf95d6649637a758fd66814d301fbb087fa993e20cd360d",
-          "targetPath": ".agent-context/runtime/packages/repo-context/src/mcp-cli.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/src/mcp-cli.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/src/mcp-server.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/src/mcp-server.ts",
           "sourceSha256": "5f3b38f886cd7956c94add76837e5adc54a79866fcf039c6fa20ef3a742646da",
-          "targetPath": ".agent-context/runtime/packages/repo-context/src/mcp-server.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/src/mcp-server.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/src/repository-context.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/src/repository-context.ts",
           "sourceSha256": "500eb9ada75de1d90b20eb35752ca9a900306bf5a4cb0db354bcf479396c80c2",
-          "targetPath": ".agent-context/runtime/packages/repo-context/src/repository-context.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/src/repository-context.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/test/mcp.test.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/test/mcp.test.ts",
           "sourceSha256": "8564360e660f6480298d0afa6707b9d40e54c133c129700bcca9e82b94a0c0bf",
-          "targetPath": ".agent-context/runtime/packages/repo-context/test/mcp.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/test/mcp.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/test/repository-context.test.ts",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/test/repository-context.test.ts",
           "sourceSha256": "0e3b72c57c38333efdcd3f9aa1589ea83bc633ebf135e502f9eb28c855c05fbd",
-          "targetPath": ".agent-context/runtime/packages/repo-context/test/repository-context.test.ts",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/test/repository-context.test.ts",
           "workspaceId": "agent-context-runtime",
           "mediaType": "text/plain"
         },
         {
           "operation": "runtime-workspace",
-          "sourcePath": ".agent-context/runtime/packages/repo-context/tsconfig.json",
+          "sourcePath": ".codex/acf/runtime-source/packages/repo-context/tsconfig.json",
           "sourceSha256": "a4baf50b7650a9960c62923e654f33c43c6e7776b641a613a8c89ca2265d3526",
-          "targetPath": ".agent-context/runtime/packages/repo-context/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/tsconfig.json",
           "workspaceId": "agent-context-runtime",
           "mediaType": "application/json"
         },
@@ -2750,34 +2750,34 @@
           "operation": "file",
           "sourcePath": "registry/sources/runtime/repo-context/mcp-cli.mjs",
           "sourceSha256": "1359fcb14cb6b6379787aa893cffa72cac53e497ba3c32ff757a5a365bc1aaa7",
-          "targetPath": ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/dist/src/mcp-cli.js",
           "mediaType": "text/javascript"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/licenses/LICENSE.model-context-protocol-2.0.0",
           "sourceSha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a",
-          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
+          "targetPath": ".codex/acf/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
           "mediaType": "text/plain"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/licenses/LICENSE.zod-4.4.3",
           "sourceSha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8",
-          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3",
+          "targetPath": ".codex/acf/sources/codex-repo-context/LICENSE.zod-4.4.3",
           "mediaType": "text/plain"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/attributions/codex-repo-context/SOURCE.json",
           "sourceSha256": "9811f5943d6ba3ff0612ac1b4b40a4e801ab97a402fd55dbea1d832f6b96a3cb",
-          "targetPath": ".agent-context/sources/codex-repo-context/SOURCE.json",
+          "targetPath": ".codex/acf/sources/codex-repo-context/SOURCE.json",
           "mediaType": "application/json"
         },
         {
           "operation": "toml-tables",
           "sourcePath": "registry/sources/codex/repo-context.toml",
-          "sourceSha256": "8acb371c803fe5ae40d11aac887e93382fe217631ea2c0d11c6e317b45e6784c",
+          "sourceSha256": "573c2030b2fe3221783f64b29907f86ff6b58cadca539b66c507ebd773bf1603",
           "targetPath": ".codex/config.toml",
           "ownedTables": [
             "mcp_servers.repo_context"
@@ -2788,7 +2788,7 @@
     },
     {
       "name": "integration-oxfmt",
-      "revision": "sha256:c8de69e536837554fbbfec4c845266edc7340fd002c16fded0ed090ebf464784",
+      "revision": "sha256:5e606d2bb76445ba9748ea36c983ac57c005af59e09c9a6c338d5ab366ff7002",
       "dependencies": [
         "core"
       ],
@@ -2798,7 +2798,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],
@@ -2806,12 +2806,12 @@
         {
           "operation": "json-array-values",
           "sourcePath": "registry/sources/integrations/oxfmt.json",
-          "sourceSha256": "1feac67543cb32bee13d9486239e787b3330cd3fe3d056f0ca15a1e3aef4a9ca",
+          "sourceSha256": "bd04114602895e6c613f3367c2c808cb1ffbfb621ccf49f4443b123db2a63fd0",
           "targetPath": ".oxfmtrc.json",
           "ownedValues": [
             {
               "arrayPointer": "/ignorePatterns",
-              "value": ".agent-context/**"
+              "value": ".codex/acf/**"
             }
           ]
         }
@@ -2819,7 +2819,7 @@
     },
     {
       "name": "codex-runtime",
-      "revision": "sha256:769b333188a5ba72df3b1ced4af0607ccd36bf30fdbc26fd448043bec344437a",
+      "revision": "sha256:2fc38177a0507c22af0f83550c8f225e9af84f87475a17eefe6c09ce8e9a2093",
       "dependencies": [
         "codex-agents",
         "codex-hooks",
@@ -2831,7 +2831,7 @@
           "kind": "project",
           "spdx": "MIT",
           "sourcePath": "LICENSE",
-          "noticePath": ".agent-context/LICENSE.agent-context-framework",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
           "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
         }
       ],

@@ -182,7 +182,7 @@ and report when a limit is reached.
 ## Project contracts
 
 - Before implementation, read every exact path declared in a configured
-  `.agent-context/policy.json` under `repository.projectContracts`.
+  `.codex/acf/policy.json` under `repository.projectContracts`.
 - If a declared contract is missing, or repository policy is unconfigured, report
   that state before relying on project architecture or documentation assumptions.
 

@@ -414,7 +414,7 @@ export async function planProjectSelection(
       targetCount: targetPaths.size,
       skillTargetCount: [...targetPaths].filter((target) => target.startsWith(".codex/skills/")).length,
       runtimeTargetCount: [...targetPaths].filter((target) =>
-        target.startsWith(".agent-context/runtime/")).length,
+        target.startsWith(".codex/acf/runtime-source/")).length,
     },
     capabilities: uniqueCapabilities(components),
     capabilityAvailability: "not-inspected",

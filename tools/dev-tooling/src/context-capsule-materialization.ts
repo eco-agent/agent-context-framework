@@ -6,10 +6,10 @@ import path from "node:path";
 import { artifactIdentity } from "@agent-context/repo-policy";
 import type {
   ContextCapsuleActivationLock,
-  ContextCapsuleLockV3,
 } from "@agent-context/repo-policy";
 
 import {
+  CONTEXT_CAPSULE_RUNTIME_SOURCE_PREFIX,
   contextCapsuleEntryBytes,
   type BuiltContextCapsule,
 } from "./context-capsule.js";
@@ -19,16 +19,14 @@ import {
   type ContextMutation,
   type ContextTransactionOptions,
 } from "./context-transaction.js";
-import { verifyContextCapsuleLock } from "./context-capsule-lock.js";
-
-export const CONTEXT_MATERIALIZATION_PATH = ".agent-context/materialization.json";
+export const CONTEXT_MATERIALIZATION_PATH = ".codex/acf/receipt.json";
 export const CONTEXT_MATERIALIZATION_SCHEMA_VERSION = 2 as const;
 export const CONTEXT_MATERIALIZATION_KIND = "agent-context-materialization" as const;
 
 const EXPANDED_SKILL_PREFIX = ".codex/skills/";
 const MATERIALIZED_SKILL_PREFIX = ".agents/skills/";
-const EXPANDED_RUNTIME_PREFIX = ".agent-context/runtime/";
-const MATERIALIZED_RUNTIME_PREFIX = ".agent-context/runtime/materialized/";
+const EXPANDED_RUNTIME_PREFIX = CONTEXT_CAPSULE_RUNTIME_SOURCE_PREFIX;
+const MATERIALIZED_RUNTIME_PREFIX = ".codex/acf/runtime/";
 
 export interface ContextMaterializedSkillFileV2 {
   readonly component: string;
@@ -101,14 +99,7 @@ export interface ContextMaterializationResult {
   readonly writtenPaths: readonly string[];
 }
 
-export interface ContextMaterializationOptions extends ContextTransactionOptions {
-  readonly authority?: ContextCapsuleLockV3;
-}
-
-export interface ContextMaterializationAuthorityVerification {
-  readonly ok: boolean;
-  readonly mismatches: readonly string[];
-}
+export type ContextMaterializationOptions = ContextTransactionOptions;
 
 interface DesiredMaterializedFile {
   readonly receipt: ContextMaterializedFileV2;
@@ -118,7 +109,6 @@ interface DesiredMaterializedFile {
 export async function planContextCapsuleMaterialization(
   capsule: BuiltContextCapsule,
   projectRoot: string,
-  authority?: ContextCapsuleLockV3,
 ): Promise<ContextMaterializationPlan> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const desiredFiles = desiredMaterializedFiles(capsule);
@@ -131,7 +121,7 @@ export async function planContextCapsuleMaterialization(
       receipt: desiredReceipt,
       previousReceipt: null,
       conflicts: [{
-        targetPath: ".agent-context/transaction.json",
+        targetPath: ".codex/acf/state/transaction.json",
         detail: `Context transaction recovery is required before materialization: ${transaction.detail}`,
       }],
     };
@@ -203,36 +193,6 @@ export async function planContextCapsuleMaterialization(
     };
   }
   if (serializeReceipt(storedReceipt.receipt) !== serializeReceipt(desiredReceipt)) {
-    if (authority === undefined) {
-      return {
-        status: "blocked",
-        projectRoot: resolvedProjectRoot,
-        receipt: desiredReceipt,
-        previousReceipt: storedReceipt.receipt,
-        conflicts: [{
-          targetPath: CONTEXT_MATERIALIZATION_PATH,
-          detail:
-            "The existing generated files are valid for a different capsule. Replacement requires tracked ownership from lock v3.",
-        }],
-      };
-    }
-    const authorityVerification = verifyContextMaterializationAuthority(
-      authority,
-      capsule,
-      desiredReceipt,
-    );
-    if (!authorityVerification.ok) {
-      return {
-        status: "blocked",
-        projectRoot: resolvedProjectRoot,
-        receipt: desiredReceipt,
-        previousReceipt: storedReceipt.receipt,
-        conflicts: [{
-          targetPath: ".agent-context/lock.json",
-          detail: `Lock v3 does not authorize generated replacement: ${authorityVerification.mismatches.join(" ")}`,
-        }],
-      };
-    }
     return {
       status: "ready",
       projectRoot: resolvedProjectRoot,
@@ -258,7 +218,6 @@ export async function materializeContextCapsule(
   const plan = await planContextCapsuleMaterialization(
     capsule,
     projectRoot,
-    options.authority,
   );
   if (plan.status === "blocked") {
     return {
@@ -305,7 +264,7 @@ export async function materializeContextCapsule(
   ];
   const writtenPaths = await applyContextTransaction(
     plan.projectRoot,
-    "capsule",
+    "sync",
     capsule.payload.registry.revision,
     mutations,
     options.afterMutation === undefined
@@ -315,7 +274,6 @@ export async function materializeContextCapsule(
   const verified = await planContextCapsuleMaterialization(
     capsule,
     plan.projectRoot,
-    options.authority,
   );
   if (verified.status !== "current") {
     throw new Error("Context capsule materialization did not verify after publication.");
@@ -410,31 +368,6 @@ export function contextCapsuleMaterializationActivation(
   ].sort((left, right) => compareStrings(left.identity, right.identity));
 }
 
-export function verifyContextMaterializationAuthority(
-  lock: ContextCapsuleLockV3,
-  capsule: BuiltContextCapsule,
-  receipt: ContextMaterializationReceiptV2,
-): ContextMaterializationAuthorityVerification {
-  const expectedActivation = contextCapsuleMaterializationActivation(capsule);
-  const mismatches = [
-    ...verifyContextCapsuleLock(
-      lock,
-      capsule,
-      lock.activation,
-      expectedActivation,
-    ).mismatches,
-  ];
-  const desiredFiles = desiredMaterializedFiles(capsule);
-  const expectedReceipt = createReceipt(
-    capsule,
-    desiredFiles.map((file) => file.receipt),
-  );
-  if (serializeReceipt(receipt) !== serializeReceipt(expectedReceipt)) {
-    mismatches.push("Materialization receipt differs from the capsule projection.");
-  }
-  return { ok: mismatches.length === 0, mismatches };
-}
-
 function desiredMaterializedFiles(capsule: BuiltContextCapsule): readonly DesiredMaterializedFile[] {
   const files: DesiredMaterializedFile[] = [];
   const targets = new Set<string>();
@@ -509,9 +442,6 @@ function desiredMaterializedFiles(capsule: BuiltContextCapsule): readonly Desire
     }
   }
   files.sort((left, right) => compareStrings(left.receipt.targetPath, right.receipt.targetPath));
-  if (files.length === 0) {
-    throw new Error("Context capsule selects no materializable files.");
-  }
   return files;
 }
 

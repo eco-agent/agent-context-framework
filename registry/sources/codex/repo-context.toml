@@ -1,6 +1,6 @@
 [mcp_servers.repo_context]
 command = "node"
-args = [".agent-context/bootstrap.mjs", "exec", "repo-context"]
+args = [".codex/acf/bootstrap.mjs", "exec", "repo-context"]
 required = true
 enabled_tools = ["repo_context"]
 startup_timeout_sec = 20

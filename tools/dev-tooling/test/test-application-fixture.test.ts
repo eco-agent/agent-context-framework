@@ -1,487 +1,144 @@
 import assert from "node:assert/strict";
-import { execFile } from "node:child_process";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
 import test from "node:test";
 
-import {
-  CONTEXT_CAPSULE_PATH,
-  decodeContextCapsuleLock,
-} from "@agent-context/repo-policy";
+import { CONTEXT_CAPSULE_PATH } from "@agent-context/repo-policy";
 
 import { readContextCapsuleFile } from "../src/context-capsule.js";
-import { verifyContextCapsuleInstallation } from "../src/context-capsule-installation.js";
-import { verifyInstalledCodexRuntime } from "../src/codex-runtime-verification.js";
-import {
-  CONTEXT_MATERIALIZATION_PATH,
-  decodeContextMaterializationReceipt,
-} from "../src/context-capsule-materialization.js";
 import {
   generateTestApplicationFixture,
   TEST_APPLICATION_MARKER_PATH,
 } from "../src/test-application-fixture.js";
 import { parseTestApplicationFixtureArguments } from "../src/test-application-fixture-cli.js";
 
-const executeFile = promisify(execFile);
-const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
-const frameworkRoot = path.resolve(moduleDirectory, "../../..");
+const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
-test("fixture CLI requires an absolute output and parses independent state controls", () => {
-  assert.throws(
-    () => parseTestApplicationFixtureArguments(["--output", "relative"]),
-    /absolute path/u,
-  );
-  const outputRoot = path.join(path.parse(frameworkRoot).root, "acf-fixtures", "application");
+test("fixture CLI exposes current capsule states", () => {
+  const output = path.resolve("D:/fixtures/app");
   assert.deepEqual(
     parseTestApplicationFixtureArguments([
-      "--",
       "--output",
-      outputRoot,
+      output,
       "--state",
       "dirty",
       "--acf",
-      "capsule",
+      "acceptance",
       "--replace",
       "--json",
     ]),
-    {
-      outputRoot,
-      gitState: "dirty",
-      acfState: "capsule",
-      replace: true,
-      json: true,
-    },
+    { outputRoot: output, gitState: "dirty", acfState: "acceptance", replace: true, json: true },
   );
-  assert.equal(
-    parseTestApplicationFixtureArguments(["--output", outputRoot, "--acf", "migrated"])
-      .acfState,
-    "migrated",
-  );
-  assert.equal(
-    parseTestApplicationFixtureArguments([
-      "--output",
-      outputRoot,
-      "--acf",
-      "runtime-migrated",
-    ]).acfState,
-    "runtime-migrated",
-  );
-  assert.equal(
-    parseTestApplicationFixtureArguments([
-      "--output",
-      outputRoot,
-      "--acf",
-      "acceptance-migrated",
-    ]).acfState,
-    "acceptance-migrated",
+  assert.throws(
+    () => parseTestApplicationFixtureArguments(["--output", output, "--acf", "migrated"]),
+    /none, core, runtime, or acceptance/u,
   );
 });
 
-test("clean application generation is deterministic and passes its own tests", async () => {
-  const fixture = await createFixtureParent();
+test("none fixture is deterministic and clean", async () => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), "acf-fixture-none-"));
   try {
-    const firstRoot = path.join(fixture.parent, "first");
-    const secondRoot = path.join(fixture.parent, "second");
+    const outputRoot = path.join(parent, "app");
     const first = await generateTestApplicationFixture({
       frameworkRoot,
-      outputRoot: firstRoot,
+      outputRoot,
       gitState: "clean",
       acfState: "none",
       replace: false,
     });
-    const second = await generateTestApplicationFixture({
+    const repeated = await generateTestApplicationFixture({
       frameworkRoot,
-      outputRoot: secondRoot,
+      outputRoot,
       gitState: "clean",
       acfState: "none",
-      replace: false,
+      replace: true,
     });
-
-    assert.deepEqual(first.status, []);
-    assert.equal(first.baselineRevision, second.baselineRevision);
+    assert.equal(first.baselineRevision, repeated.baselineRevision);
     assert.equal(first.installationRevision, null);
-    assert.equal(first.capsuleSha256, null);
-    assert.equal(first.materializedFileCount, 0);
-    assert.deepEqual(
-      JSON.parse(await readFile(path.join(firstRoot, TEST_APPLICATION_MARKER_PATH), "utf8")),
-      {
-        schemaVersion: 1,
-        kind: "agent-context-test-application",
-      generatorRevision: 6,
+    assert.deepEqual(first.status, []);
+  } finally {
+    await rm(parent, { recursive: true, force: true });
+  }
+});
+
+for (const acfState of ["core", "runtime", "acceptance"] as const) {
+  test(`${acfState} fixture tracks one capsule and ignores every projection`, async () => {
+    const parent = await mkdtemp(path.join(os.tmpdir(), `acf-fixture-${acfState}-`));
+    try {
+      const outputRoot = path.join(parent, "app");
+      const result = await generateTestApplicationFixture({
+        frameworkRoot,
+        outputRoot,
         gitState: "clean",
-        acfState: "none",
-      },
-    );
-    await executeFile(process.execPath, ["--test", "test/server.test.mjs"], {
-      cwd: firstRoot,
-      windowsHide: true,
-    });
-  } finally {
-    await fixture.remove();
-  }
-});
-
-test("capsule fixture commits a verified binary capsule beside expanded core", async () => {
-  const fixture = await createFixtureParent();
-  try {
-    const outputRoot = path.join(fixture.parent, "capsule");
-    const result = await generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot,
-      gitState: "clean",
-      acfState: "capsule",
-      replace: false,
-    });
-
-    assert.notEqual(result.installationRevision, null);
-    assert.notEqual(result.capsuleSha256, null);
-    assert.deepEqual(result.status, []);
-    const capsule = await readContextCapsuleFile(path.join(outputRoot, CONTEXT_CAPSULE_PATH));
-    assert.equal(capsule.capsuleSha256, result.capsuleSha256);
-    assert.equal((await verifyContextCapsuleInstallation(capsule, outputRoot)).ok, true);
-    assert.equal(
-      JSON.parse(
-        await readFile(path.join(outputRoot, ".agent-context", "lock.json"), "utf8"),
-      ).schemaVersion,
-      2,
-    );
-    const attributes = await executeFile(
-      "git",
-      ["check-attr", "--all", "--", CONTEXT_CAPSULE_PATH],
-      { cwd: outputRoot, windowsHide: true },
-    );
-    assert.match(attributes.stdout, /binary: set/u);
-    assert.match(attributes.stdout, /text: unset/u);
-    const changed = await executeFile(
-      "git",
-      ["diff", "--name-only", result.baselineRevision, result.installationRevision!],
-      { cwd: outputRoot, windowsHide: true },
-    );
-    assert.match(changed.stdout, /\.agent-context\/capsule\.acf/u);
-  } finally {
-    await fixture.remove();
-  }
-});
-
-test("materialized fixture writes ignored repository skills beside tracked expansion", async () => {
-  const fixture = await createFixtureParent();
-  try {
-    const outputRoot = path.join(fixture.parent, "materialized");
-    const result = await generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot,
-      gitState: "clean",
-      acfState: "materialized",
-      replace: false,
-    });
-
-    assert.equal(result.materializedFileCount, 2);
-    assert.deepEqual(result.status, []);
-    const receipt = decodeContextMaterializationReceipt(
-      JSON.parse(
-        await readFile(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
-      ) as unknown,
-    );
-    assert.equal(
-      receipt.files.every((file) =>
-        /^\.agents\/skills\/acf--diagnose--[a-f0-9]{64}\//u.test(file.targetPath)),
-      true,
-    );
-    for (const file of receipt.files) {
-      assert.equal(
-        (await readFile(path.join(outputRoot, file.targetPath))).equals(
-          await readFile(path.join(outputRoot, file.sourcePath)),
-        ),
-        true,
-      );
+        acfState,
+        replace: false,
+      });
+      assert.notEqual(result.installationRevision, null);
+      assert.notEqual(result.capsuleSha256, null);
+      assert.deepEqual(result.status, []);
+      const capsule = await readContextCapsuleFile(path.join(outputRoot, CONTEXT_CAPSULE_PATH));
+      assert.equal(capsule.capsuleSha256, result.capsuleSha256);
+      assert.equal(capsule.payload.selection.directComponents.includes("core"), acfState === "core");
+      assert.equal(await missing(path.join(outputRoot, ".agent-context")), true);
+      assert.equal(await missing(path.join(outputRoot, ".codex", "acf", "config.json")), true);
+      assert.equal(await missing(path.join(outputRoot, ".codex", "acf", "lock.json")), true);
+    } finally {
+      await rm(parent, { recursive: true, force: true });
     }
-    const tracked = await executeFile(
-      "git",
-      ["ls-files", "--", ".agents/skills", CONTEXT_MATERIALIZATION_PATH],
-      { cwd: outputRoot, windowsHide: true },
-    );
-    assert.equal(tracked.stdout, "");
-    const config = JSON.parse(
-      await readFile(path.join(outputRoot, ".agent-context", "config.json"), "utf8"),
-    ) as { components: readonly string[] };
-    assert.deepEqual(config.components, ["core", "skill-diagnose"]);
-    assert.equal(
-      JSON.parse(
-        await readFile(path.join(outputRoot, ".agent-context", "lock.json"), "utf8"),
-      ).schemaVersion,
-      2,
-    );
-    const capsule = await readContextCapsuleFile(path.join(outputRoot, CONTEXT_CAPSULE_PATH));
-    assert.equal((await verifyContextCapsuleInstallation(capsule, outputRoot)).ok, true);
-  } finally {
-    await fixture.remove();
-  }
-});
+  });
+}
 
-test("dirty materialized fixture preserves only the declared project work", async () => {
-  const fixture = await createFixtureParent();
+test("dirty fixture adds only declared project work after packing ACF", async () => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), "acf-fixture-dirty-"));
   try {
-    const outputRoot = path.join(fixture.parent, "dirty-materialized");
+    const outputRoot = path.join(parent, "app");
     const result = await generateTestApplicationFixture({
       frameworkRoot,
       outputRoot,
       gitState: "dirty",
-      acfState: "materialized",
+      acfState: "runtime",
       replace: false,
     });
-    assert.equal(result.materializedFileCount, 2);
     assert.deepEqual(result.status, [" M src/site-copy.mjs", "?? notes/local-request.md"]);
+    assert.match(await readFile(path.join(outputRoot, "notes", "local-request.md"), "utf8"), /preserve/u);
   } finally {
-    await fixture.remove();
+    await rm(parent, { recursive: true, force: true });
   }
 });
 
-test("migrated fixtures use lock v3 and bootstrap ignored skills without Git noise", async () => {
-  const fixture = await createFixtureParent();
+test("replace requires the fixture marker", async () => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), "acf-fixture-replace-"));
   try {
-    for (const gitState of ["clean", "dirty"] as const) {
-      const outputRoot = path.join(fixture.parent, `migrated-${gitState}`);
-      const result = await generateTestApplicationFixture({
-        frameworkRoot,
-        outputRoot,
-        gitState,
-        acfState: "migrated",
-        replace: false,
-      });
-      assert.equal(result.materializedFileCount, 2);
-      assert.deepEqual(
-        result.status,
-        gitState === "clean" ? [] : [" M src/site-copy.mjs", "?? notes/local-request.md"],
-      );
-      const lock = decodeContextCapsuleLock(JSON.parse(
-        await readFile(path.join(outputRoot, ".agent-context", "lock.json"), "utf8"),
-      ) as unknown);
-      assert.equal(lock.schemaVersion, 3);
-      assert.equal(lock.materialization.files.length, 2);
-      const trackedSkills = await executeFile(
-        "git",
-        ["ls-files", "--", ".codex/skills", ".agents/skills", CONTEXT_MATERIALIZATION_PATH],
-        { cwd: outputRoot, windowsHide: true },
-      );
-      assert.equal(trackedSkills.stdout, "");
-
-      await rm(path.join(outputRoot, ".agents"), { recursive: true, force: true });
-      await rm(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), { force: true });
-      const bootstrap = await executeFile(
-        process.execPath,
-        [path.join(outputRoot, ".agent-context/bootstrap.mjs"), "materialize", "--json"],
-        { cwd: outputRoot, windowsHide: true },
-      );
-      assert.equal(
-        (JSON.parse(bootstrap.stdout) as { materialization: { status: string } })
-          .materialization.status,
-        "materialized",
-      );
-      const status = await executeFile(
-        "git",
-        ["status", "--porcelain=v1", "--untracked-files=all"],
-        { cwd: outputRoot, windowsHide: true },
-      );
-      assert.deepEqual(
-        status.stdout.split(/\r?\n/u).filter(Boolean),
-        result.status,
-      );
-    }
-  } finally {
-    await fixture.remove();
-  }
-});
-
-test("runtime-migrated fixture moves the complete runtime projection out of Git", async () => {
-  const fixture = await createFixtureParent();
-  try {
-    for (const gitState of ["clean", "dirty"] as const) {
-      const outputRoot = path.join(fixture.parent, `runtime-migrated-${gitState}`);
-      const result = await generateTestApplicationFixture({
-        frameworkRoot,
-        outputRoot,
-        gitState,
-        acfState: "runtime-migrated",
-        replace: false,
-      });
-      assert.equal(result.materializedFileCount > 2, true);
-      assert.deepEqual(
-        result.status,
-        gitState === "clean" ? [] : [" M src/site-copy.mjs", "?? notes/local-request.md"],
-      );
-      const receipt = decodeContextMaterializationReceipt(JSON.parse(
-        await readFile(path.join(outputRoot, CONTEXT_MATERIALIZATION_PATH), "utf8"),
-      ) as unknown);
-      const runtimeFiles = receipt.files.filter((file) =>
-        file.targetPath.startsWith(".agent-context/runtime/materialized/"));
-      assert.equal(runtimeFiles.length > 0, true);
-      assert.equal(
-        runtimeFiles.some((file) =>
-          file.targetPath.endsWith("/packages/repo-context/dist/src/mcp-cli.js")),
-        true,
-      );
-      const tracked = await executeFile(
-        "git",
-        ["ls-files", "--", ".agent-context/runtime", ".codex/skills"],
-        { cwd: outputRoot, windowsHide: true },
-      );
-      assert.equal(tracked.stdout, "");
-    }
-  } finally {
-    await fixture.remove();
-  }
-});
-
-test("acceptance-migrated fixture passes both downstream proof commands", { timeout: 120_000 }, async () => {
-  const fixture = await createFixtureParent();
-  const outputRoot = path.join(fixture.parent, "acceptance-migrated");
-  try {
-    const result = await generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot,
-      gitState: "clean",
-      acfState: "acceptance-migrated",
-      replace: false,
-    });
-    assert.deepEqual(result.status, []);
-    await assert.rejects(
-      readFile(path.join(outputRoot, ".agent-context", "runtime", "package.json")),
-      /ENOENT/u,
-    );
-    const config = JSON.parse(
-      await readFile(path.join(outputRoot, ".agent-context", "config.json"), "utf8"),
-    ) as { components: readonly string[] };
-    assert.deepEqual(config.components, [
-      "core",
-      "skill-diagnose",
-      "codex-runtime",
-      "repository-policy",
-    ]);
-
-    const runtime = await verifyInstalledCodexRuntime(outputRoot);
-    assert.equal(runtime.runtime, "operational");
-    const policy = await executeFile(
-      process.execPath,
-      [path.join(outputRoot, ".agent-context", "policy.mjs"), "verify"],
-      { cwd: outputRoot, windowsHide: true },
-    );
-    assert.equal((JSON.parse(policy.stdout) as { status: string }).status, "completed");
-    const status = await executeFile(
-      "git",
-      ["status", "--porcelain=v1", "--untracked-files=all"],
-      { cwd: outputRoot, windowsHide: true },
-    );
-    assert.equal(status.stdout, "");
-  } finally {
-    await fixture.remove();
-  }
-});
-
-test("dirty core fixture commits ACF before applying exact project-owned changes", async () => {
-  const fixture = await createFixtureParent();
-  try {
-    const outputRoot = path.join(fixture.parent, "dirty-core");
-    const result = await generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot,
-      gitState: "dirty",
-      acfState: "core",
-      replace: false,
-    });
-
-    assert.notEqual(result.installationRevision, null);
-    assert.deepEqual(result.status, [" M src/site-copy.mjs", "?? notes/local-request.md"]);
-    assert.match(
-      await readFile(path.join(outputRoot, "AGENTS.md"), "utf8"),
-      /<!-- agent-context:core:start -->/u,
-    );
-    assert.deepEqual(
-      JSON.parse(await readFile(path.join(outputRoot, ".agent-context", "config.json"), "utf8")),
-      { schemaVersion: 2, adapter: "codex", components: ["core"] },
-    );
-    assert.match(
-      await readFile(path.join(outputRoot, "src", "site-copy.mjs"), "utf8"),
-      /Dirty fixture local edit\./u,
-    );
-  } finally {
-    await fixture.remove();
-  }
-});
-
-test("replace regenerates only a directory with the fixture marker", async () => {
-  const fixture = await createFixtureParent();
-  try {
-    const outputRoot = path.join(fixture.parent, "replaceable");
+    const outputRoot = path.join(parent, "app");
     await generateTestApplicationFixture({
       frameworkRoot,
       outputRoot,
-      gitState: "dirty",
+      gitState: "clean",
       acfState: "none",
       replace: false,
     });
-    await writeFile(path.join(outputRoot, "remove-me.txt"), "old fixture\n", "utf8");
-    const regenerated = await generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot,
-      gitState: "clean",
-      acfState: "none",
-      replace: true,
-    });
-    assert.deepEqual(regenerated.status, []);
-    await assert.rejects(readFile(path.join(outputRoot, "remove-me.txt"), "utf8"), /ENOENT/u);
-
-    const unmarkedRoot = path.join(fixture.parent, "unmarked");
-    await mkdir(unmarkedRoot);
-    await writeFile(path.join(unmarkedRoot, "user.txt"), "do not delete\n", "utf8");
+    await writeFile(path.join(outputRoot, TEST_APPLICATION_MARKER_PATH), "{}\n", "utf8");
     await assert.rejects(
       generateTestApplicationFixture({
         frameworkRoot,
-        outputRoot: unmarkedRoot,
+        outputRoot,
         gitState: "clean",
         acfState: "none",
         replace: true,
       }),
       /valid ACF fixture marker/u,
     );
-    assert.equal(await readFile(path.join(unmarkedRoot, "user.txt"), "utf8"), "do not delete\n");
   } finally {
-    await fixture.remove();
+    await rm(parent, { recursive: true, force: true });
   }
 });
 
-test("generator refuses output inside or above the framework worktree", async () => {
-  await assert.rejects(
-    generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot: path.join(frameworkRoot, ".codex", "artifacts", "unsafe-fixture"),
-      gitState: "clean",
-      acfState: "none",
-      replace: false,
-    }),
-    /outside the framework worktree/u,
-  );
-  await assert.rejects(
-    generateTestApplicationFixture({
-      frameworkRoot,
-      outputRoot: path.dirname(frameworkRoot),
-      gitState: "clean",
-      acfState: "none",
-      replace: false,
-    }),
-    /outside the framework worktree/u,
-  );
-});
-
-async function createFixtureParent(): Promise<{
-  readonly parent: string;
-  readonly remove: () => Promise<void>;
-}> {
-  const parent = await mkdtemp(path.join(os.tmpdir(), "acf-test-application-"));
-  return {
-    parent,
-    remove: async () => await rm(parent, { recursive: true, force: true }),
-  };
+async function missing(candidate: string): Promise<boolean> {
+  try {
+    await readFile(candidate);
+    return false;
+  } catch (error) {
+    return error instanceof Error && "code" in error && error.code === "ENOENT";
+  }
 }

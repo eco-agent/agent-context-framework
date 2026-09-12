@@ -39,7 +39,7 @@ export type CodexSessionBindingLookup =
   | { readonly state: "valid"; readonly binding: ScopedSessionBinding };
 
 export const CODEX_SESSION_BINDING_DIRECTORY =
-  ".agent-context/runtime/state/codex-hooks" as const;
+  ".codex/acf/runtime-source/state/codex-hooks" as const;
 
 export type HookDecision =
   | { readonly kind: "allow" }

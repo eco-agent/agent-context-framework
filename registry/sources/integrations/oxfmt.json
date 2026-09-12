@@ -1,5 +1,5 @@
 {
   "ignorePatterns": [
-    ".agent-context/**"
+    ".codex/acf/**"
   ]
 }
