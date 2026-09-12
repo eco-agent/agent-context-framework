@@ -650,7 +650,6 @@ test("Wave 2 bundles resolve independently and exclude frontend, runtime, and ob
     [
       "AGENTS.md",
       "docs/AGENTS.md",
-      ".codex/templates/work-record.md",
       ".codex/templates/project-decision.md",
     ],
   );
@@ -828,7 +827,7 @@ test("Wave 2 bundles materialize independently and installed inventory validatio
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "skills", "codebase-inventory", "SKILL.md")), true);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "skills", "design-typescript-invariants", "SKILL.md")), false);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "skills", "optimize-codex-sessions", "SKILL.md")), false);
-    assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "work-record.md")), true);
+    assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "work-record.md")), false);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "project-decision.md")), true);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "type-contract.md")), false);
     execFileSync(
@@ -891,7 +890,7 @@ test("governance rejects changes outside the named root instruction sections", a
     await writeFile(
       agentsPath,
       (await readFile(agentsPath, "utf8")).replace(
-        "Preserve unrelated changes. Push only when the user explicitly requests it.",
+        "Preserve unrelated changes. Agents may push only their `codex/<task>` branch",
         "Unrelated changes may be discarded.",
       ),
       "utf8",
@@ -982,16 +981,16 @@ test("governance rejects weaker vendoring and submodule rules", async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-vendoring-governance-"));
   try {
     await copyGovernanceFixture(temporaryRoot);
-    const workPath = path.join(
+    const corePath = path.join(
       temporaryRoot,
       "registry",
       "sources",
       "instructions",
-      "repository-work.md",
+      "core.md",
     );
     await writeFile(
-      workPath,
-      (await readFile(workPath, "utf8")).replace(
+      corePath,
+      (await readFile(corePath, "utf8")).replace(
         "Do not add or mutate a submodule\nunless a project contract requires its separate repository lifecycle.",
         "Avoid submodules when possible.",
       ),
@@ -1120,8 +1119,8 @@ test("governance rejects dilution of agent Git transaction semantics", async () 
     await writeFile(
       transactionPath,
       (await readFile(transactionPath, "utf8")).replace(
-        "If any identity, path, cleanliness check, or reachability proof differs from the\nledger, stop cleanup.",
-        "Cleanup may continue after ledger mismatches.",
+        "Do not create linked worktrees.",
+        "Create linked worktrees for isolation.",
       ),
       "utf8",
     );

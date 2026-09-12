@@ -79,7 +79,7 @@ for (const acfState of ["core", "runtime", "acceptance"] as const) {
       assert.deepEqual(result.status, []);
       const capsule = await readContextCapsuleFile(path.join(outputRoot, CONTEXT_CAPSULE_PATH));
       assert.equal(capsule.capsuleSha256, result.capsuleSha256);
-      assert.equal(capsule.payload.selection.directComponents.includes("core"), acfState === "core");
+      assert.equal(capsule.payload.selection.directComponents.includes("core"), true);
       assert.equal(await missing(path.join(outputRoot, ".agent-context")), true);
       assert.equal(await missing(path.join(outputRoot, ".codex", "acf", "config.json")), true);
       assert.equal(await missing(path.join(outputRoot, ".codex", "acf", "lock.json")), true);
