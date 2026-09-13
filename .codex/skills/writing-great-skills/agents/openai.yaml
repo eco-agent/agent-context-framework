@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $writing-great-skills to prune and organize this skill and its invocation metadata."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

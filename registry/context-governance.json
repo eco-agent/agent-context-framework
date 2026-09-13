@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.18.0",
-  "decisionPath": "registry/decisions/0.18.0-repository-registry-interface.md",
+  "registryRevision": "0.19.0",
+  "decisionPath": "registry/decisions/0.19.0-implicit-skill-authoring-guidance.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
