@@ -3,6 +3,7 @@ import path from "node:path";
 
 const ignoredDirectories = new Set([".git", "dist", "node_modules"]);
 const ignoredRelativeDirectories = new Set([
+  ".agents/skills",
   ".codex/acf/runtime",
   ".codex/acf/runtime-source",
   ".codex/work",

@@ -6,6 +6,7 @@ import test from "node:test";
 import { checkAgents } from "../src/checks/agents.js";
 import { checkBoundaries } from "../src/checks/boundaries.js";
 import { checkDependencyAdoptions } from "../src/checks/dependency-adoptions.js";
+import { checkDocs } from "../src/checks/docs.js";
 
 const root = process.cwd().replace(/[/\\]tools[/\\]repo-policy$/u, "");
 
@@ -45,6 +46,23 @@ test("workspace package boundaries are valid", async () => {
 
 test("every external manifest dependency has an adoption record", async () => {
   assert.deepEqual(await checkDependencyAdoptions(root), []);
+});
+
+test("documentation checks ignore generated skill projections", async () => {
+  const fixture = await mkdtemp(path.join(os.tmpdir(), "agent-context-docs-"));
+  try {
+    await mkdir(path.join(fixture, ".agents", "skills", "generated"), { recursive: true });
+    await writeFile(
+      path.join(fixture, ".agents", "skills", "generated", "SKILL.md"),
+      "[generated cross-skill link](../../missing/SKILL.md)\n",
+    );
+    await writeFile(path.join(fixture, "README.md"), "[missing source document](missing.md)\n");
+    assert.deepEqual(await checkDocs(fixture), [
+      "README.md has a broken local link: missing.md",
+    ]);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
 });
 
 test("distributable dependencies require immutable sources and packaged notices", async () => {
