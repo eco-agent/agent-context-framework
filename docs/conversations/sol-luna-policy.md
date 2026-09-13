@@ -14,13 +14,18 @@
 
 The task API capped the assistant response in turn 4 at 20,000 characters. The user supplied the missing ending from the original chat. The transcript combines that ending with the API copy and now contains all five turns.
 
+The API response preserved several citations only as opaque internal handles,
+for example `turn673620academia8`. Their source URLs were unavailable during
+retrieval. These markers remain part of the archived message text, but this file
+cannot resolve them or use them as independently verifiable sources.
+
 ## Transcript
 
-## Turn 1
+### Turn 1
 
 Turn ID: `a565749b-ed87-426e-b7de-d4eb6ca85bd3`
 
-### User
+#### User
 
 Message ID: `a565749b-ed87-426e-b7de-d4eb6ca85bd3`
 
@@ -79,7 +84,7 @@ This is also the only way to get an agent to use a skill is to have them use it 
 ---
 Agents struggle with verification as the authority over lineage and version control and I find that utterly foolish. I don't know what the labs are doing but someone needs to figure out where to keep durable state in the harness because these agents suck at efficiently extracting the context they need AT THE RIGHT TIME
 
-### Assistant
+#### Assistant
 
 Message ID: `ba67d393-b062-4201-b307-2f12e1cba559`
 
@@ -87,7 +92,7 @@ Your last point is where I would concentrate the engineering effort. **The host 
 
 Your persistent threads preserve responsibility, accumulated judgment, and your corrections. I would keep that structure. I would make the host responsible for revision identity, evidence freshness, and delivery of relevant changes.
 
-## Persistent responsibility changes the routing rule
+##### Persistent responsibility changes the routing rule
 
 Your peers have continuing responsibilities within the codebase. You can return to the peer that already understands the relevant subsystem, and it can consult another peer without transferring the whole task.
 
@@ -101,7 +106,7 @@ Your mega-threads also contain something that a task summary can easily omit. Th
 
 That distinction matters when managing context. A summary that retains "use small diffs" but discards the exchange that established what *small* means for this project has lost useful instruction.
 
-## Priming teaches when the workflow applies
+##### Priming teaches when the workflow applies
 
 Your priming phase has a plausible mechanism in in-context learning. Models can adapt their responses to demonstrations supplied in context without changing their trained parameters. The original GPT-3 few-shot work demonstrated this distinction explicitly. That supports the mechanism, though it does not independently establish how much priming improves your particular configurations. citeturn673620academia8
 
@@ -123,7 +128,7 @@ I would preserve a few successful examples and consequential corrections alongsi
 
 An undocumented procedure can work within a continuing thread. For recovery after compaction or thread loss, I would retain enough of its demonstrated behaviour to reconstruct it.
 
-## Durable state should have explicit owners
+##### Durable state should have explicit owners
 
 I would separate the conversation from the records that determine what the system may claim.
 
@@ -141,7 +146,7 @@ The important design choice is who can update each field. A peer may propose a r
 
 I would also keep unresolved contradictions explicit. A newer message is not automatically more authoritative than an older decision.
 
-## Verification must remain attached to what it checked
+##### Verification must remain attached to what it checked
 
 Your complaint about verification and lineage points to several questions that agents should keep separate.
 
@@ -171,7 +176,7 @@ I would begin with conservative invalidation. When a relevant input changes and 
 
 There is still judgment left for the agent and you. A current test can be inadequate. An impeccable execution record can document the wrong test. The host can enforce provenance and freshness without pretending to determine whether the evidence establishes the intended behaviour.
 
-## "At the right time" needs action-specific retrieval
+##### "At the right time" needs action-specific retrieval
 
 A memory search that returns related material does not necessarily return what the agent needs before its next action.
 
@@ -201,7 +206,7 @@ This preserves your peer structure. Shared state checks do not require a permane
 
 It also gives corrections a propagation mechanism. You should be able to correct one responsible peer and have affected peers receive the specific obsolete assumption, rather than requiring you to repeat the conversation.
 
-## Model routing should follow context ownership and failure containment
+##### Model routing should follow context ownership and failure containment
 
 Using your descriptions of the configurations, I would assign work this way:
 
@@ -226,7 +231,7 @@ Your cost observation needs the same workload-specific treatment. Persistent thr
 
 I would measure quota consumption and your correction time per accepted change. Raw token counts would remain diagnostic data, rather than the final measure of whether the arrangement works.
 
-## What the labs have addressed, and what I would build next
+##### What the labs have addressed, and what I would build next
 
 There is published work on parts of this problem. OpenAI describes repository knowledge as a system of record, with a short instruction entry point and mechanical documentation checks. Its Codex App Server documentation describes persistent threads and event histories. Anthropic describes explicit progress records and Git history to support work across sessions. citeturn111420view3turn673620view2turn111420view4
 
@@ -240,11 +245,11 @@ For purpose-built models, those are the evaluations I would care about: selectin
 
 **The standard I would use is whether you can change a requirement through one peer and have every affected peer stop relying on the old version without you having to repeat the correction.**
 
-## Turn 2
+### Turn 2
 
 Turn ID: `b1e15a9d-3f30-48a5-b2c3-f6a580b62a5b`
 
-### User
+#### User
 
 Message ID: `b1e15a9d-3f30-48a5-b2c3-f6a580b62a5b`
 
@@ -253,7 +258,7 @@ Message ID: `b1e15a9d-3f30-48a5-b2c3-f6a580b62a5b`
 My thoughts are Astra medium as the interaction point and it spawns as many threads as need be. Either by tracing the codebase starting from entry points, running it and/or understanding the project's intended direction, the model can kick-off 5-8 threads all focused on specific domains which I've found to help immensely since attention is a scarce resource and breadth and depth are equally important. I like to have the model prefix new threads with an instruction to add a random emoji based on the thread, it just makes it a tone easier to find my threads. Actually think you can add that to memory from now on?
 Astra spawns many Sol medium threads for coordination. Those Sol agents use Luna xHigh for read-only context retrieval (source-based referencing, Sol should still have judgement over Luna's results without building the roads from scratch), search and tool-calling w/ Max reserved for when context bounded small tasks running in parallel (like 6 Luna Max agents running concurrently, more latency more search depth). Sols decisions should be run by Astra for research and help analyzing things that went wrong in their own threads, computer-use and config/setup tasks on the filesystem, servers, etc.
 
-### Assistant
+#### Assistant
 
 Message ID: `ffe30963-9282-4235-8998-7fba7f7c2338`
 
@@ -263,7 +268,7 @@ A single thread can alternate between domains, but your arrangement lets each do
 
 That also explains your objection to indiscriminate subagents. A fresh agent can contribute inference without preserving the working context you actually value.
 
-## The model split
+##### The model split
 
 I understand your proposed setup this way, using your assessments of the configurations.
 
@@ -278,7 +283,7 @@ Astra starting the threads does not require Astra to manage every subsequent exc
 
 **Astra's interaction role and the Sols' continuing ownership can coexist.** The boundary is whether Astra helps make decisions or becomes a mandatory intermediary for every action.
 
-## Establish responsibilities before multiplying threads
+##### Establish responsibilities before multiplying threads
 
 Your combination of entry-point tracing, running the application, and understanding intended direction matters because those activities answer different questions.
 
@@ -292,7 +297,7 @@ For example, a thread might own authentication and sessions across routes, middl
 
 I would also distinguish a persistent responsibility from an immediately executable task. An established domain thread can remain idle until relevant work arrives. There is no need to invent work to justify keeping its context.
 
-## Run decisions by Astra without serialising the project
+##### Run decisions by Astra without serialising the project
 
 The part I would make explicit is what "Sol's decisions should be run by Astra" requires.
 
@@ -310,7 +315,7 @@ The result also needs to return to the affected Sol thread. When Astra disproves
 
 For configuration work, I would record the exact environment and changes alongside the result. A server adjustment can invalidate assumptions in a Sol thread even when no repository file changes.
 
-## Luna should reduce discovery work without taking over judgment
+##### Luna should reduce discovery work without taking over judgment
 
 Your "without building the roads from scratch" point is the right constraint on review effort.
 
@@ -328,7 +333,7 @@ There is also a useful separation between **persistent thread count and simultan
 
 I would put that concurrency limit in the host, so peers retain their histories while execution waits for capacity. It does not require another model to schedule permission messages. OpenAI's current subagent documentation explicitly warns about extra token consumption and coordination costs, particularly when parallel agents write to shared code. citeturn154903view0
 
-## The shared state can stay small
+##### The shared state can stay small
 
 For this arrangement, I would prioritise a durable roster that records each thread's identity, responsibility, and current agreements with other domains. Thread creation should consult it first and reuse the existing owner.
 
@@ -336,7 +341,7 @@ The peers should exchange focused questions, decisions, evidence, and blockers. 
 
 That is also where your earlier lineage concern belongs. When an agreement or relevant configuration changes, the host should deliver that change to affected owners before they resume work based on the old version. Persistent context remains valuable only when its assumptions can be corrected.
 
-## The emoji preference
+##### The emoji preference
 
 I cannot save new long-term memory in this conversation. I will follow this naming rule here:
 
@@ -346,18 +351,18 @@ I would choose the emoji once and preserve it for that thread. Prefer distinct e
 
 For an implementation in your host, Codex App Server exposes `thread/name/set`, alongside thread creation and resumption methods. The model can choose the emoji and name when it establishes the responsibility, and the host can set the title explicitly rather than relying on later messages to influence automatic naming. citeturn154903view1
 
-## Turn 3
+### Turn 3
 
 Turn ID: `0861f2d3-0024-474e-9526-26001cf9b45d`
 
-### User
+#### User
 
 Message ID: `0861f2d3-0024-474e-9526-26001cf9b45d`
 
 "I would have Astra use that initial investigation to establish the first five to eight domains, then let the owners refine their boundaries. Astra need not understand every implementation detail before anyone else starts." In this regard I want to ensure agents are constantly committing and making use of branching and PRs (though not autonomously merging). A lot of the time I'll see agents work for 40-50 minutes and make very little progress. Every second on the clock is usage, we need to optimize heavily for keeping work committed often, keeping the filesystem clean and maintaining fast environments for our agents. This is why Rust repos with Codex are rough. I care deeply about coherence and having the model complete work in multiple passes almost as preset quality gates or in this case workflows or priming. I usually start a UI by establishing the directory structure first since the agent would just place shit anyhow if instructed to implement immediately, then I have it import a design system like shadcn using a preset, then I do app shells, transitions, loading screens, error screens, mostly non-feature UI work and finally I start feature work by having ChatGPT generate a mock based on my instructions, feed that to chat have then annotate the mock to see where to place the components we've imported and setup, slot them in like lego, dummy data to avoid complication, motion pass, iconography pass, texture pass (using imagegen) and asset pass. Ensure all error and loading states are handled. Use the product make sure there are no quality defects. Ship.
 I also like utilizing [Fluid Functionalism](https://www.fluidfunctionalism.com/docs)
 
-### Assistant
+#### Assistant
 
 Message ID: `0224fcbc-2a41-4827-900d-d4a0cef0e261`
 
@@ -365,7 +370,7 @@ I would make **the current pass and its exit conditions part of every Sol thread
 
 Your sequence also explains what the priming should establish. The agent learns when to make structural decisions, when to compose existing components, and when to stop adding functionality and inspect the result. Later work should reuse those decisions rather than repeatedly reopening them.
 
-## Commit at the end of each useful increment
+##### Commit at the end of each useful increment
 
 I agree with making commits routine. I would separate a recoverable checkpoint from a completed quality gate.
 
@@ -391,7 +396,7 @@ For the 40–50-minute problem, I would introduce a no-progress trigger. As a st
 
 The agent should then narrow the next increment, identify the blocked dependency, or ask Astra a specific question. A difficult investigation can justify more time through a reproducer or evidence that eliminates a hypothesis. Repeated searches and another restatement of the plan should not reset the timer.
 
-## Keep threads persistent and task branches bounded
+##### Keep threads persistent and task branches bounded
 
 I would give each active writer an isolated worktree and a named task branch. The Sol thread retains its domain responsibility across successive tasks. Its branch does not need to become a permanent parallel version of the product.
 
@@ -405,7 +410,7 @@ For your no-autonomous-merge requirement, I would enforce the boundary through c
 
 The agent identity should not have your unrestricted merge authority. Required human approval alone is insufficient for your preference if the agent can subsequently execute the merge. Astra's approval should remain technical advice. You perform the merge.
 
-## Make your UI sequence the working procedure
+##### Make your UI sequence the working procedure
 
 I would preserve your order and give every pass a concrete result. The same Sol owner should usually carry a feature through its passes. Creating separate structure, motion, and icon agents would unnecessarily divide its context.
 
@@ -433,7 +438,7 @@ For fixtures, I would create reproducible scenarios instead of scattering dummy 
 
 Most pass gates should be executable by Sol without waiting for you. Astra handles consequential design changes, difficult failures, and computer-use review. Human-controlled merging does not require human permission for every intermediate step.
 
-## Fluid Functionalism belongs in the foundation
+##### Fluid Functionalism belongs in the foundation
 
 Fluid Functionalism fits the early design-system pass. Its documentation describes motion that communicates relationships, hover previews, and interruptible spring animations. It builds on shadcn/ui and offers both Radix and Base UI variants while retaining theme tokens. citeturn380187view0
 
@@ -447,7 +452,7 @@ I would also require useful keyboard and touch behaviour where pointer proximity
 
 Your texture and asset passes should preserve these decisions. A decorative change should not silently alter interaction behaviour or introduce another loading problem.
 
-## A clean filesystem should retain useful caches
+##### A clean filesystem should retain useful caches
 
 I would define cleanliness as predictable ownership and placement. Source changes belong in the task branch. Approved product assets belong in the repository. Diagnostic logs, generated previews, and disposable downloads belong in a designated artifact directory. Build caches belong in managed cache locations.
 
@@ -467,7 +472,7 @@ Keep a bounded number of warm environments. A persistent Sol thread does not nee
 
 For a frontend inside a Rust desktop application, I would establish a browser-based fixture mode where practical. Most layout and styling iterations could use that environment, while desktop integration checks remain mandatory for native behaviour. That is a project setup decision for Astra to establish once.
 
-## Record enough state to continue the next pass
+##### Record enough state to continue the next pass
 
 I would keep the durable record small. Each task needs its owner, branch, base revision, current pass, latest checkpoint, evidence references, and unresolved dependencies.
 
@@ -479,18 +484,18 @@ I would judge this setup by elapsed time per accepted pass, time lost to environ
 
 When you open a domain thread, you should be able to identify its current pass, inspect its latest committed result, and see the specific condition preventing the next checkpoint. Forty minutes of activity should never leave you guessing whether anything usable exists.
 
-## Turn 4
+### Turn 4
 
 Turn ID: `7404c2bc-1a16-4e43-8362-e272c283ddd2`
 
-### User
+#### User
 
 Message ID: `7404c2bc-1a16-4e43-8362-e272c283ddd2`
 
 Have a look at @GitHub [Lungren2/agent-context-framework](https://github.com/Lungren2/agent-context-framework)
 I want to rearchitect it around this workflow. It have a ton of very useful bits but also a lot of shit I need to cut out and consolidate
 
-### Assistant
+#### Assistant
 
 Message ID: `8cc4d88a-d786-4eda-a9d2-78b5faba4577`
 
@@ -500,9 +505,9 @@ There is useful engineering here. The artifact stores, source bindings, installa
 
 I reviewed `main` at `cd0516aa39472f64a460028a05449ae4e71fe244`, dated 24 August 2026. This is a source review, including implementation files and selected tests. I have not changed the repository or run its checks.
 
-## Where the current design fights your workflow
+##### Where the current design fights your workflow
 
-### The execution model has the wrong lifetime
+###### The execution model has the wrong lifetime
 
 The durable runtime centres on an `Objective`, its attempts, leases, acceptance gates, and terminal outcome. The Codex integration can resume threads, so persistence itself is not missing. The problem is that continuity belongs to the objective and its execution attempt. Your domain owner needs to survive several tasks, branches, PRs, and changes in direction.
 
@@ -519,7 +524,7 @@ I would make these identities separate:
 
 A domain thread should not end because a task finishes. A task should not acquire a new owner because its worktree was replaced.
 
-### Some expensive checks are only nominally scoped
+###### Some expensive checks are only nominally scoped
 
 This is the clearest performance problem in the source.
 
@@ -531,7 +536,7 @@ I have not measured the elapsed cost, but the routing is demonstrably broader th
 
 I would fix this before building new coordination features. Each pass needs an actual command scope. A frontend fixture change should not automatically pay for every framework check. A change to a shared runtime contract should receive broader checks because its dependencies justify them.
 
-### The frontend contract enforces a workflow you no longer want
+###### The frontend contract enforces a workflow you no longer want
 
 The baseline and frontend skill require adopting a licensed implementation when changing an application shell or major navigation. This is more than advice. `ImplementationContractV2` contains a product-precedent structure, and its decoder rejects an observation-only choice when the declared license permits source reuse.
 
@@ -543,7 +548,7 @@ I would remove **mandatory product adoption** from the normal frontend path. Kee
 
 I would also remove the mandatory alternative-design exercise after you have already settled the direction. The current frontend skill requires replacing a major choice and comparing another solution before retaining the first acceptable design. That is useful during exploration, but unnecessary when the user has supplied the decision.
 
-### The existing hooks detect some problems but cannot coordinate recovery
+###### The existing hooks detect some problems but cannot coordinate recovery
 
 The installed hook implementation recognises two relevant situations: context compaction and `apply_patch`. It can restore stored context after compaction and reject patch paths outside a session's scope. Other tool events return an unsupported result.
 
@@ -551,7 +556,7 @@ The active-task code also checks source hashes and rejects bindings whose source
 
 I would preserve those checks, then add the missing continuation behaviour. A stale contract should produce a specific update and a permitted next action. It should not leave the agent with a failed binding and another investigation to perform.
 
-## What I would keep, consolidate, and remove
+##### What I would keep, consolidate, and remove
 
 | Existing area | Decision | What survives |
 |---|---|---|
@@ -571,7 +576,7 @@ The registry explicitly projects source instructions and skills into installed l
 
 Your maintenance skill already gives the right procedure for this work. Trace each behaviour through its canonical source, installed projection, registry entry, governance requirement, and tests. Classify it as retained, changed, removed, or added. I would use that preservation map throughout the rewrite.
 
-## The smaller architecture I would build
+##### The smaller architecture I would build
 
 I would consolidate the runtime into one package with internal modules before creating more package boundaries.
 
@@ -600,7 +605,7 @@ tests/scenarios/
 
 The package names matter less than the ownership rules. I would establish the following boundaries.
 
-### Codex owns conversations; ACF records their responsibilities
+###### Codex owns conversations; ACF records their responsibilities
 
 ACF should register existing threads as well as create new ones. A peer record would contain its stable identity, native thread ID, domain responsibility, model profile, title, and delivery cursor.
 
@@ -610,7 +615,7 @@ Astra would consult the roster before creating another domain owner. Sol peers w
 
 Codex App Server documents thread creation, resumption, naming, and active-turn steering. That makes a thin native integration worth testing. It does **not** establish that every proposed integration will behave correctly in your particular client. I would prove that you can open, steer, and continue the same monitored threads before building the rest of the peer runtime. citeturn968558view0
 
-### ACF owns operational records
+###### ACF owns operational records
 
 My implementation choice would be one local transactional database for peer assignments, tasks, passes, pending messages, and evidence references. The existing file-backed artifact storage would hold large results.
 
@@ -620,7 +625,7 @@ Hook bindings, status output, and PR summaries should be derived views. They sho
 
 The runtime should store neither a duplicate conversation archive nor speculative summaries of everything. It needs enough information to deliver the next relevant update and validate the next state transition.
 
-### Context delivery happens at work transitions
+###### Context delivery happens at work transitions
 
 Consider two Sol owners that depend on the same API contract.
 
@@ -632,7 +637,7 @@ This does not require replaying the first owner's transcript. It requires a dire
 
 Likewise, a request to Astra should carry the unresolved question and decisive sources. Astra's correction must return to the responsible Sol thread. Otherwise, the immediate problem is fixed while the continuing owner retains the wrong explanation.
 
-### Evidence and authority remain different
+###### Evidence and authority remain different
 
 There is already worthwhile code here. `transitionHumanAcceptance` rejects a target that differs from the expected result and rejects a conflicting replay. Preserve that behaviour.
 
@@ -644,7 +649,7 @@ A checkpoint commit establishes recoverable repository state. A command receipt 
 
 A later change should not overwrite the historical fact that a check passed. It should change whether that result applies to the current candidate.
 
-## Make your passes the normal way to work
+##### Make your passes the normal way to work
 
 I would express the workflows as short, versioned procedures with explicit skill references and observable exit conditions. The host would track their progress. It would not interpret every step as a new role or generate a custom program to execute them.
 
@@ -660,7 +665,7 @@ Your first completed feature would become a reusable example. Preserve its impor
 
 The root instructions should retain universal obligations and your communication preferences. Conditional frontend detail belongs with the pass that uses it. The current root `AGENTS.md` is 20,755 bytes, so there is substantial material to classify before adding more instructions.
 
-## Make checkpoints and environment management mechanical
+##### Make checkpoints and environment management mechanical
 
 Frequent commits will work better when ACF makes them easy to produce and inspect.
 
@@ -678,7 +683,7 @@ I would also separate model concurrency from expensive process concurrency. Eigh
 
 The useful performance measurements would be time to the first committed increment, time between meaningful checkpoints, repeated retrieval, environment setup time, and verification time. A no-progress warning should prompt a smaller next step or a specific escalation. It should not encourage meaningless commits to satisfy a counter.
 
-## How I would carry out the rewrite
+##### How I would carry out the rewrite
 
 I would use reviewable PRs with direct replacement at each boundary. I would avoid a permanent second runtime beside the old one.
 
@@ -696,17 +701,17 @@ The new scenario suite should concentrate on the failures that matter to your wo
 
 I would start with scoped verification and the policy changes, then prove two real persistent peers completing committed passes. That delivers value while the rewrite proceeds. Renaming Objective to Peer, rebuilding the setup UI, or designing another general scheduler would leave the most important problems untouched.
 
-## Turn 5
+### Turn 5
 
 Turn ID: `a3c4d61b-4771-4a02-b206-dbba2944daa2`
 
-### User
+#### User
 
 Message ID: `a3c4d61b-4771-4a02-b206-dbba2944daa2`
 
 "I would remove **mandatory product adoption** from the normal frontend path" I disagree, I think it should be shifted to the mock creation phase. The core of the skill is using established UI/UX patterns. LLMs inventing generic or poorly thought-out interfaces is still an issue especially for GPT models. Interestingly enough gpt-image is good at producing good looking interfaces but the coding agents aren't, so the annotation step is really just to work around that. The established guidance helps prevent the other failure mode of the model not repurposing code/solutions like a real developer would (ctrl+c/v are our greatest assets)
 
-### Assistant
+#### Assistant
 
 Message ID: `c0287872-bc18-4f53-80b1-1a22f8444b9a`
 
@@ -714,7 +719,7 @@ Message ID: `c0287872-bc18-4f53-80b1-1a22f8444b9a`
 
 There are two requirements worth preserving: use established interaction patterns rather than inventing a product from model habits, and reuse suitable implementations rather than generating replacements for code that already exists. An attractive mock does not remove either requirement.
 
-## Adoption should inform the mock
+##### Adoption should inform the mock
 
 The existing skill has more substance than "find visual inspiration." It asks the agent to identify a product handling the same user task, inspect its interactions, pin its source, and state what will remain or change. It also requires actual source reuse rather than a look-alike generated from a description. Those are useful safeguards to retain.
 
@@ -726,7 +731,7 @@ The image-generation step would receive the selected visual references, those be
 
 Using the strengths you have observed, image generation handles visual composition while the coding agent works from a settled target. **The mock should express the selected interaction model rather than become an excuse to discard it.**
 
-## Annotation connects the visual target to reusable code
+##### Annotation connects the visual target to reusable code
 
 Your annotation step has a more specific purpose than documenting where elements appear. It prevents the coding agent from having to redesign the interface while implementing it.
 
@@ -748,7 +753,7 @@ The existing frontend discipline already says that adopted components retain own
 
 The component inventory should constrain implementation choices without forcing every mock to resemble an unmodified component gallery. Your composition, styling, texture, and asset passes still have room to establish the product's appearance.
 
-## Actual reuse must survive the handoff
+##### Actual reuse must survive the handoff
 
 Moving adoption earlier must not reduce it to screenshots and notes.
 
@@ -760,7 +765,7 @@ A statement such as "I studied the source and implemented the same idea" should 
 
 I would also keep the behavioural reference available during verification. A mock cannot show focus restoration, interrupted transitions, keyboard navigation, or recovery after a failed action. The implementation needs to satisfy the approved visual target and the retained interaction requirements.
 
-## What changes in the rearchitecture proposal
+##### What changes in the rearchitecture proposal
 
 I would revise the earlier keep/cut decision as follows:
 

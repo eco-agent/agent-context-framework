@@ -51,13 +51,26 @@ test("every external manifest dependency has an adoption record", async () => {
 test("documentation checks ignore generated skill projections", async () => {
   const fixture = await mkdtemp(path.join(os.tmpdir(), "agent-context-docs-"));
   try {
-    await mkdir(path.join(fixture, ".agents", "skills", "generated"), { recursive: true });
+    const generatedRoot = path.join(
+      fixture,
+      ".agents",
+      "skills",
+      `acf--generated--${"a".repeat(64)}`,
+    );
+    await mkdir(generatedRoot, { recursive: true });
     await writeFile(
-      path.join(fixture, ".agents", "skills", "generated", "SKILL.md"),
+      path.join(generatedRoot, "SKILL.md"),
       "[generated cross-skill link](../../missing/SKILL.md)\n",
+    );
+    const projectSkillRoot = path.join(fixture, ".agents", "skills", "project-authored");
+    await mkdir(projectSkillRoot, { recursive: true });
+    await writeFile(
+      path.join(projectSkillRoot, "SKILL.md"),
+      "[project skill link](missing.md)\n",
     );
     await writeFile(path.join(fixture, "README.md"), "[missing source document](missing.md)\n");
     assert.deepEqual(await checkDocs(fixture), [
+      ".agents/skills/project-authored/SKILL.md has a broken local link: missing.md",
       "README.md has a broken local link: missing.md",
     ]);
   } finally {
