@@ -303,6 +303,11 @@ async function main(): Promise<void> {
       openBrowser: request.openBrowser,
     });
     process.stdout.write(`repository UI: ${server.url}\n`);
+    if (server.browserLaunchIssue !== null) {
+      process.stderr.write(
+        `warning: default browser did not open: ${server.browserLaunchIssue}\n`,
+      );
+    }
     await waitForShutdown();
     await server.close();
     return;

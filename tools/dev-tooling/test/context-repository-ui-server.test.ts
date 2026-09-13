@@ -94,21 +94,22 @@ test("repository UI rejects widened registration payloads", async () => {
   }
 });
 
-test("repository UI reports browser launch failure and closes the server", async () => {
+test("repository UI reports browser launch failure and keeps the server usable", async () => {
   const parent = await mkdtemp(path.join(os.tmpdir(), "acf-repository-ui-launch-"));
+  let server: Awaited<ReturnType<typeof startContextRepositoryUiServer>> | undefined;
   try {
-    await assert.rejects(
-      startContextRepositoryUiServer({
-        frameworkRoot,
-        catalogRoot: path.join(parent, "catalog"),
-        clientRoot,
-        launchBrowser: async () => {
-          throw new Error("Browser command is unavailable.");
-        },
-      }),
-      /could not open the default browser/u,
-    );
+    server = await startContextRepositoryUiServer({
+      frameworkRoot,
+      catalogRoot: path.join(parent, "catalog"),
+      clientRoot,
+      launchBrowser: async () => {
+        throw new Error("Browser command is unavailable.");
+      },
+    });
+    assert.equal(server.browserLaunchIssue, "Browser command is unavailable.");
+    assert.equal((await fetch(server.url)).status, 200);
   } finally {
+    await server?.close();
     await rm(parent, { recursive: true, force: true });
   }
 });

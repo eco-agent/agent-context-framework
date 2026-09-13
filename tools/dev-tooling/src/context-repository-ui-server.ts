@@ -34,6 +34,7 @@ export interface ContextRepositoryUiServerOptions {
 export interface RunningContextRepositoryUiServer {
   readonly url: string;
   readonly port: number;
+  readonly browserLaunchIssue: string | null;
   close(): Promise<void>;
 }
 
@@ -136,17 +137,18 @@ export async function startContextRepositoryUiServer(
     throw new Error("Repository UI server did not bind a TCP address.");
   }
   const url = `http://${LOOPBACK_HOST}:${address.port}/?token=${encodeURIComponent(token)}`;
+  let browserLaunchIssue: string | null = null;
   if (options.openBrowser !== false) {
     try {
       await (options.launchBrowser ?? openBrowser)(url);
     } catch (error) {
-      await closeServer(server);
-      throw new Error("Repository UI could not open the default browser.", { cause: error });
+      browserLaunchIssue = error instanceof Error ? error.message : String(error);
     }
   }
   return {
     url,
     port: address.port,
+    browserLaunchIssue,
     close: async () => await closeServer(server),
   };
 }
