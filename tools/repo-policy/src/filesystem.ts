@@ -7,6 +7,7 @@ const ignoredRelativeDirectories = new Set([
   ".codex/acf/runtime-source",
   ".codex/work",
 ]);
+const generatedSkillDirectory = /^\.agents\/skills\/acf--[^/]+--[a-f0-9]{64}$/u;
 
 export async function findFiles(
   root: string,
@@ -24,7 +25,9 @@ export async function findFiles(
       const absolute = path.join(directory, entry.name);
       const relative = normalizeRelative(root, absolute);
       if (entry.isDirectory()) {
-        if (ignoredRelativeDirectories.has(relative)) continue;
+        if (ignoredRelativeDirectories.has(relative) || generatedSkillDirectory.test(relative)) {
+          continue;
+        }
         await visit(absolute);
       } else if (entry.isFile() && predicate(relative)) {
         matches.push(relative);
