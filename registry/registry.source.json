@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.17.0",
-  "decisionPath": "registry/decisions/0.17.0-repository-registry-interface.md",
+  "revision": "0.18.0",
+  "decisionPath": "registry/decisions/0.18.0-repository-registry-interface.md",
   "components": [
     {
       "name": "core",

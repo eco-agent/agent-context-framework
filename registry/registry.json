@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.17.0",
-  "decisionPath": "registry/decisions/0.17.0-repository-registry-interface.md",
+  "revision": "0.18.0",
+  "decisionPath": "registry/decisions/0.18.0-repository-registry-interface.md",
   "components": [
     {
       "name": "core",
@@ -663,7 +663,7 @@
     },
     {
       "name": "skill-tailwind-css-architect",
-      "revision": "sha256:ef8a59898dceff208fea6802d60e4e8613c8645ebb9563a080095083b00e9f29",
+      "revision": "sha256:947371290b585c68642744837cd1713c0be54878804aa4fed6db96cc44f9862c",
       "dependencies": [],
       "capabilities": [
         {
@@ -744,7 +744,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
-          "sourceSha256": "2b80ae5130825c19bfb8e05da45c47ef1fbcb3ae96e33b653839056271f32dcc",
+          "sourceSha256": "b3c04f0b4f057ad8d0e90510d7a62d3920385c3cf9e3dcf606207df43044c43a",
           "targetPath": ".codex/skills/tailwind-css-architect/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -796,7 +796,7 @@
     },
     {
       "name": "frontend-tailwind",
-      "revision": "sha256:b40992018eca900730b29f8616fde86df3d3c1e813f94e55878e6bd78be82707",
+      "revision": "sha256:47cecc1b6450f4ddf402418b87683da81df86b1d4b6deecc35783ebaaff85ce9",
       "dependencies": [
         "frontend",
         "skill-responsive-css-architect",
@@ -816,7 +816,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-          "sourceSha256": "179e3ffa8477ba66d8e19b8816d75aed031b0e4c45acb283b3384adc2a804ee2",
+          "sourceSha256": "9630dd6c78d58e3f736448080a4c8a78a4abe7e4b2cb761be83d8b75f59c4eaa",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend-tailwind",
           "markerStyle": "markdown"

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.17.0",
-  "decisionPath": "registry/decisions/0.17.0-repository-registry-interface.md",
+  "registryRevision": "0.18.0",
+  "decisionPath": "registry/decisions/0.18.0-repository-registry-interface.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
@@ -56,7 +56,7 @@
     {
       "invariantId": "frontend-tailwind-representation",
       "sourcePath": ".codex/skills/tailwind-css-architect/SKILL.md",
-      "sha256": "2b80ae5130825c19bfb8e05da45c47ef1fbcb3ae96e33b653839056271f32dcc"
+      "sha256": "b3c04f0b4f057ad8d0e90510d7a62d3920385c3cf9e3dcf606207df43044c43a"
     },
     {
       "invariantId": "framework-maintainer-contract",
@@ -206,7 +206,7 @@
     {
       "invariantId": "frontend-tailwind-explicit",
       "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-      "sha256": "179e3ffa8477ba66d8e19b8816d75aed031b0e4c45acb283b3384adc2a804ee2"
+      "sha256": "9630dd6c78d58e3f736448080a4c8a78a4abe7e4b2cb761be83d8b75f59c4eaa"
     },
     {
       "invariantId": "documentation-prose",
