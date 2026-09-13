@@ -112,7 +112,7 @@ function RepositoryManager() {
 
         <main className="workspace" id="repositories">
           <header className="hero">
-            <div><h1>Repositories</h1><p>Inspect and update every registered ACF capsule.</p></div>
+            <h1>Repositories</h1>
             <div className="hero-actions">
               <button className="icon-button" type="button" onClick={refresh} disabled={isBusy} aria-label="Refresh repositories"><RefreshIcon /></button>
               <button className="action-button secondary" type="button" onClick={syncAll} disabled={isBusy || !snapshot?.repositories.length}><SyncIcon />Sync all</button>

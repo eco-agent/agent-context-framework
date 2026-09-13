@@ -306,6 +306,7 @@ async function sendFile(response: ServerResponse, filePath: string): Promise<voi
   await new Promise<void>((resolve, reject) => {
     const stream = createReadStream(filePath);
     stream.once("error", reject);
+    stream.once("end", resolve);
     response.once("close", resolve);
     stream.pipe(response);
   });
@@ -415,6 +416,7 @@ async function pipeFile(response: ServerResponse, filePath: string): Promise<voi
   await new Promise<void>((resolve, reject) => {
     const stream = createReadStream(filePath);
     stream.once("error", reject);
+    stream.once("end", resolve);
     response.once("close", resolve);
     stream.pipe(response);
   });
