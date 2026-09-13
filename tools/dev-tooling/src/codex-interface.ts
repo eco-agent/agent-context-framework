@@ -156,7 +156,7 @@ export function unsafeReferenceDiagnostics(source: string): readonly string[] {
   const diagnostics: string[] = [];
   const rules: readonly [RegExp, string][] = [
     [/(?:^|[\s"'])(?:[A-Za-z]:[\\/]|\\\\|\/(?:home|Users|opt|srv|var|tmp)\/)/u, "Absolute framework or host paths are forbidden."],
-    [/(?:^|[\s"'])~[\\/]?\.codex(?:[\\/]|\b)/u, "User-global ~/.codex configuration is forbidden."],
+    [/(?:^|[\s"'])~[\\/]?\.codex(?:[\\/]|\b)/u, "Project-packed references may not target user-global ~/.codex configuration."],
     [/(?:^|[\s"'])tools[\\/]/u, "Host tools/ workspace entrypoints are forbidden."],
     [/\btsx\b/u, "tsx entrypoints are forbidden."],
     [/--filter\b/u, "Host workspace package filters are forbidden."],

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.15.0",
-  "decisionPath": "registry/decisions/0.15.0-single-capsule-workflow.md",
+  "revision": "0.16.0",
+  "decisionPath": "registry/decisions/0.16.0-global-repository-catalog.md",
   "components": [
     {
       "name": "core",

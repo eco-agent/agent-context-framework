@@ -307,6 +307,29 @@ source bytes, and activation hashes. `pack` writes it and the tracked activation
 files. `sync` recreates ignored runtime files and `.agents/skills` from it. The
 receipt is ignored and can replace only files whose hashes still match.
 
+### Repositories on this machine
+
+ACF keeps an explicit machine-level catalog below
+`$CODEX_HOME/acf/repositories`, or `~/.codex/acf/repositories` when
+`CODEX_HOME` is unset. Each repository has one small record. Health remains live
+repository state and is never copied into the catalog.
+
+```powershell
+pnpm agent-context repo register --cwd D:\path\to\your-project
+pnpm agent-context repo list
+pnpm agent-context repo status
+pnpm agent-context sync --all
+```
+
+`repo status` distinguishes a current repository from one needing `sync`, one
+needing `pack`, a blocked projection, a corrupt capsule, and a missing checkout.
+`repo forget <id>` removes only the global record. It does not touch the
+repository.
+
+The catalog does not replace `.codex/acf/capsule.acf` or
+`.codex/acf/policy.json`. Registration is explicit so test fixtures, CI jobs,
+and bootstrap runs never write to a user's global catalog by surprise.
+
 Fork it and rewrite whatever annoys you. Keep only the rules you would defend in a
 code review. I want people to begin with a serious setup and edit it, instead of
 reconstructing one after every bad run.
@@ -335,6 +358,8 @@ git clone https://github.com/Lungren2/agent-context-framework.git
 cd agent-context-framework
 pnpm install --frozen-lockfile
 pnpm agent-context pack codex-runtime repository-policy --cwd D:\path\to\your-project
+pnpm agent-context repo register --cwd D:\path\to\your-project
+pnpm agent-context repo status
 pnpm agent-context sync --cwd D:\path\to\your-project
 ```
 

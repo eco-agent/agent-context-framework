@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.15.0",
-  "decisionPath": "registry/decisions/0.15.0-single-capsule-workflow.md",
+  "registryRevision": "0.16.0",
+  "decisionPath": "registry/decisions/0.16.0-global-repository-catalog.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",

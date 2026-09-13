@@ -6,6 +6,16 @@ import { diffContextCapsules, readContextCapsuleFile } from "./context-capsule.j
 import { packContextCapsule, syncContextCapsule } from "./context-capsule-workflow.js";
 import { classifyContextCapsuleRestart } from "./context-capsule-restart.js";
 import { checkContextRegistry } from "./context-registry-builder.js";
+import { loadContextRegistry } from "./context-installer.js";
+import {
+  forgetContextRepository,
+  inspectContextRepositories,
+  listContextRepositories,
+  registerContextRepository,
+  resolveContextRepositoryCatalogRoot,
+  syncContextRepositories,
+  type ContextRepositoryObservation,
+} from "./context-repository-catalog.js";
 
 type ContextCliArguments =
   | { readonly command: "help" }
@@ -20,12 +30,21 @@ type ContextCliArguments =
       readonly projectRoot: string;
       readonly json: boolean;
     }
+  | { readonly command: "sync-all"; readonly json: boolean }
   | {
       readonly command: "diff";
       readonly beforePath: string;
       readonly afterPath: string;
       readonly json: boolean;
-    };
+    }
+  | {
+      readonly command: "repo-register";
+      readonly projectRoot: string;
+      readonly json: boolean;
+    }
+  | { readonly command: "repo-forget"; readonly id: string; readonly json: boolean }
+  | { readonly command: "repo-list"; readonly json: boolean }
+  | { readonly command: "repo-status"; readonly id: string | null; readonly json: boolean };
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -34,14 +53,21 @@ export const CONTEXT_INSTALLER_HELP = `Agent Context Framework
 Usage:
   pnpm agent-context pack [COMPONENT...] [--cwd PROJECT] [--json]
   pnpm agent-context sync [--cwd PROJECT] [--json]
+  pnpm agent-context sync --all [--json]
   pnpm agent-context diff --before CAPSULE --after CAPSULE [--json]
+  pnpm agent-context repo register [--cwd PROJECT] [--json]
+  pnpm agent-context repo forget ID [--json]
+  pnpm agent-context repo list [--json]
+  pnpm agent-context repo status [ID] [--json]
   pnpm agent-context help
 
 pack writes one tracked .codex/acf/capsule.acf and reconciles its tracked
 activation files. With no component arguments it preserves the current capsule
 selection, or selects core for a new project. sync verifies that capsule and
 reconciles only ignored runtime and skill projections. diff compares two valid
-capsules and reports whether Codex must restart. No command merges a branch.`;
+capsules and reports whether Codex must restart. repo manages the machine-level
+repository catalog below $CODEX_HOME/acf/repositories, defaulting to
+~/.codex/acf/repositories. No command merges a branch.`;
 
 export function parseContextInstallerArguments(
   arguments_: readonly string[],
@@ -52,6 +78,9 @@ export function parseContextInstallerArguments(
   if (command === undefined || command === "help" || command === "--help" || command === "-h") {
     return { command: "help" };
   }
+  if (command === "repo") {
+    return parseRepositoryArguments(values.slice(1), currentDirectory);
+  }
   if (command !== "pack" && command !== "sync" && command !== "diff") {
     throw new Error(CONTEXT_INSTALLER_HELP);
   }
@@ -59,6 +88,7 @@ export function parseContextInstallerArguments(
   let json = false;
   let beforePath: string | null = null;
   let afterPath: string | null = null;
+  let all = false;
   const components: string[] = [];
   for (let index = 1; index < values.length; index += 1) {
     const value = values[index];
@@ -76,6 +106,9 @@ export function parseContextInstallerArguments(
     } else if (value === "--json") {
       if (json) throw new Error("--json may be specified only once.");
       json = true;
+    } else if (value === "--all") {
+      if (all) throw new Error("--all may be specified only once.");
+      all = true;
     } else if (value?.startsWith("-")) {
       throw new Error(`Unknown agent-context argument ${value}.`);
     } else if (value !== undefined) {
@@ -83,8 +116,8 @@ export function parseContextInstallerArguments(
     }
   }
   if (command === "pack") {
-    if (beforePath !== null || afterPath !== null) {
-      throw new Error("pack does not accept --before or --after.");
+    if (beforePath !== null || afterPath !== null || all) {
+      throw new Error("pack does not accept --before, --after, or --all.");
     }
     const duplicate = components.find((component, index) => components.indexOf(component) !== index);
     if (duplicate !== undefined) throw new Error(`pack contains duplicate component ${duplicate}.`);
@@ -95,12 +128,68 @@ export function parseContextInstallerArguments(
     if (beforePath !== null || afterPath !== null) {
       throw new Error("sync does not accept --before or --after.");
     }
+    if (all) return { command: "sync-all", json };
     return { command, projectRoot, json };
   }
+  if (all) throw new Error("diff does not accept --all.");
   if (beforePath === null || afterPath === null) {
     throw new Error("diff requires --before and --after.");
   }
   return { command, beforePath, afterPath, json };
+}
+
+function parseRepositoryArguments(
+  values: readonly string[],
+  currentDirectory: string,
+): ContextCliArguments {
+  const action = values[0];
+  if (action !== "register" && action !== "forget" && action !== "list" && action !== "status") {
+    throw new Error(CONTEXT_INSTALLER_HELP);
+  }
+  let projectRoot = path.resolve(currentDirectory);
+  let cwdSpecified = false;
+  let json = false;
+  const positional: string[] = [];
+  for (let index = 1; index < values.length; index += 1) {
+    const value = values[index];
+    if (value === "--cwd") {
+      if (cwdSpecified) throw new Error("--cwd may be specified only once.");
+      const next = values[index + 1];
+      if (next === undefined) throw new Error("--cwd requires a project path.");
+      projectRoot = path.resolve(currentDirectory, next);
+      cwdSpecified = true;
+      index += 1;
+    } else if (value === "--json") {
+      if (json) throw new Error("--json may be specified only once.");
+      json = true;
+    } else if (value?.startsWith("-")) {
+      throw new Error(`Unknown agent-context argument ${value}.`);
+    } else if (value !== undefined) {
+      positional.push(value);
+    }
+  }
+  if (action === "register") {
+    if (positional.length > 0) throw new Error("repo register does not accept a repository id.");
+    return { command: "repo-register", projectRoot, json };
+  }
+  if (cwdSpecified) throw new Error(`repo ${action} does not accept --cwd.`);
+  if (action === "forget") {
+    if (positional.length !== 1) throw new Error("repo forget requires one repository id.");
+    return { command: "repo-forget", id: repositorySelector(positional[0]!), json };
+  }
+  if (action === "list") {
+    if (positional.length > 0) throw new Error("repo list does not accept a repository id.");
+    return { command: "repo-list", json };
+  }
+  if (positional.length > 1) throw new Error("repo status accepts at most one repository id.");
+  return { command: "repo-status", id: positional[0] === undefined ? null : repositorySelector(positional[0]), json };
+}
+
+function repositorySelector(value: string): string {
+  if (!/^[a-f0-9]{64}$/u.test(value)) {
+    throw new Error("Repository id must be a lowercase SHA-256 value.");
+  }
+  return value;
 }
 
 async function main(): Promise<void> {
@@ -127,6 +216,60 @@ async function main(): Promise<void> {
     if (result.status === "blocked") process.exitCode = 1;
     return;
   }
+  if (request.command === "sync-all") {
+    const catalogRoot = resolveContextRepositoryCatalogRoot();
+    const results = await syncContextRepositories(catalogRoot);
+    const failed = results.some((result) => result.status === "blocked" || result.status === "failed");
+    const output = {
+      command: "sync" as const,
+      scope: "registered" as const,
+      status: failed ? "attention" as const : "complete" as const,
+      catalogRoot,
+      results,
+    };
+    process.stdout.write(`${request.json ? JSON.stringify(output, null, 2) : formatSyncAll(output)}\n`);
+    if (failed) process.exitCode = 1;
+    return;
+  }
+  if (request.command === "repo-register") {
+    const result = await registerContextRepository(request.projectRoot);
+    process.stdout.write(`${request.json ? JSON.stringify(result, null, 2) : formatRepositoryRegistration(result)}\n`);
+    return;
+  }
+  if (request.command === "repo-forget") {
+    const result = await forgetContextRepository(request.id);
+    process.stdout.write(`${request.json ? JSON.stringify(result, null, 2) : `status: ${result.status}\nid: ${result.id}`}\n`);
+    return;
+  }
+  if (request.command === "repo-list") {
+    const catalogRoot = resolveContextRepositoryCatalogRoot();
+    const repositories = await listContextRepositories(catalogRoot);
+    const result = { command: "repo list" as const, catalogRoot, repositories };
+    process.stdout.write(`${request.json ? JSON.stringify(result, null, 2) : formatRepositoryList(catalogRoot, repositories)}\n`);
+    return;
+  }
+  if (request.command === "repo-status") {
+    const catalogRoot = resolveContextRepositoryCatalogRoot();
+    const registry = await loadContextRegistry(frameworkRoot);
+    const observations = await inspectContextRepositories(catalogRoot, registry.revision);
+    const selected = request.id === null
+      ? observations
+      : observations.filter((observation) => observation.id === request.id);
+    if (request.id !== null && selected.length === 0) {
+      throw new Error(`Repository ${request.id} is not registered.`);
+    }
+    const result = {
+      command: "repo status" as const,
+      catalogRoot,
+      status: selected.every((observation) => observation.status === "current")
+        ? "current" as const
+        : "attention" as const,
+      repositories: selected,
+    };
+    process.stdout.write(`${request.json ? JSON.stringify(result, null, 2) : formatRepositoryStatus(result)}\n`);
+    if (result.status === "attention") process.exitCode = 1;
+    return;
+  }
   const before = await readContextCapsuleFile(request.beforePath);
   const after = await readContextCapsuleFile(request.afterPath);
   const difference = diffContextCapsules(before, after);
@@ -139,6 +282,58 @@ async function main(): Promise<void> {
     restart,
   };
   process.stdout.write(`${request.json ? JSON.stringify(result, null, 2) : formatDiff(result)}\n`);
+}
+
+function formatSyncAll(result: {
+  readonly status: "complete" | "attention";
+  readonly catalogRoot: string;
+  readonly results: readonly {
+    readonly root: string | null;
+    readonly recordPath?: string;
+    readonly status: string;
+  }[];
+}): string {
+  return [
+    `status: ${result.status}`,
+    `catalog: ${result.catalogRoot}`,
+    ...result.results.map((entry) =>
+      `${entry.status}\t${entry.root ?? entry.recordPath ?? "unknown"}`),
+  ].join("\n");
+}
+
+function formatRepositoryRegistration(result: Awaited<ReturnType<typeof registerContextRepository>>): string {
+  return [
+    `status: ${result.status}`,
+    `id: ${result.record.id}`,
+    `root: ${result.record.root}`,
+    `catalog: ${result.catalogRoot}`,
+  ].join("\n");
+}
+
+function formatRepositoryList(
+  catalogRoot: string,
+  repositories: readonly { readonly id: string; readonly root: string }[],
+): string {
+  return [
+    `catalog: ${catalogRoot}`,
+    `repositories: ${repositories.length}`,
+    ...repositories.map((repository) => `${repository.id}\t${repository.root}`),
+  ].join("\n");
+}
+
+function formatRepositoryStatus(result: {
+  readonly status: "current" | "attention";
+  readonly catalogRoot: string;
+  readonly repositories: readonly ContextRepositoryObservation[];
+}): string {
+  return [
+    `status: ${result.status}`,
+    `catalog: ${result.catalogRoot}`,
+    ...result.repositories.flatMap((repository) => [
+      `${repository.status}\t${repository.id}\t${repository.root}`,
+      ...repository.issues.map((issue) => `  ${issue}`),
+    ]),
+  ].join("\n");
 }
 
 function packSummary(result: Awaited<ReturnType<typeof packContextCapsule>>) {
