@@ -3,4 +3,3 @@ AGENTS.md text eol=lf
 .codex/acf/** text eol=lf
 .codex/acf/bootstrap.mjs binary
 .codex/** text eol=lf
-*.acf binary

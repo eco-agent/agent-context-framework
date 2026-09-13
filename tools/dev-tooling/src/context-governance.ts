@@ -58,7 +58,7 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Never deploy without an explicit user request.",
   ]],
   ["registry/sources/git/managed-acf.gitignore", [
-    "/.agents/skills/",
+    "/.agents/skills/acf--*/",
     "/.codex/acf/runtime/",
     "/.codex/acf/receipt.json",
     "/.codex/acf/state/",

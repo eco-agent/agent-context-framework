@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
-import { lstat, readFile, readdir, realpath } from "node:fs/promises";
+import { lstat, readFile, readdir, realpath, rm } from "node:fs/promises";
 import path from "node:path";
 
 import { artifactIdentity } from "@agent-context/repo-policy";
@@ -157,6 +157,7 @@ export async function planContextCapsuleMaterialization(
     const conflicts = [
       ...await findUnexpectedDesiredTargets(resolvedProjectRoot, desiredReceipt.files),
       ...await findUnownedAcfSkillRoots(resolvedProjectRoot, new Set()),
+      ...await findUnexpectedRuntimeRoots(resolvedProjectRoot),
     ];
     return conflicts.length === 0
       ? {
@@ -181,6 +182,7 @@ export async function planContextCapsuleMaterialization(
       resolvedProjectRoot,
       new Set(materializedSkillRoots(storedReceipt.receipt.files)),
     ),
+    ...await findUnexpectedRuntimeRoots(resolvedProjectRoot),
   ];
   if (storedConflicts.length > 0) {
     return {
@@ -228,12 +230,16 @@ export async function materializeContextCapsule(
     };
   }
   if (plan.status === "current") {
+    const retiredRuntimeRoots = await retireObsoleteRuntimeRoots(
+      plan.projectRoot,
+      plan.receipt.treeSha256,
+    );
     return {
-      status: "current",
+      status: retiredRuntimeRoots.length === 0 ? "current" : "materialized",
       projectRoot: plan.projectRoot,
       receipt: plan.receipt,
       conflicts: [],
-      writtenPaths: [],
+      writtenPaths: retiredRuntimeRoots,
     };
   }
 
@@ -277,12 +283,16 @@ export async function materializeContextCapsule(
   if (verified.status !== "current") {
     throw new Error("Context capsule materialization did not verify after publication.");
   }
+  const retiredRuntimeRoots = await retireObsoleteRuntimeRoots(
+    plan.projectRoot,
+    plan.receipt.treeSha256,
+  );
   return {
     status: "materialized",
     projectRoot: plan.projectRoot,
     receipt: plan.receipt,
     conflicts: [],
-    writtenPaths,
+    writtenPaths: [...writtenPaths, ...retiredRuntimeRoots],
   };
 }
 
@@ -511,6 +521,59 @@ async function findUnexpectedDesiredTargets(
     }
   }
   return conflicts;
+}
+
+async function findUnexpectedRuntimeRoots(
+  projectRoot: string,
+): Promise<readonly ContextMaterializationConflict[]> {
+  const runtimePath = path.join(projectRoot, ...MATERIALIZED_RUNTIME_PREFIX.slice(0, -1).split("/"));
+  let runtimeState;
+  try {
+    runtimeState = await lstat(runtimePath);
+  } catch (error) {
+    if (isMissingPathError(error)) return [];
+    throw error;
+  }
+  if (!runtimeState.isDirectory() || runtimeState.isSymbolicLink()) {
+    return [{
+      targetPath: MATERIALIZED_RUNTIME_PREFIX.slice(0, -1),
+      detail: "ACF materialization requires the runtime path to be a real directory.",
+    }];
+  }
+  const conflicts: ContextMaterializationConflict[] = [];
+  for (const entry of await readdir(runtimePath, { withFileTypes: true })) {
+    if (/^[a-f0-9]{64}$/u.test(entry.name) && entry.isDirectory()) continue;
+    conflicts.push({
+      targetPath: `${MATERIALIZED_RUNTIME_PREFIX}${entry.name}`,
+      detail: "The ACF runtime directory contains an unexpected entry.",
+    });
+  }
+  return conflicts;
+}
+
+async function retireObsoleteRuntimeRoots(
+  projectRoot: string,
+  currentTreeSha256: string,
+): Promise<readonly string[]> {
+  const runtimePath = path.join(projectRoot, ...MATERIALIZED_RUNTIME_PREFIX.slice(0, -1).split("/"));
+  let entries;
+  try {
+    entries = await readdir(runtimePath, { withFileTypes: true });
+  } catch (error) {
+    if (isMissingPathError(error)) return [];
+    throw error;
+  }
+  const retired: string[] = [];
+  for (const entry of entries.sort((left, right) => compareStrings(left.name, right.name))) {
+    if (entry.name === currentTreeSha256) continue;
+    if (!/^[a-f0-9]{64}$/u.test(entry.name) || !entry.isDirectory()) {
+      throw new Error(`Cannot retire unexpected ACF runtime entry ${entry.name}.`);
+    }
+    const relativePath = `${MATERIALIZED_RUNTIME_PREFIX}${entry.name}`;
+    await rm(path.join(runtimePath, entry.name), { recursive: true });
+    retired.push(relativePath);
+  }
+  return retired;
 }
 
 async function findUnignoredMaterializationPaths(

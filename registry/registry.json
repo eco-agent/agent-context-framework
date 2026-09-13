@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:0407969d87f428d995656543d981f14a991c685ed3a7e2f8d38c9161ce125efe",
+      "revision": "sha256:1273378819e94af8f7d889ba36d5fb2701554b0a5d4e30894ad729eb96c45fb1",
       "dependencies": [],
       "capabilities": [
         {
@@ -48,13 +48,21 @@
         {
           "operation": "seed-file",
           "sourcePath": "registry/sources/git/managed-line-endings.gitattributes",
-          "sourceSha256": "4fd88698271ce6ce3470cac4707fe5572daa686827d7391a13a0c1ff6acf40d0",
+          "sourceSha256": "7594a0aaff18f58ef9f9b347e2c060bc1a40fe9416808d4fbf466d7029ab36c9",
           "targetPath": ".gitattributes"
         },
         {
           "operation": "text-section",
+          "sourcePath": "registry/sources/git/managed-acf.gitattributes",
+          "sourceSha256": "b297ffe5e28a07274bc57237be836bb04ac132c715f5a973de414a27351ee543",
+          "targetPath": ".gitattributes",
+          "sectionId": "acf-binary",
+          "markerStyle": "toml"
+        },
+        {
+          "operation": "text-section",
           "sourcePath": "registry/sources/git/managed-acf.gitignore",
-          "sourceSha256": "a972d945807f87c0da161d7ea7634ac2e4807301cb5a29df816c92360eb0b2e0",
+          "sourceSha256": "4f97abdb6b712343556f255348eab4b9816c37f0b3da119bb43ba1e9416a8967",
           "targetPath": ".gitignore",
           "sectionId": "acf-generated",
           "markerStyle": "toml"

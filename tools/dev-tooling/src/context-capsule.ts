@@ -147,8 +147,7 @@ export async function buildContextCapsule(
     resolvedComponents,
   };
   const activation = capsuleActivation(resolvedComponents, entries);
-  const treeSha256 = hashCanonicalJson(treeDescriptor(registrySummary, selection, entries, activation));
-  const payload: ContextCapsulePayloadV2 = {
+  return buildCapsule({
     schemaVersion: CONTEXT_CAPSULE_SCHEMA_VERSION,
     format: CONTEXT_CAPSULE_FORMAT,
     frameworkRevision: request.frameworkRevision,
@@ -156,8 +155,41 @@ export async function buildContextCapsule(
     selection,
     entries,
     activation,
-    treeSha256,
-  };
+  });
+}
+
+export function replaceContextCapsuleActivation(
+  capsule: BuiltContextCapsule,
+  activation: readonly ContextCapsuleActivationLock[],
+): BuiltContextCapsule {
+  const sortedActivation = [...activation].sort((left, right) =>
+    compareStrings(left.identity, right.identity));
+  validateCapsuleActivation(
+    capsule.payload.selection.resolvedComponents,
+    capsule.payload.entries,
+    sortedActivation,
+  );
+  return buildCapsule({
+    schemaVersion: capsule.payload.schemaVersion,
+    format: capsule.payload.format,
+    frameworkRevision: capsule.payload.frameworkRevision,
+    registry: capsule.payload.registry,
+    selection: capsule.payload.selection,
+    entries: capsule.payload.entries,
+    activation: sortedActivation,
+  });
+}
+
+function buildCapsule(
+  payloadWithoutTree: Omit<ContextCapsulePayloadV2, "treeSha256">,
+): BuiltContextCapsule {
+  const treeSha256 = hashCanonicalJson(treeDescriptor(
+    payloadWithoutTree.registry,
+    payloadWithoutTree.selection,
+    payloadWithoutTree.entries,
+    payloadWithoutTree.activation,
+  ));
+  const payload: ContextCapsulePayloadV2 = { ...payloadWithoutTree, treeSha256 };
   const payloadText = canonicalJson(payload);
   const payloadBytes = Buffer.from(payloadText, "utf8");
   const compressed = brotliCompressSync(payloadBytes, {
@@ -175,7 +207,7 @@ export async function buildContextCapsule(
     treeSha256,
     capsuleBytes: bytes.length,
     payloadBytes: payloadBytes.length,
-    entryCount: entries.length,
+    entryCount: payload.entries.length,
     payload,
   };
 }
@@ -441,10 +473,7 @@ function decodeContextCapsulePayload(value: unknown): ContextCapsulePayloadV2 {
     activation.map((entry) => entry.identity),
     "Context capsule activation identities",
   );
-  const expectedActivation = capsuleActivation(registry.components, entries);
-  if (canonicalJson(activation) !== canonicalJson(expectedActivation)) {
-    throw new Error("Context capsule activation must exactly match its tracked artifact projections.");
-  }
+  validateCapsuleActivation(registry.components, entries, activation);
   const expectedTreeSha256 = hashCanonicalJson(
     treeDescriptor(registrySummary, selection, entries, activation),
   );
@@ -620,6 +649,46 @@ function capsuleActivation(
     }
   }
   return activation.sort((left, right) => compareStrings(left.identity, right.identity));
+}
+
+function validateCapsuleActivation(
+  components: readonly ContextRegistryComponent[],
+  entries: readonly ContextCapsuleEntryV1[],
+  activation: readonly ContextCapsuleActivationLock[],
+): void {
+  const expected = capsuleActivation(components, entries);
+  if (activation.length !== expected.length) {
+    throw new Error("Context capsule activation must cover every tracked artifact exactly once.");
+  }
+  const artifacts = new Map<string, ContextRegistryArtifact>();
+  for (const component of components) {
+    for (const artifact of component.artifacts) {
+      if (!isContextCapsuleMaterializedArtifact(artifact)) {
+        artifacts.set(artifactIdentity(artifact), artifact);
+      }
+    }
+  }
+  for (let index = 0; index < expected.length; index += 1) {
+    const expectedEntry = expected[index]!;
+    const actualEntry = activation[index]!;
+    requiredSha256(actualEntry.installedSha256, "Context capsule activation installedSha256");
+    if (
+      actualEntry.identity !== expectedEntry.identity ||
+      actualEntry.targetPath !== expectedEntry.targetPath
+    ) {
+      throw new Error("Context capsule activation identities and targets must match the selected closure.");
+    }
+    const artifact = artifacts.get(actualEntry.identity);
+    if (artifact === undefined) {
+      throw new Error(`Context capsule activation artifact is absent: ${actualEntry.identity}.`);
+    }
+    if (
+      artifact.operation !== "seed-file" &&
+      actualEntry.installedSha256 !== expectedEntry.installedSha256
+    ) {
+      throw new Error("Context capsule activation must match each managed artifact projection.");
+    }
+  }
 }
 
 function decodeDirectComponents(values: readonly string[]): readonly string[] {

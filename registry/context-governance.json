@@ -16,7 +16,12 @@
     {
       "invariantId": "acf-generated-ignore",
       "sourcePath": "registry/sources/git/managed-acf.gitignore",
-      "sha256": "a972d945807f87c0da161d7ea7634ac2e4807301cb5a29df816c92360eb0b2e0"
+      "sha256": "4f97abdb6b712343556f255348eab4b9816c37f0b3da119bb43ba1e9416a8967"
+    },
+    {
+      "invariantId": "acf-binary-attribute",
+      "sourcePath": "registry/sources/git/managed-acf.gitattributes",
+      "sha256": "b297ffe5e28a07274bc57237be836bb04ac132c715f5a973de414a27351ee543"
     },
     {
       "invariantId": "frontend-discipline",

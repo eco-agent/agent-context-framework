@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   CONTEXT_CAPSULE_PATH,
   artifactIdentity,
+  type ContextCapsuleActivationLock,
   type ContextInstallationLockV2,
   type ContextLockedArtifact,
   type ContextRegistryV2,
@@ -14,6 +15,7 @@ import {
   contextCapsuleEntryBytes,
   isContextCapsuleMaterializedArtifact,
   readContextCapsuleFile,
+  replaceContextCapsuleActivation,
   type BuiltContextCapsule,
 } from "./context-capsule.js";
 import {
@@ -112,7 +114,7 @@ export async function packContextCapsule(
       ? requestedComponents
       : previousCapsule?.payload.selection.directComponents ?? []),
   ]);
-  const nextCapsule = await buildContextCapsule({
+  const candidateCapsule = await buildContextCapsule({
     frameworkRoot,
     frameworkRevision,
     directComponents,
@@ -122,30 +124,57 @@ export async function packContextCapsule(
     : embeddedInstallation(previousCapsule);
   const selected = new Set([
     ...(previousCapsule?.payload.selection.resolvedComponents.map((component) => component.name) ?? []),
-    ...nextCapsule.payload.selection.resolvedComponents.map((component) => component.name),
+    ...candidateCapsule.payload.selection.resolvedComponents.map((component) => component.name),
   ]);
   const plan = await planContextInstallation(
     projectRoot,
     frameworkRoot,
-    activationRegistry(nextCapsule),
+    activationRegistry(candidateCapsule),
     createContextProjectConfig(directComponents),
     previousLock,
     previousCapsule === null
       ? { kind: "install" }
       : { kind: "update", mode: "preserve-local", components: selected },
-    activationSources(nextCapsule),
+    activationSources(candidateCapsule),
   );
   if (plan.status === "blocked") {
     return blockedPack(
       projectRoot,
       capsulePath,
-      nextCapsule,
+      candidateCapsule,
       recovery,
       plan.conflicts.map(assessmentConflict),
       [],
     );
   }
+  const preservedDrift = plan.assessments.filter((assessment) =>
+    assessment.status === "locally-modified");
+  if (preservedDrift.length > 0) {
+    return blockedPack(
+      projectRoot,
+      capsulePath,
+      candidateCapsule,
+      recovery,
+      preservedDrift.map(assessmentConflict),
+      [],
+    );
+  }
+  const nextCapsule = replaceContextCapsuleActivation(
+    candidateCapsule,
+    plannedActivation(plan),
+  );
   requireEmbeddedActivation(plan, nextCapsule);
+  const nextProjection = await planContextCapsuleMaterialization(nextCapsule, projectRoot);
+  if (nextProjection.status === "blocked") {
+    return blockedPack(
+      projectRoot,
+      capsulePath,
+      nextCapsule,
+      recovery,
+      nextProjection.conflicts,
+      [],
+    );
+  }
   const capsuleChanged = previousCapsule?.capsuleSha256 !== nextCapsule.capsuleSha256;
   const mutations = [
     ...plan.mutations,
@@ -295,6 +324,18 @@ function requireEmbeddedActivation(
   if (JSON.stringify(planned) !== JSON.stringify(capsule.payload.activation)) {
     throw new Error("Capsule embedded activation differs from the installation plan.");
   }
+}
+
+function plannedActivation(
+  plan: Extract<ContextInstallationPlan, { status: "ready" }>,
+): readonly ContextCapsuleActivationLock[] {
+  return plan.nextLock.artifacts
+    .map((artifact) => ({
+      identity: artifactIdentity(artifact),
+      targetPath: artifact.targetPath,
+      installedSha256: artifact.installedSha256,
+    }))
+    .sort((left, right) => compareStrings(left.identity, right.identity));
 }
 
 function assessmentConflict(assessment: ArtifactAssessment): ContextCapsulePackConflict {

@@ -725,6 +725,15 @@ export async function planContextInstallation(
     const assessment = assessDesired(desired, locked, current);
     assessments.push(assessment);
 
+    if (desired.artifact.operation === "seed-file" && current.state === "present") {
+      nextLockedByIdentity.set(identity, {
+        ...desired.artifact,
+        component: desired.component,
+        installedSha256: current.sha256,
+      });
+      continue;
+    }
+
     const shouldUpdate = intent.kind === "update" && intent.components.has(desired.component);
     const shouldOverwrite = intent.kind === "update" &&
       intent.mode === "overwrite-selected" &&
@@ -756,6 +765,23 @@ export async function planContextInstallation(
     } else if (assessment.status === "unchanged") {
       nextLockedByIdentity.set(identity, lockedArtifact(desired));
     }
+  }
+
+  for (const desired of desiredArtifacts) {
+    if (desired.artifact.operation !== "seed-file") continue;
+    const target = await readVirtualTarget(
+      resolvedProjectRoot,
+      desired.artifact.targetPath,
+      virtualTargets,
+      originalTargets,
+    );
+    const installed = desired.projection.read(target);
+    if (installed.state !== "present") continue;
+    nextLockedByIdentity.set(artifactIdentity(desired.artifact), {
+      ...desired.artifact,
+      component: desired.component,
+      installedSha256: installed.sha256,
+    });
   }
 
   for (const locked of previousLock?.artifacts ?? []) {
@@ -909,6 +935,17 @@ function assessDesired(
         detail: absent
           ? "The seed source will be written because its project-owned target is missing."
           : "An existing project target will be adopted without changing its bytes.",
+      };
+    }
+    if (current.state === "absent") {
+      return {
+        ...base,
+        status: "locally-modified",
+        previousSourceSha256: locked.sourceSha256,
+        currentSha256: null,
+        nextSourceSha256: desired.artifact.sourceSha256,
+        difference: null,
+        detail: "The installed project-owned seed is missing.",
       };
     }
     return {
@@ -1132,13 +1169,18 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
     byTarget.set(artifact.targetPath, current);
   }
   for (const [targetPath, targetArtifacts] of byTarget) {
-    const wholeFile = targetArtifacts.some(
-      (artifact) => artifact.operation === "file" ||
-        artifact.operation === "seed-file" ||
-        artifact.operation === "runtime-workspace",
+    const wholeFile = targetArtifacts.some((artifact) =>
+      artifact.operation === "file" || artifact.operation === "runtime-workspace");
+    const seedWithIncompatibleOwner = targetArtifacts.some(
+      (artifact) => artifact.operation === "seed-file",
+    ) && targetArtifacts.some(
+      (artifact) => artifact.operation !== "seed-file" && artifact.operation !== "text-section",
     );
-    if (wholeFile && targetArtifacts.length > 1) {
+    if ((wholeFile || seedWithIncompatibleOwner) && targetArtifacts.length > 1) {
       throw new Error(`Whole-file target ${targetPath} cannot share ownership with another artifact.`);
+    }
+    if (targetArtifacts.filter((artifact) => artifact.operation === "seed-file").length > 1) {
+      throw new Error(`Target ${targetPath} cannot have more than one seed-file initializer.`);
     }
     const identities = targetArtifacts.map(artifactIdentity);
     if (new Set(identities).size !== identities.length) {

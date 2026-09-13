@@ -38,6 +38,14 @@
         {
           "kind": "artifact",
           "operation": "text-section",
+          "sourcePath": "registry/sources/git/managed-acf.gitattributes",
+          "targetPath": ".gitattributes",
+          "sectionId": "acf-binary",
+          "markerStyle": "toml"
+        },
+        {
+          "kind": "artifact",
+          "operation": "text-section",
           "sourcePath": "registry/sources/git/managed-acf.gitignore",
           "targetPath": ".gitignore",
           "sectionId": "acf-generated",
