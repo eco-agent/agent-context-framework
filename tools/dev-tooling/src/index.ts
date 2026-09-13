@@ -126,6 +126,7 @@ export {
   registerContextRepository,
   resolveCodexHome,
   resolveContextRepositoryCatalogRoot,
+  syncContextRepository,
   syncContextRepositories,
   CONTEXT_REPOSITORY_CATALOG_RELATIVE_PATH,
   CONTEXT_REPOSITORY_CATALOG_SCHEMA_VERSION,
@@ -135,6 +136,12 @@ export {
   type ContextRepositoryRegistrationResult,
   type ContextRepositorySyncResult,
 } from "./context-repository-catalog.js";
+export {
+  readContextRepositoryUiSnapshot,
+  startContextRepositoryUiServer,
+  type ContextRepositoryUiServerOptions,
+  type RunningContextRepositoryUiServer,
+} from "./context-repository-ui-server.js";
 export {
   contextCapsuleSkillActivation,
   contextCapsuleRuntimeActivation,

@@ -315,11 +315,18 @@ ACF keeps an explicit machine-level catalog below
 repository state and is never copied into the catalog.
 
 ```powershell
-pnpm agent-context repo register --cwd D:\path\to\your-project
-pnpm agent-context repo list
-pnpm agent-context repo status
-pnpm agent-context sync --all
+acf repo ui
+acf repo register --cwd D:\path\to\your-project
+acf repo list
+acf repo status
+acf sync --all
 ```
+
+`repo ui` opens a loopback-only management interface. Its searchable repository
+list follows the former component installer layout. Select a repository to see
+its live status, capsule identity, component closure, generated projection
+counts, and issues. The interface can register a path, refresh without writing,
+sync one repository or all of them, and forget a catalog record.
 
 `repo status` distinguishes a current repository from one needing `sync`, one
 needing `pack`, a blocked projection, a corrupt capsule, and a missing checkout.

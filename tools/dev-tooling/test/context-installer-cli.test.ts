@@ -13,6 +13,7 @@ test("CLI exposes capsule operations and the global repository catalog", () => {
   assert.match(CONTEXT_INSTALLER_HELP, /diff --before CAPSULE --after CAPSULE/u);
   assert.match(CONTEXT_INSTALLER_HELP, /repo register/u);
   assert.match(CONTEXT_INSTALLER_HELP, /repo status/u);
+  assert.match(CONTEXT_INSTALLER_HELP, /repo ui/u);
   assert.doesNotMatch(CONTEXT_INSTALLER_HELP, /\binit\b|\badd\b|\bremove\b|\bmigrate\b/u);
 
   assert.deepEqual(
@@ -53,6 +54,10 @@ test("CLI exposes capsule operations and the global repository catalog", () => {
     json: false,
   });
   assert.deepEqual(
+    parseContextInstallerArguments(["repo", "ui", "--port", "4312", "--no-open"], "D:\\project"),
+    { command: "repo-ui", port: 4312, openBrowser: false },
+  );
+  assert.deepEqual(
     parseContextInstallerArguments(
       ["diff", "--before", "before.acf", "--after", "after.acf"],
       "D:\\project",
@@ -72,4 +77,5 @@ test("CLI exposes capsule operations and the global repository catalog", () => {
   assert.throws(() => parseContextInstallerArguments(["diff"], "D:\\project"), /requires/u);
   assert.throws(() => parseContextInstallerArguments(["repo", "forget"], "D:\\project"), /requires/u);
   assert.throws(() => parseContextInstallerArguments(["repo", "list", "unexpected"], "D:\\project"), /does not accept/u);
+  assert.throws(() => parseContextInstallerArguments(["repo", "ui", "--json"], "D:\\project"), /accepts only/u);
 });

@@ -16,6 +16,7 @@ import {
   syncContextRepositories,
   type ContextRepositoryObservation,
 } from "./context-repository-catalog.js";
+import { startContextRepositoryUiServer } from "./context-repository-ui-server.js";
 
 type ContextCliArguments =
   | { readonly command: "help" }
@@ -44,22 +45,24 @@ type ContextCliArguments =
     }
   | { readonly command: "repo-forget"; readonly id: string; readonly json: boolean }
   | { readonly command: "repo-list"; readonly json: boolean }
-  | { readonly command: "repo-status"; readonly id: string | null; readonly json: boolean };
+  | { readonly command: "repo-status"; readonly id: string | null; readonly json: boolean }
+  | { readonly command: "repo-ui"; readonly port: number; readonly openBrowser: boolean };
 
 const frameworkRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
 export const CONTEXT_INSTALLER_HELP = `Agent Context Framework
 
 Usage:
-  pnpm agent-context pack [COMPONENT...] [--cwd PROJECT] [--json]
-  pnpm agent-context sync [--cwd PROJECT] [--json]
-  pnpm agent-context sync --all [--json]
-  pnpm agent-context diff --before CAPSULE --after CAPSULE [--json]
-  pnpm agent-context repo register [--cwd PROJECT] [--json]
-  pnpm agent-context repo forget ID [--json]
-  pnpm agent-context repo list [--json]
-  pnpm agent-context repo status [ID] [--json]
-  pnpm agent-context help
+  acf pack [COMPONENT...] [--cwd PROJECT] [--json]
+  acf sync [--cwd PROJECT] [--json]
+  acf sync --all [--json]
+  acf diff --before CAPSULE --after CAPSULE [--json]
+  acf repo register [--cwd PROJECT] [--json]
+  acf repo forget ID [--json]
+  acf repo list [--json]
+  acf repo status [ID] [--json]
+  acf repo ui [--port PORT] [--no-open]
+  acf help
 
 pack writes one tracked .codex/acf/capsule.acf and reconciles its tracked
 activation files. With no component arguments it preserves the current capsule
@@ -143,12 +146,15 @@ function parseRepositoryArguments(
   currentDirectory: string,
 ): ContextCliArguments {
   const action = values[0];
-  if (action !== "register" && action !== "forget" && action !== "list" && action !== "status") {
+  if (action !== "register" && action !== "forget" && action !== "list" && action !== "status" && action !== "ui") {
     throw new Error(CONTEXT_INSTALLER_HELP);
   }
   let projectRoot = path.resolve(currentDirectory);
   let cwdSpecified = false;
   let json = false;
+  let port = 0;
+  let portSpecified = false;
+  let openBrowser = true;
   const positional: string[] = [];
   for (let index = 1; index < values.length; index += 1) {
     const value = values[index];
@@ -162,11 +168,31 @@ function parseRepositoryArguments(
     } else if (value === "--json") {
       if (json) throw new Error("--json may be specified only once.");
       json = true;
+    } else if (value === "--port") {
+      if (portSpecified) throw new Error("--port may be specified only once.");
+      const next = values[index + 1];
+      if (next === undefined || !/^\d+$/u.test(next)) throw new Error("--port requires an integer from 0 to 65535.");
+      port = Number(next);
+      if (port > 65_535) throw new Error("--port requires an integer from 0 to 65535.");
+      portSpecified = true;
+      index += 1;
+    } else if (value === "--no-open") {
+      if (!openBrowser) throw new Error("--no-open may be specified only once.");
+      openBrowser = false;
     } else if (value?.startsWith("-")) {
       throw new Error(`Unknown agent-context argument ${value}.`);
     } else if (value !== undefined) {
       positional.push(value);
     }
+  }
+  if (action === "ui") {
+    if (cwdSpecified || json || positional.length > 0) {
+      throw new Error("repo ui accepts only --port and --no-open.");
+    }
+    return { command: "repo-ui", port, openBrowser };
+  }
+  if (portSpecified || !openBrowser) {
+    throw new Error(`repo ${action} does not accept --port or --no-open.`);
   }
   if (action === "register") {
     if (positional.length > 0) throw new Error("repo register does not accept a repository id.");
@@ -270,6 +296,17 @@ async function main(): Promise<void> {
     if (result.status === "attention") process.exitCode = 1;
     return;
   }
+  if (request.command === "repo-ui") {
+    const server = await startContextRepositoryUiServer({
+      frameworkRoot,
+      port: request.port,
+      openBrowser: request.openBrowser,
+    });
+    process.stdout.write(`repository UI: ${server.url}\n`);
+    await waitForShutdown();
+    await server.close();
+    return;
+  }
   const before = await readContextCapsuleFile(request.beforePath);
   const after = await readContextCapsuleFile(request.afterPath);
   const difference = diffContextCapsules(before, after);
@@ -282,6 +319,18 @@ async function main(): Promise<void> {
     restart,
   };
   process.stdout.write(`${request.json ? JSON.stringify(result, null, 2) : formatDiff(result)}\n`);
+}
+
+async function waitForShutdown(): Promise<void> {
+  await new Promise<void>((resolve) => {
+    const stop = (): void => {
+      process.off("SIGINT", stop);
+      process.off("SIGTERM", stop);
+      resolve();
+    };
+    process.on("SIGINT", stop);
+    process.on("SIGTERM", stop);
+  });
 }
 
 function formatSyncAll(result: {
