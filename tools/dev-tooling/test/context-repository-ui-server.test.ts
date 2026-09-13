@@ -94,6 +94,25 @@ test("repository UI rejects widened registration payloads", async () => {
   }
 });
 
+test("repository UI reports browser launch failure and closes the server", async () => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), "acf-repository-ui-launch-"));
+  try {
+    await assert.rejects(
+      startContextRepositoryUiServer({
+        frameworkRoot,
+        catalogRoot: path.join(parent, "catalog"),
+        clientRoot,
+        launchBrowser: async () => {
+          throw new Error("Browser command is unavailable.");
+        },
+      }),
+      /could not open the default browser/u,
+    );
+  } finally {
+    await rm(parent, { recursive: true, force: true });
+  }
+});
+
 test("repository UI serves the current extensionless wallpaper without exposing its path", async () => {
   const parent = await mkdtemp(path.join(os.tmpdir(), "acf-repository-ui-wallpaper-"));
   const wallpaperPath = path.join(parent, "TranscodedWallpaper");

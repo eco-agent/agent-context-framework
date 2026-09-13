@@ -28,6 +28,7 @@ export interface ContextRepositoryUiServerOptions {
   readonly clientRoot?: string;
   readonly catalogRoot?: string;
   readonly getWallpaperPath?: () => Promise<string>;
+  readonly launchBrowser?: (url: string) => Promise<void>;
 }
 
 export interface RunningContextRepositoryUiServer {
@@ -135,7 +136,14 @@ export async function startContextRepositoryUiServer(
     throw new Error("Repository UI server did not bind a TCP address.");
   }
   const url = `http://${LOOPBACK_HOST}:${address.port}/?token=${encodeURIComponent(token)}`;
-  if (options.openBrowser !== false) openBrowser(url);
+  if (options.openBrowser !== false) {
+    try {
+      await (options.launchBrowser ?? openBrowser)(url);
+    } catch (error) {
+      await closeServer(server);
+      throw new Error("Repository UI could not open the default browser.", { cause: error });
+    }
+  }
   return {
     url,
     port: address.port,
@@ -454,7 +462,7 @@ function setSecurityHeaders(response: ServerResponse, inlineScriptHashes: readon
   response.setHeader("x-frame-options", "DENY");
 }
 
-function openBrowser(url: string): void {
+async function openBrowser(url: string): Promise<void> {
   const command = process.platform === "win32" ? "cmd"
     : process.platform === "darwin" ? "open"
     : "xdg-open";
@@ -465,6 +473,10 @@ function openBrowser(url: string): void {
     detached: true,
     stdio: "ignore",
     windowsHide: true,
+  });
+  await new Promise<void>((resolve, reject) => {
+    child.once("error", reject);
+    child.once("spawn", resolve);
   });
   child.unref();
 }

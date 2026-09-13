@@ -314,6 +314,10 @@ ACF keeps an explicit machine-level catalog below
 `CODEX_HOME` is unset. Each repository has one small record. Health remains live
 repository state and is never copied into the catalog.
 
+Run `pnpm link --global` once from this checkout to put the repository's `acf`
+executable on `PATH`. The command uses this checkout, so pull or switch branches
+before relying on new behavior.
+
 ```powershell
 acf repo ui
 acf repo register --cwd D:\path\to\your-project

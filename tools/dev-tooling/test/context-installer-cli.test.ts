@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 
@@ -6,6 +8,24 @@ import {
   CONTEXT_INSTALLER_HELP,
   parseContextInstallerArguments,
 } from "../src/context-installer-cli.js";
+
+const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
+
+test("root package exposes a working acf executable", async () => {
+  const manifest = JSON.parse(
+    await readFile(path.join(frameworkRoot, "package.json"), "utf8"),
+  ) as { bin?: Record<string, string> };
+  const binPath = manifest.bin?.acf;
+  assert.equal(binPath, "./tools/dev-tooling/bin/acf.mjs");
+  assert.ok(binPath);
+  const invocation = spawnSync(
+    process.execPath,
+    [path.join(frameworkRoot, binPath), "help"],
+    { cwd: frameworkRoot, encoding: "utf8", windowsHide: true },
+  );
+  assert.equal(invocation.status, 0, invocation.stderr);
+  assert.match(invocation.stdout, /acf repo ui/u);
+});
 
 test("CLI exposes capsule operations and the global repository catalog", () => {
   assert.match(CONTEXT_INSTALLER_HELP, /pack \[COMPONENT\.\.\.\]/u);
