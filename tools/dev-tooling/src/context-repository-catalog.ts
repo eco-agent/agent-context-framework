@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
-import { lstat, mkdir, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises";
+import { createHash, randomUUID } from "node:crypto";
+import { link, lstat, mkdir, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -42,8 +42,9 @@ export type ContextRepositorySyncResult =
       readonly issues: readonly string[];
     }
   | {
-      readonly id: string;
-      readonly root: string;
+      readonly id: string | null;
+      readonly root: string | null;
+      readonly recordPath?: string;
       readonly status: "failed";
       readonly issues: readonly [string];
     };
@@ -66,6 +67,13 @@ interface LoadedContextRepositoryObservation extends ContextRepositoryObservatio
 }
 
 export type ContextRepositoryObservation =
+  | {
+      readonly id: string | null;
+      readonly root: null;
+      readonly recordPath: string;
+      readonly status: "invalid";
+      readonly issues: readonly [string];
+    }
   | (ContextRepositoryObservationBase & { readonly status: "missing" | "invalid" })
   | (LoadedContextRepositoryObservation & {
       readonly status: "repack-required" | "blocked" | "sync-required" | "current";
@@ -96,18 +104,24 @@ export async function registerContextRepository(
   projectRootCandidate: string,
   catalogRootCandidate = resolveContextRepositoryCatalogRoot(),
 ): Promise<ContextRepositoryRegistrationResult> {
-  const catalogRoot = path.resolve(catalogRootCandidate);
+  const catalogRoot = await canonicalizeCatalogRoot(catalogRootCandidate);
   const projectRoot = await requireRepositoryRoot(projectRootCandidate, catalogRoot);
   await readContextCapsuleFile(path.join(projectRoot, CONTEXT_CAPSULE_PATH));
   const record = contextRepositoryRecord(projectRoot);
   await mkdir(catalogRoot, { recursive: true });
   const recordPath = contextRepositoryRecordPath(catalogRoot, record.id);
   const content = serializeRecord(record);
+  const temporaryPath = path.join(catalogRoot, `.${record.id}.${randomUUID()}.tmp`);
+  await writeFile(temporaryPath, content, { encoding: "utf8", flag: "wx" });
   try {
-    await writeFile(recordPath, content, { encoding: "utf8", flag: "wx" });
-    return { status: "registered", catalogRoot, record };
-  } catch (error) {
-    if (!isErrorCode(error, "EEXIST")) throw error;
+    try {
+      await link(temporaryPath, recordPath);
+      return { status: "registered", catalogRoot, record };
+    } catch (error) {
+      if (!isErrorCode(error, "EEXIST")) throw error;
+    }
+  } finally {
+    await rm(temporaryPath, { force: true });
   }
   const existing = await readContextRepositoryRecord(recordPath);
   if (existing.root !== record.root || existing.id !== record.id) {
@@ -119,23 +133,12 @@ export async function registerContextRepository(
 export async function listContextRepositories(
   catalogRootCandidate = resolveContextRepositoryCatalogRoot(),
 ): Promise<readonly ContextRepositoryRecordV1[]> {
-  const catalogRoot = path.resolve(catalogRootCandidate);
-  let entries;
-  try {
-    entries = await readdir(catalogRoot, { withFileTypes: true });
-  } catch (error) {
-    if (isErrorCode(error, "ENOENT")) return [];
-    throw error;
-  }
+  const catalogRoot = await canonicalizeCatalogRoot(catalogRootCandidate);
+  const entries = await readContextRepositoryCatalogEntries(catalogRoot);
   const records: ContextRepositoryRecordV1[] = [];
-  for (const entry of entries.sort((left, right) => left.name.localeCompare(right.name))) {
-    if (!entry.isFile() || !entry.name.endsWith(".json")) continue;
-    const recordPath = path.join(catalogRoot, entry.name);
-    const record = await readContextRepositoryRecord(recordPath);
-    if (entry.name !== `${record.id}.json`) {
-      throw new Error(`Repository catalog filename does not match its identity: ${recordPath}.`);
-    }
-    records.push(record);
+  for (const entry of entries) {
+    if (entry.status === "invalid") throw new Error(entry.issue);
+    records.push(entry.record);
   }
   return records;
 }
@@ -144,7 +147,7 @@ export async function forgetContextRepository(
   id: string,
   catalogRootCandidate = resolveContextRepositoryCatalogRoot(),
 ): Promise<ContextRepositoryForgetResult> {
-  const catalogRoot = path.resolve(catalogRootCandidate);
+  const catalogRoot = await canonicalizeCatalogRoot(catalogRootCandidate);
   requireRepositoryId(id, "Repository selector");
   const recordPath = contextRepositoryRecordPath(catalogRoot, id);
   try {
@@ -226,10 +229,21 @@ export async function inspectContextRepositories(
   catalogRootCandidate = resolveContextRepositoryCatalogRoot(),
   expectedRegistryRevision?: string,
 ): Promise<readonly ContextRepositoryObservation[]> {
-  const records = await listContextRepositories(catalogRootCandidate);
+  const catalogRoot = await canonicalizeCatalogRoot(catalogRootCandidate);
+  const entries = await readContextRepositoryCatalogEntries(catalogRoot);
   const observations: ContextRepositoryObservation[] = [];
-  for (const record of records) {
-    observations.push(await inspectContextRepository(record, expectedRegistryRevision));
+  for (const entry of entries) {
+    if (entry.status === "invalid") {
+      observations.push({
+        id: entry.id,
+        root: null,
+        recordPath: entry.recordPath,
+        status: "invalid",
+        issues: [entry.issue],
+      });
+    } else {
+      observations.push(await inspectContextRepository(entry.record, expectedRegistryRevision));
+    }
   }
   return observations;
 }
@@ -237,9 +251,21 @@ export async function inspectContextRepositories(
 export async function syncContextRepositories(
   catalogRootCandidate = resolveContextRepositoryCatalogRoot(),
 ): Promise<readonly ContextRepositorySyncResult[]> {
-  const records = await listContextRepositories(catalogRootCandidate);
+  const catalogRoot = await canonicalizeCatalogRoot(catalogRootCandidate);
+  const entries = await readContextRepositoryCatalogEntries(catalogRoot);
   const results: ContextRepositorySyncResult[] = [];
-  for (const record of records) {
+  for (const entry of entries) {
+    if (entry.status === "invalid") {
+      results.push({
+        id: entry.id,
+        root: null,
+        recordPath: entry.recordPath,
+        status: "failed",
+        issues: [entry.issue],
+      });
+      continue;
+    }
+    const record = entry.record;
     try {
       const result = await syncContextCapsule(record.root);
       results.push({
@@ -369,6 +395,66 @@ async function readContextRepositoryRecord(recordPath: string): Promise<ContextR
     throw error;
   }
   return decodeContextRepositoryRecord(value, recordPath);
+}
+
+type ContextRepositoryCatalogEntry =
+  | { readonly status: "valid"; readonly record: ContextRepositoryRecordV1 }
+  | {
+      readonly status: "invalid";
+      readonly id: string | null;
+      readonly recordPath: string;
+      readonly issue: string;
+    };
+
+async function readContextRepositoryCatalogEntries(
+  catalogRoot: string,
+): Promise<readonly ContextRepositoryCatalogEntry[]> {
+  let directoryEntries;
+  try {
+    directoryEntries = await readdir(catalogRoot, { withFileTypes: true });
+  } catch (error) {
+    if (isErrorCode(error, "ENOENT")) return [];
+    throw error;
+  }
+  const entries: ContextRepositoryCatalogEntry[] = [];
+  for (const directoryEntry of directoryEntries.sort((left, right) =>
+    left.name.localeCompare(right.name))) {
+    if (!directoryEntry.isFile() || !directoryEntry.name.endsWith(".json")) continue;
+    const recordPath = path.join(catalogRoot, directoryEntry.name);
+    const filenameId = directoryEntry.name.slice(0, -".json".length);
+    try {
+      const record = await readContextRepositoryRecord(recordPath);
+      if (directoryEntry.name !== `${record.id}.json`) {
+        throw new Error(`Repository catalog filename does not match its identity: ${recordPath}.`);
+      }
+      entries.push({ status: "valid", record });
+    } catch (error) {
+      entries.push({
+        status: "invalid",
+        id: /^[a-f0-9]{64}$/u.test(filenameId) ? filenameId : null,
+        recordPath,
+        issue: errorMessage(error),
+      });
+    }
+  }
+  return entries;
+}
+
+async function canonicalizeCatalogRoot(candidate: string): Promise<string> {
+  let existingAncestor = path.resolve(candidate);
+  const missingSegments: string[] = [];
+  while (true) {
+    try {
+      const canonicalAncestor = await realpath(existingAncestor);
+      return path.join(canonicalAncestor, ...missingSegments.reverse());
+    } catch (error) {
+      if (!isErrorCode(error, "ENOENT")) throw error;
+      const parent = path.dirname(existingAncestor);
+      if (parent === existingAncestor) throw error;
+      missingSegments.push(path.basename(existingAncestor));
+      existingAncestor = parent;
+    }
+  }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -12,6 +12,7 @@ import { syncContextCapsule } from "../src/context-capsule-workflow.js";
 import {
   decodeContextRepositoryRecord,
   forgetContextRepository,
+  inspectContextRepositories,
   inspectContextRepository,
   listContextRepositories,
   registerContextRepository,
@@ -69,18 +70,36 @@ test("repository records separate concurrent writers and forget only catalog sta
     assert.equal(second.status, "registered");
     assert.equal((await registerContextRepository(firstRoot, catalogRoot)).status, "current");
 
+    const sharedRoot = await createCapsuleRepository(parent, "shared");
+    const sharedResults = await Promise.all(
+      Array.from({ length: 8 }, async () => await registerContextRepository(sharedRoot, catalogRoot)),
+    );
+    assert.equal(sharedResults.filter((result) => result.status === "registered").length, 1);
+    assert.equal(sharedResults.filter((result) => result.status === "current").length, 7);
+    const sharedRecordPath = path.join(catalogRoot, `${repositoryId(sharedRoot)}.json`);
+    assert.deepEqual(
+      decodeContextRepositoryRecord(JSON.parse(await readFile(sharedRecordPath, "utf8"))),
+      sharedResults[0]?.record,
+    );
+
     const records = await listContextRepositories(catalogRoot);
     assert.deepEqual(
       records.map((record) => record.id),
       [...records.map((record) => record.id)].sort(),
     );
-    assert.deepEqual(new Set(records.map((record) => record.root)), new Set([firstRoot, secondRoot]));
+    assert.deepEqual(
+      new Set(records.map((record) => record.root)),
+      new Set([firstRoot, secondRoot, sharedRoot]),
+    );
 
     const forgotten = await forgetContextRepository(first.record.id, catalogRoot);
     assert.equal(forgotten.status, "forgotten");
     assert.equal((await forgetContextRepository(first.record.id, catalogRoot)).status, "absent");
     assert.equal(await readFile(path.join(firstRoot, CONTEXT_CAPSULE_PATH)).then(() => true), true);
-    assert.deepEqual((await listContextRepositories(catalogRoot)).map((record) => record.root), [secondRoot]);
+    assert.deepEqual(
+      new Set((await listContextRepositories(catalogRoot)).map((record) => record.root)),
+      new Set([secondRoot, sharedRoot]),
+    );
   } finally {
     await rm(parent, { recursive: true, force: true });
   }
@@ -146,6 +165,13 @@ test("registration requires an ACF repository and cannot register the catalog it
     await assert.rejects(registerContextRepository(ordinaryDirectory, catalogRoot), /capsule\.acf|ENOENT/u);
     await mkdir(catalogRoot, { recursive: true });
     await assert.rejects(registerContextRepository(path.dirname(catalogRoot), catalogRoot), /must not contain/u);
+
+    const projectRoot = await createCapsuleRepository(parent, "catalog-owner");
+    const nestedCatalog = path.join(projectRoot, "catalog");
+    const catalogAlias = path.join(parent, "catalog-alias");
+    await mkdir(nestedCatalog);
+    await symlink(nestedCatalog, catalogAlias, process.platform === "win32" ? "junction" : "dir");
+    await assert.rejects(registerContextRepository(projectRoot, catalogAlias), /must not contain/u);
   } finally {
     await rm(parent, { recursive: true, force: true });
   }
@@ -168,11 +194,23 @@ test("all-repository sync reports one failure and continues with the remaining r
       await registerContextRepository(outputRoot, catalogRoot);
     }
     await writeFile(path.join(firstRoot, CONTEXT_CAPSULE_PATH), "not a capsule", "utf8");
+    const malformedId = "0".repeat(64);
+    const malformedPath = path.join(catalogRoot, `${malformedId}.json`);
+    await writeFile(malformedPath, "{", "utf8");
 
     const results = await syncContextRepositories(catalogRoot);
-    assert.equal(results.length, 2);
+    assert.equal(results.length, 3);
     assert.equal(results.find((result) => result.root === firstRoot)?.status, "failed");
     assert.equal(results.find((result) => result.root === secondRoot)?.status, "current");
+    const malformed = results.find((result) => result.id === malformedId);
+    assert.equal(malformed?.status, "failed");
+    assert.equal(malformed?.root, null);
+    assert.equal(malformed?.recordPath, malformedPath);
+
+    const observations = await inspectContextRepositories(catalogRoot);
+    const invalid = observations.find((result) => result.id === malformedId);
+    assert.equal(invalid?.status, "invalid");
+    assert.equal(invalid?.root, null);
   } finally {
     await rm(parent, { recursive: true, force: true });
   }

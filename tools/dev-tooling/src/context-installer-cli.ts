@@ -287,12 +287,17 @@ async function main(): Promise<void> {
 function formatSyncAll(result: {
   readonly status: "complete" | "attention";
   readonly catalogRoot: string;
-  readonly results: readonly { readonly root: string; readonly status: string }[];
+  readonly results: readonly {
+    readonly root: string | null;
+    readonly recordPath?: string;
+    readonly status: string;
+  }[];
 }): string {
   return [
     `status: ${result.status}`,
     `catalog: ${result.catalogRoot}`,
-    ...result.results.map((entry) => `${entry.status}\t${entry.root}`),
+    ...result.results.map((entry) =>
+      `${entry.status}\t${entry.root ?? entry.recordPath ?? "unknown"}`),
   ].join("\n");
 }
 
