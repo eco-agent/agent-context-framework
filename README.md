@@ -99,12 +99,10 @@ text GPT-5.6 sees before each decision.
 ### The baseline every task receives
 
 The always-on baseline is assembled from the
-[`core`](registry/sources/instructions/core.md),
-[`repository work`](registry/sources/instructions/repository-work.md), and
-[`verification`](registry/sources/instructions/verification.md) instructions.
-They define how the agent handles user changes, Git, communication, project
-contracts, and completion. These are defaults I do not want to remember at the
-start of each task.
+[`core`](registry/sources/instructions/core.md) instructions. It defines how the
+agent handles user changes, Git, communication, project contracts, and
+completion. These are defaults I do not want to remember at the start of each
+task.
 
 The Git rules exist because an agent can produce a correct patch and still make a
 mess of the repository around it. ACF gives one branch and index to one active
