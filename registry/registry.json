@@ -1293,7 +1293,7 @@
     },
     {
       "name": "skill-writing-great-skills",
-      "revision": "sha256:ffc4b1997c1512664886ce50eef96111281c89034ee1bdf7b350054d68c2c987",
+      "revision": "sha256:c2bc6fca12dea3ec1708a1721c318423462dc3edfd7ad3ece92488f6c58e77f7",
       "dependencies": [],
       "capabilities": [
         {
@@ -1316,7 +1316,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/writing-great-skills/agents/openai.yaml",
-          "sourceSha256": "7aab2fc177e901dfd49d67fe2289becb35dfa85bc1b1a7c184275e1e0cbef298",
+          "sourceSha256": "1c3ba7891d2c956e46d54a2d7fbc2663ba92a33ca7fa52f8af1afa2303a93a31",
           "targetPath": ".codex/skills/writing-great-skills/agents/openai.yaml",
           "mediaType": "application/yaml"
         },
