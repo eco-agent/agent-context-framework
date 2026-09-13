@@ -33,7 +33,8 @@
     "@agent-context/objective-runtime": "workspace:*",
     "@agent-context/repo-policy": "workspace:*",
     "diff": "9.0.0",
-    "smol-toml": "1.7.1"
+    "smol-toml": "1.7.1",
+    "wallpaper": "7.3.1"
   },
   "devDependencies": {
     "@types/node": "24.13.3",

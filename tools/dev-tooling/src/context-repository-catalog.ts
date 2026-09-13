@@ -265,24 +265,23 @@ export async function syncContextRepositories(
       });
       continue;
     }
-    const record = entry.record;
-    try {
-      const result = await syncContextCapsule(record.root);
-      results.push({
-        id: record.id,
-        root: record.root,
-        status: result.status,
-        capsuleSha256: result.capsuleSha256,
-        treeSha256: result.treeSha256,
-        changedPathCount: result.materialization?.writtenPaths.length ?? 0,
-        issues: result.conflicts.map((conflict) =>
-          `${conflict.targetPath}: ${conflict.detail}`),
-      });
-    } catch (error) {
-      results.push({ id: record.id, root: record.root, status: "failed", issues: [errorMessage(error)] });
-    }
+    results.push(await syncContextRepositoryRecord(entry.record));
   }
   return results;
+}
+
+export async function syncContextRepository(
+  id: string,
+  catalogRootCandidate = resolveContextRepositoryCatalogRoot(),
+): Promise<ContextRepositorySyncResult> {
+  requireRepositoryId(id, "Repository selector");
+  const catalogRoot = await canonicalizeCatalogRoot(catalogRootCandidate);
+  const entries = await readContextRepositoryCatalogEntries(catalogRoot);
+  const entry = entries.find((candidate) =>
+    candidate.status === "valid" ? candidate.record.id === id : candidate.id === id);
+  if (entry === undefined) throw new Error(`Repository ${id} is not registered.`);
+  if (entry.status === "invalid") throw new Error(entry.issue);
+  return await syncContextRepositoryRecord(entry.record);
 }
 
 export function decodeContextRepositoryRecord(
@@ -338,6 +337,26 @@ function unavailable(
   issue: string,
 ): ContextRepositoryObservation {
   return { id: record.id, root: record.root, status, issues: [issue] };
+}
+
+async function syncContextRepositoryRecord(
+  record: ContextRepositoryRecordV1,
+): Promise<ContextRepositorySyncResult> {
+  try {
+    const result = await syncContextCapsule(record.root);
+    return {
+      id: record.id,
+      root: record.root,
+      status: result.status,
+      capsuleSha256: result.capsuleSha256,
+      treeSha256: result.treeSha256,
+      changedPathCount: result.materialization?.writtenPaths.length ?? 0,
+      issues: result.conflicts.map((conflict) =>
+        `${conflict.targetPath}: ${conflict.detail}`),
+    };
+  } catch (error) {
+    return { id: record.id, root: record.root, status: "failed", issues: [errorMessage(error)] };
+  }
 }
 
 async function requireRepositoryRoot(candidate: string, catalogRoot: string): Promise<string> {

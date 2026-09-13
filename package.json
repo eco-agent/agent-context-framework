@@ -3,6 +3,9 @@
   "private": true,
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "acf": "./tools/dev-tooling/bin/acf.mjs"
+  },
   "packageManager": "pnpm@10.22.0",
   "engines": {
     "node": "24.14.0"
@@ -17,7 +20,7 @@
   "scripts": {
     "agent:inspect": "node .codex/skills/optimize-codex-sessions/scripts/codex-agent-inspect.mjs",
     "agent-context": "node --import tsx tools/dev-tooling/src/context-installer-cli.ts",
-    "build": "tsc -b",
+    "build": "pnpm --filter @agent-context/repository-ui build && tsc -b",
     "capsule:bootstrap:build": "node node_modules/vite-plus/dist/pack-bin.js tools/dev-tooling/src/context-capsule-bootstrap-entry.ts --write --format esm --platform node --out-dir registry/sources/bootstrap --logLevel info --clean --minify && node tools/dev-tooling/scripts/normalize-generated-bundle.mjs registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
     "capsule:runtime:prepare": "pnpm --dir .codex/acf/runtime-source install --frozen-lockfile && pnpm --dir .codex/acf/runtime-source run build",
     "capsule:hooks:build": "pnpm capsule:runtime:prepare && node node_modules/vite-plus/dist/pack-bin.js ./.codex/acf/runtime-source/packages/hooks/src/codex-cli.ts --write --format esm --platform node --out-dir registry/sources/runtime/hooks --logLevel info --clean --minify && node tools/dev-tooling/scripts/normalize-generated-bundle.mjs registry/sources/runtime/hooks/codex-cli.mjs",
@@ -30,7 +33,7 @@
     "fixture:test-app": "node --import tsx tools/dev-tooling/src/test-application-fixture-cli.ts",
     "task:doctor": "pnpm policy:build && pnpm --filter @agent-context/dev-tooling task:doctor",
     "task:handoff": "node tools/dev-tooling/dist/src/task-handoff-cli.js",
-    "typecheck": "tsc -b --pretty false",
+    "typecheck": "pnpm --filter @agent-context/repository-ui typecheck && tsc -b --pretty false",
     "typecheck:clean": "tsc -b --clean",
     "typecheck:watch": "tsc -b --watch --pretty",
     "test": "pnpm -r --if-present test",

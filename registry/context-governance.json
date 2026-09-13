@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.17.0",
-  "decisionPath": "registry/decisions/0.17.0-remove-default-tw-fade.md",
+  "registryRevision": "0.18.0",
+  "decisionPath": "registry/decisions/0.18.0-repository-registry-interface.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
