@@ -89,7 +89,7 @@ test("an existing stage claim blocks a second writer without deleting its files"
     await assert.rejects(
       applyContextTransaction(
         projectRoot,
-        "capsule",
+        "pack",
         "0.14.0",
         [{ operation: "write", targetPath: "capsule.txt", content: "capsule\n" }],
       ),
@@ -146,11 +146,11 @@ test("binary capsule writes keep exact bytes across interrupted recovery", async
     await assert.rejects(
       applyContextTransaction(
         projectRoot,
-        "capsule",
+        "pack",
         "0.14.0",
         [{
           operation: "write",
-          targetPath: ".agent-context/capsule.acf",
+          targetPath: ".codex/acf/capsule.acf",
           content: capsuleBytes,
         }],
         {
@@ -164,7 +164,7 @@ test("binary capsule writes keep exact bytes across interrupted recovery", async
     assert.equal((await inspectContextTransaction(projectRoot)).status, "resumable");
     await resumeContextTransaction(projectRoot);
     assert.equal(
-      (await readFile(path.join(projectRoot, ".agent-context", "capsule.acf"))).equals(
+      (await readFile(path.join(projectRoot, ".codex", "acf", "capsule.acf"))).equals(
         capsuleBytes,
       ),
       true,

@@ -75,64 +75,6 @@ export {
   type RepositorySnapshot,
 } from "./acceptance-verification.js";
 export {
-  addComponent,
-  doctorProject,
-  initProject,
-  inspectProject,
-  loadContextRegistry,
-  planProjectSelection,
-  removeComponent,
-  updateProject,
-  type ArtifactAssessment,
-  type ContextDiffResult,
-  type ContextDoctorResult,
-  type ContextInspection,
-  type ContextOperationResult,
-  type ContextRecoveryResult,
-  type ContextAssessmentCount,
-  type ContextSelectionDrift,
-  type ContextSelectionFootprint,
-  type ContextSelectionPreview,
-  type ContextSelectionStatus,
-  type ContextUpdateMode,
-} from "./context-installer.js";
-export {
-  installSetupComponents,
-  planSetupSelection,
-  readSetupSnapshot,
-  startSetupServer,
-  type RunningSetupServer,
-  type SetupServerOptions,
-} from "./setup-server.js";
-export {
-  decodeSetupComponentDetail,
-  decodeSetupInstallOutcome,
-  decodeSetupSelectionPreview,
-  decodeSetupSnapshot,
-  parseSetupPlanCommand,
-  parseSetupInstallCommand,
-  type SetupCapabilitySummary,
-  type SetupComponentArtifact,
-  type SetupComponentDetail,
-  type SetupComponentReference,
-  type SetupComponentSummary,
-  type SetupConflict,
-  type SetupInstallCommand,
-  type SetupInstallOutcome,
-  type SetupSelectionPreview,
-  type SetupSourceOverride,
-  type SetupToolArgumentSummary,
-  type SetupToolModeSummary,
-  type SetupToolSummary,
-  type SetupPlanCommand,
-  type SetupFootprint,
-  type SetupLicenseSummary,
-  type SetupActivationDisclosure,
-  type SetupSelectionDrift,
-  type SetupAssessmentCount,
-  type SetupSnapshot,
-} from "./setup-contract.js";
-export {
   generateTestApplicationFixture,
   TEST_APPLICATION_MARKER_PATH,
   type TestApplicationAcfState,
@@ -142,7 +84,6 @@ export {
 } from "./test-application-fixture.js";
 export {
   buildContextCapsule,
-  buildContextCapsuleForProject,
   contextCapsuleEntryBytes,
   diffContextCapsules,
   extractContextCapsule,
@@ -158,35 +99,24 @@ export {
   type ContextCapsuleDiff,
   type ContextCapsuleEntryV1,
   type ContextCapsuleInspection,
-  type ContextCapsulePayloadV1,
+  type ContextCapsulePayloadV2,
 } from "./context-capsule.js";
 export {
-  readContextCapsuleProjectFiles,
-  readContextCapsuleV2Installation,
   verifyContextCapsuleInstallation,
-  verifyContextCapsuleV3Installation,
   type ContextCapsuleInstallationMismatch,
   type ContextCapsuleInstallationVerification,
-  type ContextCapsuleProjectFiles,
-  type ContextCapsuleV2Installation,
-  type ContextCapsuleV3InstallationVerification,
 } from "./context-capsule-installation.js";
-export {
-  createContextCapsuleLock,
-  verifyContextCapsuleLock,
-  type ContextCapsuleLockVerification,
-} from "./context-capsule-lock.js";
 export {
   bootstrapContextCapsule,
   type ContextCapsuleBootstrapResult,
 } from "./context-capsule-bootstrap.js";
 export {
-  migrateContextCapsuleV2,
-  planContextCapsuleV2Migration,
-  type ContextCapsuleMigrationConflict,
-  type ContextCapsuleMigrationPlan,
-  type ContextCapsuleMigrationResult,
-} from "./context-capsule-migration.js";
+  packContextCapsule,
+  syncContextCapsule,
+  type ContextCapsulePackConflict,
+  type ContextCapsulePackResult,
+  type ContextCapsuleSyncResult,
+} from "./context-capsule-workflow.js";
 export {
   contextCapsuleSkillActivation,
   contextCapsuleRuntimeActivation,
@@ -194,12 +124,10 @@ export {
   decodeContextMaterializationReceipt,
   materializeContextCapsule,
   planContextCapsuleMaterialization,
-  verifyContextMaterializationAuthority,
   CONTEXT_MATERIALIZATION_KIND,
   CONTEXT_MATERIALIZATION_PATH,
   CONTEXT_MATERIALIZATION_SCHEMA_VERSION,
   type ContextMaterializationConflict,
-  type ContextMaterializationAuthorityVerification,
   type ContextMaterializationPlan,
   type ContextMaterializationOptions,
   type ContextMaterializationReceiptV2,

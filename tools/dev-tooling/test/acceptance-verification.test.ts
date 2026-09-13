@@ -12,9 +12,11 @@ import {
   type AcceptanceProcessRequest,
 } from "../src/acceptance-verification.js";
 import { parseAcceptanceVerificationArguments } from "../src/acceptance-verification-cli.js";
+import { buildContextCapsule } from "../src/context-capsule.js";
 
 const FRAMEWORK_REVISION = "a".repeat(40);
 const FIXTURE_REVISION = "b".repeat(40);
+const sourceFrameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
 test("acceptance verification runs each proof layer once in order", async () => {
   const fixture = await createRoots();
@@ -168,11 +170,7 @@ test("acceptance verification rejects a fixture missing a downstream proof compo
   const fixture = await createRoots();
   const executor = new SequencedExecutor(fixture.framework, fixture.downstream);
   try {
-    await writeFile(
-      path.join(fixture.downstream, ".agent-context", "config.json"),
-      '{"components":["core","codex-runtime"]}\n',
-      "utf8",
-    );
+    await writeCapsule(fixture.downstream, ["core", "codex-runtime"]);
     const result = await verifyAcceptanceSequence(
       { frameworkRoot: fixture.framework, fixtureRoot: fixture.downstream },
       executor,
@@ -370,15 +368,23 @@ async function createRoots(): Promise<{
     '{"packageManager":"pnpm@10.22.0"}\n',
     "utf8",
   );
-  await mkdir(path.join(downstream, ".agent-context"), { recursive: true });
-  await writeFile(
-    path.join(downstream, ".agent-context", "config.json"),
-    '{"components":["core","codex-runtime","repository-policy"]}\n',
-    "utf8",
-  );
+  await writeCapsule(downstream, ["core", "codex-runtime", "repository-policy"]);
   return {
     framework,
     downstream,
     remove: async () => await rm(parent, { recursive: true, force: true }),
   };
+}
+
+async function writeCapsule(root: string, directComponents: readonly string[]): Promise<void> {
+  await mkdir(path.join(root, ".codex", "acf"), { recursive: true });
+  const capsule = await buildContextCapsule({
+    frameworkRoot: sourceFrameworkRoot,
+    frameworkRevision: FRAMEWORK_REVISION,
+    directComponents,
+  });
+  await writeFile(
+    path.join(root, ".codex", "acf", "capsule.acf"),
+    capsule.bytes,
+  );
 }

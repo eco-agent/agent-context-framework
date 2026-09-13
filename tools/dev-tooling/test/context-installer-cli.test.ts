@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -6,60 +7,42 @@ import {
   parseContextInstallerArguments,
 } from "../src/context-installer-cli.js";
 
-test("CLI help is explicit and repository-independent", () => {
-  assert.deepEqual(parseContextInstallerArguments(["--help"], "D:\\project"), {
-    command: "help",
-    projectRoot: "D:\\project",
-    component: null,
-    output: "text",
-  });
-  assert.equal(parseContextInstallerArguments(["add", "core", "-h"], "D:\\project").command, "help");
-  assert.match(CONTEXT_INSTALLER_HELP, /inspect, plan, diff, and doctor are read-only/u);
-  assert.match(CONTEXT_INSTALLER_HELP, /token-protected\s+loopback UI/u);
-  assert.match(CONTEXT_INSTALLER_HELP, /--overwrite replaces only the\s+selected registry-owned scopes/u);
-  assert.match(CONTEXT_INSTALLER_HELP, /never pushes or deploys/u);
-});
+test("CLI exposes only pack, sync, and diff", () => {
+  assert.match(CONTEXT_INSTALLER_HELP, /pack \[COMPONENT\.\.\.\]/u);
+  assert.match(CONTEXT_INSTALLER_HELP, /sync/u);
+  assert.match(CONTEXT_INSTALLER_HELP, /diff --before CAPSULE --after CAPSULE/u);
+  assert.doesNotMatch(CONTEXT_INSTALLER_HELP, /\binit\b|\badd\b|\bremove\b|\bmigrate\b/u);
 
-test("CLI plan accepts zero or many unique component additions as read-only JSON", () => {
   assert.deepEqual(
-    parseContextInstallerArguments(["plan", "codex-runtime", "repository-policy", "--json"], "D:\\project"),
+    parseContextInstallerArguments(["pack", "codex-runtime", "repository-policy", "--json"], "D:\\project"),
     {
-      command: "plan",
-      projectRoot: "D:\\project",
-      component: null,
+      command: "pack",
+      projectRoot: path.resolve("D:\\project"),
       components: ["codex-runtime", "repository-policy"],
-      output: "json",
+      json: true,
     },
   );
-  assert.deepEqual(parseContextInstallerArguments(["plan"], "D:\\project"), {
-    command: "plan",
-    projectRoot: "D:\\project",
-    component: null,
-    components: [],
-    output: "text",
+  assert.deepEqual(parseContextInstallerArguments(["sync", "--cwd", "fixture"], "D:\\project"), {
+    command: "sync",
+    projectRoot: path.resolve("D:\\project", "fixture"),
+    json: false,
   });
-  assert.throws(
-    () => parseContextInstallerArguments(["plan", "core", "core"], "D:\\project"),
-    /duplicate component core/u,
-  );
-});
-
-test("CLI setup can close after a successful installation response", () => {
   assert.deepEqual(
-    parseContextInstallerArguments(["setup", "--no-open", "--exit-after-install"], "D:\\project"),
+    parseContextInstallerArguments(
+      ["diff", "--before", "before.acf", "--after", "after.acf"],
+      "D:\\project",
+    ),
     {
-      command: "setup",
-      projectRoot: "D:\\project",
-      component: null,
-      output: "text",
-      port: 0,
-      openBrowser: false,
-      exitAfterInstall: true,
+      command: "diff",
+      beforePath: path.resolve("D:\\project", "before.acf"),
+      afterPath: path.resolve("D:\\project", "after.acf"),
+      json: false,
     },
   );
+  assert.throws(() => parseContextInstallerArguments(["init"], "D:\\project"), /Usage:/u);
   assert.throws(
-    () => parseContextInstallerArguments(["inspect", "--exit-after-install"], "D:\\project"),
-    /valid only with agent-context setup/u,
+    () => parseContextInstallerArguments(["pack", "core", "core"], "D:\\project"),
+    /duplicate component/u,
   );
-  assert.match(CONTEXT_INSTALLER_HELP, /closes setup after a successful installation response/u);
+  assert.throws(() => parseContextInstallerArguments(["diff"], "D:\\project"), /requires/u);
 });

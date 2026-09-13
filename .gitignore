@@ -29,4 +29,11 @@ dist-test/
 *.tsbuildinfo
 .codex/artifacts/
 .codex/runs/
-.codex/work/reference-checkouts/
+
+# agent-context:acf-generated:start
+/.agents/skills/acf--*/
+/.codex/acf/runtime/
+/.codex/acf/receipt.json
+/.codex/acf/state/
+/.codex/work/
+# agent-context:acf-generated:end

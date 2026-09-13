@@ -265,7 +265,7 @@ function artifact(
         : fields.operation === "toml-tables" || fields.operation === "toml-members"
           ? ".codex/config.toml"
           : fields.operation === "seed-file"
-            ? ".agent-context/policy.json"
+            ? ".codex/acf/policy.json"
             : "AGENTS.md",
     ...fields,
   };

@@ -10,7 +10,7 @@ const REQUIRED_REVIEW_OWNER = "@bet01";
 const REQUIRED_REVIEW_PATTERNS = [
   "/AGENTS.md",
   "/.codex/skills/",
-  "/.agent-context/runtime/",
+  "/.codex/acf/runtime-source/",
   "/.github/CODEOWNERS",
   "/packages/codex-workflow-runtime/",
   "/packages/codex-frontend-workflows/",
@@ -21,46 +21,48 @@ const REQUIRED_REVIEW_PATTERNS = [
 
 const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   ["registry/sources/instructions/core.md", [
-    "Push only when the user explicitly requests it.",
+    "Agents may push only their `codex/<task>` branch",
+    "Humans own `development`, integration, and merge.",
+    "Do not create linked",
+    "A remote branch does",
+    "Do not create a task work record by default.",
+    "`.codex/acf/state/` directory",
+    "Agents never merge or commit directly to `development`.",
     "Never deploy without an explicit user request.",
     "Treat framework-managed instructions as maintainer-owned policy.",
     "Do not edit, remove, override, or weaken them from project work.",
     "repository.projectContracts",
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",
     "Read-only review, explanation, and status work do not authorize tests.",
-    "Use a branch for each logical work stream.",
+    "Use one `codex/<task>` branch for each",
     "Never use `git stash`",
     "Prefer a package dependency when its public API is enough.",
     "Record the upstream URL, commit, prefix, license, and update procedure.",
     "stop and report the missing capability instead of inventing another vendoring method.",
     "Do not add or mutate a submodule unless a project contract requires its separate repository lifecycle.",
     "Do not change global Git configuration.",
-    "Treat the work record as temporary task state.",
-    "Otherwise remove it in the same task.",
     "Use native scout subagents proactively when a task contains two or more independent read-only investigations that can return once.",
     "Start independent scouts in parallel up to the capacity Codex exposes.",
     "Treat their output as evidence, not a decision.",
     "Only Sol agents may edit repository state.",
     "Do not wait on broken delegation after the second failure.",
-  ]],
-  ["registry/sources/instructions/framework-root-prefix.md", [
-    "Push only when the user explicitly requests it.",
-    "Never deploy without an explicit user request.",
-  ]],
-  ["registry/sources/instructions/repository-work.md", [
     "For an approved staged frontend program, complete the current design stage",
     "The cross-layer slice rule applies when the work reaches product assembly.",
-    "Prefer a package dependency when its public API is enough.",
-    "Record the upstream URL, commit, prefix, license, and update procedure.",
-    "stop and report the missing capability instead of inventing another vendoring method.",
-    "Do not add or mutate a submodule unless a project contract requires its separate repository lifecycle.",
-    "Treat the work record as temporary task state.",
-    "Otherwise remove it in the same task.",
+    "an explicit user request or a declared final-acceptance contract",
   ]],
-  ["registry/sources/instructions/verification.md", [
-    "For code changes, run the narrowest applicable type and behavior checks before handoff.",
-    "Read-only review, explanation, and status work do not authorize tests.",
-    "an explicit request or a declared final-acceptance contract",
+  ["registry/sources/instructions/framework-root-prefix.md", [
+    "Agents may push only their `codex/<task>` branch",
+    "Humans own `development`, integration, and merge.",
+    "do not create worktrees.",
+    "but never merge",
+    "Never deploy without an explicit user request.",
+  ]],
+  ["registry/sources/git/managed-acf.gitignore", [
+    "/.agents/skills/acf--*/",
+    "/.codex/acf/runtime/",
+    "/.codex/acf/receipt.json",
+    "/.codex/acf/state/",
+    "/.codex/work/",
   ]],
   ["registry/sources/instructions/repository-policy.md", [
     "exact project contract paths",
@@ -70,13 +72,6 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Changed-file verification must run the repository-declared agent-prose check on model-facing files.",
     "If the repository has no such check, report the gap.",
     "Use technical-prose checks only for technical documentation selected by repository policy.",
-  ]],
-  ["registry/sources/templates/work-record.md", [
-    "For staged frontend work, name the current design stage and its promotion gate.",
-    "The slice becomes cross-layer when the work reaches product assembly.",
-    "Status | `active`, `complete`, or `stopped`",
-    "Durable destination | Canonical decision, handoff, or `this record`",
-    "Retention reason | Policy requirement or evidence that exists nowhere else",
   ]],
   ["registry/sources/instructions/frontend.md", [
     "Treat schemas and the current implementation as evidence, not as the default interface.",
@@ -304,10 +299,11 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "unbounded retries, routes, transitions, or reviewer passes",
   ]],
   [".codex/skills/orchestrate-codex-workflows/references/git-transaction.md", [
-    "A branch owns a logical work stream.",
-    "Give one mutable branch and index to one active writer at a time.",
-    "Never use `git stash`.",
-    "If any identity, path, cleanliness check, or reachability proof differs from the ledger, stop cleanup.",
+    "Each agent work stream uses one",
+    "Never assign two writers to the same checkout",
+    "Do not create linked worktrees.",
+    "Do not use `git stash`.",
+    "Agents never merge the pull request",
   ]],
 ]);
 
@@ -517,17 +513,23 @@ function markdownHeadingRegion(document: string, heading: string, targetPath: st
   const nextHeading = new RegExp(`^#{1,${level}}\\s+`, "gmu");
   nextHeading.lastIndex = afterHeading;
   const next = nextHeading.exec(document);
-  const end = next?.index ?? document.length;
+  const managedEnd = /^<!-- agent-context:[a-z0-9-]+:end -->$/gmu;
+  managedEnd.lastIndex = afterHeading;
+  const boundary = managedEnd.exec(document);
+  const end = Math.min(next?.index ?? document.length, boundary?.index ?? document.length);
   return document.slice(start, end).replace(/\n+$/u, "\n");
 }
 
 function markdownPrefixRegion(document: string, beforeHeading: string, targetPath: string): string {
-  if (!/^#{1,6}\s+\S/u.test(beforeHeading)) {
-    throw new Error(`Invalid governed heading: ${beforeHeading}.`);
+  if (
+    !/^#{1,6}\s+\S/u.test(beforeHeading) &&
+    !/^<!-- agent-context:[a-z0-9-]+:start -->$/u.test(beforeHeading)
+  ) {
+    throw new Error(`Invalid governed prefix boundary: ${beforeHeading}.`);
   }
   const end = document.indexOf(`${beforeHeading}\n`);
   if (end < 0 || document.indexOf(`${beforeHeading}\n`, end + beforeHeading.length + 1) >= 0) {
-    throw new Error(`Governed heading must occur exactly once in ${targetPath}: ${beforeHeading}.`);
+    throw new Error(`Governed prefix boundary must occur exactly once in ${targetPath}: ${beforeHeading}.`);
   }
   return document.slice(0, end).replace(/\n+$/u, "\n");
 }

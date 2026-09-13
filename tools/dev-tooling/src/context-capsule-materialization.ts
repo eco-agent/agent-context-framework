@@ -1,12 +1,11 @@
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
-import { lstat, readFile, readdir, realpath } from "node:fs/promises";
+import { lstat, readFile, readdir, realpath, rm } from "node:fs/promises";
 import path from "node:path";
 
 import { artifactIdentity } from "@agent-context/repo-policy";
 import type {
   ContextCapsuleActivationLock,
-  ContextCapsuleLockV3,
 } from "@agent-context/repo-policy";
 
 import {
@@ -19,16 +18,14 @@ import {
   type ContextMutation,
   type ContextTransactionOptions,
 } from "./context-transaction.js";
-import { verifyContextCapsuleLock } from "./context-capsule-lock.js";
-
-export const CONTEXT_MATERIALIZATION_PATH = ".agent-context/materialization.json";
+export const CONTEXT_MATERIALIZATION_PATH = ".codex/acf/receipt.json";
 export const CONTEXT_MATERIALIZATION_SCHEMA_VERSION = 2 as const;
 export const CONTEXT_MATERIALIZATION_KIND = "agent-context-materialization" as const;
 
 const EXPANDED_SKILL_PREFIX = ".codex/skills/";
 const MATERIALIZED_SKILL_PREFIX = ".agents/skills/";
-const EXPANDED_RUNTIME_PREFIX = ".agent-context/runtime/";
-const MATERIALIZED_RUNTIME_PREFIX = ".agent-context/runtime/materialized/";
+const EXPANDED_RUNTIME_PREFIX = ".codex/acf/runtime-source/";
+const MATERIALIZED_RUNTIME_PREFIX = ".codex/acf/runtime/";
 
 export interface ContextMaterializedSkillFileV2 {
   readonly component: string;
@@ -101,14 +98,7 @@ export interface ContextMaterializationResult {
   readonly writtenPaths: readonly string[];
 }
 
-export interface ContextMaterializationOptions extends ContextTransactionOptions {
-  readonly authority?: ContextCapsuleLockV3;
-}
-
-export interface ContextMaterializationAuthorityVerification {
-  readonly ok: boolean;
-  readonly mismatches: readonly string[];
-}
+export type ContextMaterializationOptions = ContextTransactionOptions;
 
 interface DesiredMaterializedFile {
   readonly receipt: ContextMaterializedFileV2;
@@ -118,7 +108,6 @@ interface DesiredMaterializedFile {
 export async function planContextCapsuleMaterialization(
   capsule: BuiltContextCapsule,
   projectRoot: string,
-  authority?: ContextCapsuleLockV3,
 ): Promise<ContextMaterializationPlan> {
   const resolvedProjectRoot = await realpath(projectRoot);
   const desiredFiles = desiredMaterializedFiles(capsule);
@@ -131,7 +120,7 @@ export async function planContextCapsuleMaterialization(
       receipt: desiredReceipt,
       previousReceipt: null,
       conflicts: [{
-        targetPath: ".agent-context/transaction.json",
+        targetPath: ".codex/acf/state/transaction.json",
         detail: `Context transaction recovery is required before materialization: ${transaction.detail}`,
       }],
     };
@@ -168,6 +157,7 @@ export async function planContextCapsuleMaterialization(
     const conflicts = [
       ...await findUnexpectedDesiredTargets(resolvedProjectRoot, desiredReceipt.files),
       ...await findUnownedAcfSkillRoots(resolvedProjectRoot, new Set()),
+      ...await findUnexpectedRuntimeRoots(resolvedProjectRoot),
     ];
     return conflicts.length === 0
       ? {
@@ -192,6 +182,7 @@ export async function planContextCapsuleMaterialization(
       resolvedProjectRoot,
       new Set(materializedSkillRoots(storedReceipt.receipt.files)),
     ),
+    ...await findUnexpectedRuntimeRoots(resolvedProjectRoot),
   ];
   if (storedConflicts.length > 0) {
     return {
@@ -203,36 +194,6 @@ export async function planContextCapsuleMaterialization(
     };
   }
   if (serializeReceipt(storedReceipt.receipt) !== serializeReceipt(desiredReceipt)) {
-    if (authority === undefined) {
-      return {
-        status: "blocked",
-        projectRoot: resolvedProjectRoot,
-        receipt: desiredReceipt,
-        previousReceipt: storedReceipt.receipt,
-        conflicts: [{
-          targetPath: CONTEXT_MATERIALIZATION_PATH,
-          detail:
-            "The existing generated files are valid for a different capsule. Replacement requires tracked ownership from lock v3.",
-        }],
-      };
-    }
-    const authorityVerification = verifyContextMaterializationAuthority(
-      authority,
-      capsule,
-      desiredReceipt,
-    );
-    if (!authorityVerification.ok) {
-      return {
-        status: "blocked",
-        projectRoot: resolvedProjectRoot,
-        receipt: desiredReceipt,
-        previousReceipt: storedReceipt.receipt,
-        conflicts: [{
-          targetPath: ".agent-context/lock.json",
-          detail: `Lock v3 does not authorize generated replacement: ${authorityVerification.mismatches.join(" ")}`,
-        }],
-      };
-    }
     return {
       status: "ready",
       projectRoot: resolvedProjectRoot,
@@ -258,7 +219,6 @@ export async function materializeContextCapsule(
   const plan = await planContextCapsuleMaterialization(
     capsule,
     projectRoot,
-    options.authority,
   );
   if (plan.status === "blocked") {
     return {
@@ -270,12 +230,16 @@ export async function materializeContextCapsule(
     };
   }
   if (plan.status === "current") {
+    const retiredRuntimeRoots = await retireObsoleteRuntimeRoots(
+      plan.projectRoot,
+      plan.receipt.treeSha256,
+    );
     return {
-      status: "current",
+      status: retiredRuntimeRoots.length === 0 ? "current" : "materialized",
       projectRoot: plan.projectRoot,
       receipt: plan.receipt,
       conflicts: [],
-      writtenPaths: [],
+      writtenPaths: retiredRuntimeRoots,
     };
   }
 
@@ -305,7 +269,7 @@ export async function materializeContextCapsule(
   ];
   const writtenPaths = await applyContextTransaction(
     plan.projectRoot,
-    "capsule",
+    "sync",
     capsule.payload.registry.revision,
     mutations,
     options.afterMutation === undefined
@@ -315,17 +279,20 @@ export async function materializeContextCapsule(
   const verified = await planContextCapsuleMaterialization(
     capsule,
     plan.projectRoot,
-    options.authority,
   );
   if (verified.status !== "current") {
     throw new Error("Context capsule materialization did not verify after publication.");
   }
+  const retiredRuntimeRoots = await retireObsoleteRuntimeRoots(
+    plan.projectRoot,
+    plan.receipt.treeSha256,
+  );
   return {
     status: "materialized",
     projectRoot: plan.projectRoot,
     receipt: plan.receipt,
     conflicts: [],
-    writtenPaths,
+    writtenPaths: [...writtenPaths, ...retiredRuntimeRoots],
   };
 }
 
@@ -356,9 +323,6 @@ export function decodeContextMaterializationReceipt(
   }
   if (new Set(files.map((file) => file.targetPath)).size !== files.length) {
     throw new Error("Context materialization receipt target paths must be unique.");
-  }
-  if (files.length === 0) {
-    throw new Error("Context materialization receipt must contain at least one file.");
   }
   for (const skillRoot of materializedSkillRoots(files)) {
     if (!files.some((file) =>
@@ -408,31 +372,6 @@ export function contextCapsuleMaterializationActivation(
     ...contextCapsuleSkillActivation(capsule),
     ...contextCapsuleRuntimeActivation(capsule),
   ].sort((left, right) => compareStrings(left.identity, right.identity));
-}
-
-export function verifyContextMaterializationAuthority(
-  lock: ContextCapsuleLockV3,
-  capsule: BuiltContextCapsule,
-  receipt: ContextMaterializationReceiptV2,
-): ContextMaterializationAuthorityVerification {
-  const expectedActivation = contextCapsuleMaterializationActivation(capsule);
-  const mismatches = [
-    ...verifyContextCapsuleLock(
-      lock,
-      capsule,
-      lock.activation,
-      expectedActivation,
-    ).mismatches,
-  ];
-  const desiredFiles = desiredMaterializedFiles(capsule);
-  const expectedReceipt = createReceipt(
-    capsule,
-    desiredFiles.map((file) => file.receipt),
-  );
-  if (serializeReceipt(receipt) !== serializeReceipt(expectedReceipt)) {
-    mismatches.push("Materialization receipt differs from the capsule projection.");
-  }
-  return { ok: mismatches.length === 0, mismatches };
 }
 
 function desiredMaterializedFiles(capsule: BuiltContextCapsule): readonly DesiredMaterializedFile[] {
@@ -509,9 +448,6 @@ function desiredMaterializedFiles(capsule: BuiltContextCapsule): readonly Desire
     }
   }
   files.sort((left, right) => compareStrings(left.receipt.targetPath, right.receipt.targetPath));
-  if (files.length === 0) {
-    throw new Error("Context capsule selects no materializable files.");
-  }
   return files;
 }
 
@@ -585,6 +521,59 @@ async function findUnexpectedDesiredTargets(
     }
   }
   return conflicts;
+}
+
+async function findUnexpectedRuntimeRoots(
+  projectRoot: string,
+): Promise<readonly ContextMaterializationConflict[]> {
+  const runtimePath = path.join(projectRoot, ...MATERIALIZED_RUNTIME_PREFIX.slice(0, -1).split("/"));
+  let runtimeState;
+  try {
+    runtimeState = await lstat(runtimePath);
+  } catch (error) {
+    if (isMissingPathError(error)) return [];
+    throw error;
+  }
+  if (!runtimeState.isDirectory() || runtimeState.isSymbolicLink()) {
+    return [{
+      targetPath: MATERIALIZED_RUNTIME_PREFIX.slice(0, -1),
+      detail: "ACF materialization requires the runtime path to be a real directory.",
+    }];
+  }
+  const conflicts: ContextMaterializationConflict[] = [];
+  for (const entry of await readdir(runtimePath, { withFileTypes: true })) {
+    if (/^[a-f0-9]{64}$/u.test(entry.name) && entry.isDirectory()) continue;
+    conflicts.push({
+      targetPath: `${MATERIALIZED_RUNTIME_PREFIX}${entry.name}`,
+      detail: "The ACF runtime directory contains an unexpected entry.",
+    });
+  }
+  return conflicts;
+}
+
+async function retireObsoleteRuntimeRoots(
+  projectRoot: string,
+  currentTreeSha256: string,
+): Promise<readonly string[]> {
+  const runtimePath = path.join(projectRoot, ...MATERIALIZED_RUNTIME_PREFIX.slice(0, -1).split("/"));
+  let entries;
+  try {
+    entries = await readdir(runtimePath, { withFileTypes: true });
+  } catch (error) {
+    if (isMissingPathError(error)) return [];
+    throw error;
+  }
+  const retired: string[] = [];
+  for (const entry of entries.sort((left, right) => compareStrings(left.name, right.name))) {
+    if (entry.name === currentTreeSha256) continue;
+    if (!/^[a-f0-9]{64}$/u.test(entry.name) || !entry.isDirectory()) {
+      throw new Error(`Cannot retire unexpected ACF runtime entry ${entry.name}.`);
+    }
+    const relativePath = `${MATERIALIZED_RUNTIME_PREFIX}${entry.name}`;
+    await rm(path.join(runtimePath, entry.name), { recursive: true });
+    retired.push(relativePath);
+  }
+  return retired;
 }
 
 async function findUnignoredMaterializationPaths(
@@ -870,16 +859,13 @@ function decodeMaterializedFile(value: unknown, index: number): ContextMateriali
   }
   const sourcePath = portableRelativePath(record.sourcePath, `${label}.sourcePath`);
   requireMaterializedTargetPath(targetPath);
-  const sourcePrefix = `${EXPANDED_SKILL_PREFIX}${skillName}/`;
-  if (!sourcePath.startsWith(sourcePrefix)) {
-    throw new Error(`${label}.sourcePath does not match its skill name.`);
+  const relativeSkillPath = targetPath.slice(skillRoot.length + 1);
+  if (relativeSkillPath.length === 0) {
+    throw new Error(`${label}.targetPath must name a file below its skill root.`);
   }
-  const relativeSkillPath = sourcePath.slice(sourcePrefix.length);
-  if (targetPath !== `${skillRoot}/${relativeSkillPath}`) {
-    throw new Error(`${label}.targetPath does not preserve its skill-relative source path.`);
-  }
-  if (record.identity !== `file:${sourcePath}`) {
-    throw new Error(`${label}.identity does not match its whole-file source.`);
+  const expandedTarget = `${EXPANDED_SKILL_PREFIX}${skillName}/${relativeSkillPath}`;
+  if (record.identity !== `file:${expandedTarget}`) {
+    throw new Error(`${label}.identity does not match its expanded skill target.`);
   }
   return {
     component: requiredString(record.component, `${label}.component`),

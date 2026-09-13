@@ -72,8 +72,8 @@ function capsuleArtifacts(
 function restartKind(targetPath: string): ContextCapsuleRestartReasonKind | null {
   if (targetPath.startsWith(".codex/skills/")) return "skills";
   if (
-    targetPath.startsWith(".agent-context/runtime/") ||
-    targetPath === ".agent-context/bootstrap.mjs"
+    targetPath.startsWith(".codex/acf/runtime-source/") ||
+    targetPath === ".codex/acf/bootstrap.mjs"
   ) {
     return "runtime";
   }

@@ -5,6 +5,7 @@ import {
   mkdir,
   mkdtemp,
   readFile,
+  rename,
   rm,
   writeFile,
 } from "node:fs/promises";
@@ -14,7 +15,7 @@ import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 import { bootstrapRuntime } from "./runtime-bootstrap.js";
-import { addComponent, initProject } from "./context-installer.js";
+import { packContextCapsule } from "./context-capsule-workflow.js";
 import { verifyInstalledCodexRuntime } from "./codex-runtime-verification.js";
 
 const MAX_PROCESS_OUTPUT_BYTES = 1_000_000;
@@ -23,7 +24,7 @@ const SOURCE_MARKER = "must be an isolation object";
 export interface RuntimeIsolationResult {
   readonly schemaVersion: 1;
   readonly fixture: "non-node";
-  readonly archive: "git-tracked-runtime";
+  readonly archive: "capsule-materialized-runtime";
   readonly bootstrap: {
     readonly noInstall: "dependencies-missing";
     readonly installed: "operational";
@@ -63,7 +64,8 @@ export async function verifyRuntimeIsolation(
     );
     await writeFile(path.join(fixtureRoot, "host.lock"), "host lock\n", "utf8");
 
-    const bindingPath = ".agent-context/session-binding.json";
+    const bindingPath = ".codex/acf/state/codex-hooks/isolation-session.json";
+    await mkdir(path.dirname(path.join(fixtureRoot, bindingPath)), { recursive: true });
     await writeFile(
       path.join(fixtureRoot, bindingPath),
       `${JSON.stringify({
@@ -99,7 +101,7 @@ export async function verifyRuntimeIsolation(
     });
     assertEqual(installed.status, "operational", "Installed runtime status");
 
-    const runtimeRoot = path.join(fixtureRoot, ".agent-context", "runtime");
+    const runtimeRoot = path.join(fixtureRoot, ".codex", "acf", "runtime", "f".repeat(64));
     await verifyPolicySurface(runtimeRoot, fixtureRoot);
     await verifyProjectMatrixSurface(runtimeRoot, fixtureRoot);
     await verifyRepositoryContextSurface(runtimeRoot, fixtureRoot);
@@ -123,7 +125,7 @@ export async function verifyRuntimeIsolation(
     return {
       schemaVersion: 1,
       fixture: "non-node",
-      archive: "git-tracked-runtime",
+      archive: "capsule-materialized-runtime",
       bootstrap: {
         noInstall: "dependencies-missing",
         installed: "operational",
@@ -155,9 +157,14 @@ async function verifyMaterializedCodexRuntime(
   const hostFiles = ["README.md", "host.lock"] as const;
   const before = await hashFiles(fixtureRoot, hostFiles);
 
-  await initProject(fixtureRoot, frameworkRoot);
-  const added = await addComponent(fixtureRoot, frameworkRoot, "codex-runtime");
-  if (added.plan.status !== "ready") throw new Error("Codex runtime materialization was blocked.");
+  const revision = (await runProcess("git", ["rev-parse", "HEAD"], frameworkRoot)).stdout.trim();
+  const packed = await packContextCapsule(
+    frameworkRoot,
+    fixtureRoot,
+    revision,
+    ["codex-runtime"],
+  );
+  if (packed.status === "blocked") throw new Error("Codex runtime materialization was blocked.");
   const noInstall = await bootstrapRuntime({ projectRoot: fixtureRoot, mode: "no-install" });
   assertEqual(noInstall.status, "dependencies-missing", "Materialized runtime no-install status");
   const installed = await bootstrapRuntime({ projectRoot: fixtureRoot, mode: "install-and-build" });
@@ -192,11 +199,27 @@ async function materializeArchivedRuntime(
       `--output=${archivePath}`,
       "HEAD",
       "--",
-      ".agent-context/runtime",
+      ".codex/acf/runtime-source",
     ],
     frameworkRoot,
   );
   await runProcess("tar", ["-xf", archivePath, "-C", fixtureRoot], frameworkRoot);
+  const treeSha256 = "f".repeat(64);
+  const runtimeRoot = path.join(fixtureRoot, ".codex", "acf", "runtime", treeSha256);
+  await mkdir(path.dirname(runtimeRoot), { recursive: true });
+  await rename(path.join(fixtureRoot, ".codex", "acf", "runtime-source"), runtimeRoot);
+  await writeFile(
+    path.join(fixtureRoot, ".codex", "acf", "receipt.json"),
+    `${JSON.stringify({
+      schemaVersion: 2,
+      kind: "agent-context-materialization",
+      registryRevision: "isolation",
+      capsuleSha256: "e".repeat(64),
+      treeSha256,
+      files: [],
+    })}\n`,
+    "utf8",
+  );
 }
 
 async function verifyPolicySurface(
@@ -224,7 +247,7 @@ async function verifyProjectMatrixSurface(
   fixtureRoot: string,
 ): Promise<void> {
   const cli = path.join(runtimeRoot, "packages", "policy", "dist", "src", "cli.js");
-  const matrixRoot = path.join(fixtureRoot, ".agent-context", "validation-matrix");
+  const matrixRoot = path.join(fixtureRoot, ".codex", "acf", "state", "validation-matrix");
   const fixtures = [
     { name: "minimal-typescript", files: [["package.json", "{}\n"], ["tsconfig.json", "{}\n"]], manifests: ["package.json"], markers: ["package.json", "tsconfig.json"] },
     { name: "non-node", files: [["pyproject.toml", "[project]\nname = \"fixture\"\n"]], manifests: [], markers: ["pyproject.toml"] },
@@ -434,7 +457,9 @@ async function runProcess(
     child.on("error", reject);
     child.on("close", (code) => {
       if (code === 0) resolve({ stdout, stderr });
-      else reject(new Error(`${file} exited with ${code ?? "no status"}: ${stderr}`));
+      else reject(new Error(
+        `${file} ${arguments_.join(" ")} exited with ${code ?? "no status"}: ${stderr || stdout}`,
+      ));
     });
     child.stdin.end(input);
   });

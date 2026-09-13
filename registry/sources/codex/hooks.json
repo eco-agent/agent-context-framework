@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel)\" && exec node \"$root/.agent-context/bootstrap.mjs\" exec hook --cwd \"$root\"'",
-            "commandWindows": "powershell.exe -NoProfile -NonInteractive -Command \"$root = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & node (Join-Path $root '.agent-context/bootstrap.mjs') exec hook --cwd $root; exit $LASTEXITCODE\""
+            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel)\" && exec node \"$root/.codex/acf/bootstrap.mjs\" exec hook --cwd \"$root\"'",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -Command \"$root = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & node (Join-Path $root '.codex/acf/bootstrap.mjs') exec hook --cwd $root; exit $LASTEXITCODE\""
           }
         ]
       }
@@ -18,8 +18,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel)\" && exec node \"$root/.agent-context/bootstrap.mjs\" exec hook --cwd \"$root\"'",
-            "commandWindows": "powershell.exe -NoProfile -NonInteractive -Command \"$root = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & node (Join-Path $root '.agent-context/bootstrap.mjs') exec hook --cwd $root; exit $LASTEXITCODE\""
+            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel)\" && exec node \"$root/.codex/acf/bootstrap.mjs\" exec hook --cwd \"$root\"'",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -Command \"$root = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & node (Join-Path $root '.codex/acf/bootstrap.mjs') exec hook --cwd $root; exit $LASTEXITCODE\""
           }
         ]
       }

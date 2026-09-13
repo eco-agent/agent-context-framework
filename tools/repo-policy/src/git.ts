@@ -93,8 +93,8 @@ async function resolveDefaultBase(root: string): Promise<string> {
   }
 
   for (const args of [
-    ["merge-base", "HEAD", "main"],
-    ["merge-base", "HEAD", "origin/main"],
+    ["merge-base", "HEAD", "development"],
+    ["merge-base", "HEAD", "origin/development"],
     ["rev-parse", "HEAD^"],
     ["rev-parse", "HEAD"],
   ] as const) {

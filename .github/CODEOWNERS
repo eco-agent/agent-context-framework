@@ -1,6 +1,6 @@
 /AGENTS.md @bet01
 /.codex/skills/ @bet01
-/.agent-context/runtime/ @bet01
+/.codex/acf/runtime-source/ @bet01
 /.github/CODEOWNERS @bet01
 /packages/codex-workflow-runtime/ @bet01
 /packages/codex-frontend-workflows/ @bet01

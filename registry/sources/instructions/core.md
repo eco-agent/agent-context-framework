@@ -1,11 +1,11 @@
 # Project agent context
 
-> Make checkpoint commits often. Push only when the user explicitly requests
-> it. Give each logical work stream its own branch. Create an ephemeral worktree
-> only when concurrent work or an isolated check needs another checkout.
-> Keep long-running task evidence in `.codex/work` Markdown. Use the `visualize`
-> skill when an in-conversation visual would materially improve understanding.
-> Create a standalone HTML response file only when the user asks for an export.
+> Make checkpoint commits often. Start agent work from `development` on a
+> `codex/<task>` branch. Use one writer per checkout and do not create worktrees.
+> Push the task branch and open a pull request to `development`, but never merge
+> it. Use the `visualize` skill when an in-conversation visual would materially
+> improve understanding. Create a standalone HTML response file only when the
+> user asks for an export.
 
 ## Communication
 
@@ -116,39 +116,40 @@ When the provider marks a scout failure as transient, replace that evidence lane
 once. If the replacement also fails, Sol completes the lane directly or reports
 the missing evidence. Do not wait on broken delegation after the second failure.
 
-Only Sol agents may edit repository state. The primary may delegate a write to a
-Sol worker in an isolated worktree, or it may hand the current branch and index to
-that worker until the assignment ends. One active writer owns each branch and
-index. Otherwise the primary remains the writer.
+Only Sol agents may edit repository state. The primary may hand the current
+checkout to a Sol worker until the assignment ends. One active writer owns the
+checkout, branch, and index. Otherwise the primary remains the writer.
 
 ## Work
 
-Preserve unrelated changes. Push only when the user explicitly requests it.
-Never deploy without an explicit user request.
+Preserve unrelated changes. Agents may push only their `codex/<task>` branch and
+open or update its pull request to `development`. Humans own `development`,
+integration, and merge. Never deploy without an explicit user request.
 
-Resolve the intended baseline to a full commit ID before creating a branch, then
-record it. A moving branch name is not durable evidence. Use a branch for each
-logical work stream. Use the current checkout for serial work, and add a linked
-worktree only when concurrency or an isolated check needs another checkout.
-Record the worktree's branch and absolute path.
-
-An agent-created worktree is disposable execution state. Remove only a clean
-worktree created by the current run, and only after recording its commits and
-path. Use `git worktree remove`; never force removal or delete the path directly.
+Resolve `development` to a full commit ID before creating a branch. A moving
+branch name is not durable evidence. Use one `codex/<task>` branch for each
+logical work stream and the current checkout for its files. Do not create linked
+worktrees. A remote branch does not isolate concurrent writes to the same files
+on disk.
 
 Keep task-owned dirty state in checkpoint commits on the task branch. Never use
 `git stash`, and never include unrelated user changes in a checkpoint.
 
-Before substantial code, write `.codex/work/<task>.md`. Record the outcome,
-decisions, state, topology, smallest complete slice, replacements, non-goals,
-and propagation. Give every decision one answer and one owner. Keep specialists
-within their assigned scope.
+Do not create a task work record by default. Put durable decisions in their
+canonical project documents. If an interrupted filesystem transaction needs
+recovery state, write only the fields needed to resume below the ignored
+`.codex/acf/state/` directory and remove them after recovery.
 
-Treat the work record as temporary task state. At closure, record whether the
-task completed or stopped, the final revision, and the verification result. Keep
-the record only when it still owns evidence required by policy or evidence not
-moved into a canonical decision or handoff. Otherwise remove it in the same
-task. Never remove a user-authored record or another task's record.
+At completion, push the `codex/<task>` branch and open or update its pull request
+against `development`. Agents never merge or commit directly to `development`.
+Report missing remote or pull-request access instead of substituting another
+integration path.
+
+Complete one cross-layer slice when the work reaches product assembly. For an
+approved staged frontend program, complete the current design stage instead of
+forcing foundations, component contracts, interaction studies, or visual
+acceptance into premature product assembly. The cross-layer slice rule applies
+when the work reaches product assembly.
 
 Edit the owning representation and replace obsolete paths directly. Do not add
 compatibility layers, migrations, adapters, dual writes, fallbacks, or parallel
@@ -164,8 +165,8 @@ capability instead of inventing another vendoring method. A selected-file
 adoption remains a pinned, attributed copy. Do not add or mutate a submodule
 unless a project contract requires its separate repository lifecycle.
 
-Do not change global Git configuration. Any repository or worktree
-configuration change requires an explicit project decision.
+Do not change global Git configuration. Any repository configuration change
+requires an explicit project decision.
 
 Derive limits from a measured model, transport, storage, or runtime boundary,
 and report when a limit is reached.
@@ -182,7 +183,7 @@ and report when a limit is reached.
 ## Project contracts
 
 - Before implementation, read every exact path declared in a configured
-  `.agent-context/policy.json` under `repository.projectContracts`.
+  `.codex/acf/policy.json` under `repository.projectContracts`.
 - If a declared contract is missing, or repository policy is unconfigured, report
   that state before relying on project architecture or documentation assumptions.
 

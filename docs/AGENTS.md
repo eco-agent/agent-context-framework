@@ -11,6 +11,21 @@ These instructions apply to files under `docs/`.
 - Resolve fuzzy or overloaded terms against the existing code and contracts.
 - Create an ADR only for a hard-to-reverse, surprising decision with real alternatives.
 
+## Commands
+
+- For documentation-only changes, run only `pnpm verify:profile docs`. Do not also run task or branch verification.
+
+## Constraints
+
+- Documentation is planning authority, not implementation evidence.
+
+## References
+
+- [Documentation index](README.md)
+- [Portable objective orchestration](architecture/portable-objective-orchestration.md)
+
+<!-- agent-context:documentation:start -->
+
 ## Prose and reporting style
 
 Write documentation and reports in plain English. Start with the outcome, then
@@ -34,16 +49,4 @@ files, interfaces, or behavior that changed.
 Accuracy comes first. Next, include enough detail for safe review and
 continuation, state verification clearly, stay relevant, and make the result easy
 to read.
-
-## Commands
-
-- For documentation-only changes, run only `pnpm verify:profile docs`. Do not also run task or branch verification.
-
-## Constraints
-
-- Documentation is planning authority, not implementation evidence.
-
-## References
-
-- [Documentation index](README.md)
-- [Portable objective orchestration](architecture/portable-objective-orchestration.md)
+<!-- agent-context:documentation:end -->

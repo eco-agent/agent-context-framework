@@ -1,6 +1,7 @@
 node_modules/
 dist/
 *.log
-/.agents/skills/
-/.agent-context/runtime/
-/.agent-context/materialization.json
+/.agents/skills/acf--*/
+/.codex/acf/runtime/
+/.codex/acf/receipt.json
+/.codex/acf/state/

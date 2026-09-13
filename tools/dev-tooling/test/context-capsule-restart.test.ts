@@ -1,15 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import {
   buildContextCapsule,
+  diffContextCapsules,
   type BuiltContextCapsule,
 } from "../src/context-capsule.js";
 import { classifyContextCapsuleRestart } from "../src/context-capsule-restart.js";
-import { runContextCapsuleCli } from "../src/context-capsule-cli.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 const frameworkRevision = "d".repeat(40);
@@ -61,28 +59,12 @@ test("inspectable source changes do not invent a restart requirement", async () 
 });
 
 test("semantic capsule diff reports restart classification", async () => {
-  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "acf-restart-diff-"));
-  try {
-    const before = await capsule(["core"]);
-    const after = await capsule(["core", "skill-diagnose"]);
-    const beforePath = path.join(temporaryRoot, "before.acf");
-    const afterPath = path.join(temporaryRoot, "after.acf");
-    await writeFile(beforePath, before.bytes);
-    await writeFile(afterPath, after.bytes);
-    const result = await runContextCapsuleCli(
-      ["diff", "--before", beforePath, "--after", afterPath, "--json"],
-      temporaryRoot,
-      frameworkRoot,
-    );
-    assert.equal(result.exitCode, 1);
-    const output = JSON.parse(result.output) as {
-      restart: { required: boolean; reasons: readonly { kind: string }[] };
-    };
-    assert.equal(output.restart.required, true);
-    assert.deepEqual(output.restart.reasons.map((reason) => reason.kind), ["skills"]);
-  } finally {
-    await rm(temporaryRoot, { recursive: true, force: true });
-  }
+  const before = await capsule(["core"]);
+  const after = await capsule(["core", "skill-diagnose"]);
+  assert.equal(diffContextCapsules(before, after).equal, false);
+  const restart = classifyContextCapsuleRestart(before, after);
+  assert.equal(restart.required, true);
+  assert.deepEqual(restart.reasons.map((reason) => reason.kind), ["skills"]);
 });
 
 async function capsule(directComponents: readonly string[]): Promise<BuiltContextCapsule> {

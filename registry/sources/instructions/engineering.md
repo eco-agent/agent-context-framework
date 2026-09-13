@@ -10,8 +10,7 @@ parser, protocol, adapter, fixture, or schema, use
 `reuse-before-implementation`. Use `write-technical-prose` only when repository
 policy selects technical documentation for a deterministic prose check.
 
-When the installed templates have no more specific owner, start durable task
-evidence from `.codex/templates/work-record.md` and project decisions from
+When no more specific owner exists, record durable project decisions from
 `.codex/templates/project-decision.md`.
 
 General engineering work does not automatically require frontend, TypeScript,

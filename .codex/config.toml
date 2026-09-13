@@ -3,7 +3,7 @@ model_reasoning_effort = "high"
 
 [mcp_servers.repo_context]
 command = "node"
-args = ["registry/sources/runtime/repo-context/mcp-cli.mjs", "--root", "."]
+args = [".codex/acf/bootstrap.mjs", "exec", "repo-context"]
 required = true
 startup_timeout_sec = 20
 tool_timeout_sec = 15

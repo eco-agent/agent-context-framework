@@ -13,8 +13,8 @@ import {
 import path from "node:path";
 import { setTimeout as wait } from "node:timers/promises";
 
-export const CONTEXT_TRANSACTION_PATH = ".agent-context/transaction.json";
-export const CONTEXT_TRANSACTION_STAGE_PATH = ".agent-context/transaction-stage";
+export const CONTEXT_TRANSACTION_PATH = ".codex/acf/state/transaction.json";
+export const CONTEXT_TRANSACTION_STAGE_PATH = ".codex/acf/state/transaction-stage";
 const CONTEXT_TRANSACTION_STAGED_JOURNAL = "journal.staged";
 const WINDOWS_RENAME_RETRY_DELAYS_MS = [100, 200, 300] as const;
 
@@ -28,7 +28,7 @@ export type ContextMutation =
 
 export interface ContextTransactionJournal {
   readonly schemaVersion: 1;
-  readonly command: "init" | "add" | "update" | "remove" | "capsule";
+  readonly command: "init" | "add" | "update" | "remove" | "pack" | "sync";
   readonly registryRevision: string;
   readonly mutations: readonly ContextTransactionJournalMutation[];
 }
@@ -84,7 +84,7 @@ export async function applyContextTransaction(
   const resolvedProjectRoot = await realpath(projectRoot);
   const existing = await inspectContextTransaction(resolvedProjectRoot);
   if (existing.status !== "none") {
-    throw new Error("An incomplete context transaction exists. Run agent-context doctor before writing.");
+    throw new Error("An incomplete context transaction exists. Run agent-context sync before writing.");
   }
 
   const journalPath = await secureProjectPath(
@@ -105,7 +105,7 @@ export async function applyContextTransaction(
     } catch (error) {
       if (isAlreadyExistsError(error)) {
         throw new Error(
-          "Another context transaction claimed project staging. Run agent-context doctor before retrying.",
+          "Another context transaction claimed project staging. Run agent-context sync before retrying.",
           { cause: error },
         );
       }
@@ -541,7 +541,8 @@ function decodeJournal(value: unknown): ContextTransactionJournal {
     record.command !== "add" &&
     record.command !== "update" &&
     record.command !== "remove" &&
-    record.command !== "capsule"
+    record.command !== "pack" &&
+    record.command !== "sync"
   ) {
     throw new Error("Context transaction command is invalid.");
   }

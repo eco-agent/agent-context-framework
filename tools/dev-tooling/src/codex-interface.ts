@@ -71,7 +71,7 @@ export async function validateWaveFourRegistryReferences(
   for (const { component, artifact } of artifacts) {
     if (
       artifact.operation === "runtime-workspace" ||
-      artifact.targetPath === ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js"
+      artifact.targetPath === ".codex/acf/runtime-source/packages/repo-context/dist/src/mcp-cli.js"
     ) continue;
     const source = await readFile(path.join(frameworkRoot, artifact.sourcePath), "utf8");
     const diagnostics = unsafeReferenceDiagnostics(source);
@@ -162,9 +162,9 @@ export function unsafeReferenceDiagnostics(source: string): readonly string[] {
     [/--filter\b/u, "Host workspace package filters are forbidden."],
   ];
   for (const [pattern, diagnostic] of rules) if (pattern.test(source)) diagnostics.push(diagnostic);
-  for (const match of source.matchAll(/\.agent-context[\\/]runtime[\\/][^\s"']*/gu)) {
+  for (const match of source.matchAll(/\.codex[\\/]acf[\\/]runtime(?:-source)?[\\/][^\s"']*/gu)) {
     if (match[0].split(/[\\/]/u).includes("..")) {
-      diagnostics.push("Runtime references may not escape .agent-context/runtime.");
+      diagnostics.push("Runtime references may not escape .codex/acf runtime directories.");
       break;
     }
   }
@@ -196,7 +196,7 @@ function validateInstalledRepoContext(config: Readonly<Record<string, unknown>>,
   const args = array(server.args);
   if (
     server.command !== "node" ||
-    args[0] !== ".agent-context/bootstrap.mjs" ||
+    args[0] !== ".codex/acf/bootstrap.mjs" ||
     args[1] !== "exec" || args[2] !== "repo-context" || args.length !== 3 ||
     Object.hasOwn(server, "cwd") || server.required !== true ||
     JSON.stringify(server.enabled_tools) !== JSON.stringify(["repo_context"]) ||
@@ -217,7 +217,7 @@ function validateHookDocument(value: unknown, label: string): void {
         const value = command[key];
         if (
           typeof value !== "string" ||
-          !value.includes(".agent-context/bootstrap.mjs") ||
+          !value.includes(".codex/acf/bootstrap.mjs") ||
           !value.includes("exec hook")
         ) {
           throw new Error(`${label} ${event} ${key} must use the project-local bootstrap hook entrypoint.`);

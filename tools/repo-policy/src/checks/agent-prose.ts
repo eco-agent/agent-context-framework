@@ -56,7 +56,6 @@ const modelFacingFiles = new Set([
 const modelFacingRoots = [
   ".codex/agents/",
   ".codex/skills/",
-  ".codex/work/",
   "registry/decisions/",
   "registry/sources/codex/",
   "registry/sources/instructions/",

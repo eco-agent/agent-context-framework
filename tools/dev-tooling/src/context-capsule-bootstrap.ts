@@ -3,14 +3,12 @@ import path from "node:path";
 
 import {
   CONTEXT_CAPSULE_PATH,
-  decodeContextCapsuleLock,
 } from "@agent-context/repo-policy";
 
 import { readContextCapsuleFile } from "./context-capsule.js";
 import {
-  readContextCapsuleProjectFiles,
-  verifyContextCapsuleV3Installation,
-  type ContextCapsuleV3InstallationVerification,
+  verifyContextCapsuleInstallation,
+  type ContextCapsuleInstallationVerification,
 } from "./context-capsule-installation.js";
 import {
   materializeContextCapsule,
@@ -26,7 +24,7 @@ export interface ContextCapsuleBootstrapResult {
   readonly projectRoot: string;
   readonly capsulePath: string;
   readonly recovery: ContextTransactionRecoveryResult;
-  readonly verification: ContextCapsuleV3InstallationVerification;
+  readonly verification: ContextCapsuleInstallationVerification;
   readonly materialization: ContextMaterializationResult;
 }
 
@@ -37,7 +35,7 @@ export async function bootstrapContextCapsule(
   const recovery = await resumeContextTransaction(resolvedProjectRoot);
   const capsulePath = path.join(resolvedProjectRoot, CONTEXT_CAPSULE_PATH);
   const capsule = await readContextCapsuleFile(capsulePath);
-  const verification = await verifyContextCapsuleV3Installation(
+  const verification = await verifyContextCapsuleInstallation(
     capsule,
     resolvedProjectRoot,
   );
@@ -46,12 +44,9 @@ export async function bootstrapContextCapsule(
       `Context capsule bootstrap verification failed: ${verification.mismatches.map((mismatch) => `${mismatch.targetPath ?? mismatch.identity}: ${mismatch.detail}`).join(" ")}`,
     );
   }
-  const projectFiles = await readContextCapsuleProjectFiles(resolvedProjectRoot);
-  const authority = decodeContextCapsuleLock(projectFiles.lock);
   const materialization = await materializeContextCapsule(
     capsule,
     resolvedProjectRoot,
-    { authority },
   );
   return {
     command: "bootstrap-capsule",

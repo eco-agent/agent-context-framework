@@ -19,7 +19,6 @@ import {
   writeContextRegistry,
 } from "../src/context-registry-builder.js";
 import { checkContextGovernance } from "../src/context-governance.js";
-import { planSetupSelection } from "../src/setup-server.js";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
 
@@ -118,7 +117,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
           assert.equal(targets.has(license.noticePath), true);
         } else {
           assert.equal(license.sourcePath, "LICENSE");
-          assert.equal(license.noticePath, ".agent-context/LICENSE.agent-context-framework");
+          assert.equal(license.noticePath, ".codex/acf/LICENSE.agent-context-framework");
         }
       }
     }
@@ -651,7 +650,6 @@ test("Wave 2 bundles resolve independently and exclude frontend, runtime, and ob
     [
       "AGENTS.md",
       "docs/AGENTS.md",
-      ".codex/templates/work-record.md",
       ".codex/templates/project-decision.md",
     ],
   );
@@ -759,7 +757,7 @@ test("optional orchestration authoring has an explicit consumer and a governed s
   assert.equal(intentRecord >= 0 && externalEffect > intentRecord, true, "evidence intent must precede the external effect");
 });
 
-test("orchestration authoring install and setup planning preserve the consumer package graph", async () => {
+test("orchestration authoring installation preserves the consumer package graph", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "agent-context-orchestration-authoring-"));
   const componentName = "skill-orchestrate-codex-workflows";
   const manifest = '{"name":"consumer","private":true,"dependencies":{"existing":"1.0.0"}}\n';
@@ -784,18 +782,6 @@ test("orchestration authoring install and setup planning preserve the consumer p
     assert.equal(preview.trustRequired, true);
     assert.equal(preview.activations.some((activation) =>
       activation.id === "codex-authenticated-execution" && activation.status === "dormant"), true);
-
-    const setupPreview = await planSetupSelection(root, frameworkRoot, {
-      components: [componentName],
-      overrides: [],
-    });
-    assert.deepEqual(setupPreview.requestedComponents, preview.requestedComponents);
-    assert.deepEqual(setupPreview.resolvedComponents, preview.resolvedComponents);
-    assert.deepEqual(setupPreview.footprint, preview.footprint);
-    assert.deepEqual(setupPreview.capabilities, preview.capabilities);
-    assert.equal(setupPreview.licenses.some((license) => license.spdx === "Apache-2.0"), true);
-    assert.equal(setupPreview.trustRequired, true);
-    assert.deepEqual(setupPreview.activations, preview.activations);
 
     const installed = await addComponent(root, frameworkRoot, componentName);
     assert.equal(installed.plan.status, "ready");
@@ -841,7 +827,7 @@ test("Wave 2 bundles materialize independently and installed inventory validatio
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "skills", "codebase-inventory", "SKILL.md")), true);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "skills", "design-typescript-invariants", "SKILL.md")), false);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "skills", "optimize-codex-sessions", "SKILL.md")), false);
-    assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "work-record.md")), true);
+    assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "work-record.md")), false);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "project-decision.md")), true);
     assert.equal(await exists(path.join(engineeringRoot, ".codex", "templates", "type-contract.md")), false);
     execFileSync(
@@ -904,7 +890,7 @@ test("governance rejects changes outside the named root instruction sections", a
     await writeFile(
       agentsPath,
       (await readFile(agentsPath, "utf8")).replace(
-        "Preserve unrelated changes. Push only when the user explicitly requests it.",
+        "Preserve unrelated changes. Agents may push only their `codex/<task>` branch",
         "Unrelated changes may be discarded.",
       ),
       "utf8",
@@ -995,16 +981,16 @@ test("governance rejects weaker vendoring and submodule rules", async () => {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "agent-context-vendoring-governance-"));
   try {
     await copyGovernanceFixture(temporaryRoot);
-    const workPath = path.join(
+    const corePath = path.join(
       temporaryRoot,
       "registry",
       "sources",
       "instructions",
-      "repository-work.md",
+      "core.md",
     );
     await writeFile(
-      workPath,
-      (await readFile(workPath, "utf8")).replace(
+      corePath,
+      (await readFile(corePath, "utf8")).replace(
         "Do not add or mutate a submodule\nunless a project contract requires its separate repository lifecycle.",
         "Avoid submodules when possible.",
       ),
@@ -1133,8 +1119,8 @@ test("governance rejects dilution of agent Git transaction semantics", async () 
     await writeFile(
       transactionPath,
       (await readFile(transactionPath, "utf8")).replace(
-        "If any identity, path, cleanliness check, or reachability proof differs from the\nledger, stop cleanup.",
-        "Cleanup may continue after ledger mismatches.",
+        "Do not create linked worktrees.",
+        "Create linked worktrees for isolation.",
       ),
       "utf8",
     );
@@ -1258,8 +1244,8 @@ async function copyPackagedSkills(temporaryRoot: string): Promise<void> {
     );
   }
   await cp(
-    path.join(frameworkRoot, ".agent-context", "runtime"),
-    path.join(temporaryRoot, ".agent-context", "runtime"),
+    path.join(frameworkRoot, ".codex", "acf", "runtime-source"),
+    path.join(temporaryRoot, ".codex", "acf", "runtime-source"),
     {
       recursive: true,
       filter: (source) => {

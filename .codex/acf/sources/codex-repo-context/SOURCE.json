@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "2.0.0",
+      "license": "MIT"
+    },
+    {
+      "repository": "https://github.com/colinhacks/zod",
+      "revision": "v4.4.3",
+      "license": "MIT"
+    }
+  ]
+}

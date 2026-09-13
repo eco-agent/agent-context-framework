@@ -4,7 +4,7 @@ import path from "node:path";
 import test from "node:test";
 
 const frameworkRoot = path.resolve(import.meta.dirname, "../../..");
-const runtimeRoot = path.join(frameworkRoot, ".agent-context", "runtime");
+const runtimeRoot = path.join(frameworkRoot, ".codex", "acf", "runtime-source");
 
 test("isolated runtime owns an exact static package graph", async () => {
   const manifest = await readJson(path.join(runtimeRoot, "package.json"));
@@ -87,8 +87,8 @@ test("runtime base excludes host orchestration while its lock includes optional 
     path.join(frameworkRoot, "tsconfig.json"),
     "utf8",
   );
-  assert.equal(hostWorkspace.includes(".agent-context/runtime"), false);
-  assert.equal(hostTypeScript.includes(".agent-context/runtime"), false);
+  assert.equal(hostWorkspace.includes(".codex/acf/runtime-source"), false);
+  assert.equal(hostTypeScript.includes(".codex/acf/runtime-source"), false);
 });
 
 async function sourceFiles(root: string): Promise<readonly string[]> {

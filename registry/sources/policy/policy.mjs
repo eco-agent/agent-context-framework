@@ -12,10 +12,10 @@ try {
     rest.length > 0 ||
     ((operation === "inspect" || operation === "doctor") && profile !== undefined)
   ) {
-    throw new Error("Usage: node .agent-context/policy.mjs <inspect|doctor|verify [PROFILE]>.");
+    throw new Error("Usage: node .codex/acf/policy.mjs <inspect|doctor|verify [PROFILE]>.");
   }
   const contextRoot = path.dirname(fileURLToPath(import.meta.url));
-  const projectRoot = path.dirname(contextRoot);
+  const projectRoot = path.dirname(path.dirname(contextRoot));
   const bootstrap = path.join(contextRoot, "bootstrap.mjs");
   const arguments_ = [
     bootstrap,
@@ -29,9 +29,9 @@ try {
   if (operation === "doctor" || operation === "verify") {
     arguments_.push(
       "--config",
-      ".agent-context/policy.json",
+      ".codex/acf/policy.json",
       "--invariants",
-      ".agent-context/policy-invariants.json",
+      ".codex/acf/policy-invariants.json",
     );
   }
   if (operation === "verify" && profile !== undefined) {

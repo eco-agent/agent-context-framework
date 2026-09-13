@@ -19,20 +19,25 @@ import {
 
 import {
   CONTEXT_ADAPTER,
-  CONTEXT_CAPSULE_FORMAT_V1,
+  CONTEXT_CAPSULE_FORMAT as CONTEXT_CAPSULE_FORMAT_VALUE,
   CONTEXT_INSTALLATION_SCHEMA_VERSION,
   artifactIdentity,
   decodeContextProjectConfig,
   decodeContextRegistry,
   resolveContextComponents,
+  type ContextCapsuleActivationLock,
+  type ContextRegistryArtifact,
   type ContextRegistryComponent,
 } from "@agent-context/repo-policy";
 
-import { CONTEXT_CONFIG_PATH, loadContextRegistry } from "./context-installer.js";
+import { createArtifactProjection } from "./context-artifact-projection.js";
+import { loadContextRegistry } from "./context-installer.js";
 
-export const CONTEXT_CAPSULE_FORMAT = CONTEXT_CAPSULE_FORMAT_V1;
-export const CONTEXT_CAPSULE_SCHEMA_VERSION = 1 as const;
-export const CONTEXT_CAPSULE_MAGIC = Buffer.from("ACFCAP1\n", "ascii");
+export const CONTEXT_CAPSULE_FORMAT = CONTEXT_CAPSULE_FORMAT_VALUE;
+export const CONTEXT_CAPSULE_SCHEMA_VERSION = 2 as const;
+export const CONTEXT_CAPSULE_MAGIC = Buffer.from("ACFCAP2\n", "ascii");
+export const CONTEXT_CAPSULE_RUNTIME_SOURCE_PREFIX = ".codex/acf/runtime-source/";
+export const CONTEXT_CAPSULE_SKILL_SOURCE_PREFIX = ".codex/skills/";
 
 export interface ContextCapsuleRegistryV1 {
   readonly schemaVersion: typeof CONTEXT_INSTALLATION_SCHEMA_VERSION;
@@ -52,13 +57,14 @@ export interface ContextCapsuleEntryV1 {
   readonly contentBase64: string;
 }
 
-export interface ContextCapsulePayloadV1 {
+export interface ContextCapsulePayloadV2 {
   readonly schemaVersion: typeof CONTEXT_CAPSULE_SCHEMA_VERSION;
   readonly format: typeof CONTEXT_CAPSULE_FORMAT;
   readonly frameworkRevision: string;
   readonly registry: ContextCapsuleRegistryV1;
   readonly selection: ContextCapsuleSelectionV1;
   readonly entries: readonly ContextCapsuleEntryV1[];
+  readonly activation: readonly ContextCapsuleActivationLock[];
   readonly treeSha256: string;
 }
 
@@ -69,7 +75,7 @@ export interface BuiltContextCapsule {
   readonly capsuleBytes: number;
   readonly payloadBytes: number;
   readonly entryCount: number;
-  readonly payload: ContextCapsulePayloadV1;
+  readonly payload: ContextCapsulePayloadV2;
 }
 
 export interface ContextCapsuleBuildRequest {
@@ -140,16 +146,50 @@ export async function buildContextCapsule(
     directComponents: [...request.directComponents],
     resolvedComponents,
   };
-  const treeSha256 = hashCanonicalJson(treeDescriptor(registrySummary, selection, entries));
-  const payload: ContextCapsulePayloadV1 = {
+  const activation = capsuleActivation(resolvedComponents, entries);
+  return buildCapsule({
     schemaVersion: CONTEXT_CAPSULE_SCHEMA_VERSION,
     format: CONTEXT_CAPSULE_FORMAT,
     frameworkRevision: request.frameworkRevision,
     registry: registrySummary,
     selection,
     entries,
-    treeSha256,
-  };
+    activation,
+  });
+}
+
+export function replaceContextCapsuleActivation(
+  capsule: BuiltContextCapsule,
+  activation: readonly ContextCapsuleActivationLock[],
+): BuiltContextCapsule {
+  const sortedActivation = [...activation].sort((left, right) =>
+    compareStrings(left.identity, right.identity));
+  validateCapsuleActivation(
+    capsule.payload.selection.resolvedComponents,
+    capsule.payload.entries,
+    sortedActivation,
+  );
+  return buildCapsule({
+    schemaVersion: capsule.payload.schemaVersion,
+    format: capsule.payload.format,
+    frameworkRevision: capsule.payload.frameworkRevision,
+    registry: capsule.payload.registry,
+    selection: capsule.payload.selection,
+    entries: capsule.payload.entries,
+    activation: sortedActivation,
+  });
+}
+
+function buildCapsule(
+  payloadWithoutTree: Omit<ContextCapsulePayloadV2, "treeSha256">,
+): BuiltContextCapsule {
+  const treeSha256 = hashCanonicalJson(treeDescriptor(
+    payloadWithoutTree.registry,
+    payloadWithoutTree.selection,
+    payloadWithoutTree.entries,
+    payloadWithoutTree.activation,
+  ));
+  const payload: ContextCapsulePayloadV2 = { ...payloadWithoutTree, treeSha256 };
   const payloadText = canonicalJson(payload);
   const payloadBytes = Buffer.from(payloadText, "utf8");
   const compressed = brotliCompressSync(payloadBytes, {
@@ -167,30 +207,9 @@ export async function buildContextCapsule(
     treeSha256,
     capsuleBytes: bytes.length,
     payloadBytes: payloadBytes.length,
-    entryCount: entries.length,
+    entryCount: payload.entries.length,
     payload,
   };
-}
-
-export async function buildContextCapsuleForProject(
-  frameworkRoot: string,
-  projectRoot: string,
-  frameworkRevision: string,
-): Promise<BuiltContextCapsule> {
-  const resolvedProjectRoot = await realpath(projectRoot);
-  const configPath = await secureExistingFile(
-    resolvedProjectRoot,
-    CONTEXT_CONFIG_PATH,
-    "Context project config",
-  );
-  const config = decodeContextProjectConfig(
-    JSON.parse(decodeUtf8Text(await readFile(configPath), "Context project config")) as unknown,
-  );
-  return await buildContextCapsule({
-    frameworkRoot,
-    frameworkRevision,
-    directComponents: config.components,
-  });
 }
 
 export function readContextCapsule(bytes: Uint8Array): BuiltContextCapsule {
@@ -199,7 +218,7 @@ export function readContextCapsule(bytes: Uint8Array): BuiltContextCapsule {
     capsuleBytes.length <= CONTEXT_CAPSULE_MAGIC.length ||
     !capsuleBytes.subarray(0, CONTEXT_CAPSULE_MAGIC.length).equals(CONTEXT_CAPSULE_MAGIC)
   ) {
-    throw new Error("Context capsule must begin with the ACFCAP1 header.");
+    throw new Error("Context capsule must begin with the ACFCAP2 header.");
   }
   let payloadBytes: Buffer;
   try {
@@ -358,7 +377,7 @@ export function contextCapsuleEntryBytes(
   return decodeEntryBytes(entry);
 }
 
-function decodeContextCapsulePayload(value: unknown): ContextCapsulePayloadV1 {
+function decodeContextCapsulePayload(value: unknown): ContextCapsulePayloadV2 {
   const record = strictObject(value, "Context capsule payload", [
     "schemaVersion",
     "format",
@@ -366,6 +385,7 @@ function decodeContextCapsulePayload(value: unknown): ContextCapsulePayloadV1 {
     "registry",
     "selection",
     "entries",
+    "activation",
     "treeSha256",
   ]);
   if (record.schemaVersion !== CONTEXT_CAPSULE_SCHEMA_VERSION) {
@@ -445,7 +465,18 @@ function decodeContextCapsulePayload(value: unknown): ContextCapsulePayloadV1 {
     directComponents,
     resolvedComponents: registry.components,
   };
-  const expectedTreeSha256 = hashCanonicalJson(treeDescriptor(registrySummary, selection, entries));
+  const activation = requiredArray(
+    record.activation,
+    "Context capsule activation",
+  ).map(decodeCapsuleActivation);
+  requireSortedUnique(
+    activation.map((entry) => entry.identity),
+    "Context capsule activation identities",
+  );
+  validateCapsuleActivation(registry.components, entries, activation);
+  const expectedTreeSha256 = hashCanonicalJson(
+    treeDescriptor(registrySummary, selection, entries, activation),
+  );
   const treeSha256 = requiredSha256(record.treeSha256, "Context capsule treeSha256");
   if (treeSha256 !== expectedTreeSha256) {
     throw new Error(
@@ -459,7 +490,24 @@ function decodeContextCapsulePayload(value: unknown): ContextCapsulePayloadV1 {
     registry: registrySummary,
     selection,
     entries,
+    activation,
     treeSha256,
+  };
+}
+
+function decodeCapsuleActivation(value: unknown): ContextCapsuleActivationLock {
+  const record = strictObject(value, "Context capsule activation record", [
+    "identity",
+    "targetPath",
+    "installedSha256",
+  ]);
+  return {
+    identity: requiredString(record.identity, "Context capsule activation identity"),
+    targetPath: portableRelativePath(record.targetPath, "Context capsule activation targetPath"),
+    installedSha256: requiredSha256(
+      record.installedSha256,
+      "Context capsule activation installedSha256",
+    ),
   };
 }
 
@@ -552,6 +600,7 @@ function treeDescriptor(
   registry: ContextCapsuleRegistryV1,
   selection: ContextCapsuleSelectionV1,
   entries: readonly ContextCapsuleEntryV1[],
+  activation: readonly ContextCapsuleActivationLock[],
 ): unknown {
   return {
     registry,
@@ -564,7 +613,82 @@ function treeDescriptor(
       sourceSha256: entry.sourceSha256,
       byteLength: entry.byteLength,
     })),
+    activation,
   };
+}
+
+export function isContextCapsuleMaterializedArtifact(
+  artifact: ContextRegistryArtifact,
+): boolean {
+  return artifact.targetPath.startsWith(CONTEXT_CAPSULE_SKILL_SOURCE_PREFIX) ||
+    artifact.targetPath.startsWith(CONTEXT_CAPSULE_RUNTIME_SOURCE_PREFIX);
+}
+
+function capsuleActivation(
+  components: readonly ContextRegistryComponent[],
+  entries: readonly ContextCapsuleEntryV1[],
+): readonly ContextCapsuleActivationLock[] {
+  const byPath = new Map(entries.map((entry) => [entry.sourcePath, entry]));
+  const activation: ContextCapsuleActivationLock[] = [];
+  for (const component of components) {
+    for (const artifact of component.artifacts) {
+      if (isContextCapsuleMaterializedArtifact(artifact)) continue;
+      const entry = byPath.get(artifact.sourcePath);
+      if (entry === undefined) {
+        throw new Error(`Context capsule activation source is missing: ${artifact.sourcePath}.`);
+      }
+      const source = decodeUtf8Text(
+        decodeEntryBytes(entry),
+        `Context capsule activation source ${artifact.sourcePath}`,
+      );
+      activation.push({
+        identity: artifactIdentity(artifact),
+        targetPath: artifact.targetPath,
+        installedSha256: createArtifactProjection(artifact, source).sourceSha256,
+      });
+    }
+  }
+  return activation.sort((left, right) => compareStrings(left.identity, right.identity));
+}
+
+function validateCapsuleActivation(
+  components: readonly ContextRegistryComponent[],
+  entries: readonly ContextCapsuleEntryV1[],
+  activation: readonly ContextCapsuleActivationLock[],
+): void {
+  const expected = capsuleActivation(components, entries);
+  if (activation.length !== expected.length) {
+    throw new Error("Context capsule activation must cover every tracked artifact exactly once.");
+  }
+  const artifacts = new Map<string, ContextRegistryArtifact>();
+  for (const component of components) {
+    for (const artifact of component.artifacts) {
+      if (!isContextCapsuleMaterializedArtifact(artifact)) {
+        artifacts.set(artifactIdentity(artifact), artifact);
+      }
+    }
+  }
+  for (let index = 0; index < expected.length; index += 1) {
+    const expectedEntry = expected[index]!;
+    const actualEntry = activation[index]!;
+    requiredSha256(actualEntry.installedSha256, "Context capsule activation installedSha256");
+    if (
+      actualEntry.identity !== expectedEntry.identity ||
+      actualEntry.targetPath !== expectedEntry.targetPath
+    ) {
+      throw new Error("Context capsule activation identities and targets must match the selected closure.");
+    }
+    const artifact = artifacts.get(actualEntry.identity);
+    if (artifact === undefined) {
+      throw new Error(`Context capsule activation artifact is absent: ${actualEntry.identity}.`);
+    }
+    if (
+      artifact.operation !== "seed-file" &&
+      actualEntry.installedSha256 !== expectedEntry.installedSha256
+    ) {
+      throw new Error("Context capsule activation must match each managed artifact projection.");
+    }
+  }
 }
 
 function decodeDirectComponents(values: readonly string[]): readonly string[] {

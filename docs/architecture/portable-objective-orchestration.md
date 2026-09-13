@@ -48,24 +48,22 @@ content identity is an error.
 The framework does not select, create, persist, or clean a work directory. A
 runtime adapter receives the directory as execution configuration. The
 objective stores full Git commit IDs, artifact references, and external context
-identities. A branch owns a logical work stream. A linked worktree only
-materializes a branch when concurrent or isolated filesystem access needs a
-separate checkout.
+identities. `development` is the human-owned integration branch. An agent work
+stream owns one `codex/<task>` branch in one checkout.
 
 These policies remain outside the kernel:
 
-- one task branch in the current checkout for serial work.
-- one task branch plus one ephemeral linked worktree for a concurrent writer.
-- one worker worktree with serialized branch assignment.
+- one task branch in the current checkout with one writer.
 - an ephemeral checkout restored from a recorded commit and artifact checkpoint.
 - a read-only repository for inspection objectives.
 - a remote execution environment referenced by a provider key.
 
-The host gives one mutable branch and index to one active writer at a time. A
-work directory and its worktree registration are disposable execution state.
-Durable resume depends on the objective envelope, full commit IDs, compact
-checkpoint, artifacts, and runtime resume token. It does not depend on a path,
-moving branch name, private local ref, or originating chat.
+The host gives one checkout, branch, and index to one active writer at a time.
+A remote branch does not isolate concurrent filesystem writes. The framework
+does not create linked worktrees. Durable resume depends on the objective
+envelope, full commit IDs, compact checkpoint, artifacts, and runtime resume
+token. It does not depend on a path, moving branch name, private local ref, or
+originating chat.
 
 ## Agent work persistence
 

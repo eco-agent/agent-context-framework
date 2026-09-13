@@ -414,7 +414,7 @@ export async function planProjectSelection(
       targetCount: targetPaths.size,
       skillTargetCount: [...targetPaths].filter((target) => target.startsWith(".codex/skills/")).length,
       runtimeTargetCount: [...targetPaths].filter((target) =>
-        target.startsWith(".agent-context/runtime/")).length,
+        target.startsWith(".codex/acf/runtime-source/")).length,
     },
     capabilities: uniqueCapabilities(components),
     capabilityAvailability: "not-inspected",
@@ -573,13 +573,9 @@ async function inspectInstalledRepositoryPolicy(
 ): Promise<ContextRepositoryPolicyHealth> {
   const cliPath = path.join(
     projectRoot,
-    ".agent-context",
-    "runtime",
-    "packages",
-    "policy",
-    "dist",
-    "src",
-    "cli.js",
+    ".codex",
+    "acf",
+    "policy.mjs",
   );
   const output = await executeCompactJson(process.execPath, [
     cliPath,
@@ -729,6 +725,15 @@ export async function planContextInstallation(
     const assessment = assessDesired(desired, locked, current);
     assessments.push(assessment);
 
+    if (desired.artifact.operation === "seed-file" && current.state === "present") {
+      nextLockedByIdentity.set(identity, {
+        ...desired.artifact,
+        component: desired.component,
+        installedSha256: current.sha256,
+      });
+      continue;
+    }
+
     const shouldUpdate = intent.kind === "update" && intent.components.has(desired.component);
     const shouldOverwrite = intent.kind === "update" &&
       intent.mode === "overwrite-selected" &&
@@ -760,6 +765,23 @@ export async function planContextInstallation(
     } else if (assessment.status === "unchanged") {
       nextLockedByIdentity.set(identity, lockedArtifact(desired));
     }
+  }
+
+  for (const desired of desiredArtifacts) {
+    if (desired.artifact.operation !== "seed-file") continue;
+    const target = await readVirtualTarget(
+      resolvedProjectRoot,
+      desired.artifact.targetPath,
+      virtualTargets,
+      originalTargets,
+    );
+    const installed = desired.projection.read(target);
+    if (installed.state !== "present") continue;
+    nextLockedByIdentity.set(artifactIdentity(desired.artifact), {
+      ...desired.artifact,
+      component: desired.component,
+      installedSha256: installed.sha256,
+    });
   }
 
   for (const locked of previousLock?.artifacts ?? []) {
@@ -915,6 +937,17 @@ function assessDesired(
           : "An existing project target will be adopted without changing its bytes.",
       };
     }
+    if (current.state === "absent") {
+      return {
+        ...base,
+        status: "locally-modified",
+        previousSourceSha256: locked.sourceSha256,
+        currentSha256: null,
+        nextSourceSha256: desired.artifact.sourceSha256,
+        difference: null,
+        detail: "The installed project-owned seed is missing.",
+      };
+    }
     return {
       ...base,
       status: "unchanged",
@@ -935,6 +968,17 @@ function assessDesired(
         nextSourceSha256: desired.artifact.sourceSha256,
         difference: boundedDifference("absent", desired.artifact.targetPath, "", desired.projection.sourceDisplay),
         detail: "The selected project-owned source has not been installed.",
+      };
+    }
+    if (current.state === "present" && current.sha256 === desired.projection.sourceSha256) {
+      return {
+        ...base,
+        status: "unchanged",
+        previousSourceSha256: null,
+        currentSha256: current.sha256,
+        nextSourceSha256: desired.artifact.sourceSha256,
+        difference: null,
+        detail: "The existing target exactly matches the capsule activation projection.",
       };
     }
     return {
@@ -1125,13 +1169,18 @@ function validateTargetOwnership(artifacts: readonly ContextRegistryArtifact[]):
     byTarget.set(artifact.targetPath, current);
   }
   for (const [targetPath, targetArtifacts] of byTarget) {
-    const wholeFile = targetArtifacts.some(
-      (artifact) => artifact.operation === "file" ||
-        artifact.operation === "seed-file" ||
-        artifact.operation === "runtime-workspace",
+    const wholeFile = targetArtifacts.some((artifact) =>
+      artifact.operation === "file" || artifact.operation === "runtime-workspace");
+    const seedWithIncompatibleOwner = targetArtifacts.some(
+      (artifact) => artifact.operation === "seed-file",
+    ) && targetArtifacts.some(
+      (artifact) => artifact.operation !== "seed-file" && artifact.operation !== "text-section",
     );
-    if (wholeFile && targetArtifacts.length > 1) {
+    if ((wholeFile || seedWithIncompatibleOwner) && targetArtifacts.length > 1) {
       throw new Error(`Whole-file target ${targetPath} cannot share ownership with another artifact.`);
+    }
+    if (targetArtifacts.filter((artifact) => artifact.operation === "seed-file").length > 1) {
+      throw new Error(`Target ${targetPath} cannot have more than one seed-file initializer.`);
     }
     const identities = targetArtifacts.map(artifactIdentity);
     if (new Set(identities).size !== identities.length) {

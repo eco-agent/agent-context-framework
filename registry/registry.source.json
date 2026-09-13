@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.14.2",
-  "decisionPath": "registry/decisions/0.14.2-windows-transaction-promotion.md",
+  "revision": "0.15.0",
+  "decisionPath": "registry/decisions/0.15.0-single-capsule-workflow.md",
   "components": [
     {
       "name": "core",
@@ -11,13 +11,13 @@
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" },
+        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" },
         {
           "kind": "third-party",
           "spdx": "MIT",
           "source": "https://github.com/cursor/plugins",
           "revision": "fd6dd6f7276956a532bb78a748a8d2818b6eb5f4",
-          "noticePath": ".agent-context/LICENSE.cursor-unslop.upstream"
+          "noticePath": ".codex/acf/LICENSE.cursor-unslop.upstream"
         }
       ],
       "artifacts": [
@@ -37,30 +37,46 @@
         },
         {
           "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/git/managed-acf.gitattributes",
+          "targetPath": ".gitattributes",
+          "sectionId": "acf-binary",
+          "markerStyle": "toml"
+        },
+        {
+          "kind": "artifact",
+          "operation": "text-section",
+          "sourcePath": "registry/sources/git/managed-acf.gitignore",
+          "targetPath": ".gitignore",
+          "sectionId": "acf-generated",
+          "markerStyle": "toml"
+        },
+        {
+          "kind": "artifact",
           "operation": "file",
           "sourcePath": "LICENSE",
-          "targetPath": ".agent-context/LICENSE.agent-context-framework",
+          "targetPath": ".codex/acf/LICENSE.agent-context-framework",
           "mediaType": "text/plain"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/licenses/LICENSE.cursor-unslop.upstream",
-          "targetPath": ".agent-context/LICENSE.cursor-unslop.upstream",
+          "targetPath": ".codex/acf/LICENSE.cursor-unslop.upstream",
           "mediaType": "text/plain"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "targetPath": ".agent-context/bootstrap.mjs",
+          "targetPath": ".codex/acf/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/attributions/core/SOURCE.json",
-          "targetPath": ".agent-context/sources/core/SOURCE.json",
+          "targetPath": ".codex/acf/sources/core/SOURCE.json",
           "mediaType": "application/json"
         }
       ]
@@ -71,7 +87,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "network", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -85,7 +101,7 @@
       "name": "skill-choose-react-animation",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -191,7 +207,7 @@
       "capabilities": [
         { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -205,7 +221,7 @@
       "name": "skill-responsive-css-architect",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -223,7 +239,7 @@
         { "kind": "runtime", "name": "network", "requirement": "recommended" },
         { "kind": "runtime", "name": "python", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -248,7 +264,7 @@
         { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" },
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -264,7 +280,7 @@
       "name": "frontend-tailwind",
       "dependencies": ["frontend", "skill-responsive-css-architect", "skill-tailwind-css-architect"],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -282,7 +298,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "node", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -297,7 +313,7 @@
       "name": "skill-design-operational-boundaries",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -340,7 +356,7 @@
       "name": "skill-diagnose",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -378,7 +394,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "network", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -472,7 +488,7 @@
         { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "runtime", "name": "agent-prose-check", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -491,7 +507,7 @@
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "repository-context", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "directory",
@@ -568,41 +584,41 @@
         { "kind": "runtime", "name": "network", "requirement": "required" }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }
+        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }
       ],
       "artifacts": [
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-workflow-runtime.tsconfig.json",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/tsconfig.json",
           "mediaType": "application/json"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-frontend-workflows.tsconfig.json",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/tsconfig.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/tsconfig.json",
           "mediaType": "application/json"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-workflow-runtime.package.json",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/package.json",
           "mediaType": "application/json"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "packages/codex-workflow-runtime/LICENSE",
-          "targetPath": ".agent-context/runtime/packages/codex-workflow-runtime/LICENSE",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-workflow-runtime/LICENSE",
           "mediaType": "text/plain"
         },
         {
           "kind": "runtime-directory",
           "sourceDirectory": "packages/codex-workflow-runtime/src",
-          "targetDirectory": ".agent-context/runtime/packages/codex-workflow-runtime/src",
+          "targetDirectory": ".codex/acf/runtime-source/packages/codex-workflow-runtime/src",
           "excludedPrefixes": [],
           "workspaceId": "agent-context-runtime"
         },
@@ -610,20 +626,20 @@
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/codex-frontend-workflows.package.json",
-          "targetPath": ".agent-context/runtime/packages/codex-frontend-workflows/package.json",
+          "targetPath": ".codex/acf/runtime-source/packages/codex-frontend-workflows/package.json",
           "mediaType": "application/json"
         },
         {
           "kind": "runtime-directory",
           "sourceDirectory": "packages/codex-frontend-workflows/src",
-          "targetDirectory": ".agent-context/runtime/packages/codex-frontend-workflows/src",
+          "targetDirectory": ".codex/acf/runtime-source/packages/codex-frontend-workflows/src",
           "excludedPrefixes": [],
           "workspaceId": "agent-context-runtime"
         },
         {
           "kind": "runtime-directory",
           "sourceDirectory": "packages/codex-frontend-workflows/test",
-          "targetDirectory": ".agent-context/runtime/packages/codex-frontend-workflows/test",
+          "targetDirectory": ".codex/acf/runtime-source/packages/codex-frontend-workflows/test",
           "excludedPrefixes": [],
           "workspaceId": "agent-context-runtime"
         }
@@ -645,7 +661,7 @@
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -666,13 +682,6 @@
         {
           "kind": "artifact",
           "operation": "file",
-          "sourcePath": "registry/sources/templates/work-record.md",
-          "targetPath": ".codex/templates/work-record.md",
-          "mediaType": "text/markdown"
-        },
-        {
-          "kind": "artifact",
-          "operation": "file",
           "sourcePath": "registry/sources/templates/project-decision.md",
           "targetPath": ".codex/templates/project-decision.md",
           "mediaType": "text/markdown"
@@ -683,7 +692,7 @@
       "name": "typescript-engineering",
       "dependencies": ["engineering", "skill-design-typescript-invariants"],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -711,7 +720,7 @@
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "repository-context", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -729,7 +738,7 @@
       "capabilities": [
         { "kind": "runtime", "name": "agent-prose-check", "requirement": "recommended" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -748,19 +757,19 @@
         { "kind": "runtime", "name": "node", "requirement": "required" },
         { "kind": "runtime", "name": "corepack", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
-          "sourceDirectory": ".agent-context/runtime",
-          "targetDirectory": ".agent-context/runtime",
+          "sourceDirectory": ".codex/acf/runtime-source",
+          "targetDirectory": ".codex/acf/runtime-source",
           "excludedPrefixes": ["node_modules/", "packages/"],
           "workspaceId": "agent-context-runtime"
         },
         {
           "kind": "runtime-directory",
-          "sourceDirectory": ".agent-context/runtime/packages/shared",
-          "targetDirectory": ".agent-context/runtime/packages/shared",
+          "sourceDirectory": ".codex/acf/runtime-source/packages/shared",
+          "targetDirectory": ".codex/acf/runtime-source/packages/shared",
           "excludedPrefixes": ["dist/", "node_modules/"],
           "workspaceId": "agent-context-runtime"
         }
@@ -770,12 +779,12 @@
       "name": "repository-policy",
       "dependencies": ["core", "runtime-base"],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
-          "sourceDirectory": ".agent-context/runtime/packages/policy",
-          "targetDirectory": ".agent-context/runtime/packages/policy",
+          "sourceDirectory": ".codex/acf/runtime-source/packages/policy",
+          "targetDirectory": ".codex/acf/runtime-source/packages/policy",
           "excludedPrefixes": ["dist/", "node_modules/"],
           "workspaceId": "agent-context-runtime"
         },
@@ -783,7 +792,7 @@
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/policy/cli.mjs",
-          "targetPath": ".agent-context/runtime/packages/policy/dist/src/cli.js",
+          "targetPath": ".codex/acf/runtime-source/packages/policy/dist/src/cli.js",
           "mediaType": "text/javascript"
         },
         {
@@ -798,20 +807,20 @@
           "kind": "artifact",
           "operation": "seed-file",
           "sourcePath": "registry/sources/policy/policy.json",
-          "targetPath": ".agent-context/policy.json"
+          "targetPath": ".codex/acf/policy.json"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/policy/invariants.json",
-          "targetPath": ".agent-context/policy-invariants.json",
+          "targetPath": ".codex/acf/policy-invariants.json",
           "mediaType": "application/json"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/policy/policy.mjs",
-          "targetPath": ".agent-context/policy.mjs",
+          "targetPath": ".codex/acf/policy.mjs",
           "mediaType": "text/javascript"
         }
       ]
@@ -820,7 +829,7 @@
       "name": "codex-agents",
       "dependencies": ["core"],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -864,12 +873,12 @@
         { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "runtime", "name": "shell", "requirement": "required" }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "runtime-directory",
-          "sourceDirectory": ".agent-context/runtime/packages/hooks",
-          "targetDirectory": ".agent-context/runtime/packages/hooks",
+          "sourceDirectory": ".codex/acf/runtime-source/packages/hooks",
+          "targetDirectory": ".codex/acf/runtime-source/packages/hooks",
           "excludedPrefixes": ["dist/", "node_modules/"],
           "workspaceId": "agent-context-runtime"
         },
@@ -877,7 +886,7 @@
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/hooks/codex-cli.mjs",
-          "targetPath": ".agent-context/runtime/packages/hooks/dist/src/codex-cli.js",
+          "targetPath": ".codex/acf/runtime-source/packages/hooks/dist/src/codex-cli.js",
           "mediaType": "text/javascript"
         },
         {
@@ -907,27 +916,27 @@
         { "kind": "runtime", "name": "ripgrep", "requirement": "required" }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" },
+        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" },
         {
           "kind": "third-party",
           "spdx": "MIT",
           "source": "https://github.com/modelcontextprotocol/typescript-sdk",
           "revision": "2.0.0",
-          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0"
+          "noticePath": ".codex/acf/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0"
         },
         {
           "kind": "third-party",
           "spdx": "MIT",
           "source": "https://github.com/colinhacks/zod",
           "revision": "v4.4.3",
-          "noticePath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3"
+          "noticePath": ".codex/acf/sources/codex-repo-context/LICENSE.zod-4.4.3"
         }
       ],
       "artifacts": [
         {
           "kind": "runtime-directory",
-          "sourceDirectory": ".agent-context/runtime/packages/repo-context",
-          "targetDirectory": ".agent-context/runtime/packages/repo-context",
+          "sourceDirectory": ".codex/acf/runtime-source/packages/repo-context",
+          "targetDirectory": ".codex/acf/runtime-source/packages/repo-context",
           "excludedPrefixes": ["dist/", "node_modules/"],
           "workspaceId": "agent-context-runtime"
         },
@@ -935,28 +944,28 @@
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/runtime/repo-context/mcp-cli.mjs",
-          "targetPath": ".agent-context/runtime/packages/repo-context/dist/src/mcp-cli.js",
+          "targetPath": ".codex/acf/runtime-source/packages/repo-context/dist/src/mcp-cli.js",
           "mediaType": "text/javascript"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/licenses/LICENSE.model-context-protocol-2.0.0",
-          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
+          "targetPath": ".codex/acf/sources/codex-repo-context/LICENSE.model-context-protocol-2.0.0",
           "mediaType": "text/plain"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/licenses/LICENSE.zod-4.4.3",
-          "targetPath": ".agent-context/sources/codex-repo-context/LICENSE.zod-4.4.3",
+          "targetPath": ".codex/acf/sources/codex-repo-context/LICENSE.zod-4.4.3",
           "mediaType": "text/plain"
         },
         {
           "kind": "artifact",
           "operation": "file",
           "sourcePath": "registry/sources/attributions/codex-repo-context/SOURCE.json",
-          "targetPath": ".agent-context/sources/codex-repo-context/SOURCE.json",
+          "targetPath": ".codex/acf/sources/codex-repo-context/SOURCE.json",
           "mediaType": "application/json"
         },
         {
@@ -973,7 +982,7 @@
       "name": "integration-oxfmt",
       "dependencies": ["core"],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
         {
           "kind": "artifact",
@@ -981,7 +990,7 @@
           "sourcePath": "registry/sources/integrations/oxfmt.json",
           "targetPath": ".oxfmtrc.json",
           "ownedValues": [
-            { "arrayPointer": "/ignorePatterns", "value": ".agent-context/**" }
+            { "arrayPointer": "/ignorePatterns", "value": ".codex/acf/**" }
           ]
         }
       ]
@@ -990,7 +999,7 @@
       "name": "codex-runtime",
       "dependencies": ["codex-agents", "codex-hooks", "codex-repo-context"],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".agent-context/LICENSE.agent-context-framework" }],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": []
     }
   ]
