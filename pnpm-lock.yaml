@@ -27,9 +27,6 @@ importers:
       tsx:
         specifier: 4.22.4
         version: 4.22.4
-      tw-fade:
-        specifier: 0.7.1
-        version: 0.7.1(tailwindcss@4.3.3)
       typescript:
         specifier: 7.0.2
         version: 7.0.2
@@ -1768,9 +1765,6 @@ packages:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
     engines: {node: '>=20'}
 
-  tailwindcss@4.3.3:
-    resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
-
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
@@ -1801,14 +1795,6 @@ packages:
     resolution: {integrity: sha512-X8EX+XV4QR5xCsrgxaED954zTDfY8KqlDtskKEL0cHhyS/P8b4IFOvGDQpsC9Q1XnLq915wEfwwY/zzskCtmhg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
-
-  tw-fade@0.7.1:
-    resolution: {integrity: sha512-eV4kb+ff/GPbGkM5UM5TBrVUXKtkq8BH/vHIUvz4YX59GJepfunv/d6q7nhNd4c4VoyZMHRER0zVlRBV3SUZJg==}
-    peerDependencies:
-      tailwindcss: '>=4.0.0'
-    peerDependenciesMeta:
-      tailwindcss:
-        optional: true
 
   type-fest@5.8.0:
     resolution: {integrity: sha512-YGYEVz3Fm5iy/AybuA0oyNFq7H4CgQNfRp/qfe8nurE1kuCeNm3/vfm9X4Mtl+qLyaKJUh5xrFZwogr41SMjYA==}
@@ -3029,9 +3015,6 @@ snapshots:
 
   tagged-tag@1.0.0: {}
 
-  tailwindcss@4.3.3:
-    optional: true
-
   tinybench@2.9.0: {}
 
   tinyexec@1.2.4: {}
@@ -3055,10 +3038,6 @@ snapshots:
       esbuild: 0.28.1
     optionalDependencies:
       fsevents: 2.3.3
-
-  tw-fade@0.7.1(tailwindcss@4.3.3):
-    optionalDependencies:
-      tailwindcss: 4.3.3
 
   type-fest@5.8.0:
     dependencies:

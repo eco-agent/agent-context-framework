@@ -29,11 +29,9 @@ Implement only the Tailwind concern recorded in the owning task contract. Do not
      reason to move styling into raw CSS.
    * Keep every plugin class name as a complete static token. Do not construct utility names dynamically.
 
-2. Import `tw-fade` and `shadow-plugin` once after `tailwindcss` in the project entry stylesheet.
+2. Import `shadow-plugin` once after `tailwindcss` in the project entry stylesheet.
 
-3. Use `tw-fade` on every scrollable overflow. Put `fade-x`, `fade-y`, or `fade` on the element that scrolls.
-
-4. Use `shadow-plugin` for elevated surfaces such as cards, dialogs, popovers, dropdowns, menus, tooltips, sheets, toasts, and command palettes.
+3. Use `shadow-plugin` for elevated surfaces such as cards, dialogs, popovers, dropdowns, menus, tooltips, sheets, toasts, and command palettes.
 
    * Do not pair `border-*` or `ring-*` with `shadow-*` on the same elevated element. Replace the pair with one concrete `smooth-shadow-ring-xs`, `smooth-shadow-ring-sm`, `smooth-shadow-ring-md`, `smooth-shadow-ring-lg`, `smooth-shadow-ring-xl`, or `smooth-shadow-ring-2xl` class so its hairline and shadow render as one continuous edge.
    * Do not add a second border or ring to `smooth-shadow-ring-*`.
@@ -69,7 +67,6 @@ In Tailwind v4 projects, preserve the native layer order:
 @layer theme, base, components, utilities;
 
 @import "tailwindcss";
-@import "tw-fade";
 @import "shadow-plugin";
 
 /* Contains top-level @theme declarations. */

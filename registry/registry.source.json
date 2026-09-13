@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.16.0",
-  "decisionPath": "registry/decisions/0.16.0-global-repository-catalog.md",
+  "revision": "0.17.0",
+  "decisionPath": "registry/decisions/0.17.0-remove-default-tw-fade.md",
   "components": [
     {
       "name": "core",
