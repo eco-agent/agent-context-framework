@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "revision": "0.20.0",
-  "decisionPath": "registry/decisions/0.20.0-remote-github-workstreams.md",
+  "revision": "0.21.0",
+  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
   "components": [
     {
       "name": "core",
@@ -101,7 +101,7 @@
     },
     {
       "name": "skill-github-workstreams",
-      "revision": "sha256:ac237d2e3326043593945f99804d0c9b067a2c2cb031ee975d6e318c2bb5c424",
+      "revision": "sha256:4c215fdad4b6d22dcbb8a3bf1aa58dde473d0b2ce9a7d815934cc3a5d8886f58",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -131,9 +131,40 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/github-workstreams/SKILL.md",
-          "sourceSha256": "a964303221057b7126b0846fbbb1074c348d68000c14b6a850ea65d293922d22",
+          "sourceSha256": "4363d2d15419171adcddf1a56f8827e1a7dab2c7e4078d2f6b378ea21895cb64",
           "targetPath": ".codex/skills/github-workstreams/SKILL.md",
           "mediaType": "text/markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-coordinate-persistent-tasks",
+      "revision": "sha256:22dd9b0b52dd8ffadeba8ae4df2ff372633f7e543ee180e74f0608a2461669a6",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
+          "sourceSha256": "57a45d402116950cd8e92fae5b75f0c7c24fe507d065c0e479b59d426cd20db1",
+          "targetPath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/coordinate-persistent-tasks/agents/openai.yaml",
+          "sourceSha256": "01a4a30b4989a57e00b5f0cc4f080f94d48e040323cb75a699de0ce716eab405",
+          "targetPath": ".codex/skills/coordinate-persistent-tasks/agents/openai.yaml",
+          "mediaType": "application/yaml"
         }
       ]
     },
@@ -2521,9 +2552,10 @@
     },
     {
       "name": "codex-agents",
-      "revision": "sha256:4faf09339bfbdfe64e8801cd10c0637b1329b1f4ecb53dd8981104c459d06c72",
+      "revision": "sha256:6494540c205ed3d6da6f074c91ed61abd5cbdbaeec7245231e472b62204a1f83",
       "dependencies": [
-        "core"
+        "core",
+        "skill-coordinate-persistent-tasks"
       ],
       "capabilities": [],
       "licenses": [
@@ -2539,34 +2571,34 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/codex/agents/default.toml",
-          "sourceSha256": "a3ad5b769d8601ed44cf3af1744eaf197d4e90d2f57cce984ba842e1b2b8245f",
+          "sourceSha256": "38239df28e8162929ee48337ba32b6994cfdb22618528f0081260b2ea825ee9a",
           "targetPath": ".codex/agents/default.toml",
           "mediaType": "application/toml"
         },
         {
           "operation": "file",
           "sourcePath": "registry/sources/codex/agents/scout.toml",
-          "sourceSha256": "4ea2dca2f8df8e1d67577a086a306cfd04b7a3401da6c1738683c213b81c6fb6",
+          "sourceSha256": "f799e2b7a1c1030845b8252f78e83c9c3deda08da8f2785aaab32b11dcdc0647",
           "targetPath": ".codex/agents/scout.toml",
           "mediaType": "application/toml"
         },
         {
           "operation": "file",
-          "sourcePath": "registry/sources/codex/agents/worker.toml",
-          "sourceSha256": "c2e2bb0e181df838c4cd2874cda5501253c5ad57907084905206d0ef4cc9bfbc",
-          "targetPath": ".codex/agents/worker.toml",
+          "sourcePath": "registry/sources/codex/agents/investigator.toml",
+          "sourceSha256": "0bb031f6f9ce17e994e84dddd143045b6749cd70c9e93b191af8b6116ef40b92",
+          "targetPath": ".codex/agents/investigator.toml",
           "mediaType": "application/toml"
         },
         {
           "operation": "toml-members",
           "sourcePath": "registry/sources/codex/agents.toml",
-          "sourceSha256": "7cc7a331c267fac4d1a43a6f4b27787dbcf2608866034e2d9e4265e8c4226735",
+          "sourceSha256": "4422d10775a1ae166ec15bb25f0ff590ef30ed14dcad7f091357874d0d4153cf",
           "targetPath": ".codex/config.toml",
           "ownedMembers": [
             "agents.default",
             "agents.interrupt_message",
-            "agents.scout",
-            "agents.worker"
+            "agents.investigator",
+            "agents.scout"
           ]
         }
       ]

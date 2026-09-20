@@ -43,6 +43,7 @@ const packagedSkills = [
   "design-web-typography",
   "frontend-design-discipline",
   "github-workstreams",
+  "coordinate-persistent-tasks",
   "responsive-css-architect",
   "tailwind-css-architect",
   "codebase-inventory",
@@ -90,7 +91,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
     "skill-optimize-codex-sessions",
   ];
   assert.equal(first.components.filter((component) =>
-    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 22);
+    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 23);
   for (const component of first.components) {
     assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
   }
@@ -98,7 +99,14 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
     first.components.filter((component) => waveTwoSkills.includes(component.name)).map((component) => component.name),
     waveTwoSkills,
   );
-  const inventory = first.components.find((component) => component.name === "skill-codebase-inventory");
+  const persistentTasks = first.components.find((component) => component.name === "skill-coordinate-persistent-tasks");
+  assert.ok(persistentTasks);
+  const codexAgents = first.components.find((component) => component.name === "codex-agents");
+  assert.ok(codexAgents);
+  assert.equal(codexAgents.dependencies.includes("skill-coordinate-persistent-tasks"), true);
+  assert.equal(codexAgents.artifacts.some((artifact) => artifact.sourcePath.endsWith("/investigator.toml")), true);
+  assert.equal(codexAgents.artifacts.some((artifact) => artifact.sourcePath.endsWith("/worker.toml")), false);
+    const inventory = first.components.find((component) => component.name === "skill-codebase-inventory");
   assert.ok(inventory);
   assert.equal(inventory.artifacts.some((artifact) => artifact.sourcePath.endsWith("/logo.png")), false);
   for (const component of first.components) {
@@ -915,7 +923,7 @@ test("governance compares canonical and installed role prompts as complete files
     await writeFile(
       scoutPath,
       (await readFile(scoutPath, "utf8")).replace(
-        "Do not edit files, make repository decisions, start other agents, or turn the investigation into a redesign.",
+        "Do not edit files, make repository decisions, start agents, or expand the investigation.",
         "Edit files when it helps the investigation.",
       ),
       "utf8",
@@ -1077,6 +1085,10 @@ test("governance rejects dilution of restored skill guards", async () => {
     {
       skill: "github-workstreams",
       remove: "Move the branch ref with `force: false`.",
+    },
+    {
+      skill: "coordinate-persistent-tasks",
+      remove: "Do not poll tasks continuously",
     },
   ] as const;
 
@@ -1276,6 +1288,7 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
     "diagnose",
     "frontend-design-discipline",
     "github-workstreams",
+    "coordinate-persistent-tasks",
     "maintain-agent-context-framework",
     "optimize-codex-sessions",
     "orchestrate-codex-workflows",

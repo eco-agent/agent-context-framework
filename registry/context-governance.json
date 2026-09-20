@@ -1,12 +1,12 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.20.0",
-  "decisionPath": "registry/decisions/0.20.0-remote-github-workstreams.md",
+  "registryRevision": "0.21.0",
+  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "123fe549f5380efb079174032d580c45496e26768073e668bd2fcea6232a3ba8"
+      "sha256": "dd467eab62d0bc1824701a3aab2448c7c4ba082e89d233687730c84b10b346af"
     },
     {
       "invariantId": "framework-root-prefix",
@@ -76,7 +76,7 @@
     {
       "invariantId": "github-workstreams-contract",
       "sourcePath": ".codex/skills/github-workstreams/SKILL.md",
-      "sha256": "a964303221057b7126b0846fbbb1074c348d68000c14b6a850ea65d293922d22"
+      "sha256": "4363d2d15419171adcddf1a56f8827e1a7dab2c7e4078d2f6b378ea21895cb64"
     },
     {
       "invariantId": "github-workstreams-invocation",
@@ -256,17 +256,12 @@
     {
       "invariantId": "codex-agent-default-profile",
       "sourcePath": "registry/sources/codex/agents/default.toml",
-      "sha256": "a3ad5b769d8601ed44cf3af1744eaf197d4e90d2f57cce984ba842e1b2b8245f"
+      "sha256": "38239df28e8162929ee48337ba32b6994cfdb22618528f0081260b2ea825ee9a"
     },
     {
       "invariantId": "codex-agent-scout-profile",
       "sourcePath": "registry/sources/codex/agents/scout.toml",
-      "sha256": "4ea2dca2f8df8e1d67577a086a306cfd04b7a3401da6c1738683c213b81c6fb6"
-    },
-    {
-      "invariantId": "codex-agent-worker-profile",
-      "sourcePath": "registry/sources/codex/agents/worker.toml",
-      "sha256": "c2e2bb0e181df838c4cd2874cda5501253c5ad57907084905206d0ef4cc9bfbc"
+      "sha256": "f799e2b7a1c1030845b8252f78e83c9c3deda08da8f2785aaab32b11dcdc0647"
     },
     {
       "invariantId": "codex-hooks-project-local",
@@ -417,6 +412,21 @@
       "invariantId": "frontend-workflow-zero-model-preflight",
       "sourcePath": "packages/codex-frontend-workflows/src/preflight.ts",
       "sha256": "41a07c52341689cf75cc6a9c445947045d350c104d4f552c6f1e70ae33fff329"
+    },
+    {
+      "invariantId": "persistent-task-coordination",
+      "sourcePath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
+      "sha256": "57a45d402116950cd8e92fae5b75f0c7c24fe507d065c0e479b59d426cd20db1"
+    },
+    {
+      "invariantId": "persistent-task-coordination-invocation",
+      "sourcePath": ".codex/skills/coordinate-persistent-tasks/agents/openai.yaml",
+      "sha256": "01a4a30b4989a57e00b5f0cc4f080f94d48e040323cb75a699de0ce716eab405"
+    },
+    {
+      "invariantId": "codex-agent-investigator-profile",
+      "sourcePath": "registry/sources/codex/agents/investigator.toml",
+      "sha256": "0bb031f6f9ce17e994e84dddd143045b6749cd70c9e93b191af8b6116ef40b92"
     }
   ],
   "completeFileProjectionScopes": [

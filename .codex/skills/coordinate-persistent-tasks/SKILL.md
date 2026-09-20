@@ -40,10 +40,12 @@ title is a lookup label and does not change when the owner starts another piece
 of work.
 
 Reuse the exact task ID when one pinned task owns the responsibility. If no owner
-exists, create one Sol Medium task, record its returned task ID, set its stable
-title, and pin it. If several tasks claim the responsibility, do not choose the
-newest task or create another one. Report the conflicting IDs and ask the user to
-select the owner.
+exists, create one only when the user explicitly asked to establish or create
+domain owners. Record its returned task ID, set its stable title, and pin it. If
+the user did not authorize creation, report the missing owner and ask for that
+decision. If several tasks claim the responsibility, do not choose the newest
+task or create another one. Report the conflicting IDs and ask the user to select
+the owner.
 
 Create a projectless task when repository work must stay remote through the
 GitHub connector. Put the repository, responsibility key, neighbouring owners,
