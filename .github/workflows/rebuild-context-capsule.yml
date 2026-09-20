@@ -27,7 +27,7 @@ jobs:
       - run: pnpm policy:build
       - name: Refresh protected-source hashes
         run: |
-          node -e 'const fs=require("fs"),crypto=require("crypto");const p="registry/context-governance.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));for(const e of j.protectedSources)e.sha256=crypto.createHash("sha256").update(fs.readFileSync(e.sourcePath)).digest("hex");fs.writeFileSync(p,JSON.stringify(j,null,2)+"\\n")'
+          node -e 'const fs=require("fs"),crypto=require("crypto");const p="registry/context-governance.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));for(const e of j.protectedSources)e.sha256=crypto.createHash("sha256").update(fs.readFileSync(e.sourcePath)).digest("hex");fs.writeFileSync(p,JSON.stringify(j,null,2)+String.fromCharCode(10))'
       - run: pnpm registry:build
       - name: Rebuild capsule
         run: |
