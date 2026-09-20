@@ -7,11 +7,24 @@
       "name": "core",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "git", "requirement": "required" },
-        { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "required"
+        },
+        {
+          "kind": "codex-skill",
+          "name": "visualize",
+          "requirement": "recommended"
+        }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" },
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        },
         {
           "kind": "third-party",
           "spdx": "MIT",
@@ -85,9 +98,20 @@
       "name": "skill-adopt-established-product",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "network", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -101,7 +125,14 @@
       "name": "skill-choose-react-animation",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -159,7 +190,11 @@
       "name": "skill-design-interface-details",
       "dependencies": [],
       "capabilities": [
-        { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" }
+        {
+          "kind": "codex-skill",
+          "name": "imagegen",
+          "requirement": "recommended"
+        }
       ],
       "licenses": [
         {
@@ -205,9 +240,20 @@
       "name": "skill-frontend-design-discipline",
       "dependencies": [],
       "capabilities": [
-        { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" }
+        {
+          "kind": "codex-skill",
+          "name": "imagegen",
+          "requirement": "recommended"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -221,7 +267,14 @@
       "name": "skill-responsive-css-architect",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -235,17 +288,38 @@
       "name": "skill-tailwind-css-architect",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "native-subagents", "requirement": "recommended" },
-        { "kind": "runtime", "name": "network", "requirement": "recommended" },
-        { "kind": "runtime", "name": "python", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "native-subagents",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "python",
+          "requirement": "recommended"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
           "sourceDirectory": ".codex/skills/tailwind-css-architect",
           "targetDirectory": ".codex/skills/tailwind-css-architect",
-          "excludedPrefixes": ["references/tailwind-docs/cache/"]
+          "excludedPrefixes": [
+            "references/tailwind-docs/cache/"
+          ]
         }
       ]
     },
@@ -261,10 +335,25 @@
         "skill-frontend-design-discipline"
       ],
       "capabilities": [
-        { "kind": "codex-skill", "name": "imagegen", "requirement": "recommended" },
-        { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
+        {
+          "kind": "codex-skill",
+          "name": "imagegen",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "codex-skill",
+          "name": "visualize",
+          "requirement": "recommended"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -278,9 +367,20 @@
     },
     {
       "name": "frontend-tailwind",
-      "dependencies": ["frontend", "skill-responsive-css-architect", "skill-tailwind-css-architect"],
+      "dependencies": [
+        "frontend",
+        "skill-responsive-css-architect",
+        "skill-tailwind-css-architect"
+      ],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -296,16 +396,29 @@
       "name": "skill-codebase-inventory",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "node", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
           "sourceDirectory": ".codex/skills/codebase-inventory",
           "targetDirectory": ".codex/skills/codebase-inventory",
           "excludedPrefixes": [],
-          "excludedPaths": ["fixtures/sample-repo/src/components/logo.png"]
+          "excludedPaths": [
+            "fixtures/sample-repo/src/components/logo.png"
+          ]
         }
       ]
     },
@@ -313,7 +426,14 @@
       "name": "skill-design-operational-boundaries",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -356,7 +476,14 @@
       "name": "skill-diagnose",
       "dependencies": [],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -392,9 +519,20 @@
       "name": "skill-reuse-before-implementation",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "network", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -430,7 +568,11 @@
       "name": "skill-write-technical-prose",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
       ],
       "licenses": [
         {
@@ -461,7 +603,11 @@
       "name": "skill-writing-great-skills",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
       ],
       "licenses": [
         {
@@ -485,10 +631,25 @@
       "name": "skill-maintain-agent-context-framework",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "git", "requirement": "required" },
-        { "kind": "runtime", "name": "agent-prose-check", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "agent-prose-check",
+          "requirement": "recommended"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -502,12 +663,35 @@
       "name": "skill-optimize-codex-sessions",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "codex-session-log", "requirement": "required" },
-        { "kind": "runtime", "name": "git", "requirement": "required" },
-        { "kind": "runtime", "name": "node", "requirement": "required" },
-        { "kind": "runtime", "name": "repository-context", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "codex-session-log",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "repository-context",
+          "requirement": "recommended"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "directory",
@@ -521,13 +705,34 @@
       "name": "skill-orchestrate-codex-workflows",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "codex-authentication", "requirement": "required" },
-        { "kind": "runtime", "name": "git", "requirement": "recommended" },
-        { "kind": "runtime", "name": "network", "requirement": "required" },
-        { "kind": "runtime", "name": "node", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "codex-authentication",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "recommended"
+        },
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": ".codex/skills/orchestrate-codex-workflows/LICENSE", "noticePath": ".codex/skills/orchestrate-codex-workflows/LICENSE" },
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": ".codex/skills/orchestrate-codex-workflows/LICENSE",
+          "noticePath": ".codex/skills/orchestrate-codex-workflows/LICENSE"
+        },
         {
           "kind": "third-party",
           "spdx": "Apache-2.0",
@@ -579,12 +784,29 @@
         "skill-orchestrate-codex-workflows"
       ],
       "capabilities": [
-        { "kind": "runtime", "name": "codex-authentication", "requirement": "required" },
-        { "kind": "runtime", "name": "node", "requirement": "required" },
-        { "kind": "runtime", "name": "network", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "codex-authentication",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
       ],
       "artifacts": [
         {
@@ -657,11 +879,30 @@
         "skill-write-technical-prose"
       ],
       "capabilities": [
-        { "kind": "runtime", "name": "network", "requirement": "required" },
-        { "kind": "runtime", "name": "node", "requirement": "required" },
-        { "kind": "runtime", "name": "technical-prose-check", "requirement": "recommended" }
+        {
+          "kind": "runtime",
+          "name": "network",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "technical-prose-check",
+          "requirement": "recommended"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -690,9 +931,19 @@
     },
     {
       "name": "typescript-engineering",
-      "dependencies": ["engineering", "skill-design-typescript-invariants"],
+      "dependencies": [
+        "engineering",
+        "skill-design-typescript-invariants"
+      ],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -713,14 +964,39 @@
     },
     {
       "name": "session-quality",
-      "dependencies": ["skill-optimize-codex-sessions"],
-      "capabilities": [
-        { "kind": "runtime", "name": "codex-session-log", "requirement": "required" },
-        { "kind": "runtime", "name": "git", "requirement": "required" },
-        { "kind": "runtime", "name": "node", "requirement": "required" },
-        { "kind": "runtime", "name": "repository-context", "requirement": "recommended" }
+      "dependencies": [
+        "skill-optimize-codex-sessions"
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "codex-session-log",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "repository-context",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -734,11 +1010,24 @@
     },
     {
       "name": "skill-authoring",
-      "dependencies": ["skill-writing-great-skills"],
-      "capabilities": [
-        { "kind": "runtime", "name": "agent-prose-check", "requirement": "recommended" }
+      "dependencies": [
+        "skill-writing-great-skills"
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "agent-prose-check",
+          "requirement": "recommended"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -754,38 +1043,72 @@
       "name": "runtime-base",
       "dependencies": [],
       "capabilities": [
-        { "kind": "runtime", "name": "node", "requirement": "required" },
-        { "kind": "runtime", "name": "corepack", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "node",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "corepack",
+          "requirement": "required"
+        }
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "runtime-directory",
           "sourceDirectory": ".codex/acf/runtime-source",
           "targetDirectory": ".codex/acf/runtime-source",
-          "excludedPrefixes": ["node_modules/", "packages/"],
+          "excludedPrefixes": [
+            "node_modules/",
+            "packages/"
+          ],
           "workspaceId": "agent-context-runtime"
         },
         {
           "kind": "runtime-directory",
           "sourceDirectory": ".codex/acf/runtime-source/packages/shared",
           "targetDirectory": ".codex/acf/runtime-source/packages/shared",
-          "excludedPrefixes": ["dist/", "node_modules/"],
+          "excludedPrefixes": [
+            "dist/",
+            "node_modules/"
+          ],
           "workspaceId": "agent-context-runtime"
         }
       ]
     },
     {
       "name": "repository-policy",
-      "dependencies": ["core", "runtime-base"],
+      "dependencies": [
+        "core",
+        "runtime-base"
+      ],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "runtime-directory",
           "sourceDirectory": ".codex/acf/runtime-source/packages/policy",
           "targetDirectory": ".codex/acf/runtime-source/packages/policy",
-          "excludedPrefixes": ["dist/", "node_modules/"],
+          "excludedPrefixes": [
+            "dist/",
+            "node_modules/"
+          ],
           "workspaceId": "agent-context-runtime"
         },
         {
@@ -827,9 +1150,18 @@
     },
     {
       "name": "codex-agents",
-      "dependencies": ["core"],
+      "dependencies": [
+        "core"
+      ],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -847,39 +1179,60 @@
         },
         {
           "kind": "artifact",
-          "operation": "file",
-          "sourcePath": "registry/sources/codex/agents/worker.toml",
-          "targetPath": ".codex/agents/worker.toml",
-          "mediaType": "application/toml"
-        },
-        {
-          "kind": "artifact",
           "operation": "toml-members",
           "sourcePath": "registry/sources/codex/agents.toml",
           "targetPath": ".codex/config.toml",
           "ownedMembers": [
             "agents.default",
             "agents.interrupt_message",
-            "agents.scout",
-            "agents.worker"
+            "agents.investigator",
+            "agents.scout"
           ]
+        },
+        {
+          "kind": "artifact",
+          "operation": "file",
+          "sourcePath": "registry/sources/codex/agents/investigator.toml",
+          "targetPath": ".codex/agents/investigator.toml",
+          "mediaType": "application/toml"
         }
       ]
     },
     {
       "name": "codex-hooks",
-      "dependencies": ["core", "runtime-base"],
-      "capabilities": [
-        { "kind": "runtime", "name": "git", "requirement": "required" },
-        { "kind": "runtime", "name": "shell", "requirement": "required" }
+      "dependencies": [
+        "core",
+        "runtime-base"
       ],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "capabilities": [
+        {
+          "kind": "runtime",
+          "name": "git",
+          "requirement": "required"
+        },
+        {
+          "kind": "runtime",
+          "name": "shell",
+          "requirement": "required"
+        }
+      ],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "runtime-directory",
           "sourceDirectory": ".codex/acf/runtime-source/packages/hooks",
           "targetDirectory": ".codex/acf/runtime-source/packages/hooks",
-          "excludedPrefixes": ["dist/", "node_modules/"],
+          "excludedPrefixes": [
+            "dist/",
+            "node_modules/"
+          ],
           "workspaceId": "agent-context-runtime"
         },
         {
@@ -911,12 +1264,24 @@
     },
     {
       "name": "codex-repo-context",
-      "dependencies": ["core", "runtime-base"],
+      "dependencies": [
+        "core",
+        "runtime-base"
+      ],
       "capabilities": [
-        { "kind": "runtime", "name": "ripgrep", "requirement": "required" }
+        {
+          "kind": "runtime",
+          "name": "ripgrep",
+          "requirement": "required"
+        }
       ],
       "licenses": [
-        { "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" },
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        },
         {
           "kind": "third-party",
           "spdx": "MIT",
@@ -937,7 +1302,10 @@
           "kind": "runtime-directory",
           "sourceDirectory": ".codex/acf/runtime-source/packages/repo-context",
           "targetDirectory": ".codex/acf/runtime-source/packages/repo-context",
-          "excludedPrefixes": ["dist/", "node_modules/"],
+          "excludedPrefixes": [
+            "dist/",
+            "node_modules/"
+          ],
           "workspaceId": "agent-context-runtime"
         },
         {
@@ -973,16 +1341,27 @@
           "operation": "toml-tables",
           "sourcePath": "registry/sources/codex/repo-context.toml",
           "targetPath": ".codex/config.toml",
-          "ownedTables": ["mcp_servers.repo_context"],
+          "ownedTables": [
+            "mcp_servers.repo_context"
+          ],
           "sectionId": "codex-repo-context"
         }
       ]
     },
     {
       "name": "integration-oxfmt",
-      "dependencies": ["core"],
+      "dependencies": [
+        "core"
+      ],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": [
         {
           "kind": "artifact",
@@ -990,16 +1369,30 @@
           "sourcePath": "registry/sources/integrations/oxfmt.json",
           "targetPath": ".oxfmtrc.json",
           "ownedValues": [
-            { "arrayPointer": "/ignorePatterns", "value": ".codex/acf/**" }
+            {
+              "arrayPointer": "/ignorePatterns",
+              "value": ".codex/acf/**"
+            }
           ]
         }
       ]
     },
     {
       "name": "codex-runtime",
-      "dependencies": ["codex-agents", "codex-hooks", "codex-repo-context"],
+      "dependencies": [
+        "codex-agents",
+        "codex-hooks",
+        "codex-repo-context"
+      ],
       "capabilities": [],
-      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework"
+        }
+      ],
       "artifacts": []
     }
   ]
