@@ -20,6 +20,10 @@ jobs:
         with:
           node-version: 24.14.0
           cache: true
+      - name: Restore the capsule baseline projection
+        run: |
+          git fetch --depth=1 origin development
+          git show FETCH_HEAD:.codex/acf/bootstrap.mjs > .codex/acf/bootstrap.mjs
       - name: Regenerate bootstrap and capsule
         run: |
           vp run --workspace-root capsule:bootstrap:build
