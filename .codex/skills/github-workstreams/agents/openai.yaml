@@ -1,0 +1,7 @@
+interface:
+  display_name: "GitHub Workstreams"
+  short_description: "Run remote work through draft PRs"
+  default_prompt: "Use $github-workstreams to implement this change on a remote feature branch without touching my local checkout."
+
+policy:
+  allow_implicit_invocation: true

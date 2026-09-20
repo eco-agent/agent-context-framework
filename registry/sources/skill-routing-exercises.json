@@ -168,6 +168,22 @@
       "changedDecision": "Remove layers that own no decision, shrink mutable state scope, and retain boundaries that own a named guarantee.",
       "observation": "The before-and-after call path, state owner, retained boundary decisions, and focused behavior checks.",
       "gracePath": "Retain the public or authority boundary and report the remaining trace cost when cleanup is outside scope."
+    },
+    {
+      "component": "skill-github-workstreams",
+      "positivePrompt": "Use the GitHub connector to implement this feature without changing my local checkout.",
+      "negativePrompt": "Explain this local diff without changing files, branches, or pull requests.",
+      "changedDecision": "Pin development, create one remote task branch, commit bounded slices with Git objects, and open a draft pull request to development.",
+      "observation": "The exact baseline and head commits, non-forced branch updates, a draft pull request, commit-bound verification, and an unchanged local checkout.",
+      "gracePath": "Leave the last safe remote state intact and report the missing connector operation, authority, or conflicting branch head."
+    },
+    {
+      "component": "skill-coordinate-persistent-tasks",
+      "positivePrompt": "Find the existing Codex task that owns authentication, send it this contract change, and run one Astra review pass because the change crosses the session boundary.",
+      "negativePrompt": "Use disposable read-only agents to locate every import of this function.",
+      "changedDecision": "Reuse the pinned Sol Medium domain owner by native task ID and invoke Astra only for the named cross-domain review.",
+      "observation": "One responsibility maps to one pinned task ID, the existing owner receives the change, and the Astra pass records its bounded reads, messages, and stopping point.",
+      "gracePath": "If no owner exists, create and pin one Sol Medium task. If several tasks claim the domain, report their IDs and ask the user to choose."
     }
   ]
 }

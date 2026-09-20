@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "revision": "0.19.0",
-  "decisionPath": "registry/decisions/0.19.0-implicit-skill-authoring-guidance.md",
+  "revision": "0.21.0",
+  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
   "components": [
     {
       "name": "core",
-      "dependencies": [],
+      "dependencies": ["skill-github-workstreams"],
       "capabilities": [
         { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
@@ -78,6 +78,34 @@
           "sourcePath": "registry/sources/attributions/core/SOURCE.json",
           "targetPath": ".codex/acf/sources/core/SOURCE.json",
           "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-github-workstreams",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/github-workstreams",
+          "targetDirectory": ".codex/skills/github-workstreams",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
+      "name": "skill-coordinate-persistent-tasks",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/coordinate-persistent-tasks",
+          "targetDirectory": ".codex/skills/coordinate-persistent-tasks",
+          "excludedPrefixes": []
         }
       ]
     },
@@ -827,7 +855,7 @@
     },
     {
       "name": "codex-agents",
-      "dependencies": ["core"],
+      "dependencies": ["core", "skill-coordinate-persistent-tasks"],
       "capabilities": [],
       "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [
@@ -848,8 +876,8 @@
         {
           "kind": "artifact",
           "operation": "file",
-          "sourcePath": "registry/sources/codex/agents/worker.toml",
-          "targetPath": ".codex/agents/worker.toml",
+          "sourcePath": "registry/sources/codex/agents/investigator.toml",
+          "targetPath": ".codex/agents/investigator.toml",
           "mediaType": "application/toml"
         },
         {
@@ -861,7 +889,7 @@
             "agents.default",
             "agents.interrupt_message",
             "agents.scout",
-            "agents.worker"
+            "agents.investigator"
           ]
         }
       ]

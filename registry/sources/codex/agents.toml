@@ -2,13 +2,13 @@
 interrupt_message = true
 
 [agents.default]
-description = "General-purpose Sol agent for tasks without a more precise role."
+description = "Sol Medium domain agent for continuing implementation and maintenance."
 config_file = "./agents/default.toml"
 
 [agents.scout]
-description = "Read-only Luna Max agent for bounded investigation and research."
+description = "Read-only Luna xHigh retriever for bounded source-based context gathering."
 config_file = "./agents/scout.toml"
 
-[agents.worker]
-description = "Sol High worker for one bounded, exclusively owned implementation task."
-config_file = "./agents/worker.toml"
+[agents.investigator]
+description = "Read-only Luna Max investigator for small independent questions that justify deeper inference."
+config_file = "./agents/investigator.toml"

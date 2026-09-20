@@ -1,72 +1,40 @@
 # Git transaction
 
-Use Git history as the durable record of a bounded workflow. `development` is
-the human-owned integration branch. Each agent work stream uses one
-`codex/<task>` branch and one checkout.
+Use Git history as the durable record of a bounded workflow. `main` is the
+deployment branch. `development` is the human-owned integration branch and
+the branch the user runs locally.
 
-## Ownership
+## GitHub connector path
 
-Record these values before mutation:
+When the GitHub connector can write to the repository, read and follow
+[`github-workstreams`](../../github-workstreams/SKILL.md). That skill owns
+branch creation, Git-object commits, draft pull requests, CI inspection, and the
+rule that the user's local checkout remains untouched.
 
-| Field | Required value |
-| --- | --- |
-| baseline | Full commit ID resolved from `development` |
-| branch | One `codex/<task>` branch |
-| checkout | Canonical absolute path used by the writer |
-| writer | One Sol role with write authority |
+Record the repository, exact `development` commit, remote
+`codex/<task>` branch, known head commit, pull request number, and sole writer
+in the workflow ledger. Store each new head and pull request identity before the
+next stage uses it.
 
-A remote branch isolates Git history. It does not isolate files in a shared
-checkout. Never assign two writers to the same checkout, even when they use
-different branches. Read-only scouts may inspect the checkout while the writer
-works.
+A branch update must be a non-forced fast-forward from the recorded head. A
+write conflict means the branch changed outside this workflow. Stop the write,
+inspect the new head, and reconcile it before creating another commit.
 
-Do not create linked worktrees. If another write stream needs to run at the same
-time, it needs a separately provisioned checkout outside this workflow. Stop
-when no separate checkout is available.
+## Missing connector
 
-## Start
+If the task requires remote delivery and the GitHub connector or its write
+authority is unavailable, report the missing capability. Do not modify the
+user's local checkout, create a local branch, or create a worktree as a
+substitute.
 
-1. Fetch the remote when network access is available.
-2. Resolve `development` or `origin/development` to a full commit ID.
-3. Confirm the checkout has no unrelated state that the workflow would overwrite.
-4. Create `codex/<task>` at that exact commit.
-5. Record the branch, baseline, checkout, and writer in the workflow ledger.
+A workflow may use a local checkout only when the user explicitly asks for
+local execution. One Sol writer then owns that checkout, branch, and index.
+Never assign two writers to it. Do not create linked worktrees or use
+`git stash`.
 
-Do not use `git stash`. Do not amend, reset, rebase, or force-push a branch while
-another role may be reading it.
+## Completion
 
-## Checkpoints and recovery
-
-Commit task-owned changes at logical checkpoints. A commit is the normal resume
-point. Do not create `.codex/work/<task>.md`.
-
-If an interrupted filesystem transaction cannot resume from Git alone, write
-the smallest recovery record that identifies the transaction and its verified
-boundary below ignored `.codex/acf/state/`. Delete it after recovery. Do not put
-analysis, progress narration, copied context, or durable decisions there.
-
-Stop on any of these conditions:
-
-- the recorded baseline no longer identifies the intended work;
-- the checkout contains unrelated changes that overlap the task;
-- another writer owns the checkout;
-- a checkpoint cannot be created without including unrelated files;
-- recovery evidence disagrees with Git or the filesystem.
-
-## Delivery
-
-1. Run the required verification on a committed, clean checkout.
-2. Push only the current `codex/<task>` branch.
-3. Open or update a pull request targeting `development`.
-4. Report the exact task-branch tip, verification result, and pull-request URL.
-
-Agents never merge the pull request and never commit directly to `development`.
-Humans own review, integration, and merge. If push or pull-request access is
-missing, preserve the local task branch and report the exact missing capability.
-Do not substitute `main`, another base branch, a patch file, or a local merge.
-
-## Cleanup
-
-Remove only ignored recovery state created by the completed workflow. Keep the
-task branch and pull request available for human review. Do not delete remote
-branches, integration branches, or another workflow's state.
+A remote workflow completes with a committed branch tip, the required evidence,
+and an open pull request targeting `development`. Agents never merge, deploy,
+force-push, delete branches, close pull requests, or write directly to
+`development` or `main`.

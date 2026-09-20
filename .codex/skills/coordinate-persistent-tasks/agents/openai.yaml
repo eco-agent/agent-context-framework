@@ -1,0 +1,7 @@
+interface:
+  display_name: "Persistent Codex Tasks"
+  short_description: "Reuse domain owners and invoke bounded monitoring"
+  default_prompt: "Use $coordinate-persistent-tasks to find the existing domain owner, continue its task, and invoke one bounded Astra monitoring pass only if a named trigger requires it."
+
+policy:
+  allow_implicit_invocation: true
