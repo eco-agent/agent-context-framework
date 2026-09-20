@@ -23,6 +23,7 @@ jobs:
       - run: corepack enable
       - run: corepack prepare pnpm@10.22.0 --activate
       - run: pnpm install --frozen-lockfile
+      - run: pnpm policy:build
       - name: Rebuild capsule
         run: |
           rm .codex/acf/capsule.acf
