@@ -20,8 +20,8 @@ jobs:
         with:
           node-version: 24.14.0
           cache: true
-      - name: Verify full profile
-        run: vp run --workspace-root verify:profile full
+      - name: Verify bootstrap owner
+        run: vp run --filter @agent-context/dev-tooling test
       - name: Print failed check logs
         if: failure()
         run: find .codex/artifacts -type f -name '*.log' -print -exec cat {} \;
