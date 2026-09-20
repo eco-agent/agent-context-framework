@@ -14,6 +14,7 @@
   `development`. Humans own local execution, integration, merge, and deployment.
 
 <!-- agent-context:core:start -->
+
 # Project agent context
 
 > Keep checkpoint commits small and frequent. When the GitHub connector can
