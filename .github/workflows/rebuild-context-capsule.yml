@@ -1,0 +1,41 @@
+name: Rebuild context capsule
+
+on:
+  push:
+    branches:
+      - codex/repair-context-capsule
+    paths:
+      - .github/workflows/rebuild-context-capsule.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@10.22.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Rebuild capsule
+        run: |
+          rm .codex/acf/capsule.acf
+          pnpm agent-context -- pack core skill-adopt-established-product skill-choose-react-animation skill-design-accessible-interfaces skill-design-color-systems skill-design-interface-details skill-design-web-typography skill-frontend-design-discipline skill-responsive-css-architect skill-tailwind-css-architect frontend frontend-tailwind skill-codebase-inventory skill-design-operational-boundaries skill-design-typescript-invariants skill-diagnose skill-reduce-reader-load skill-reuse-before-implementation skill-separate-shared-state skill-write-technical-prose skill-writing-great-skills skill-maintain-agent-context-framework skill-optimize-codex-sessions skill-orchestrate-codex-workflows skill-github-workstreams workflow-frontend-composition engineering typescript-engineering session-quality skill-authoring runtime-base repository-policy codex-agents codex-hooks codex-repo-context integration-oxfmt codex-runtime --cwd . --json
+          pnpm agent-context -- sync --cwd . --json
+      - name: Require capsule-only tracked change
+        run: |
+          changed="$(git diff --name-only)"
+          test "$changed" = ".codex/acf/capsule.acf"
+      - name: Commit generated capsule
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .codex/acf/capsule.acf
+          git commit -m "Rebuild context capsule"
+          git push origin HEAD:codex/repair-context-capsule
