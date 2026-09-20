@@ -542,9 +542,9 @@
     },
     {
       "kind": "file",
-      "invariantId": "codex-agent-worker-profile",
-      "sourcePath": "registry/sources/codex/agents/worker.toml",
-      "targetPath": ".codex/agents/worker.toml"
+      "invariantId": "codex-agent-investigator-profile",
+      "sourcePath": "registry/sources/codex/agents/investigator.toml",
+      "targetPath": ".codex/agents/investigator.toml"
     },
     {
       "kind": "file",
