@@ -1,0 +1,27 @@
+name: Verify capsule bootstrap repair
+
+on:
+  pull_request:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: 24.14.0
+          cache: true
+      - name: Verify full profile
+        run: vp run --workspace-root verify:profile full
+      - name: Print failed check logs
+        if: failure()
+        run: find .codex/artifacts -type f -name '*.log' -print -exec cat {} \;
