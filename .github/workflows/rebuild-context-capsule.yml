@@ -1,4 +1,5 @@
 name: Rebuild context capsule
+# One-shot repair workflow. Remove after the generated capsule lands.
 
 on:
   push:
