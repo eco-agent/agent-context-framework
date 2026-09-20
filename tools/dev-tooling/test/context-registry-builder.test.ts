@@ -42,6 +42,7 @@ const packagedSkills = [
   "design-interface-details",
   "design-web-typography",
   "frontend-design-discipline",
+  "github-workstreams",
   "responsive-css-architect",
   "tailwind-css-architect",
   "codebase-inventory",
@@ -89,7 +90,7 @@ test("Wave 1 and Wave 2 registry is deterministic, licensed, and excludes genera
     "skill-optimize-codex-sessions",
   ];
   assert.equal(first.components.filter((component) =>
-    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 21);
+    component.name.startsWith("skill-") && component.name !== "skill-authoring").length, 22);
   for (const component of first.components) {
     assert.match(component.revision, /^sha256:[a-f0-9]{64}$/u);
   }
@@ -770,7 +771,7 @@ test("orchestration authoring installation preserves the consumer package graph"
     const preview = await planProjectSelection(root, frameworkRoot, [componentName]);
     assert.deepEqual(preview.requestedComponents, [componentName]);
     assert.equal(preview.resolvedComponents.includes(componentName), true);
-    assert.deepEqual(preview.transitiveComponents, []);
+    assert.deepEqual(preview.transitiveComponents, ["skill-github-workstreams"]);
     assert.equal(preview.footprint.skillTargetCount > 0, true);
     assert.equal(preview.footprint.runtimeTargetCount, 0);
     for (const capability of ["codex-authentication", "network", "node"]) {
@@ -791,7 +792,9 @@ test("orchestration authoring installation preserves the consumer package graph"
     assert.equal(await exists(path.join(root, "package-lock.json")), false);
     assert.equal(
       installed.writtenPaths.filter((targetPath) => targetPath.startsWith(".codex/skills/"))
-        .every((targetPath) => targetPath.startsWith(".codex/skills/orchestrate-codex-workflows/")),
+        .every((targetPath) =>
+          targetPath.startsWith(".codex/skills/orchestrate-codex-workflows/") ||
+          targetPath.startsWith(".codex/skills/github-workstreams/")),
       true,
     );
     assert.equal(
@@ -890,7 +893,7 @@ test("governance rejects changes outside the named root instruction sections", a
     await writeFile(
       agentsPath,
       (await readFile(agentsPath, "utf8")).replace(
-        "Preserve unrelated changes. Agents may push only their `codex/<task>` branch",
+        "Agents may write only their remote `codex/<task>` branch",
         "Unrelated changes may be discarded.",
       ),
       "utf8",
@@ -1071,6 +1074,10 @@ test("governance rejects dilution of restored skill guards", async () => {
       skill: "optimize-codex-sessions",
       remove: "Managed workflows require a stable `objectiveId`",
     },
+    {
+      skill: "github-workstreams",
+      remove: "Move the branch ref with `force: false`.",
+    },
   ] as const;
 
   for (const item of cases) {
@@ -1119,8 +1126,8 @@ test("governance rejects dilution of agent Git transaction semantics", async () 
     await writeFile(
       transactionPath,
       (await readFile(transactionPath, "utf8")).replace(
-        "Do not create linked worktrees.",
-        "Create linked worktrees for isolation.",
+        "non-forced fast-forward",
+        "forced update",
       ),
       "utf8",
     );
@@ -1268,6 +1275,7 @@ async function copyGovernedSkills(temporaryRoot: string): Promise<void> {
     "design-web-typography",
     "diagnose",
     "frontend-design-discipline",
+    "github-workstreams",
     "maintain-agent-context-framework",
     "optimize-codex-sessions",
     "orchestrate-codex-workflows",
