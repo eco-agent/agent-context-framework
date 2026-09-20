@@ -22,6 +22,7 @@ jobs:
           cache: true
       - name: Restore the capsule baseline projection
         run: |
+          vp run --workspace-root policy:build
           node --import tsx --input-type=module -e "import { writeFile } from 'node:fs/promises'; import { contextCapsuleEntryBytes, readContextCapsuleFile } from './tools/dev-tooling/src/context-capsule.ts'; const capsule = await readContextCapsuleFile('.codex/acf/capsule.acf'); await writeFile('.codex/acf/bootstrap.mjs', contextCapsuleEntryBytes(capsule, 'registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs'));"
       - name: Regenerate bootstrap and capsule
         run: |
