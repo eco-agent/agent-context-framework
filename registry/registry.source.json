@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "revision": "0.19.0",
-  "decisionPath": "registry/decisions/0.19.0-implicit-skill-authoring-guidance.md",
+  "revision": "0.21.0",
+  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
   "components": [
     {
       "name": "core",
-      "dependencies": [],
+      "dependencies": ["skill-github-workstreams"],
       "capabilities": [
         { "kind": "runtime", "name": "git", "requirement": "required" },
         { "kind": "codex-skill", "name": "visualize", "requirement": "recommended" }
@@ -78,6 +78,20 @@
           "sourcePath": "registry/sources/attributions/core/SOURCE.json",
           "targetPath": ".codex/acf/sources/core/SOURCE.json",
           "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-github-workstreams",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/github-workstreams",
+          "targetDirectory": ".codex/skills/github-workstreams",
+          "excludedPrefixes": []
         }
       ]
     },

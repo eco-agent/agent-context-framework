@@ -1,12 +1,14 @@
 {
   "schemaVersion": 2,
-  "revision": "0.19.0",
-  "decisionPath": "registry/decisions/0.19.0-implicit-skill-authoring-guidance.md",
+  "revision": "0.20.0",
+  "decisionPath": "registry/decisions/0.20.0-remote-github-workstreams.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:1273378819e94af8f7d889ba36d5fb2701554b0a5d4e30894ad729eb96c45fb1",
-      "dependencies": [],
+      "revision": "sha256:33419fd0f785d3c928cf392a8db6ae9667b9b376b1f15ec9d919c84aeccd5a7c",
+      "dependencies": [
+        "skill-github-workstreams"
+      ],
       "capabilities": [
         {
           "kind": "runtime",
@@ -40,7 +42,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "2ed549a002972be9a5cd3bea20f04a610cbcb65944e7bc2aa4faee7b5eed8318",
+          "sourceSha256": "123fe549f5380efb079174032d580c45496e26768073e668bd2fcea6232a3ba8",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -94,6 +96,44 @@
           "sourceSha256": "a9827bd103412b8c6a4b274deb904f3098561b7a01f671675d02c25977bd6f70",
           "targetPath": ".codex/acf/sources/core/SOURCE.json",
           "mediaType": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "skill-github-workstreams",
+      "revision": "sha256:ac237d2e3326043593945f99804d0c9b067a2c2cb031ee975d6e318c2bb5c424",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [
+        {
+          "kind": "project",
+          "spdx": "MIT",
+          "sourcePath": "LICENSE",
+          "noticePath": ".codex/acf/LICENSE.agent-context-framework",
+          "noticeSha256": "b80894bb43e7005a48bd77951dbd56ee1524a84badd708d57a058030e59013f3"
+        }
+      ],
+      "artifacts": [
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/github-workstreams/agents/openai.yaml",
+          "sourceSha256": "1b9c395ba792f7a1fc69026e8c4b9179fef6a6df409d593c9602d0b7c5316a97",
+          "targetPath": ".codex/skills/github-workstreams/agents/openai.yaml",
+          "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/github-workstreams/assets/icon.svg",
+          "sourceSha256": "8936b24f674a1250d999e2c2b5901374fb4240426f32bd1ae340c352a90d617d",
+          "targetPath": ".codex/skills/github-workstreams/assets/icon.svg",
+          "mediaType": "text/plain"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/github-workstreams/SKILL.md",
+          "sourceSha256": "a964303221057b7126b0846fbbb1074c348d68000c14b6a850ea65d293922d22",
+          "targetPath": ".codex/skills/github-workstreams/SKILL.md",
+          "mediaType": "text/markdown"
         }
       ]
     },
@@ -1495,7 +1535,7 @@
     },
     {
       "name": "skill-orchestrate-codex-workflows",
-      "revision": "sha256:3291b63d67c8fa437a0c33f209db5e1dbe0249d9edd0f8304222ebde9eda3bb3",
+      "revision": "sha256:1ad50d06de3e1bc127d0705f0a6f4d04ec8c8d83b3095f3dabddc7f8c9849798",
       "dependencies": [],
       "capabilities": [
         {
@@ -1582,7 +1622,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
-          "sourceSha256": "bad6e33944ad1b7446005fc4c9b560d448c857b0fdafce64abf59602eb763901",
+          "sourceSha256": "0ac594ffd9c31ace910108c7e3b42c03e9a9469fed2e85d369fd3b96b90ebfad",
           "targetPath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
           "mediaType": "text/markdown"
         },

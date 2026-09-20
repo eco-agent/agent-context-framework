@@ -1,9 +1,9 @@
 [
   {
     "path": "AGENTS.md",
-    "start": "> Make checkpoint commits often.",
+    "start": "> Keep checkpoint commits small and frequent.",
     "end": "# Agent Context Framework",
-    "sha256": "e816e980890b6fcaeeeacb19fb1d98e06aef2f5763f28f522ab78bb003a4754b"
+    "sha256": "9572631f204dc4aeb72b4dca1c273eed91ae933bc396e0a7e0c9b26be0149c7d"
   },
   {
     "path": "docs/AGENTS.md",
