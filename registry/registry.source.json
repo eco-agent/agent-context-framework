@@ -888,8 +888,8 @@
           "ownedMembers": [
             "agents.default",
             "agents.interrupt_message",
-            "agents.scout",
-            "agents.investigator"
+            "agents.investigator",
+            "agents.scout"
           ]
         }
       ]

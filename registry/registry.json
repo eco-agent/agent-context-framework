@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:33419fd0f785d3c928cf392a8db6ae9667b9b376b1f15ec9d919c84aeccd5a7c",
+      "revision": "sha256:00661ac8e08832214da534507b3e1f0614a32e48b8c49449d37e4aeaa84ac100",
       "dependencies": [
         "skill-github-workstreams"
       ],
@@ -42,7 +42,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "123fe549f5380efb079174032d580c45496e26768073e668bd2fcea6232a3ba8",
+          "sourceSha256": "dd467eab62d0bc1824701a3aab2448c7c4ba082e89d233687730c84b10b346af",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -139,7 +139,7 @@
     },
     {
       "name": "skill-coordinate-persistent-tasks",
-      "revision": "sha256:22dd9b0b52dd8ffadeba8ae4df2ff372633f7e543ee180e74f0608a2461669a6",
+      "revision": "sha256:74eb5d264328af5259b70934722891d413ca4e5668f56fc26dd601ed1fe7ad6b",
       "dependencies": [],
       "capabilities": [],
       "licenses": [
@@ -154,17 +154,17 @@
       "artifacts": [
         {
           "operation": "file",
-          "sourcePath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
-          "sourceSha256": "57a45d402116950cd8e92fae5b75f0c7c24fe507d065c0e479b59d426cd20db1",
-          "targetPath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
-          "mediaType": "text/markdown"
-        },
-        {
-          "operation": "file",
           "sourcePath": ".codex/skills/coordinate-persistent-tasks/agents/openai.yaml",
           "sourceSha256": "01a4a30b4989a57e00b5f0cc4f080f94d48e040323cb75a699de0ce716eab405",
           "targetPath": ".codex/skills/coordinate-persistent-tasks/agents/openai.yaml",
           "mediaType": "application/yaml"
+        },
+        {
+          "operation": "file",
+          "sourcePath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
+          "sourceSha256": "81725d58d1b74d0a100c8deb5cfe34885e18a6f53be58eefa71bda8930f5c856",
+          "targetPath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
+          "mediaType": "text/markdown"
         }
       ]
     },
@@ -2552,7 +2552,7 @@
     },
     {
       "name": "codex-agents",
-      "revision": "sha256:6494540c205ed3d6da6f074c91ed61abd5cbdbaeec7245231e472b62204a1f83",
+      "revision": "sha256:172ed608c523051131fe1d6370dc6addb110698740b99d909ea469487e3c8ad1",
       "dependencies": [
         "core",
         "skill-coordinate-persistent-tasks"
