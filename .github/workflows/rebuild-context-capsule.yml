@@ -24,6 +24,7 @@ jobs:
       - run: corepack prepare pnpm@10.22.0 --activate
       - run: pnpm install --frozen-lockfile
       - run: pnpm policy:build
+      - run: pnpm registry:build
       - name: Rebuild capsule
         run: |
           rm .codex/acf/capsule.acf
@@ -32,11 +33,12 @@ jobs:
       - name: Require capsule-only tracked change
         run: |
           changed="$(git diff --name-only)"
-          test "$changed" = ".codex/acf/capsule.acf"
+          expected="$(printf '.codex/acf/capsule.acf\\nregistry/registry.json')"
+          test "$changed" = "$expected"
       - name: Commit generated capsule
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .codex/acf/capsule.acf
+          git add .codex/acf/capsule.acf registry/registry.json
           git commit -m "Rebuild context capsule"
           git push origin HEAD:codex/repair-context-capsule
