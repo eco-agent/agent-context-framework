@@ -5,7 +5,7 @@
   "components": [
     {
       "name": "core",
-      "revision": "sha256:00661ac8e08832214da534507b3e1f0614a32e48b8c49449d37e4aeaa84ac100",
+      "revision": "sha256:976e209959444d2ac90ea3ac640040ed145f3f24b563aab76421483f999497ca",
       "dependencies": [
         "skill-github-workstreams"
       ],
@@ -86,7 +86,7 @@
         {
           "operation": "file",
           "sourcePath": "registry/sources/bootstrap/context-capsule-bootstrap-entry.mjs",
-          "sourceSha256": "5a9b7d8e62c7f7129bac6aab9c3bef7de73b21a3e03deeb04a29bb0253ff2ce0",
+          "sourceSha256": "d3e558ac3e2a9674aa56b0206936debd4a2287494b886e6afa26db30d0c6d7bc",
           "targetPath": ".codex/acf/bootstrap.mjs",
           "mediaType": "text/javascript"
         },
