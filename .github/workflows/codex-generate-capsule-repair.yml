@@ -1,9 +1,9 @@
 name: Generate capsule bootstrap repair
 
 on:
-  push:
+  pull_request:
     branches:
-      - codex/fix-capsule-bootstrap-drift
+      - development
 
 permissions:
   contents: read
