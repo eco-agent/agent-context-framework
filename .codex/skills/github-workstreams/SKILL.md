@@ -58,18 +58,21 @@ or contribute through their own branches.
 For a multi-file slice:
 
 1. Create one blob for each changed file.
-2. Create a tree based on the known current tree. Preserve every untouched path
-   and file mode.
+2. Create a tree based on the known current tree. Preserve every untouched path,
+   file mode, symlink, and submodule entry exactly as it appears in that tree.
 3. Create one commit whose parent is the known branch head.
-4. Move the branch ref with `force: false`.
-5. Record the returned commit as the new known head.
+4. Immediately before moving the ref, fetch the branch head again. Continue only
+   when it exactly matches the recorded known head.
+5. Move the branch ref with `force: false`.
+6. Record the returned commit as the new known head.
 
 Objects created before the ref update are harmless. The branch changes only at
 the final step.
 
-A non-fast-forward rejection means another actor changed the branch. Fetch the
-new head and inspect the difference. Reconcile it in a new commit or ask the
-branch owner to decide. Never force the ref through the conflict.
+A changed pre-update head or non-fast-forward rejection means another actor
+changed the branch. Stop the write, fetch the new head, and inspect the
+difference. Reconcile it in a new commit or ask the branch owner to decide.
+Never force the ref through the conflict.
 
 Use file-level create, update, or delete operations only for a genuinely
 isolated one-file change.
@@ -93,8 +96,15 @@ Update the same branch and pull request as later slices land. Do not create
 another pull request for the same work stream.
 
 Use a stacked pull request only when a change truly depends on an unmerged
-branch. Name that dependency in the child pull request. Otherwise branch from
-the current `development` commit.
+branch. Set the child pull request's base to the parent work branch and name the
+dependency in the child pull request. Until the parent merges, compare and
+verify the child against that parent head.
+
+After the parent merges, do not treat the child as reconciled automatically.
+Fetch the merged parent and the child head, move or rebuild the child on the
+updated `development` history without rewriting shared history, deliberately
+retarget the child pull request to `development`, and verify the resulting
+head. Otherwise branch from the current `development` commit.
 
 ## Separate implementation from verification
 
@@ -112,9 +122,12 @@ failed job
 failed step or log
 ```
 
-Do not poll a running workflow. Report its identity and continue independent
-work, or stop with the running state recorded. After a run reaches a terminal
-state, do not request it again unless a rerun or new commit creates a new run.
+Do not poll a running workflow. Record the workflow-run ID and tested commit SHA
+as one evidence pair. Report that pair and continue independent work, or stop
+with the running state recorded. A passing run is valid only while its tested
+SHA equals the current pull request head. If the head moves, mark the older run
+stale and obtain evidence for the new head. After a run reaches a terminal state,
+do not request it again unless a rerun or new commit creates a new run.
 
 Classify a failure before changing code:
 
@@ -134,9 +147,12 @@ or remains unexecuted.
 After the pull request exists, prefer its diff, changed files, review threads,
 and exact head commit over another repository-wide search.
 
-Never merge, deploy, force-push, delete a branch, close a pull request, or write
-to `development` or `main`. Leave the branch and pull request available for
-human review.
+Do not autonomously merge, deploy, force-push, rewrite history, delete a branch,
+close a pull request, or write to `development` or `main`. Perform one of
+those operations only when the user explicitly requests that exact operation.
+Never infer permission from task completion, approval, passing CI, or a general
+request to finish. Leave the branch and pull request available for human review
+when no such request exists.
 
 ## Completion
 
