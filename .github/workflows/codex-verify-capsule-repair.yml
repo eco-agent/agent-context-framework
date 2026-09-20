@@ -20,6 +20,8 @@ jobs:
         with:
           node-version: 24.14.0
           cache: true
+      - name: Build workspace dependencies
+        run: vp run --workspace-root build
       - name: Verify bootstrap owner
         run: vp run --filter @agent-context/dev-tooling test
       - name: Print failed check logs
