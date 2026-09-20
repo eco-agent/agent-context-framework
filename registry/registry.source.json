@@ -96,6 +96,20 @@
       ]
     },
     {
+      "name": "skill-coordinate-persistent-tasks",
+      "dependencies": [],
+      "capabilities": [],
+      "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
+      "artifacts": [
+        {
+          "kind": "directory",
+          "sourceDirectory": ".codex/skills/coordinate-persistent-tasks",
+          "targetDirectory": ".codex/skills/coordinate-persistent-tasks",
+          "excludedPrefixes": []
+        }
+      ]
+    },
+    {
       "name": "skill-adopt-established-product",
       "dependencies": [],
       "capabilities": [
@@ -841,7 +855,7 @@
     },
     {
       "name": "codex-agents",
-      "dependencies": ["core"],
+      "dependencies": ["core", "skill-coordinate-persistent-tasks"],
       "capabilities": [],
       "licenses": [{ "kind": "project", "spdx": "MIT", "sourcePath": "LICENSE", "noticePath": ".codex/acf/LICENSE.agent-context-framework" }],
       "artifacts": [

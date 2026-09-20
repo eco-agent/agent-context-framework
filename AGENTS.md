@@ -117,26 +117,27 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 
 ## Agent routing
 
-Use native scout subagents proactively when a task contains two or more
-independent read-only investigations that can return once. Give each scout one
-question, a bounded scope, the evidence it must return, and a stopping condition.
-Start independent scouts in parallel up to the capacity Codex exposes. Do not add
-a smaller project limit. Keep doing local work that does not depend on their
-answers.
+Use `coordinate-persistent-tasks` when work belongs to a continuing domain or
+needs an invoked cross-domain review. Sol Medium tasks own domains and are the
+normal user interaction point. Find and reuse the existing pinned owner by its
+native task ID before creating another task.
 
-Scouts use Luna in a read-only sandbox. Treat their output as evidence, not a
-decision. The primary Sol agent owns task interpretation, contradiction
-resolution, architecture judgment, and the decision about what becomes
-repository state. Sol must gather evidence directly when the search itself
-requires interpreting ambiguous contracts or deciding what counts.
+Astra Medium performs one bounded monitoring and delegation pass only after a
+user request, an owner request, an ownership conflict, a shared-contract change,
+an unexplained verification failure, stalled work, or an explicit review
+boundary. The pass reads affected tasks, sends the required actions, optionally
+waits once for a dispatched result, reports, and stops. It never polls tasks
+continuously or rereads unchanged state.
 
-When the provider marks a scout failure as transient, replace that evidence lane
-once. If the replacement also fails, Sol completes the lane directly or reports
-the missing evidence. Do not wait on broken delegation after the second failure.
+Use Luna xHigh for ordinary bounded read-only retrieval. Use Luna Max for one
+small independent read-only investigation that warrants deeper inference. Give
+either role one question, a revision, readable scope, expected evidence, and a
+stopping condition. Luna output is evidence. The requesting Sol owner or invoked
+Astra monitor decides what follows.
 
-Only Sol agents may edit repository state. The primary may hand the current
-checkout to a Sol worker until the assignment ends. One active writer owns the
-checkout, branch, and index. Otherwise the primary remains the writer.
+Persistent Sol owners communicate directly. Do not create disposable Sol
+implementation subagents. One active writer owns each remote work branch. Use
+separate branches and pull requests when another owner must contribute.
 
 ## Work
 

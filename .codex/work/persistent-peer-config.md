@@ -24,7 +24,7 @@ Repository policy is unconfigured because `.agent-context/policy.json` is absent
 
 ## Current state
 
-The first slice changes the model profiles and removes the disposable Sol High implementation worker. The invoked Astra workflow and durable peer roster still need canonical owners.
+The first slice changes the model profiles and removes the disposable Sol High implementation worker. The native task workflow now uses pinned Codex tasks as the responsibility index. Governance, generated registry data, installation tests, and verification still need propagation.
 
 ## Topology
 
@@ -44,7 +44,8 @@ Update canonical role sources, installed projections, project defaults, and the 
 - Changed: project and default Sol reasoning from High to Medium; scout from Luna Max to Luna xHigh.
 - Removed: disposable write-capable Sol High worker and primary-agent escalation language.
 - Added: separate Luna Max investigator; direct domain-owner coordination; invoked and finite Astra escalation triggers.
-- Deferred: persistent peer roster, stable task titles, event cursors, direct message delivery, evidence applicability storage, capacity controls, and workflow projections.
+- Added: stable pinned-task titles, native task IDs as identity, exact-owner reuse, duplicate-owner conflict handling, direct messages, and a finite Astra pass.
+- Deferred: evidence applicability storage beyond Git and CI identity, host-wide capacity controls, and a richer event cursor if native task summaries prove insufficient.
 
 ## Non-goals
 
