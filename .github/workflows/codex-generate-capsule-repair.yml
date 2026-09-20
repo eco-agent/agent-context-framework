@@ -1,0 +1,42 @@
+name: Generate capsule bootstrap repair
+
+on:
+  push:
+    branches:
+      - codex/fix-capsule-bootstrap-drift
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: 24.14.0
+          cache: true
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        run: vp install
+      - name: Regenerate bootstrap and capsule
+        run: |
+          pnpm capsule:bootstrap:build
+          pnpm registry:build
+          pnpm agent-context pack --cwd .
+      - name: Verify generated repair
+        run: pnpm verify:profile full
+      - name: Collect generated files
+        run: |
+          mkdir generated-repair
+          git diff --name-only -z | tar --null -T - -czf generated-repair/generated-files.tar.gz
+      - name: Upload generated files
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-repair
+          path: generated-repair/generated-files.tar.gz
+          if-no-files-found: error
+          retention-days: 1
