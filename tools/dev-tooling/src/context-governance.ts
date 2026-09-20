@@ -37,8 +37,8 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "repository.projectContracts",
     "For code changes, run the narrowest applicable type and behavior checks before handoff.",
     "Read-only review, explanation, and status work do not authorize tests.",
-    "Use one `codex/<task>` branch for each",
-    "Never use `git stash`",
+    "create one remote `codex/<task>` branch",
+    "Do not create linked worktrees or use `git stash`.",
     "Prefer a package dependency when its public API is enough.",
     "Record the upstream URL, commit, prefix, license, and update procedure.",
     "stop and report the missing capability instead of inventing another vendoring method.",
@@ -55,7 +55,7 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
   ]],
   ["registry/sources/instructions/framework-root-prefix.md", [
     "use the `github-workstreams` skill",
-    "leave the user's local checkout untouched.",
+    "user's local checkout untouched.",
     "`main` is the deployment branch.",
     "`development` is the human-owned local",
     "never merge it.",
@@ -312,11 +312,11 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "unbounded retries, routes, transitions, or reviewer passes",
   ]],
   [".codex/skills/orchestrate-codex-workflows/references/git-transaction.md", [
-    "Each agent work stream uses one",
-    "Never assign two writers to the same checkout",
-    "Do not create linked worktrees.",
-    "Do not use `git stash`.",
-    "Agents never merge the pull request",
+    "[`github-workstreams`](../../github-workstreams/SKILL.md)",
+    "exact `development` commit",
+    "non-forced fast-forward",
+    "Do not modify the user's local checkout",
+    "Agents never merge, deploy, force-push, delete branches, close pull requests",
   ]],
 ]);
 
@@ -711,3 +711,4 @@ function normalizeLf(value: string): string {
 function contentHash(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
 }
+

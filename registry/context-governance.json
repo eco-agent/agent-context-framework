@@ -1,17 +1,17 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.19.0",
-  "decisionPath": "registry/decisions/0.19.0-implicit-skill-authoring-guidance.md",
+  "registryRevision": "0.20.0",
+  "decisionPath": "registry/decisions/0.20.0-remote-github-workstreams.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "2ed549a002972be9a5cd3bea20f04a610cbcb65944e7bc2aa4faee7b5eed8318"
+      "sha256": "123fe549f5380efb079174032d580c45496e26768073e668bd2fcea6232a3ba8"
     },
     {
       "invariantId": "framework-root-prefix",
       "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
-      "sha256": "cbbc6554009cbcedaa446aed67089a4bc53077b063299582c7aee7054cf7a80d"
+      "sha256": "d631df6061aa05193b2b26d49f229d961b8658adc64b75703fe29eee7e4ff5d0"
     },
     {
       "invariantId": "acf-generated-ignore",
@@ -74,6 +74,16 @@
       "sha256": "e1017944798b6548cb44ea428253645cc5c81f0d4febb6f0cc8c36611a300801"
     },
     {
+      "invariantId": "github-workstreams-contract",
+      "sourcePath": ".codex/skills/github-workstreams/SKILL.md",
+      "sha256": "a964303221057b7126b0846fbbb1074c348d68000c14b6a850ea65d293922d22"
+    },
+    {
+      "invariantId": "github-workstreams-invocation",
+      "sourcePath": ".codex/skills/github-workstreams/agents/openai.yaml",
+      "sha256": "1b9c395ba792f7a1fc69026e8c4b9179fef6a6df409d593c9602d0b7c5316a97"
+    },
+    {
       "invariantId": "established-product-adoption",
       "sourcePath": ".codex/skills/adopt-established-product/SKILL.md",
       "sha256": "78af4c2e2df2ed5062f81f1498d07c3bdaf01cad310673e048b688473ec0fc80"
@@ -106,7 +116,7 @@
     {
       "invariantId": "skill-routing-exercises",
       "sourcePath": "registry/sources/skill-routing-exercises.json",
-      "sha256": "a09258a518ba30a2a9305e4d99cab3df4e3b1ef72e98b0f31944c11334fd63dd"
+      "sha256": "c87e2cff58df609a15adbfa59b32156747f300851b6cbfc4de4a151c4533eb70"
     },
     {
       "invariantId": "session-optimization",
@@ -276,7 +286,7 @@
     {
       "invariantId": "orchestration-git-transaction",
       "sourcePath": ".codex/skills/orchestrate-codex-workflows/references/git-transaction.md",
-      "sha256": "bad6e33944ad1b7446005fc4c9b560d448c857b0fdafce64abf59602eb763901"
+      "sha256": "0ac594ffd9c31ace910108c7e3b42c03e9a9469fed2e85d369fd3b96b90ebfad"
     },
     {
       "invariantId": "orchestration-loop-catalog",
@@ -636,3 +646,4 @@
     }
   ]
 }
+
