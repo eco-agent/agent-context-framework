@@ -116,7 +116,7 @@
     {
       "invariantId": "skill-routing-exercises",
       "sourcePath": "registry/sources/skill-routing-exercises.json",
-      "sha256": "c87e2cff58df609a15adbfa59b32156747f300851b6cbfc4de4a151c4533eb70"
+      "sha256": "df687aa30c7469464a81ba725d43d59860597cdb65ec1af360941daaf31eaecc"
     },
     {
       "invariantId": "session-optimization",
