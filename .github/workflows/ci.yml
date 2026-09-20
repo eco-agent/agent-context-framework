@@ -38,7 +38,7 @@ jobs:
         run: vp install
 
       - name: Check generated registry
-        run: pnpm registry:check
+        run: vp run --workspace-root registry:check
 
       - name: Check formatting and lint
         run: vp check
