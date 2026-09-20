@@ -251,7 +251,7 @@
     {
       "invariantId": "codex-agent-selection",
       "sourcePath": "registry/sources/codex/agents.toml",
-      "sha256": "7cc7a331c267fac4d1a43a6f4b27787dbcf2608866034e2d9e4265e8c4226735"
+      "sha256": "4422d10775a1ae166ec15bb25f0ff590ef30ed14dcad7f091357874d0d4153cf"
     },
     {
       "invariantId": "codex-agent-default-profile",
@@ -416,7 +416,7 @@
     {
       "invariantId": "persistent-task-coordination",
       "sourcePath": ".codex/skills/coordinate-persistent-tasks/SKILL.md",
-      "sha256": "57a45d402116950cd8e92fae5b75f0c7c24fe507d065c0e479b59d426cd20db1"
+      "sha256": "81725d58d1b74d0a100c8deb5cfe34885e18a6f53be58eefa71bda8930f5c856"
     },
     {
       "invariantId": "persistent-task-coordination-invocation",
