@@ -24,11 +24,11 @@ jobs:
         run: vp install
       - name: Regenerate bootstrap and capsule
         run: |
-          pnpm capsule:bootstrap:build
-          pnpm registry:build
-          pnpm agent-context pack --cwd .
+          vp run --workspace-root capsule:bootstrap:build
+          vp run --workspace-root registry:build
+          vp run --workspace-root agent-context -- pack --cwd .
       - name: Verify generated repair
-        run: pnpm verify:profile full
+        run: vp run --workspace-root verify:profile -- full
       - name: Collect generated files
         run: |
           mkdir generated-repair
