@@ -1,13 +1,14 @@
-> Make checkpoint commits often. Start agent work from `development` on a
-> `codex/<task>` branch. Use one writer per checkout and do not create worktrees.
-> Push the task branch and open a pull request to `development`, but never merge
-> it. Use the `visualize` skill when an in-conversation visual would materially
-> improve understanding. Create a standalone HTML response file only when the
-> user asks for an export.
+> Keep checkpoint commits small and frequent. When the GitHub connector can
+> write to the repository, use the `github-workstreams` skill and leave the
+> user's local checkout untouched. Start remote agent work from `development`
+> on a `codex/<task>` branch, open a draft pull request to `development`, and
+> never merge it. Use the `visualize` skill when an in-conversation visual
+> would materially improve understanding. Create a standalone HTML response
+> file only when the user asks for an export.
 
 # Agent Context Framework
 
-- Preserve unrelated changes. Agents may push only their `codex/<task>` branch
-  and open or update its pull request to `development`. Humans own
-  `development`, integration, and merge. Never deploy without an explicit user
-  request.
+- `main` is the deployment branch. `development` is the human-owned local
+  integration branch. Agents may write only their remote `codex/<task>` branch
+  through the GitHub connector and may open or update its pull request to
+  `development`. Humans own local execution, integration, merge, and deployment.

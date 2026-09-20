@@ -1,11 +1,12 @@
 # Project agent context
 
-> Make checkpoint commits often. Start agent work from `development` on a
-> `codex/<task>` branch. Use one writer per checkout and do not create worktrees.
-> Push the task branch and open a pull request to `development`, but never merge
-> it. Use the `visualize` skill when an in-conversation visual would materially
-> improve understanding. Create a standalone HTML response file only when the
-> user asks for an export.
+> Keep checkpoint commits small and frequent. When the GitHub connector can
+> write to the repository, use the `github-workstreams` skill and leave the
+> user's local checkout untouched. Start remote agent work from `development`
+> on a `codex/<task>` branch, open a draft pull request to `development`, and
+> never merge it. Use the `visualize` skill when an in-conversation visual
+> would materially improve understanding. Create a standalone HTML response
+> file only when the user asks for an export.
 
 ## Communication
 
@@ -122,28 +123,42 @@ checkout, branch, and index. Otherwise the primary remains the writer.
 
 ## Work
 
-Preserve unrelated changes. Agents may push only their `codex/<task>` branch and
-open or update its pull request to `development`. Humans own `development`,
-integration, and merge. Never deploy without an explicit user request.
+Preserve unrelated changes. `main` is the deployment branch. `development`
+is the human-owned integration branch and the branch the user runs locally.
+Humans own local execution, integration, merge, and deployment.
 
-Resolve `development` to a full commit ID before creating a branch. A moving
-branch name is not durable evidence. Use one `codex/<task>` branch for each
-logical work stream and the current checkout for its files. Do not create linked
-worktrees. A remote branch does not isolate concurrent writes to the same files
-on disk.
+When the GitHub connector can write to the repository, use the
+`github-workstreams` skill for non-trivial coding work. In that mode, do not
+edit the user's local files, index, branches, worktrees, dependencies, build
+outputs, processes, or caches. Read and write repository state through the
+connector. Resolve `development` to a full commit ID, create one remote
+`codex/<task>` branch from that commit, give it one writer, and expose the work
+through a draft pull request targeting `development`.
 
-Keep task-owned dirty state in checkpoint commits on the task branch. Never use
-`git stash`, and never include unrelated user changes in a checkpoint.
+Use branches to represent incomplete or alternate product behavior. Do not add
+an environment variable or feature flag whose only purpose is to reveal work
+that can live on a named branch. Secrets and real environment-specific
+addresses may still use environment variables. The same documented run command
+should start every product branch.
 
-Do not create a task work record by default. Put durable decisions in their
-canonical project documents. If an interrupted filesystem transaction needs
-recovery state, write only the fields needed to resume below the ignored
-`.codex/acf/state/` directory and remove them after recovery.
+Keep task-owned state in small checkpoint commits. For multi-file changes
+through the GitHub connector, create blobs, one tree based on the known current
+tree, and one commit before moving the branch ref without force. If the ref
+update conflicts, inspect the new remote head and reconcile it. Never overwrite
+another writer's commit.
 
-At completion, push the `codex/<task>` branch and open or update its pull request
-against `development`. Agents never merge or commit directly to `development`.
-Report missing remote or pull-request access instead of substituting another
-integration path.
+Do not create linked worktrees or use `git stash`. Do not create a task work
+record by default. Put durable decisions in their canonical project documents.
+If an interrupted filesystem transaction needs recovery state, write only the
+fields needed to resume below the ignored `.codex/acf/state/` directory and
+remove them after recovery.
+
+Open a draft pull request after the first coherent checkpoint and update that
+pull request throughout the task. Agents may push only their
+`codex/<task>` branch. They never merge, commit directly to `development` or
+`main`, delete branches, close pull requests, deploy, or force-push. If the
+GitHub connector or its write authority is missing, report the missing
+capability. Do not mutate the user's local checkout as a substitute.
 
 Complete one cross-layer slice when the work reaches product assembly. For an
 approved staged frontend program, complete the current design stage instead of
