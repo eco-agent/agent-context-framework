@@ -431,7 +431,7 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     "If the project has a component library for that role, use its component.",
     "Do not hand-write composite behavior",
     "A muted one-pixel separator is not default decoration",
-    "Default to minimalism",
+    "Fluid Functionalism",
   ]) {
     assert.match(normalizedFrontendSource, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
   }

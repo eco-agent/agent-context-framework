@@ -73,8 +73,15 @@ background.
 
 Every frontend must set `-webkit-font-smoothing: antialiased` and
 `-moz-osx-font-smoothing: grayscale` on `body` in the global base stylesheet.
-Default to minimalism. Use claymorphism, glassmorphism, or neumorphism only when
-specified.
+When a project has no approved design system, use
+[Fluid Functionalism](https://github.com/mickadesign/fluid-functionalism) as the
+default. Start with its shared sizes, surfaces, components, and motion that
+makes state changes legible. Match its Radix or Base UI variant to the project's
+existing primitives. Keep project-owned tokens and component behavior unless
+the approved design calls for a change. Do not add a component or animation
+without a role in the user's task. If the project cannot adopt the system,
+record the constraint and follow its existing design. Use claymorphism,
+glassmorphism, or neumorphism only when specified.
 
 Bind final visual acceptance to the exact evidence and Git revision the human
 reviewed. Automated checks may prove that evidence exists and required states

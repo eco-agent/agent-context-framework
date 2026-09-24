@@ -31,7 +31,7 @@
     {
       "invariantId": "frontend-baseline",
       "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
-      "sha256": "9c4bfae425b95dc8d637286cc583afc89633aa986905172cf2badeb0e3292f8b"
+      "sha256": "78c7df3296b37818c2891f747779d1d958e65568c76855c098715d71cd034221"
     },
     {
       "invariantId": "frontend-representation-router",

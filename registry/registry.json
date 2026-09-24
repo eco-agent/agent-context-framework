@@ -540,7 +540,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:b39593ca727ebe71f40df5daee46b58ed9f3c7d0deac711ae142d86102a9e60c",
+      "revision": "sha256:8e2756385bdff898ab926e2fc1bfa630386201ede14e2e53b969bdf24494a8ea",
       "dependencies": [],
       "capabilities": [
         {
@@ -611,7 +611,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
-          "sourceSha256": "9c4bfae425b95dc8d637286cc583afc89633aa986905172cf2badeb0e3292f8b",
+          "sourceSha256": "78c7df3296b37818c2891f747779d1d958e65568c76855c098715d71cd034221",
           "targetPath": ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
           "mediaType": "text/markdown"
         },

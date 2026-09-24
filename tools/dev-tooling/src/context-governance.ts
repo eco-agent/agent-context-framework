@@ -114,6 +114,7 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "If the project has a component library for that role, use its component.",
     "Do not hand-write composite behavior such as dialogs, popovers, menus, tooltips, comboboxes, listboxes, tabs, accordions, toasts, date pickers, or data grids until you have checked the project's component system and assessed a maintained accessible implementation.",
     "A muted one-pixel separator is not default decoration and must not compensate for weak hierarchy.",
+    "Fluid Functionalism",
   ]],
   ["registry/sources/instructions/frontend-tailwind.md", [
     "When project policy selects Tailwind, use `tailwind-css-architect`",
