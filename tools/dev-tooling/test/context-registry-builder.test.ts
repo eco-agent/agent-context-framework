@@ -416,7 +416,11 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     path.join(frameworkRoot, "registry", "sources", "instructions", "frontend.md"),
     "utf8",
   );
-  const normalizedFrontendSource = frontendSource.replace(/\s+/gu, " ");
+  const frontendBaseline = await readFile(
+    path.join(frameworkRoot, ".codex", "skills", "frontend-design-discipline", "references", "frontend-baseline.md"),
+    "utf8",
+  );
+  const normalizedFrontendSource = frontendBaseline.replace(/\s+/gu, " ");
   for (const required of [
     "Do not make product decisions from model priors or a familiar generic interface.",
     "Treat schemas and the current implementation as evidence, not as the default interface.",
@@ -427,7 +431,7 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     "If the project has a component library for that role, use its component.",
     "Do not hand-write composite behavior",
     "A muted one-pixel separator is not default decoration",
-    "Default to minimalism",
+    "Fluid Functionalism",
   ]) {
     assert.match(normalizedFrontendSource, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
   }
@@ -439,11 +443,13 @@ test("installed frontend and skill bytes retain canonical anti-dilution semantic
     assert.equal((await diffProject(root, frameworkRoot)).current, true);
     const installedAgents = await readFile(path.join(root, "AGENTS.md"), "utf8");
     assert.equal(installedAgents.includes(frontendSource), true);
+    assert.match(installedAgents, /frontend-baseline\.md/u);
 
     for (const expected of [
       ".codex/skills/frontend-design-discipline/assets/design-search.md",
       ".codex/skills/frontend-design-discipline/assets/component-lab.md",
       ".codex/skills/frontend-design-discipline/assets/visual-evidence.md",
+      ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
       ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
       ".codex/skills/frontend-design-discipline/references/interaction-studies.md",
       ".codex/skills/frontend-design-discipline/references/precedent-evidence.md",

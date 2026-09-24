@@ -1,18 +1,4 @@
 ## Tailwind frontend
 
-Select these instructions only when the project contract names Tailwind CSS as
-the frontend styling system.
-
-Use `skill-tailwind-css-architect` for Tailwind configuration, utility
-boundaries, and component styling. Tailwind utilities are the normal
-representation for styles Tailwind can express. `skill-responsive-css-architect`
-decides layout relationships and responsive behavior, but it does not move
-utility-expressible styling into raw CSS.
-
-Import `shadow-plugin` once, after `tailwindcss`, in the Tailwind entry
-stylesheet.
-
-Use `shadow-plugin` for elevated surfaces. Replace a border or ring combined
-with a shadow by one `smooth-shadow-ring-*` class. Use `smooth-shadow-*` when the
-surface needs no edge stroke. Preserve keyboard focus with
-`focus-visible:outline-*`.
+When project policy selects Tailwind, use `tailwind-css-architect` for
+configuration, utilities, component styling, and responsive CSS ownership.

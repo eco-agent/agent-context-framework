@@ -1,17 +1,17 @@
 {
   "schemaVersion": 3,
-  "registryRevision": "0.21.0",
-  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
+  "registryRevision": "0.21.1",
+  "decisionPath": "registry/decisions/0.21.1-prune-agent-instructions.md",
   "protectedSources": [
     {
       "invariantId": "portable-core",
       "sourcePath": "registry/sources/instructions/core.md",
-      "sha256": "dd467eab62d0bc1824701a3aab2448c7c4ba082e89d233687730c84b10b346af"
+      "sha256": "9039d26e8558cbc2f50ffdff932f80f9b49b344f58777f6913e2f9c7ba30cdba"
     },
     {
       "invariantId": "framework-root-prefix",
       "sourcePath": "registry/sources/instructions/framework-root-prefix.md",
-      "sha256": "d631df6061aa05193b2b26d49f229d961b8658adc64b75703fe29eee7e4ff5d0"
+      "sha256": "de5eb690db08e196b1150720baa4685e5bec9a825f7b36611f922117b138b9b2"
     },
     {
       "invariantId": "acf-generated-ignore",
@@ -26,12 +26,17 @@
     {
       "invariantId": "frontend-discipline",
       "sourcePath": "registry/sources/instructions/frontend.md",
-      "sha256": "7a20113e06ad54dc20f98f105e413f14e68c117bf1561d9565cfbf11e3da15fb"
+      "sha256": "c69e3a01b88798046c7f4b78b58e6bd1539612c0066be37a6708280ad83b9fce"
+    },
+    {
+      "invariantId": "frontend-baseline",
+      "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
+      "sha256": "78c7df3296b37818c2891f747779d1d958e65568c76855c098715d71cd034221"
     },
     {
       "invariantId": "frontend-representation-router",
       "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-      "sha256": "3c1a3f2cb882e60117ea447e46bd545dcfaf855bacb1f33dafc8fcdc57839fd2"
+      "sha256": "baf468b55e3160a1fb475b7f84faa41b6b61a720ae7e48a695d3ed7c1d295e95"
     },
     {
       "invariantId": "frontend-accessible-component-reuse",
@@ -216,7 +221,7 @@
     {
       "invariantId": "frontend-tailwind-explicit",
       "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-      "sha256": "9630dd6c78d58e3f736448080a4c8a78a4abe7e4b2cb761be83d8b75f59c4eaa"
+      "sha256": "fb97f90cf17b2a54165f7e4db0b5ec6f96706a1c2a3a5aeeed45e760a9b25c62"
     },
     {
       "invariantId": "documentation-prose",
@@ -520,13 +525,6 @@
       "sourcePath": "registry/sources/instructions/repository-policy.md",
       "targetPath": "AGENTS.md",
       "heading": "## Repository policy"
-    },
-    {
-      "kind": "markdown-section",
-      "invariantId": "portable-core",
-      "sourcePath": "registry/sources/instructions/core.md",
-      "targetPath": "AGENTS.md",
-      "heading": "## Writing check"
     },
     {
       "kind": "file",
