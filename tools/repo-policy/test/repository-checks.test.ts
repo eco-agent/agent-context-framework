@@ -14,8 +14,12 @@ test("instruction hierarchy preserves every legacy block verbatim", async () => 
   assert.deepEqual(await checkAgents(root), []);
 });
 
-test("instruction hierarchy retains communication, anti-prior, and direct-reuse rules", async () => {
+test("instruction hierarchy routes writing and frontend detail to skills", async () => {
   const rootInstructions = await readFile(path.join(root, "AGENTS.md"), "utf8");
+  const frontendBaseline = await readFile(
+    path.join(root, ".codex/skills/frontend-design-discipline/references/frontend-baseline.md"),
+    "utf8",
+  );
   const frontendInstructions = await readFile(
     path.join(root, ".codex/skills/frontend-design-discipline/SKILL.md"),
     "utf8",
@@ -26,9 +30,9 @@ test("instruction hierarchy retains communication, anti-prior, and direct-reuse 
   );
   assert.match(rootInstructions, /in plain English/u);
   assert.match(rootInstructions, /Do not impose character, word, paragraph, or bullet limits/u);
-  assert.match(rootInstructions, /Use the `visualize`[\s>]+skill when an in-conversation visual/u);
-  assert.match(rootInstructions, /Create a standalone HTML response file only when the\s+>\s+user asks/u);
-  assert.match(rootInstructions, /eyebrows,\s+kickers, overlines, pills, badges/u);
+  assert.doesNotMatch(rootInstructions, /### Unslop|Use the `visualize` skill|standalone HTML response/u);
+  assert.match(rootInstructions, /references\/frontend-baseline\.md/u);
+  assert.match(frontendBaseline, /eyebrows,\s+kickers, overlines, pills, badges/u);
   assert.match(
     frontendInstructions,
     /A heading moved into helper text has changed even when its\s+words remain the same/u,

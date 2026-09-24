@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "revision": "0.21.0",
-  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
+  "revision": "0.21.1",
+  "decisionPath": "registry/decisions/0.21.1-prune-agent-instructions.md",
   "components": [
     {
       "name": "core",
-      "revision": "sha256:00661ac8e08832214da534507b3e1f0614a32e48b8c49449d37e4aeaa84ac100",
+      "revision": "sha256:e951e817c8ddada55863a43c3974c3a79bde3e1e687f2c5743d96cdb03872ed0",
       "dependencies": [
         "skill-github-workstreams"
       ],
@@ -42,7 +42,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/core.md",
-          "sourceSha256": "dd467eab62d0bc1824701a3aab2448c7c4ba082e89d233687730c84b10b346af",
+          "sourceSha256": "9039d26e8558cbc2f50ffdff932f80f9b49b344f58777f6913e2f9c7ba30cdba",
           "targetPath": "AGENTS.md",
           "sectionId": "core",
           "markerStyle": "markdown"
@@ -540,7 +540,7 @@
     },
     {
       "name": "skill-frontend-design-discipline",
-      "revision": "sha256:125f943f2d3364bde82d431ac8691f813ef3e17c730f1415bdc5e08278ba39f4",
+      "revision": "sha256:b39593ca727ebe71f40df5daee46b58ed9f3c7d0deac711ae142d86102a9e60c",
       "dependencies": [],
       "capabilities": [
         {
@@ -610,6 +610,13 @@
         },
         {
           "operation": "file",
+          "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
+          "sourceSha256": "9c4bfae425b95dc8d637286cc583afc89633aa986905172cf2badeb0e3292f8b",
+          "targetPath": ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
+          "mediaType": "text/markdown"
+        },
+        {
+          "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
           "sourceSha256": "2696b2d480014a640a64397fd53ca12898959402a7a27c9d4781e8fe2e4c3bd6",
           "targetPath": ".codex/skills/frontend-design-discipline/references/frontend-stages.md",
@@ -674,7 +681,7 @@
         {
           "operation": "file",
           "sourcePath": ".codex/skills/frontend-design-discipline/SKILL.md",
-          "sourceSha256": "3c1a3f2cb882e60117ea447e46bd545dcfaf855bacb1f33dafc8fcdc57839fd2",
+          "sourceSha256": "baf468b55e3160a1fb475b7f84faa41b6b61a720ae7e48a695d3ed7c1d295e95",
           "targetPath": ".codex/skills/frontend-design-discipline/SKILL.md",
           "mediaType": "text/markdown"
         }
@@ -823,7 +830,7 @@
     },
     {
       "name": "frontend",
-      "revision": "sha256:0a2eb7c71d627e70a74d07871d82c7ae0f2ad469a8262a5ec5cc0d153d7b6cea",
+      "revision": "sha256:9eff4be06277b1eb4048e3db767e3d43be5810f5d8bf0ec6f791cb5fb39dc797",
       "dependencies": [
         "skill-adopt-established-product",
         "skill-choose-react-animation",
@@ -858,7 +865,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend.md",
-          "sourceSha256": "7a20113e06ad54dc20f98f105e413f14e68c117bf1561d9565cfbf11e3da15fb",
+          "sourceSha256": "c69e3a01b88798046c7f4b78b58e6bd1539612c0066be37a6708280ad83b9fce",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend",
           "markerStyle": "markdown"
@@ -867,7 +874,7 @@
     },
     {
       "name": "frontend-tailwind",
-      "revision": "sha256:47cecc1b6450f4ddf402418b87683da81df86b1d4b6deecc35783ebaaff85ce9",
+      "revision": "sha256:639d30cc5d8eeb49f3cf0132b582e0c837d818ee8766f6d74ab8cc8c9ab6d8fb",
       "dependencies": [
         "frontend",
         "skill-responsive-css-architect",
@@ -887,7 +894,7 @@
         {
           "operation": "text-section",
           "sourcePath": "registry/sources/instructions/frontend-tailwind.md",
-          "sourceSha256": "9630dd6c78d58e3f736448080a4c8a78a4abe7e4b2cb761be83d8b75f59c4eaa",
+          "sourceSha256": "fb97f90cf17b2a54165f7e4db0b5ec6f96706a1c2a3a5aeeed45e760a9b25c62",
           "targetPath": "AGENTS.md",
           "sectionId": "frontend-tailwind",
           "markerStyle": "markdown"

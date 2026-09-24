@@ -2,9 +2,7 @@
 > write to the repository, use the `github-workstreams` skill and leave the
 > user's local checkout untouched. Start remote agent work from `development`
 > on a `codex/<task>` branch, open a draft pull request to `development`, and
-> never merge it. Use the `visualize` skill when an in-conversation visual
-> would materially improve understanding. Create a standalone HTML response
-> file only when the user asks for an export.
+> never merge it.
 
 # Agent Context Framework
 

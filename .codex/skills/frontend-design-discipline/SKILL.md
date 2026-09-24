@@ -5,6 +5,10 @@ description: Reframe and specify substantial frontends or novel user-facing inte
 
 # Define the frontend before implementing it
 
+Before frontend implementation, read [frontend-baseline.md](references/frontend-baseline.md).
+For a small settled repair, the baseline applies without the design-search steps
+in this skill.
+
 Decide what the product should show and how it should behave before treating the
 schema or current component tree as the answer. Once the user approves one
 design, give implementation specialists that design rather than the discarded

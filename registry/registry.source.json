@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "0.21.0",
-  "decisionPath": "registry/decisions/0.21.0-persistent-domain-peers.md",
+  "revision": "0.21.1",
+  "decisionPath": "registry/decisions/0.21.1-prune-agent-instructions.md",
   "components": [
     {
       "name": "core",

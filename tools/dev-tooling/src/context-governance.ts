@@ -101,6 +101,10 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "Use technical-prose checks only for technical documentation selected by repository policy.",
   ]],
   ["registry/sources/instructions/frontend.md", [
+    "Before any frontend edit, read",
+    ".codex/skills/frontend-design-discipline/references/frontend-baseline.md",
+  ]],
+  [".codex/skills/frontend-design-discipline/references/frontend-baseline.md", [
     "Treat schemas and the current implementation as evidence, not as the default interface.",
     "Abstract style phrases do not replace inspectable visual evidence.",
     "Bind final visual acceptance to the exact evidence and Git revision the human reviewed.",
@@ -112,8 +116,7 @@ const PROTECTED_SEMANTIC_REQUIREMENTS = new Map<string, readonly string[]>([
     "A muted one-pixel separator is not default decoration and must not compensate for weak hierarchy.",
   ]],
   ["registry/sources/instructions/frontend-tailwind.md", [
-    "Tailwind utilities are the normal representation for styles Tailwind can express.",
-    "`skill-responsive-css-architect` decides layout relationships and responsive behavior, but it does not move utility-expressible styling into raw CSS.",
+    "When project policy selects Tailwind, use `tailwind-css-architect`",
   ]],
   [".codex/skills/frontend-design-discipline/SKILL.md", [
     "substantial frontends or novel user-facing interactions",
